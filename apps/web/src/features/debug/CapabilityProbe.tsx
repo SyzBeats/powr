@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react';
 
 import type { CapabilityReport } from '@powr/application';
 
+import { Button } from '#ui/button';
+import { Card, Screen } from '#ui/screen';
+
 import { APP_INFO, usePlatform } from '../../hooks/use-app';
-import { Button } from '../../ui/button';
-import { Card, Screen } from '../../ui/screen';
 
 /** `/debug/capabilities`: what this browser supports, for spike S-2 (§8.23). */
 export function CapabilityProbe() {

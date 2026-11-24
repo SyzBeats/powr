@@ -58,6 +58,16 @@ describe('layer rules (oxlint overrides)', () => {
     expect(output).toContain('Features never touch infrastructure');
   });
 
+  it('keeps adapters away from the design system, also through the #ui alias', () => {
+    const file = probe(
+      'apps/web/src/infrastructure/__probe__/probe.ts',
+      "import { cn } from '#ui/cn';\nimport { Button } from '../../ui/button';\nexport const probe = [cn, Button];\n",
+    );
+    const { status, output } = lint(file);
+    expect(status).not.toBe(0);
+    expect(output.match(/Adapters know nothing about the UI/g)).toHaveLength(2);
+  });
+
   it('keeps the design system free of domain packages', () => {
     const file = probe(
       'apps/web/src/ui/__probe__/probe.ts',
@@ -71,11 +81,11 @@ describe('layer rules (oxlint overrides)', () => {
   it('keeps the service worker away from app code', () => {
     const file = probe(
       'apps/web/src/sw/__probe__.ts',
-      "import { logSet } from '@powr/application';\nimport { cn } from '../ui/cn';\nimport { openRuntimeDb } from '../infrastructure/runtime-db';\nexport const probe = [logSet, cn, openRuntimeDb];\n",
+      "import { logSet } from '@powr/application';\nimport { cn } from '../ui/cn';\nimport { Button } from '#ui/button';\nimport { openRuntimeDb } from '../infrastructure/runtime-db';\nexport const probe = [logSet, cn, Button, openRuntimeDb];\n",
     );
     const { status, output } = lint(file);
     expect(status).not.toBe(0);
-    expect(output).toContain('The service worker stays tiny');
+    expect(output.match(/The service worker stays tiny/g)).toHaveLength(2);
     expect(output).toContain('may only import src/infrastructure/runtime-db');
     expect(output.match(/may only import/g)).toHaveLength(1);
   });

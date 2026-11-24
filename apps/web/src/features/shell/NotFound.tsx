@@ -1,7 +1,7 @@
 import { Trans, useLingui } from '@lingui/react/macro';
 import { Link } from '@tanstack/react-router';
 
-import { Screen } from '../../ui/screen';
+import { Screen } from '#ui/screen';
 
 export function NotFound() {
   const { t } = useLingui();

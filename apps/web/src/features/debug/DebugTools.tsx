@@ -1,9 +1,10 @@
 import { Link } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 
+import { Button } from '#ui/button';
+import { Card } from '#ui/screen';
+
 import { useDiagnostics } from '../../hooks/use-app';
-import { Button } from '../../ui/button';
-import { Card } from '../../ui/screen';
 
 interface RecentEntry {
   seq?: number;

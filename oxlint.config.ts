@@ -47,6 +47,12 @@ const LAZY_BACKUP: ImportPattern = {
 /** The bare package only; gitignore-style groups would also match a local `./zod` module. */
 const ZOD_PACKAGE = '^zod(/.*)?$';
 
+/**
+ * The design system's subpath-import alias (`#ui/*`, apps/web/package.json `imports`, ADR-0003).
+ * A regex, because `#` starts a comment in the gitignore-style `group` patterns.
+ */
+const UI_ALIAS = '^#ui(/.*)?$';
+
 const browserGlobalsBanned = (reason: string): RuleSetting<'no-restricted-globals'> => [
   'error',
   ...BROWSER_GLOBALS.map((name) => ({ name, message: reason })),
@@ -286,6 +292,7 @@ const config: OxlintConfig = {
             group: ['**/features/**', '**/ui/**', '**/hooks/**', '**/routes/**'],
             message: 'Adapters know nothing about the UI.',
           },
+          { regex: UI_ALIAS, message: 'Adapters know nothing about the UI.' },
           LAZY_BACKUP,
         ),
       },
@@ -312,6 +319,7 @@ const config: OxlintConfig = {
             group: [...UI_FRAMEWORKS, ...STORAGE_LIBS, '@powr/*'],
             message: 'The service worker stays tiny.',
           },
+          { regex: UI_ALIAS, message: 'The service worker stays tiny.' },
           {
             group: ['../**', '!../infrastructure/runtime-db', '!../infrastructure/runtime-db/**'],
             message: 'The service worker may only import src/infrastructure/runtime-db.',

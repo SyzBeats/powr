@@ -3,6 +3,11 @@ import { useState } from 'react';
 
 import type { ExerciseDef, ExerciseId, LoggedSet, Session } from '@powr/domain';
 
+import { Button } from '#ui/button';
+import { NumberField } from '#ui/number-field';
+import { Card, Screen } from '#ui/screen';
+import { Segmented } from '#ui/segmented';
+
 import { useExercises } from '../../hooks/use-content';
 import {
   useActiveSession,
@@ -11,10 +16,6 @@ import {
   useSessionSets,
 } from '../../hooks/use-session';
 import { formatNumber, formatTime } from '../../i18n/format';
-import { Button } from '../../ui/button';
-import { NumberField } from '../../ui/number-field';
-import { Card, Screen } from '../../ui/screen';
-import { Segmented } from '../../ui/segmented';
 
 type RirChoice = '0' | '1' | '2' | '3' | '4' | '5' | 'none';
 

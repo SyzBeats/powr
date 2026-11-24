@@ -4,11 +4,12 @@ import { lazy, Suspense } from 'react';
 
 import type { ThemePreference } from '@powr/formats';
 
+import { Card, Screen } from '#ui/screen';
+import { Segmented } from '#ui/segmented';
+
 import { isEnabled } from '../../feature-flags';
 import { APP_INFO, useDebugMode } from '../../hooks/use-app';
 import { useSetTheme, useThemePreference } from '../../hooks/use-settings';
-import { Card, Screen } from '../../ui/screen';
-import { Segmented } from '../../ui/segmented';
 
 const DebugTools = lazy(() => import('../debug/DebugTools'));
 

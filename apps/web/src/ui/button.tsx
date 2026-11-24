@@ -2,7 +2,7 @@ import { Button as BaseButton } from '@base-ui/react/button';
 import { cva, type VariantProps } from 'class-variance-authority';
 import type { ComponentProps } from 'react';
 
-import { cn } from './cn';
+import { cn } from '#ui/cn';
 
 const buttonVariants = cva(
   'inline-flex items-center justify-center gap-2 rounded-xl px-4 font-semibold transition-colors select-none disabled:opacity-50 data-[disabled]:opacity-50',

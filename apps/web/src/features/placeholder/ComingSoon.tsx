@@ -1,6 +1,6 @@
 import { Trans } from '@lingui/react/macro';
 
-import { Screen } from '../../ui/screen';
+import { Screen } from '#ui/screen';
 
 /** Placeholder for tabs whose features arrive after the walking skeleton. */
 export function ComingSoon({ title }: { title: string }) {

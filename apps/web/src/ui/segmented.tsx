@@ -1,7 +1,7 @@
 import { Toggle } from '@base-ui/react/toggle';
 import { ToggleGroup } from '@base-ui/react/toggle-group';
 
-import { cn } from './cn';
+import { cn } from '#ui/cn';
 
 export interface SegmentedOption<T extends string> {
   readonly value: T;

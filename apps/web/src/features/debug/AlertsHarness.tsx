@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 
+import { Button } from '#ui/button';
+import { Card, Screen } from '#ui/screen';
+
 import { APP_INFO, useDiagnostics, usePlatform } from '../../hooks/use-app';
-import { Button } from '../../ui/button';
-import { Card, Screen } from '../../ui/screen';
 import { startRun, VARIANTS, type HarnessRun, type Variant } from './alert-harness';
 
 const REST_PRESETS = [

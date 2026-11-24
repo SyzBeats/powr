@@ -16,8 +16,8 @@
     "components": "#ui",
     "ui": "#ui",
     "utils": "#ui/cn",
-    "lib": "#ui",
-    "hooks": "#ui"
+    "lib": "#ui/lib",
+    "hooks": "#ui/hooks"
   },
   "registries": {}
 }

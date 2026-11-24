@@ -1,8 +1,9 @@
 import { Trans } from '@lingui/react/macro';
 
+import { Button } from '#ui/button';
+
 import { useAppUpdate } from '../../hooks/use-app';
 import { useActiveSession } from '../../hooks/use-session';
-import { Button } from '../../ui/button';
 
 /** Non-blocking update notice (PWA-04); never applies an update during a workout. */
 export function UpdateBanner() {

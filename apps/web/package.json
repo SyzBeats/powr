@@ -3,6 +3,10 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "imports": {
+    "#ui/cn": "./src/ui/cn.ts",
+    "#ui/*": "./src/ui/*.tsx"
+  },
   "scripts": {
     "dev": "vite",
     "build": "node scripts/i18n-check.ts && vite build",

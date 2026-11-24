@@ -4,9 +4,10 @@ import { CircleCheck, CloudOff } from 'lucide-react';
 
 import type { Session } from '@powr/domain';
 
+import { Card, Screen } from '#ui/screen';
+
 import { useOfflineReady } from '../../hooks/use-app';
 import { useActiveSession, useSessionSets } from '../../hooks/use-session';
-import { Card, Screen } from '../../ui/screen';
 
 const linkButtonClass =
   'flex min-h-target-lg w-full items-center justify-center rounded-xl px-4 text-lg font-semibold';

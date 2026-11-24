@@ -1,6 +1,6 @@
 import { useEffect, useRef, type ReactNode } from 'react';
 
-import { cn } from './cn';
+import { cn } from '#ui/cn';
 
 /** One screen: an h1 that receives focus on route changes (§8.14), then the content. */
 export function Screen({
