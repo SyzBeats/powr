@@ -60,6 +60,38 @@ test.describe('app shell (WP0.3)', () => {
     expect(await themeColors()).toEqual(['#f6f6f4', '#101214']);
   });
 
+  test('shadcn components follow the app theme through the colour bridge (TD-21)', async ({
+    page,
+  }) => {
+    // The shadcn Input (`border-input`, `bg-transparent dark:bg-input/30`) on the alert harness.
+    const styles = async (osScheme: 'light' | 'dark', theme: 'Light' | 'Dark' | 'System') => {
+      await page.emulateMedia({ colorScheme: osScheme });
+      await page.goto('/settings');
+      const option = page.getByRole('button', { name: theme });
+      await option.click();
+      // Pressed once the setting is stored, so the next page boots with it.
+      await expect(option).toHaveAttribute('aria-pressed', 'true');
+      await page.goto('/debug/alerts');
+      return page.getByLabel('Device and browser label').evaluate((input) => {
+        const style = getComputedStyle(input);
+        return {
+          border: style.borderTopColor,
+          transparent: style.backgroundColor === 'rgba(0, 0, 0, 0)',
+        };
+      });
+    };
+    // --input → --fg-muted: #54595f light, #a9afb6 dark (tokens.css).
+    const light = { border: 'rgb(84, 89, 95)', transparent: true };
+    const dark = { border: 'rgb(169, 175, 182)', transparent: false };
+
+    // The app theme wins over the OS setting, for the tokens and for `dark:` alike.
+    expect(await styles('dark', 'Light')).toEqual(light);
+    expect(await styles('light', 'Dark')).toEqual(dark);
+    // "System" follows the OS.
+    expect(await styles('dark', 'System')).toEqual(dark);
+    expect(await styles('light', 'System')).toEqual(light);
+  });
+
   test('deep links work and unknown routes show a not-found screen', async ({ page }) => {
     await page.goto('/data');
     await expect(page.getByRole('heading', { level: 1, name: 'Data and backups' })).toBeVisible();

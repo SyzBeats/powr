@@ -32,7 +32,7 @@ and the ADRs. M0 was built against v0.2; on 2026-11-24 every deviation below was
 | `pnpm licence:demo-gpl`                       | Proves the gate: a build with a GPL fixture fails, `MIT OR GPL` passes as MIT, a clean build passes                        |
 | `pnpm size`                                   | size-limit budgets (entry JS/CSS, service worker) and the precache budget (after `pnpm build`)                             |
 | `pnpm icons`                                  | Regenerates the placeholder icons (own artwork)                                                                            |
-| `pnpm --filter @powr/web ui:add <component>`  | Adds a shadcn component with the pinned CLI (`pnpm dlx shadcn@4.23.0 add`); review the diff as in technical concept §8.9.2 |
+| `pnpm --filter @powr/web ui:add <component>`  | Adds a shadcn component via `scripts/ui-add.ts` (pinned CLI, `cn` → `#ui/cn`, formatting), then review the diff per §8.9.2 |
 | `pnpm verify`                                 | The whole CI pipeline locally: lint, format, knip, i18n, typecheck, test, build, licence, size, e2e                        |
 | `pnpm docker:build` / `pnpm docker:run`       | Build and run the nginx image on http://localhost:8080 (after `pnpm build`)                                                |
 | `pnpm docker:smoke`                           | Header, caching and SPA smoke test against http://localhost:8080                                                           |
@@ -87,6 +87,7 @@ On the phone:
 | WP0.8 Diagnostics    | Done                      | `e2e/diagnostics.spec.ts`: `?debug=1` diagnostics export; alert harness exports results as a file; variant B service-worker timer fires while the page is hidden; capability probe export                                                                                                                                                                                              |
 | M0 cleanup           | Done                      | `pnpm verify` green (89 unit tests, 20 E2E); entry JS 211.42 → 202.54 kB gzip (backup chunk 9.5 kB, lazy); `e2e/backup.spec.ts` exports and restores offline on first use (also against the nginx image); `shadcn@4.23.0 add input` through `#ui/*`; licence gate with recorded approvals; docs v0.3 (Mermaid: 9 blocks parse; all § references, ADR links and TD/T/QS/OQ IDs resolve) |
 | M1 contract          | Done                      | `pnpm verify` green (101 unit tests, 20 E2E); shared domain types and source registry (section 5): 22 seeded sources (3 excluded, 19 mapping) pass `packages/rules/scripts/sources.test.ts`; a throwaway tools package checked every stub citation through `@powr/rules/sources/node` and `checkSourceRefs` (then removed); entry JS 202.55 → 204.29 kB gzip                           |
+| TD-21                | Done                      | `pnpm --filter @powr/web ui:add input --overwrite --yes` through the new script: import rewritten to `#ui/cn`, `cn` removed, `package.json` and lockfile unchanged; `e2e/shell.spec.ts` checks the shadcn `Input` in four theme × OS combinations (fails with Tailwind's own `dark:`); `scripts/theme-bridge.test.ts` checks AA for 18 bridged pairs; entry CSS 3.79 → 4.51 kB gzip    |
 
 ## 3. Deviations from the concept and ADRs
 
@@ -140,6 +141,7 @@ On the phone:
 | 2026-11-24 | M1      | Movement patterns as listed in PRD §7.1 (18)                                                | `MOVEMENT_PATTERNS`: the 18 PRD members plus `shoulderHorizontalAdduction`, `shoulderHorizontalAbduction`, `shrug`, `wristFlexion`, `wristExtension`                                                                                                                                                                                                                                                                                                                                    | EXL-01 needs a pattern for every exercise, and the §7.2 groups forearms, upper traps and rear delts and the EB mapping rows fly, rear-delt fly and shrug have none in the PRD list                                                                   | Product owner: amend PRD §7.1, or drop the five before content uses them                                                                             |
 | 2026-11-24 | M1      | Tag set of the EB "How to read the evidence tags" (§8.6.1)                                  | Kept the 14 tags. The EB body also marks two acute EMG studies `[EMG]` (Ema 2016, PubMed 34644424); the registry tags them `OBS` with a note, and EMG stays a muscle-credit evidence code                                                                                                                                                                                                                                                                                               | `[EMG]` is not in the EB tag table and has no UI label in §8.6.4                                                                                                                                                                                     | Confirm in the next docs pass (§8.6.1, §8.6.4)                                                                                                       |
 | 2026-11-24 | M1      | Every muscle credit cites a registry source (§8.12)                                         | Added `src.powr-eb-mapping` (tag `INF`), the EB mapping table itself, as the source of credits the EB rates C (convention or biomechanics)                                                                                                                                                                                                                                                                                                                                              | The EB's only basis for C rows is its own convention; without a sanctioned ID each author would invent one                                                                                                                                           | Amend §8.12                                                                                                                                          |
+| 2026-11-24 | TD-21   | §8.9.2 review: replace the `cn` import, rename shadcn tokens, remove `dark:` (TD-21 open)   | **TD-21 resolved by product owner 2026-11-24: keep `#ui/cn` + colour bridge.** `ui:add` runs `scripts/ui-add.ts`: the pinned CLI, then `from "cn"` → `#ui/cn`, the `cn` package removed, `src/ui` formatted. `app.css` aliases shadcn's colour names to POWR tokens (`--input` → `--fg-muted`), scopes `dark:` to the theme attribute and sets the default border colour. `Input` re-added through the script; edits: target, radius, focus, one `dark:` class                          | `components.json` aliases cannot redirect the bare `cn` package import. The bridge lets registry components render with POWR colours in both themes at WCAG AA (`--border` is decorative, < 3:1, so `--input` uses `--fg-muted`)                     | Docs pass: §8.9.2 workflow (steps 1, 2, 4), §8.9.3, ADR-0003 amendment, close TD-21 in §11.2                                                         |
 
 ## 4. Not done in M0 / open items
 
@@ -164,8 +166,10 @@ On the phone:
   work must agree on them.
 - Custom exercises (EXL-04) need a source for user-set credits, because `MuscleCredit.source` is
   required.
-- Decide on adopting the `cn` package and on a shadcn token-name bridge when more CLI components
-  arrive (TD-21, product owner).
+- TD-21 is resolved (section 3): `#ui/cn` stays, and `app.css` bridges shadcn's colour names. Not
+  bridged: shadcn's radius scale (`--radius`, used through `rounded-*` and `var(--radius-md)`) and
+  its chart colours; the `ui:add` review still replaces translucent focus rings (`ring-ring/50` is
+  below 3:1) with the global outline and sets 48 px targets.
 - These items are also in the technical concept's technical-debt list (§11.2): component and
   pseudo-locale tests TD-11; Lighthouse CI, token gate and Trusted Types TD-12; QS-01 TD-13; update
   and recovery UI TD-14; save picker TD-15.
@@ -276,3 +280,6 @@ Member values are camelCase, like the existing unions (`TechniqueKind`, `curveCl
 - 2026-11-24: M1 contract step: shared domain types (full `ExerciseDef`, enums, ID types, evidence
   tags) and the source registry directory with loader, validator and 22 seeded sources. New
   section 5 (the changelog moved to section 6); eight M1 rows in section 3; section 4 updated.
+- 2026-11-24: TD-21 resolved by the product owner (keep `#ui/cn` + colour bridge): `ui:add` script,
+  colour bridge and theme-scoped `dark:` in `app.css`, `Input` re-added through the script. Run
+  instructions, section 2, a section 3 row and section 4 updated.

@@ -29,7 +29,7 @@ export default defineConfig({
         test: {
           name: 'web',
           root: 'apps/web',
-          include: ['src/**/*.test.ts'],
+          include: ['src/**/*.test.ts', 'scripts/**/*.test.ts'],
           setupFiles: [setup, './vitest.setup.ts'],
         },
       },

@@ -1,7 +1,87 @@
 @import 'tailwindcss';
 @import './tokens.css';
 
+/*
+ * shadcn colour-name bridge (TD-21, product-owner decision 2026-11-24). Registry components use
+ * shadcn's semantic colour names; here they alias the POWR tokens of tokens.css, so the components
+ * follow the app theme through light-dark() and inherit the tokens' contrast (WCAG 2.2 AA in both
+ * themes). `--primary` and `--border` mean the same in both systems and need no alias. `--input`
+ * (form-control boundaries) maps to `--fg-muted`, because `--border` is decorative (< 3:1).
+ * shadcn's chart colours are not bridged: charts use ECharts with POWR's own palette (§8.10).
+ */
+:root {
+  --background: var(--bg);
+  --foreground: var(--fg);
+  --card: var(--surface);
+  --card-foreground: var(--fg);
+  --popover: var(--surface);
+  --popover-foreground: var(--fg);
+  --primary-foreground: var(--on-primary);
+  --secondary: var(--surface-raised);
+  --secondary-foreground: var(--fg);
+  --muted: var(--surface-raised);
+  --muted-foreground: var(--fg-muted);
+  --accent: var(--surface-raised);
+  --accent-foreground: var(--fg);
+  --destructive: var(--danger);
+  --destructive-foreground: var(--on-danger);
+  --input: var(--fg-muted);
+  --ring: var(--focus);
+  --sidebar: var(--surface);
+  --sidebar-foreground: var(--fg);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--on-primary);
+  --sidebar-accent: var(--surface-raised);
+  --sidebar-accent-foreground: var(--fg);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--focus);
+}
+
+/*
+ * `dark:` follows the app theme like light-dark() does: `data-theme="dark"`, or the OS setting
+ * only while the theme is "system" (no data-theme). Tailwind's default would follow the OS even
+ * when the user picked light.
+ */
+@custom-variant dark {
+  &:where([data-theme='dark'], [data-theme='dark'] *) {
+    @slot;
+  }
+  @media (prefers-color-scheme: dark) {
+    &:where(:root:not([data-theme]), :root:not([data-theme]) *) {
+      @slot;
+    }
+  }
+}
+
 @theme inline {
+  /* shadcn names (bridge above) */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* POWR names */
   --color-bg: var(--bg);
   --color-surface: var(--surface);
   --color-surface-raised: var(--surface-raised);
@@ -31,6 +111,15 @@
 
   body {
     min-height: 100dvh;
+  }
+
+  /* Registry components draw bare `border`/`border-b` lines in the border colour, as in shadcn. */
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--border);
   }
 
   :focus-visible {
