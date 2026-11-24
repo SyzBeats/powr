@@ -7,8 +7,8 @@ packages:
 minimumReleaseAge: 10080
 
 # Exact versions pinned by the technical concept (Appendix B) that were younger than
-# 7 days when M0 was set up. Remove each entry once it has matured.
-# See IMPLEMENTATION_NOTES.md (WP0.1).
+# 7 days when M0 was set up. Remove the whole list after 2026-12-01, when all of them have
+# matured (ADR-0021, TD-18; reminder in IMPLEMENTATION_NOTES.md section 4).
 minimumReleaseAgeExclude:
   - pnpm
   - '@pnpm/exe.*'

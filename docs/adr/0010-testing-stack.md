@@ -1,7 +1,7 @@
 # ADR-0010: Testing stack
 
-- Status: Accepted
-- Date: 2026-11-23
+- Status: Accepted (v0.3, 2026-11-24: E2E test server, see below)
+- Date: 2026-11-23, amended 2026-11-24
 - Related: technical concept §8.20, §10.2; PRD NFR-MNT-02/03/05, NFR-A11Y-11, TC-13, M9–M12
 
 ## Context
@@ -47,3 +47,11 @@ End-to-end tests:
 - Positive: one runner for all JavaScript tests, sharing Vite's config and transforms; real Chromium for components and E2E; deterministic property tests with fixed seeds in CI and random seeds nightly.
 - Negative: emulated Chromium is not a Galaxy S22; device-specific behaviour (alerts, freezing, Samsung Internet) relies on the manual protocol (technical debt TD-04).
 - Runner-up: Jest + Cypress (not recommended; listed for completeness).
+
+## Amendment (v0.3, 2026-11-24)
+
+- **E2E test server.** Playwright runs against `apps/web/e2e/static-server.ts`, which serves `dist` with the headers read from `deploy/security-headers.conf` and with nginx's cache rules and SPA fallback. Each test gets its own server and origin, so tests can stop the server (offline) or deploy version N+1 on the same origin (update gate). `vite preview` was not used because it sends no CSP. The same suite runs against the nginx image with `E2E_BASE_URL` (tests that stop or swap the server are skipped there); CI does both.
+- Every E2E test fails on any CSP violation and on any request to another origin or any non-GET request (QS-06).
+- **Not built in M0:** Vitest browser-mode component tests with Testing Library and the Lingui pseudo-locale expansion test (M1, TD-11).
+
+Source: `IMPLEMENTATION_NOTES.md` §3 (repository root), which records each deviation with its reason.

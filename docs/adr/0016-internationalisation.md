@@ -1,6 +1,6 @@
 # ADR-0016: Internationalisation: Lingui 6 + Intl
 
-- Status: Accepted (v0.2, 2026-11-24: literal-string enforcement re-designed for oxlint)
+- Status: Accepted (v0.2, 2026-11-24: literal-string enforcement re-designed for oxlint; v0.3, 2026-11-24: configuration as implemented, see below)
 - Date: 2026-11-23, revised 2026-11-24
 - Related: technical concept §8.15, §8.7.3; PRD NFR-MNT-04, NFR-L10N-01/02, NG-10, C-06, TC-16
 
@@ -38,3 +38,12 @@ The UI is English only, but all user-facing strings must be externalized so that
 - Negative: the macro needs a Babel transform under Vite 8 / Rolldown (`@rolldown/plugin-babel`); verified in the M0 skeleton. Fallback: use `i18n._()` with explicit IDs and no macros (risk T-08).
 - Negative (v0.2): literal strings outside JSX are not caught by a blocking rule (TD-08).
 - Runner-up: **i18next**.
+
+## Amendment (v0.3, 2026-11-24)
+
+- **`react/jsx-no-literals` configuration.** `noStrings: false`, because in oxlint `noStrings: true` flags every attribute literal (`className`, `to`, …). `restrictedAttributes` covers the text-bearing attributes `aria-label`, `title`, `placeholder`, `alt` and `label`; `allowedStrings` lists symbols such as "·", "×" and "–"; `<Trans>` and `<Plural>` are allowed as elements. The developer harness pages (`src/features/debug`, English-only diagnostics for device spikes) are exempt from this rule and from `no-unlocalized-strings`.
+- **`lingui/no-unlocalized-strings`** (warning) is scoped to `features`, `ui` and `routes`, with identifier-like strings (no spaces, no capitals) ignored.
+- **Catalog check in the build.** `pnpm build` runs the `lingui extract` check before Vite: production macros drop the source messages, so a stale catalog would show message hashes in the UI, and `failOnMissing` does not catch messages that were never extracted.
+- **Babel macro path verified** under Rolldown. Lingui 6.12 recommends its native `macroTransform` and prints a warning for the Babel path, which the build suppresses (`LINGUI_SUPPRESS_BABEL_WARNING`). Evaluating the native transform is TD-09.
+
+Source: `IMPLEMENTATION_NOTES.md` §3 (repository root), which records each deviation with its reason.

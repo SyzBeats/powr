@@ -1,7 +1,7 @@
 # ADR-0018: Licence compliance tooling: own inventory from the bundle graph + SPDX policy gate
 
-- Status: Accepted
-- Date: 2026-11-23
+- Status: Accepted (v0.3, 2026-11-24: own SPDX evaluator; licence exceptions approved, see below)
+- Date: 2026-11-23, amended 2026-11-24
 - Related: technical concept §8.21, §8.12; PRD LEG-06, LEG-08, NFR-MNT-08, TC-18, V-04, R-09
 
 ## Context
@@ -36,3 +36,18 @@ Facts checked 2026-11-23: `rollup-plugin-license` 3.7.2 (MIT, peer `rollup ^1–
 - Positive: the inventory reflects exactly what ships; one mechanism covers code, fonts, art and data; no external service.
 - Negative: own code to maintain (about 300 lines + tests); covered by fixtures (a GPL fixture must fail, an `MIT OR GPL` fixture must pass as MIT).
 - Runner-up: **rollup-plugin-license**, once Rolldown compatibility is confirmed, for the bundle part only.
+
+## Amendment (v0.3, 2026-11-24)
+
+- **Own SPDX evaluator.** The checker evaluates the `spdx-expression-parse` syntax tree itself; `spdx-satisfies` is not used. The evaluator must record which alternative of an `OR` expression was chosen and apply glob deny patterns such as `GPL-*`.
+- **Plugin flow across two builds.** The app build writes its package list; the service-worker build runs last, merges both lists, writes `attributions.json` and fails the build on a disallowed licence, before Workbox builds the precache manifest, so `attributions.json` is precached.
+- **Approved licence decisions** (recorded in `licence-policy.yaml` and `assets-inventory.yaml`):
+
+  | Decision | Scope | Approval |
+  |---|---|---|
+  | `LicenseRef-Own-Work` on the allowlist for the project's own original assets (the generated app icons; also the M0 content stub) | Distributed | Approved by product owner Simeon Zimmermann, 2026-11-24 |
+  | Exception for `spdx-exceptions@2.5.0` (CC-BY-3.0): SPDX exception-ID list read by the licence tool, data only | Build-only, never shipped | Approved by product owner Simeon Zimmermann, 2026-11-24 |
+
+- **Approval is enforced.** Each exception entry carries `reviewer`, `approval`, `date`, `scope` and `rationale`. The gate ignores an exception without a recorded `approval`, so an unapproved entry fails the build like a missing one (policy unit test).
+
+Source: `IMPLEMENTATION_NOTES.md` §3 (repository root), which records each deviation with its reason.

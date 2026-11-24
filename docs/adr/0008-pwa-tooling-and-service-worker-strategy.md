@@ -1,7 +1,7 @@
 # ADR-0008: PWA tooling and service-worker strategy
 
-- Status: Accepted
-- Date: 2026-11-23
+- Status: Accepted (v0.3, 2026-11-24: amended after M0, see below)
+- Date: 2026-11-23, amended 2026-11-24
 - Related: technical concept §8.4, §6.3, §6.7; PRD PWA-01…05, PWA-03, PWA-04, DAT-14, NFR-REL-08, TC-04
 
 ## Context
@@ -43,3 +43,14 @@ Facts checked 2026-11-23:
 - Negative: rare edge case (an update was waiting, the user declined it, then the process was killed mid-session) activates the new version on cold start. Accepted with mitigations (risk T-05); the version-pinning fallback is documented in §6.3.
 - Negative: a rejected install wastes one `sw.js` fetch per check; negligible.
 - Runner-up: **Serwist**, a drop-in replacement for the Workbox modules if Workbox maintenance stalls.
+
+## Amendment (v0.3, 2026-11-24)
+
+- **Own registration code instead of `virtual:pwa-register`.** `src/infrastructure/pwa/registration.ts` (about 90 lines) registers `/sw.js` after first render, watches every `updatefound`, reports "offline ready" and "update available", checks for updates on return to the foreground (at most every 6 h) and after a session ends, and posts `SKIP_WAITING` only on the user's accept. vite-plugin-pwa runs with `injectRegister: false`; `workbox-window` is not a dependency. Reason: `workbox-window` stops listening to `updatefound` after the first update it considers external, and an install rejected by the gate mid-workout is exactly that, so the update would not be offered after the workout. The Playwright update test covers the flow.
+- **Service-worker source `src/sw/sw.ts`** (not `service-worker.ts`): vite-plugin-pwa derives the output name `/sw.js` from the source file name. It is built as an IIFE (classic script).
+- **Icons from an own generator** (`tools/icons`, Node with a `zlib` PNG encoder; `pnpm icons`) instead of `@vite-pwa/assets-generator`, which depends on sharp, whose prebuilt libvips binary is LGPL-3.0. The icons are own work (`LicenseRef-Own-Work`, approved by the product owner on 2026-11-24, ADR-0018).
+- **`theme-init.js`** (pre-paint theme script, not content-hashed) joins `index.html`, `sw.js`, the manifest, `changelog.json` and `version.json` on the `no-cache` list.
+- **`changelog.json`** is generated from the first release on; M0 ships `version.json` only (TD-20).
+- **Lazy chunks are precached.** The precache glob covers every emitted chunk, including the lazily loaded backup chunk; an E2E test exports and restores with the server stopped.
+
+Source: `IMPLEMENTATION_NOTES.md` §3 (repository root), which records each deviation with its reason.

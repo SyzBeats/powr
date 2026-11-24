@@ -1,6 +1,6 @@
 # ADR-0002: Frontend framework and build tooling: React 19 + TypeScript 7.0 + Vite 8
 
-- Status: Accepted (v0.2, 2026-11-24: TypeScript changed from 6.0.x to 7.0.x)
+- Status: Accepted (v0.2, 2026-11-24: TypeScript changed from 6.0.x to 7.0.x; v0.3, 2026-11-24: one alias exception, see below)
 - Date: 2026-11-23, revised 2026-11-24
 - Related: technical concept §4, §5.2, §8.9, §8.21; ADR-0017; PRD C-01, NFR-PERF-01/07, OC-01
 
@@ -74,3 +74,23 @@ Registry and vendor facts (checked 2026-11-23/24):
 - Positive: type checks are much faster, and the same TypeScript semantics are used by `tsc` and by type-aware oxlint.
 - Negative: no TypeScript programmatic API until 7.1, so dependency-cruiser is dropped for now (risk T-03, TD-07).
 - Negative: Rolldown is younger than Rollup; some Rollup-only plugins (for example `rollup-plugin-license`, peer `rollup ^1–4`) may not work, which is one reason the licence inventory is an own plugin (ADR-0018).
+
+## Amendment (v0.3, 2026-11-24)
+
+**One alias exception: `#ui/*` subpath imports** (approved by the product owner on 2026-11-24). The convention "no `baseUrl`, no path aliases" stays. The one exception is Node's standard `imports` field in `apps/web/package.json`:
+
+```json
+"imports": {
+  "#ui/cn": "./src/ui/cn.ts",
+  "#ui/*": "./src/ui/*.tsx"
+}
+```
+
+- Why: the official shadcn CLI (`shadcn add`) needs an alias for the component directory (ADR-0003). Without one, `shadcn init` and `add` cannot place or import components.
+- Why subpath imports and not `paths`: they need no `tsconfig` `paths`/`baseUrl` and no Vite `resolve.alias`. TypeScript 7 with `moduleResolution: "bundler"`, Vite 8, Vitest, oxlint (import plugin, type-aware rules) and knip resolve them natively, as Node does.
+- The wildcard target ends in `.tsx`, so imports are extensionless (`#ui/button`) and resolve exactly; `#ui/cn` is an exact entry for the one `.ts` file. Entries for lib and hook files (`.ts`) are added with the first such file; knip reports unused entries.
+- All design-system imports in the app use `#ui/*`. oxfmt's `sortImports` has a `subpath` group for them, between `@powr/*` and relative imports.
+
+Also from M0: `vite.config.ts` was committed unformatted (double quotes, 80 columns), so `pnpm format:check` failed; it is formatted with oxfmt now.
+
+Source: `IMPLEMENTATION_NOTES.md` §3 (repository root), which records each deviation with its reason.

@@ -1,6 +1,6 @@
 # ADR-0001: Repository structure: pnpm-workspace monorepo with layered packages
 
-- Status: Accepted (v0.2, 2026-11-24: boundary enforcement re-designed after replacing ESLint with oxlint)
+- Status: Accepted (v0.2, 2026-11-24: boundary enforcement re-designed after replacing ESLint with oxlint; v0.3, 2026-11-24: amended after M0, see below)
 - Date: 2026-11-23, revised 2026-11-24
 - Related: technical concept §5; PRD NFR-MNT-01/02/06, TC-05, TC-15
 
@@ -55,3 +55,14 @@ v0.1 used `eslint-plugin-boundaries` plus a dependency-cruiser cross-check. ESLi
 - Positive: TypeScript project references give incremental type checks.
 - Negative: more configuration (one `package.json` and `tsconfig` per package). Mitigated by a shared `tsconfig.base.json` and keeping packages source-only (no per-package bundling; Vite compiles them through the workspace).
 - Negative: the runner-up (single app) would be faster to start. If the package overhead slows M0, packages can begin as folders inside one package, keeping the same import rules, and be split later.
+
+## Amendment (v0.3, 2026-11-24)
+
+The decision stands. M0 implemented it with these differences:
+
+- **`@powr/rules` does not depend on `@powr/domain` yet.** M0 imports nothing from the domain there, and knip fails on unused dependencies. The allowed-dependency matrix of the architecture test still permits the edge; the dependency is declared in M1 together with the `RuleSet` types.
+- **Lazy package entries.** `@powr/formats` and `@powr/application` each have a second entry, `./backup` (`package.json` `exports`). The package roots stay free of Zod schemas and fflate because they are on the app's startup path; the backup entries load with `import()` (technical concept §8.19). The package boundaries do not change: the same packages, the same references. A lint rule forbids static value imports of the backup entries in app code (type imports are allowed); oxlint also checks `import()`, so the single loader carries the one disable comment.
+- **More native lint rules.** `no-restricted-properties` bans `Math.random` in `packages/domain` (in addition to the architecture test). Every `apps/web` override forbids importing `zod` directly (only `src/zod.ts` may, ADR-0009). The `#ui/*` subpath-imports alias (ADR-0003) is matched with `regex` patterns, because `#` starts a comment in gitignore-style `group` patterns; infrastructure and the service worker may not use it.
+- **Boundary probes.** `tools/arch-test/test/boundary-probes.test.ts` writes forbidden files into the real source tree and asserts that oxlint or `tsc -b` fails on them.
+
+Source: `IMPLEMENTATION_NOTES.md` §3 (repository root), which records each deviation with its reason.

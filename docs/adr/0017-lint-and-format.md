@@ -1,6 +1,6 @@
 # ADR-0017: Lint and format: oxlint (type-aware) + oxfmt
 
-- Status: Accepted (product-owner decision 2026-11-24; supersedes the v0.1 decision "ESLint 10 + typescript-eslint + Prettier")
+- Status: Accepted (product-owner decision 2026-11-24; supersedes the v0.1 decision "ESLint 10 + typescript-eslint + Prettier"; v0.3, 2026-11-24: amended after M0, see below)
 - Date: 2026-11-23, rewritten 2026-11-24
 - Related: technical concept §5.2, §8.5, §8.14, §8.15, §8.21; ADR-0001 (boundaries), ADR-0002 (TypeScript 7.0), ADR-0016 (i18n); PRD NFR-MNT-04, NFR-A11Y-01
 
@@ -80,3 +80,12 @@ The matrix still favours ESLint + Prettier on rule coverage and plugin maturity.
 - Negative: Lingui's `no-unlocalized-strings` and the React Compiler rules are only available as alpha JS-plugin warnings (T-16, TD-08).
 - Negative: oxfmt is beta. Output may change between versions and diverges from Prettier in documented edge cases (T-17).
 - Runner-up: **ESLint 10 + typescript-eslint + Prettier 3**. TypeScript 6.0 would then be needed again for typescript-eslint.
+
+## Amendment (v0.3, 2026-11-24)
+
+- **ESLint is installed, never run.** ESLint 10.15.0 is in the lockfile as the auto-installed **peer** of `eslint-plugin-lingui` and `eslint-plugin-react-hooks`, which the alpha JS plugins need to load. No script, workflow or editor setting runs it, and there is still no ESLint configuration. `eslint-plugin-lingui` 0.16 and `@typescript-eslint/utils` declare TypeScript < 6.1 (a peer warning); the rules work without type information. Re-check when the plugins support TypeScript 7.
+- **Native React Compiler rules.** oxlint 1.95 ships native ports of most React Compiler rules in its `correctness` category: `react/purity`, `refs`, `immutability`, `set-state-in-render`, `set-state-in-effect`, `static-components`, `use-memo`, `preserve-manual-memoization`, `incompatible-library`, `globals`, `error-boundaries` (`unsupported-syntax` is in `restriction`, off). With `correctness: 'error'` they already block; a `Math.random()`-in-render probe reports the native error and the alpha warning. Verifying parity, dropping the duplicated alpha rules and narrowing OQ-T10 is TD-10.
+- **More native rules than planned:** `no-restricted-properties` (`Math.random` in the domain) and `jsx-a11y/label-has-associated-control` with `controlComponents: ['Input']` for the design-system input.
+- **oxfmt `sortImports`** has a `subpath` group for the `#ui/*` alias (ADR-0002): built-in → external → `@powr/*` → `#ui/*` → relative.
+
+Source: `IMPLEMENTATION_NOTES.md` §3 (repository root), which records each deviation with its reason.

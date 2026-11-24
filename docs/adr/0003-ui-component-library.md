@@ -1,7 +1,7 @@
 # ADR-0003: UI component library: shadcn/ui on Base UI
 
-- Status: Accepted
-- Date: 2026-11-23
+- Status: Accepted (v0.3, 2026-11-24: `#ui/*` alias and shadcn CLI workflow, see below)
+- Date: 2026-11-23, amended 2026-11-24
 - Related: technical concept §8.9, §8.14; PRD NFR-A11Y-01…11, NFR-USE-05, WKT-02, SET-01, PWA-14
 
 ## Context
@@ -41,3 +41,18 @@ Use **shadcn/ui components on Base UI primitives**, styled with Tailwind CSS v4 
 - Negative: owned component code must be maintained (no automatic library upgrades). Mitigated by keeping changes small and re-pulling from the shadcn registry when useful.
 - Negative: accessibility of custom domain components is the project's responsibility; covered by axe tests and the TalkBack protocol.
 - Runner-up: **Mantine 9**, if building and maintaining owned components turns out too slow.
+
+## Amendment (v0.3, 2026-11-24)
+
+**M0 (v0.2 state).** `shadcn init` 4.23 needs a path alias or package `imports`, which ADR-0002 did not allow, and it adds the Geist web font (conflicts with the system font stack, OQ-T7), `tw-animate-css` and the `shadcn` package. M0 therefore wrote `components.json` by hand (style `base-nova`, Base UI) and wrote Button, the segmented control (ToggleGroup) and NumberField in shadcn style.
+
+**Decision (product owner, 2026-11-24): the `#ui/*` subpath-imports alias is approved** so that the official CLI works (ADR-0002 amendment). Constraints: keep the system font stack; no Geist or other web font; no dependency beyond what a component genuinely needs; every dependency passes the licence gate (ADR-0018).
+
+- `apps/web/package.json` `imports`: `#ui/cn` → `./src/ui/cn.ts`, `#ui/*` → `./src/ui/*.tsx`. `components.json` aliases: `components` and `ui` → `#ui`, `utils` → `#ui/cn`, `lib` → `#ui/lib`, `hooks` → `#ui/hooks`.
+- The CLI version is pinned: `pnpm --filter @powr/web ui:add <component>` runs `pnpm dlx shadcn@4.23.0 add`. The CLI is not a repository dependency. `shadcn init` is still not used.
+- **Review after every `add`** (technical concept §8.9.2): replace `import { cn } from "cn"` with `#ui/cn` and remove the `cn` package the CLI installs; map shadcn token names to POWR tokens (ADR-0004); ≥ 48 px targets for workout controls; drop `dark:` classes (tokens follow the app theme through `light-dark()`, Tailwind's `dark:` follows the OS); no fonts or extra packages.
+- **Proof:** `shadcn@4.23.0 add input` resolved the aliases, created `src/ui/input.tsx` (Base UI `Input`) and added `cn@0.5.2`. The review reverted the `cn` dependency and mapped the classes; the CLI changed no CSS, fonts or other files. `Input` replaced the hand-written text inputs.
+- Base UI injects `<style>` elements unless told not to; the app root uses `CSPProvider` with `disableStyleElements`, because `style-src 'self'` blocks them (technical concept §7.3).
+- Open: shadcn's registry now depends on the `cn` package and on shadcn token names. Whether to adopt `cn` (replacing clsx + tailwind-merge) and whether to add a token-name bridge to `app.css` is decided when more components arrive (TD-21).
+
+Source: `IMPLEMENTATION_NOTES.md` §3 (repository root), which records each deviation with its reason.

@@ -7,13 +7,13 @@
 | Field | Value |
 |---|---|
 | Title | POWR (working title): Technical Concept |
-| Version | 0.2 |
+| Version | 0.3 |
 | Date | 2026-11-24 |
-| Status | Draft v0.2: all open questions resolved; only spikes/validation tasks remain |
+| Status | Draft v0.3: all open questions resolved; M0 (walking skeleton) implemented and its deviations folded in; only spikes/validation tasks remain |
 | Owner / publisher | Simeon Zimmermann, SZ WEB DEVELOPMENT, Switzerland |
 | Author | Architecture agent, for the product owner (sole developer) |
 | Audience | Implementation agent, product owner, testers |
-| Sources | (1) **PRD v0.2** `docs/PRD.md`, authoritative for all requirements. (2) **Evidence base** `reports/Strength and hypertrophy evidence base.md` ("EB"), source of all training formulas and defaults. (3) Braindump `app.requirements.md` (background). (4) **npm registry metadata**, queried 2026-11-23: versions, licences and publish dates of every recommended package (Appendix B). (5) **MDN browser-compat-data 8.1.10**, which lists Chrome for Android 158 and Samsung Internet 31.0 (Blink 148, released 2026-09-23) as current: browser capability claims (Appendix C). (6) Vendor and platform documentation (Appendix D). (7) **Product-owner decisions of 2026-11-24** on the open questions (hosting on Hetzner + Coolify, oxlint and oxfmt instead of ESLint and Prettier, domain strategy, GitHub, Labs audio test); new facts re-checked on the npm registry, GitHub and vendor docs on 2026-11-24. |
+| Sources | (1) **PRD v0.2** `docs/PRD.md`, authoritative for all requirements. (2) **Evidence base** `reports/Strength and hypertrophy evidence base.md` ("EB"), source of all training formulas and defaults. (3) Braindump `app.requirements.md` (background). (4) **npm registry metadata**, queried 2026-11-23: versions, licences and publish dates of every recommended package (Appendix B). (5) **MDN browser-compat-data 8.1.10**, which lists Chrome for Android 158 and Samsung Internet 31.0 (Blink 148, released 2026-09-23) as current: browser capability claims (Appendix C). (6) Vendor and platform documentation (Appendix D). (7) **Product-owner decisions of 2026-11-24** on the open questions (hosting on Hetzner + Coolify, oxlint and oxfmt instead of ESLint and Prettier, domain strategy, GitHub, Labs audio test); new facts re-checked on the npm registry, GitHub and vendor docs on 2026-11-24. (8) **M0 implementation log** `IMPLEMENTATION_NOTES.md` (repository root; §3 lists every deviation from v0.2) and the **product-owner decisions of 2026-11-24 on the M0 cleanup**: docs v0.3, lazy-loaded backup path, unused dependencies removed, `#ui/*` alias for the shadcn CLI approved, licence exceptions approved. |
 | Structure | arc42 (sections 1–12) plus appendices. Architecture decisions are recorded as ADRs in `docs/adr/` (index: `docs/adr/README.md`). |
 
 ### 0.1 Conventions
@@ -31,6 +31,7 @@
 2. Read §5 for the package layout and the dependency rules you must not break.
 3. Build the walking skeleton in Appendix A, milestone M0, using §7 (deployment), §8.2–§8.4 (persistence, backup, service worker) and §8.21 (CI).
 4. Before each feature, read the matching cross-cutting concepts in §8 and the runtime scenarios in §6.
+5. `IMPLEMENTATION_NOTES.md` in the repository root records how the code follows this document, every deviation and the open items. Read it before changing a decision.
 
 ### 0.3 Change log
 
@@ -38,6 +39,7 @@
 |---|---|---|
 | 0.1 | 2026-11-23 | First complete draft: arc42 sections 1–12, appendices, 21 ADRs, 8 open questions |
 | 0.2 | 2026-11-24 | Product-owner decisions applied. **Resolved:** OQ-T1 = C (beta on a subdomain of the publisher's business domain; production domain chosen after the trademark check V-05, never changed afterwards); OQ-T2 = **Hetzner Cloud VPS (Germany) + self-hosted Coolify** (a new option: §7 and ADR-0011 rewritten, privacy wording changed from "Swiss hosting" to "EU hosting with a Swiss publisher", new operations section §7.6); OQ-T3 = B (background-audio keep-alive tested in S-1, opt-in Labs only if it clearly works); OQ-T5 = A (private GitHub + Actions). **Linting and formatting:** ESLint + typescript-eslint replaced by **oxlint** (type-aware via `oxlint-tsgolint`); Prettier replaced by **oxfmt** (ADR-0017). Consequences: layer boundaries re-designed (pnpm isolation + TypeScript project references + oxlint `no-restricted-imports` overrides + an architecture test; dependency-cruiser dropped, §5.2, ADR-0001); **TypeScript moved from 6.0 to 7.0** (ADR-0002); Lingui literal-string enforcement re-designed (§8.15, ADR-0016); Tailwind class sorting through oxfmt. **Adopted defaults, pending confirmation:** OQ-T4 = A, OQ-T6 = A, OQ-T7 = A, OQ-T8 = A. New open questions OQ-T9…OQ-T11. Roadmap spikes updated (S-1 includes the audio test, S-7 is now the Hetzner/Coolify setup). **Final 2026-11-24:** OQ-T4, T6, T7, T8 confirmed (A); OQ-T9 = hosted free-tier uptime monitor, preferably EU-based (service chosen in S-7); OQ-T10 = warn now, block later for the alpha JS-plugin rules; OQ-T11 = DNS stays at the current provider (`beta.`, `coolify.` and CAA records), business-domain name to be filled in by the product owner in S-7/WP0.7. All open questions are resolved. |
+| 0.3 | 2026-11-24 | **M0 implemented; deviations folded in** (each one is a row in `IMPLEMENTATION_NOTES.md` §3, marked "Docs amended in v0.3"). Changed sections: §5.1–§5.3 (backup entries `@powr/formats/backup` and `@powr/application/backup`, deferred `@powr/rules` → `@powr/domain` dependency, `sw.ts`, `feature-flags.ts`, `zod.ts`, `#ui/*` alias, lint additions); §6.4/§6.5 (synchronous fflate API because `worker-src 'self'` blocks `blob:` workers; canonical JSON; lazy backup chunk); §7.3 (nginx excerpt with `include mime.types`, gzip and `theme-init.js` as `no-cache`; `Permissions-Policy` without `bluetooth=()`; CSP notes for the per-package Zod wrapper and Base UI's `CSPProvider`); §8.2 (no `dexie-react-hooks`; M0 Dexie schema with four tables and nested-key indexes; `powr-runtime` without Dexie); §8.3.5 (zip-bomb ratio for entries over 1 MiB); §8.4 (own service-worker registration instead of `virtual:pwa-register`; own icon generator instead of `@vite-pwa/assets-generator`); §8.5 (native React Compiler rules in oxlint 1.95); §8.9.2 (shadcn CLI workflow with the `#ui/*` subpath imports, product-owner approval 2026-11-24); §8.15 (`jsx-no-literals` configuration, catalog check in the build); §8.18 (`minimumReleaseAgeExclude`); §8.19 (entry JS 211.4 → 202.5 KB with the lazy backup chunk); §8.20 (E2E test server with production headers); §8.21 (licence plugin flow, own SPDX evaluator, approved licence exceptions, ESLint only as an unused peer, M0 CI state); §8.22; §11.2 (TD-09…TD-21); Appendix B (versions as installed). ADRs 0001, 0002, 0003, 0006, 0008, 0009, 0010, 0013, 0016, 0017, 0018 and 0021 carry an "Amendment (v0.3, 2026-11-24)" section. Editorial: a stray Traefik row moved from §8.23 to the glossary. |
 
 ---
 
@@ -207,17 +209,17 @@ flowchart LR
 |---|---|---|---|
 | Repository and modularity | pnpm-workspace monorepo with framework-free packages (`domain`, `rules`, `content`, `formats`, `application`) and one app (`apps/web`); package boundaries enforced by pnpm strictness, TypeScript project references, oxlint import rules and an architecture test | Q3, maintainability | ADR-0001, ADR-0021 |
 | Framework and build | React 19 + TypeScript 7.0 (native compiler) + Vite 8 (Rolldown), React Compiler on | Q5, OC-01 | ADR-0002 |
-| UI components and styling | shadcn/ui components (copied into the repo) on **Base UI** primitives, Tailwind CSS v4 with CSS-variable design tokens | Q5 | ADR-0003, ADR-0004 |
+| UI components and styling | shadcn/ui components (copied into the repo with the pinned shadcn CLI through the `#ui/*` subpath-imports alias, then reviewed) on **Base UI** primitives, Tailwind CSS v4 with CSS-variable design tokens | Q5 | ADR-0003, ADR-0004 |
 | Routing | TanStack Router (type-safe routes and search params, code splitting, navigation blockers for the back gesture) | Q5, Q2 | ADR-0014 |
 | Persistence | IndexedDB via **Dexie 4** with strict durability for user-confirmed writes; derived data in rebuildable tables; separate tiny runtime DB for service-worker flags | Q1, Q2 | ADR-0006 |
 | State | Dexie `liveQuery` for persisted state, Zustand for ephemeral cross-screen UI state, router search params for view state, pure reducer for the active session | Q2, Q5 | ADR-0005 |
-| Offline and updates | `vite-plugin-pwa` (injectManifest) with a custom service worker on Workbox precaching. Update prompt only; install is **gated** while a workout is active; migrations never start mid-session. | Q1, Q2 | ADR-0008 |
+| Offline and updates | `vite-plugin-pwa` (injectManifest) with a custom service worker on Workbox precaching and own registration code. Update prompt only; install is **gated** while a workout is active; migrations never start mid-session. | Q1, Q2 | ADR-0008 |
 | Engine | Pure, deterministic TypeScript functions. Every result carries an `Explanation`. Parameters are injected as a resolved `RuleSet`. Heavy recomputes run in a Web Worker. | Q3 | ADR-0020 |
 | Rules registry | YAML parameter tables with evidence tags, source IDs and `verified` flags, validated against a typed schema at build time and compiled to versioned JSON; user overrides layer on top | Q3 | ADR-0012 |
 | Content | YAML exercise library, muscle taxonomy, equipment catalog, templates, validated and coverage-tested at build time | Q3 | ADR-0012 (shared pipeline), §8.12 |
 | Timers and alerts | Timestamp model persisted with the session; wake lock during workouts; Web Audio and vibration while visible; page timeout plus service-worker `waitUntil` timer plus notification when hidden; capability matrix drives an honest status | Q2 | ADR-0019 |
 | Backup | ZIP container (fflate), per-entry SHA-256, single record-migration chain shared with the local DB, Zod validation, atomic replace-all restore, safety snapshot; AES-GCM encryption in v1.3 | Q1, Q4 | ADR-0013 |
-| Validation | Zod 4 (JIT disabled for CSP) for import, forms, content and rules schemas; JSON Schema export documents the backup format | Q1, Q4 | ADR-0009 |
+| Validation | Zod 4 (JIT disabled for CSP by a `zod.ts` wrapper per package) for import, forms, content and rules schemas; backup schemas load lazily; JSON Schema export documents the backup format | Q1, Q4 | ADR-0009 |
 | Dates and time | Temporal API through the `temporal-polyfill` ponyfill (native Temporal exists only in Chrome 144+ and Samsung Internet 31+) | Q1, Q3 | ADR-0015 |
 | Charts | Apache ECharts 6 (tree-shaken, lazy-loaded) for analytics; hand-written SVG sparklines on Home | Q5 | ADR-0007 |
 | i18n | Lingui 6 (ICU messages, compiled catalogs, lint rule against literal strings) plus `Intl` formatters | TC-C06 | ADR-0016 |
@@ -268,10 +270,10 @@ flowchart TB
 | Package | Responsibility | May depend on | Must not contain | PRD |
 |---|---|---|---|---|
 | `@powr/domain` | Entities, value objects and **all calculations**: units and rounding, plate math, e1RM, trend filter, progression, warm-ups, volume accounting, deload/taper/return, readiness, PRs, streaks, scoring, bodyweight trend, nutrition (v1.2), plan generation and validation, explanation types. Owns the `RuleSet` *type* and the `ExerciseDef` *type*. | `temporal-polyfill` only | React, Dexie, DOM, `Date.now()`, `Math.random()`, `fetch`, Zod, any I/O | PRG-*, PLN-*, EXL-05, WKT-06/07, MOT-01/03/04, ANL-07, BOD-02…09, RDY-02 |
-| `@powr/rules` | Rules registry: YAML parameter tables, source registry, Zod schema, build script producing `rules.json` (versioned, hashed), resolver that applies context variants and user overrides and returns a `ResolvedRuleSet` with provenance | `@powr/domain`, `zod` (build + resolver validation), `yaml` (build only) | Calculations | PRG-18, NFR-MNT-01, LEG-05 |
+| `@powr/rules` | Rules registry: YAML parameter tables, source registry, Zod schema, build script producing `rules.json` (versioned, hashed), resolver that applies context variants and user overrides and returns a `ResolvedRuleSet` with provenance | `@powr/domain` (declared in M1 with the `RuleSet` types; M0 imports nothing from it, and an unused declaration would fail knip), `zod` (build + resolver validation), `yaml` (build only) | Calculations | PRG-18, NFR-MNT-01, LEG-05 |
 | `@powr/content` | Exercise library, muscle taxonomy (§7.2 PRD), equipment catalog and presets, program templates, achievement definitions (v1.2), educational texts, body-map region IDs; schemas, linter, coverage tests; build output `content.json` | `@powr/domain`, `zod`, `yaml` (build only) | Calculations beyond validation | EXL-01…05, EQP-01/02, §7.1–7.6 PRD |
-| `@powr/formats` | Persisted record schemas per `dataVersion`, the **record migration chain** (used by the Dexie upgrade and by backup import), backup container codec (manifest, hashing, zip), `.ics` serializer, CSV serializer (v1.3), JSON Schema export of the backup format | `@powr/domain`, `zod`, `fflate` | UI, Dexie | DAT-05…10, CAL-01…05, DAT-11, NFR-MNT-03 |
-| `@powr/application` | Use cases (commands and queries), **ports** (repository, clock, platform), the active-session reducer and effect descriptions, derivation and recompute orchestration, plan-generation orchestration, import/export orchestration | `@powr/domain`, `@powr/rules`, `@powr/content`, `@powr/formats` | React, Dexie, DOM APIs (only through ports) | All functional domains |
+| `@powr/formats` | Persisted record schemas per `dataVersion`, the **record migration chain** (used by the Dexie upgrade and by backup import), backup container codec (manifest, hashing, zip), `.ics` serializer, CSV serializer (v1.3), JSON Schema export of the backup format. Two entries (v0.3): the root is schema-free (`DATA_VERSION`, raw table names and keys, migration chain, record types) and sits on the startup path; `@powr/formats/backup` holds the codec, the Zod record and manifest schemas and fflate, and loads lazily (§8.19) | `@powr/domain`, `zod`, `fflate` | UI, Dexie | DAT-05…10, CAL-01…05, DAT-11, NFR-MNT-03 |
+| `@powr/application` | Use cases (commands and queries), **ports** (repository, clock, platform), the active-session reducer and effect descriptions, derivation and recompute orchestration, plan-generation orchestration, import/export orchestration. The backup use cases are a separate entry, `@powr/application/backup` (v0.3), which the app loads with `import()` | `@powr/domain`, `@powr/rules`, `@powr/content`, `@powr/formats` | React, Dexie, DOM APIs (only through ports) | All functional domains |
 | `apps/web` | React UI (routes, features, design system), infrastructure adapters (Dexie repositories, platform adapters for wake lock, audio, vibration, notifications, files, share, storage), composition root, service worker, engine Web Worker, i18n catalogs | Everything above | Business rules (they live in domain/application) | All UI requirements |
 | `tools/*` | Node/TS scripts: licence inventory and attributions generator, reference dataset generator, capability-matrix compiler, percentile derivation pipeline (v1.1, after V-03), release-notes compiler | Any (build-time only) | Anything shipped to users | LEG-06/08, PWA-13, ANL-08, NFR-MNT-07 |
 
@@ -287,16 +289,19 @@ v0.2 replaces ESLint (and with it `eslint-plugin-boundaries`) by oxlint (ADR-001
    | Element (path) | May import | Rule (`no-restricted-imports` patterns for these files) |
    |---|---|---|
    | `src/app/**` (composition root, router, providers) | everything in `apps/web` | — |
-   | `src/features/**` (screens and feature components) | `ui`, `hooks`, `i18n`, `@powr/application` types, `@powr/domain` types and pure helpers | forbid `dexie`, `dexie-react-hooks`, `**/infrastructure/**`, `**/sw/**`, `workbox-*` |
+   | `src/features/**` (screens and feature components) | `ui` (through `#ui/*`), `hooks`, `i18n`, `@powr/application` types, `@powr/domain` types and pure helpers | forbid `dexie`, `**/infrastructure/**`, `**/sw/**`, `workbox-*` |
    | `src/hooks/**` (query and command hooks) | `@powr/application`, `src/app/container` | forbid `dexie`, `**/infrastructure/**`, `**/features/**` |
-   | `src/infrastructure/**` (Dexie, platform adapters, workers) | `@powr/*`, browser APIs | forbid `**/features/**`, `**/ui/**`, `**/hooks/**` |
-   | `src/ui/**` (design system) | `ui` only, Base UI, Tailwind utilities | forbid `@powr/*`, `**/features/**`, `**/hooks/**`, `**/infrastructure/**` |
-   | `src/sw/**` (service worker) | `workbox-*`, `src/infrastructure/runtime-db` only | forbid `react`, `dexie`, `@powr/*`, everything under `src/` except `infrastructure/runtime-db` |
+   | `src/infrastructure/**` (Dexie, platform adapters, workers) | `@powr/*`, browser APIs | forbid `**/features/**`, `**/ui/**`, `#ui/*`, `**/hooks/**`, `**/routes/**` |
+   | `src/ui/**` (design system) | `ui` only (`#ui/*`), Base UI, Tailwind utilities | forbid `@powr/*`, `**/features/**`, `**/hooks/**`, `**/infrastructure/**` |
+   | `src/sw/**` (service worker) | `workbox-*`, `src/infrastructure/runtime-db` only | forbid `react`, `dexie`, `zod`, `@powr/*`, `#ui/*`, everything under `src/` except `infrastructure/runtime-db` |
 
-   In `packages/domain/**`, `no-restricted-imports` forbids `react`, `dexie`, `zod` and every `@powr/*` package, and `no-restricted-globals` bans `Date`, `performance`, `crypto`, `window`, `document`, `localStorage`, `setTimeout`, `setInterval`, `fetch`. Time and IDs come in as arguments.
+   Every element above also forbids two things (v0.3): importing `zod` directly (only `src/zod.ts` may, §7.3), and static value imports of the lazy backup entries `@powr/application/backup` and `@powr/formats/backup` (type imports are allowed, §8.19). oxlint checks `import()` with the same rule, so the one loader in `src/hooks/use-data.ts` carries the only disable comment. The `#ui/*` alias is matched with `regex` patterns, because `#` starts a comment in gitignore-style `group` patterns.
+
+   In `packages/domain/**`, `no-restricted-imports` forbids `react`, `dexie`, `zod` and every `@powr/*` package, `no-restricted-globals` bans `Date`, `performance`, `crypto`, `window`, `document`, `localStorage`, `setTimeout`, `setInterval`, `fetch`, and the native `no-restricted-properties` bans `Math.random` (v0.3). Time and IDs come in as arguments.
 5. **Architecture test (Vitest, `tools/arch-test`).** A small test runs with the unit tests and checks what lint rules cannot express:
    - the allowed internal-dependency matrix, read from every `package.json` and `tsconfig.json` `references`;
-   - that no file in `packages/domain/src` contains `Math.random`, `Date.now` or `new Date(` (oxlint's `no-restricted-globals` covers globals, not member calls).
+   - that no file in `packages/domain/src` contains `Math.random`, `Date.now` or `new Date(`. Lint already reports these in the editor (`no-restricted-globals` for `Date`, `no-restricted-properties` for `Math.random`); the test is the safety net.
+   - boundary probes: forbidden files are written into the real source tree and the real gates (oxlint, `tsc -b`) must fail on them (`tools/arch-test/test/boundary-probes.test.ts`).
    It replaces the dependency-cruiser cross-check of v0.1. dependency-cruiser 18.9 supports TypeScript `< 7` or `≥ 7.1` but not 7.0, and its alternative swc parser is marked experimental, so it is deferred until TypeScript 7.1 (TD-07).
 
 `eslint-plugin-boundaries` through oxlint's JS plugins was rejected. JS plugins are alpha and not subject to semver [Verified: oxc.rs JS plugins page], and the plugin relies on ESLint settings and import resolvers that are not documented as supported.
@@ -317,26 +322,32 @@ powr/
 ├─ .github/workflows/ci.yml, deploy.yml, rollback.yml
 ├─ docs/  (PRD.md, technical-concept.md, adr/, formats/, device-tests/, release-notes/)
 ├─ apps/web/
+│  ├─ package.json              # "imports": #ui/cn, #ui/* (subpath-imports alias for the shadcn CLI, ADR-0003)
+│  ├─ components.json           # shadcn CLI config: style base-nova, aliases #ui, #ui/cn, #ui/lib, #ui/hooks
 │  ├─ index.html                # theme-color metas, CSP-compatible (no inline script)
 │  ├─ vite.config.ts            # react(+compiler), lingui, tanstack router, pwa(injectManifest), licence plugin
-│  ├─ public/                   # icons (regular + maskable), screenshots, robots.txt
+│  ├─ public/                   # icons (regular + maskable, from tools/icons), theme-init.js, robots.txt
 │  ├─ src/
-│  │  ├─ main.tsx               # bootstrap: theme pre-paint, capability probe, DB open/migrate gate, render
+│  │  ├─ main.tsx               # bootstrap: capability probe, DB open/migrate gate, render
+│  │  ├─ feature-flags.ts       # release-tag feature flags (§8.22)
+│  │  ├─ zod.ts                 # z with JIT off (CSP, §7.3); the app's only direct zod import
 │  │  ├─ app/                   # container.ts (composition root), router.tsx, providers, error boundaries
 │  │  ├─ routes/                # TanStack Router route files (thin: params, loaders, lazy components)
 │  │  ├─ features/
 │  │  │  ├─ onboarding/  session/  plan/  exercises/  bodymap/  progress/
 │  │  │  ├─ body/  calendar/  data/  settings/  about/  home/
 │  │  ├─ hooks/                 # useLive*, useCommand*, useCapabilities, useReducedMotion…
-│  │  ├─ ui/                    # shadcn/Base UI components, tokens.css, icons/, charts/ (EChart wrapper, Sparkline)
+│  │  ├─ ui/                    # shadcn/Base UI components (imported as #ui/*), tokens.css, icons/, charts/ (EChart wrapper, Sparkline)
 │  │  ├─ i18n/                  # lingui config, locales/en/messages.po, compiled catalogs
 │  │  ├─ infrastructure/
-│  │  │  ├─ db/                 # Dexie schema (versions), repositories, unit of work, runtime-db
+│  │  │  ├─ db/                 # Dexie schema (versions), repositories, unit of work, safety DB
+│  │  │  ├─ runtime-db/         # powr-runtime: plain IndexedDB shared with the service worker
+│  │  │  ├─ pwa/                # own service-worker registration and update prompt (§8.4)
 │  │  │  ├─ platform/           # wakeLock, audio, haptics, notifications, files, share, storage, install
 │  │  │  ├─ workers/            # engine.worker.ts + typed RPC client
 │  │  │  ├─ diagnostics/        # log ring buffer, perf marks
 │  │  │  └─ capabilities/       # feature detection + shipped device-test matrix
-│  │  └─ sw/                    # service-worker.ts (precache, navigation, install gate, alerts, share target)
+│  │  └─ sw/                    # sw.ts → /sw.js (precache, navigation, install gate, alerts, share target)
 │  └─ e2e/                      # Playwright specs, fixtures, reference dataset loader
 ├─ packages/
 │  ├─ domain/src/   units/ time/ ids/ equipment/ loading/ e1rm/ trend/ progression/ warmup/
@@ -346,9 +357,11 @@ powr/
 │  ├─ content/      data/exercises/*.yaml  data/muscles.yaml  data/equipment.yaml  data/presets.yaml
 │  │                data/templates/*.yaml  data/education/*.md  src/schema.ts  scripts/{build,lint}.ts
 │  │                ids.lock.json   # every ID ever published (stability check)
-│  ├─ formats/      src/records/v1.ts … vN.ts  src/migrations/  src/backup/  src/ics/  src/csv/
-│  └─ application/  src/ports/  src/usecases/  src/session/  src/derivation/  src/importexport/
-└─ tools/  licence/  arch-test/  dataset/  capability-matrix/  release-notes/  percentiles/ (v1.1)
+│  ├─ formats/      src/records/ (tables.ts schema-free; v1.ts … vN.ts Zod)  src/migrations/
+│  │                src/backup/ (entry @powr/formats/backup, lazy)  src/ics/  src/csv/  src/zod.ts
+│  └─ application/  src/ports/  src/usecases/ (backup.ts = entry @powr/application/backup)  src/session/
+│                   src/derivation/  src/importexport/
+└─ tools/  licence/  arch-test/  icons/  dataset/  capability-matrix/  release-notes/  percentiles/ (v1.1)
 ```
 
 ### 5.4 Domain engine modules
@@ -766,12 +779,12 @@ Rules:
 
 ### 6.4 Backup export (DAT-05, DAT-08, NFR-PERF-08)
 
-1. User taps "Export backup" (Settings → Data, or the backup reminder on Home).
+1. User taps "Export backup" (Settings → Data, or the backup reminder on Home). The first export or import loads the backup chunk (`@powr/application/backup` with `@powr/formats/backup`: Zod schemas and fflate) with `import()`. The service worker precaches it like every chunk, so this works offline (§8.19).
 2. `exportBackup` opens one **read-only transaction** over all raw tables and reads every record (consistent snapshot; derived tables are skipped).
-3. The records are serialized per table to UTF-8 JSON (`data/<table>.json`, arrays sorted by primary key for deterministic output).
+3. The records are serialized per table to UTF-8 JSON (`data/<table>.json`): arrays sorted by primary key, and canonical JSON with sorted object keys, so equal data gives equal bytes and hashes whatever the property order.
 4. For each entry: SHA-256 via `crypto.subtle.digest`, byte length and record count.
 5. A `manifest.json` (§8.3.2) is built with `formatVersion`, `dataVersion`, app, rules and content versions, `createdAt` with offset, counts, date range, entry hashes and a `contentDigest`.
-6. fflate builds the ZIP (manifest first, `deflate` level 6), off the main thread via fflate's async API.
+6. fflate builds the ZIP (manifest first, `deflate` level 6) with its **synchronous** API (`zipSync`; v0.3). fflate's async API starts its workers from `blob:` URLs, which the CSP's `worker-src 'self'` blocks. For large backups the codec moves into the engine worker (TD-16).
 7. Delivery through `FileGateway.save`: the File System Access save picker where present (`showSaveFilePicker`, Chrome Android 132+ and Samsung Internet 29+ per MDN BCD; **[Device test]** for the Android picker and cloud-drive providers), otherwise an `<a download>` Blob download into Downloads. **Never** Web Share (`.zip` is not on Chrome's share allowlist, PRD P-04).
 8. On `saved` or `downloaded`, write `meta.lastBackup = { at, counts, bytes }`. The backup reminder resets (DAT-08). The UI states where the file went and recommends copying it off the phone.
 
@@ -811,7 +824,7 @@ sequenceDiagram
 
 - Every failure before the transaction leaves the data untouched, and the transaction itself is atomic (no partial import).
 - Text fields are only ever rendered as React text nodes (no HTML, no Markdown from user data). Numeric fields are range-checked by the schemas.
-- Import is offline-capable and needs no network.
+- Import is offline-capable and needs no network. It uses the same lazy, precached backup chunk as export; unzipping uses fflate's synchronous `unzipSync` after the central-directory checks (§8.3.5). An E2E test exports and restores with the server stopped.
 
 ### 6.6 `.ics` export (CAL-01…05)
 
@@ -890,7 +903,7 @@ flowchart LR
   TR --> NP
 ```
 
-**Deployed artifact.** One OCI image per commit, `ghcr.io/<owner>/powr-web:<version>-<sha>`: the official `nginx:1.30-alpine` image (nginx 1.30 is the current stable branch, BSD-2-Clause; 1.30.8 released 2026-11-23 [Verified: GitHub nginx/nginx releases]) plus `dist/` and the project's `deploy/nginx.conf`. `dist/` contains `index.html`, `sw.js`, `manifest.webmanifest`, `assets/*` (content-hashed JS, CSS, `content.<hash>.json`, `rules.<hash>.json`, worker chunks), `icons/*`, `changelog.json`, `version.json` and `legal/*` (privacy notice and imprint as static HTML for the website, LEG-09). The **same image** is promoted from beta to production; it is never rebuilt for production.
+**Deployed artifact.** One OCI image per commit, `ghcr.io/<owner>/powr-web:<version>-<sha>`: the official `nginx:1.30-alpine` image (nginx 1.30 is the current stable branch, BSD-2-Clause; 1.30.8 released 2026-11-23 [Verified: GitHub nginx/nginx releases]) plus `dist/` and the project's `deploy/nginx.conf`. `dist/` contains `index.html`, `sw.js`, `manifest.webmanifest`, `assets/*` (content-hashed JS, CSS, `content.<hash>.json`, `rules.<hash>.json`, worker chunks), `icons/*`, `theme-init.js`, `changelog.json` (from the first release on; M0 ships `version.json` only), `version.json` and `legal/*` (privacy notice and imprint as static HTML for the website, LEG-09). The **same image** is promoted from beta to production; it is never rebuilt for production.
 
 ### 7.2 Hosting decision and comparison (ADR-0011)
 
@@ -932,32 +945,45 @@ nginx was chosen over Caddy for the container because Coolify's own static pack 
 
 **TLS and reverse proxy.** Traefik, Coolify's default proxy (new configurations use Traefik v3.7 [Verified: Coolify proxy docs]), terminates TLS with automatically issued **Let's Encrypt** certificates, redirects HTTP to HTTPS, and routes each domain to its container on the internal Docker network. Response headers are set in nginx, so they are identical in CI tests, beta and production; Traefik passes them through.
 
-`deploy/nginx.conf` (excerpt; validated in spike S-7 and by the CI header smoke test):
+`deploy/security-headers.conf` and `deploy/nginx.conf` (excerpts as implemented in M0, WP0.7; checked by the CI header smoke test, validated on the server in spike S-7):
 
 ```nginx
 # deploy/security-headers.conf: included in every location, because a location that sets
-# any add_header drops the headers inherited from the server block
+# any add_header drops the headers inherited from the server block. The E2E test server
+# reads this file too, so tests run with exactly these headers (§8.20).
 add_header Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' blob: data:; font-src 'self'; connect-src 'self'; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; upgrade-insecure-requests" always;
 add_header Strict-Transport-Security "max-age=63072000; includeSubDomains" always;
 add_header X-Content-Type-Options "nosniff" always;
 add_header Referrer-Policy "no-referrer" always;
-add_header Permissions-Policy "camera=(self), microphone=(), geolocation=(), payment=(), usb=(), bluetooth=(), serial=(), hid=(), midi=(), display-capture=()" always;
+add_header Permissions-Policy "camera=(self), microphone=(), geolocation=(), payment=(), usb=(), serial=(), hid=(), midi=(), display-capture=()" always;
 add_header Cross-Origin-Opener-Policy "same-origin" always;
 add_header Cross-Origin-Resource-Policy "same-origin" always;
 ```
 
 ```nginx
-# deploy/nginx.conf (excerpt)
+# deploy/nginx.conf (excerpt), installed as /etc/nginx/conf.d/default.conf in nginx:1.30-alpine
 server {
   listen 8080;
+  listen [::]:8080;
   root /usr/share/nginx/html;
   server_tokens off;
   access_log off;                       # privacy: no access logs (§7.4)
   error_log /dev/stderr crit;           # only critical server errors
-  types { application/manifest+json webmanifest; }
 
-  # --- Caching (NFR-REL-08, PWA-04) ---
-  location ~ ^/(sw\.js|index\.html|manifest\.webmanifest|changelog\.json|version\.json)$ {
+  # A `types` block replaces the inherited MIME map, so include the full map first;
+  # otherwise every other file would be served as application/octet-stream.
+  include /etc/nginx/mime.types;
+  types { application/manifest+json webmanifest; }
+  charset utf-8;
+  charset_types text/css application/javascript application/json application/manifest+json text/plain image/svg+xml;
+
+  gzip on;
+  gzip_vary on;
+  gzip_min_length 1024;
+  gzip_types text/css application/javascript application/json application/manifest+json image/svg+xml text/plain;
+
+  # --- Caching (NFR-REL-08, PWA-04): entry points are revalidated on every request ---
+  location ~ ^/(sw\.js|index\.html|manifest\.webmanifest|changelog\.json|version\.json|theme-init\.js)$ {
     include /etc/nginx/security-headers.conf;
     add_header Cache-Control "no-cache" always;
   }
@@ -969,6 +995,7 @@ server {
   location /icons/ {
     include /etc/nginx/security-headers.conf;
     add_header Cache-Control "public, max-age=604800" always;
+    try_files $uri =404;
   }
 
   # --- SPA fallback for deep links (PWA-12) ---
@@ -979,13 +1006,15 @@ server {
 }
 ```
 
+v0.3 changes against the v0.2 excerpt: `include /etc/nginx/mime.types` before the `types` block, `charset` and `gzip` for text responses, `listen [::]:8080`, `try_files` for `/icons/`, and `theme-init.js` in the `no-cache` list (it is a classic script that cannot be content-hashed). `Permissions-Policy` no longer lists `bluetooth=()`: Chromium 159 logs "Unrecognized feature: 'bluetooth'" on every page load, so the entry had no effect.
+
 A CI test runs the image and asserts the full header set on `/`, `/sw.js`, a hashed asset, an icon and a deep link.
 
-CSP notes (unchanged from v0.1):
+CSP notes (v0.3: updated from the M0 implementation):
 
-- No inline scripts or styles in `index.html`. The pre-paint theme script is an external file loaded synchronously in `<head>`.
-- React sets inline styles through the CSSOM (`element.style`), which `style-src 'self'` does not block. Base UI and ECharts behave the same way.
-- **Zod 4 must run JIT-less:** call `z.config({ jitless: true })` at startup, because Zod's JIT uses `new Function`, which this CSP forbids.
+- No inline scripts or styles in `index.html`. The pre-paint theme script is the external classic script `public/theme-init.js`, loaded synchronously in `<head>`. It is not content-hashed, so nginx serves it with `no-cache`.
+- React sets inline styles through the CSSOM (`element.style`), which `style-src 'self'` does not block. ECharts behaves the same way. Base UI would also inject `<style>` elements, which `style-src 'self'` blocks; the app root wraps everything in Base UI's `CSPProvider` with `disableStyleElements`.
+- **Zod 4 must run JIT-less**, because Zod's JIT uses `new Function`, which this CSP forbids. A `z.config({ jitless: true })` call at startup is not enough: Zod 4.6 probes `new Function` as soon as an object schema is *created*, and schemas are created at module top level, which in a code-split bundle can run before any startup code. Therefore every package with schemas (`rules`, `content`, `formats`) and the app have a local `zod.ts` that calls `z.config({ jitless: true })` and re-exports `z`. All other files import `z` from there; oxlint's `no-restricted-imports` forbids importing `zod` directly in the packages and (since v0.3) everywhere in `apps/web` (ADR-0009). The content catalog is built on first use, not at import time.
 - `canvas-confetti` is used with `useWorker: false` (its worker uses a `blob:` URL).
 - `'wasm-unsafe-eval'` is added to `script-src` only if v1.3 adopts Argon2id via `hash-wasm` (§8.3.6).
 - Trusted Types are enforced in development and E2E builds now and in production later (TD-03).
@@ -1110,18 +1139,20 @@ DST and clock changes: "same local wall-clock time" logic always uses `Temporal.
 
 #### 8.2.1 Library and databases
 
-**Dexie 4.4** (Apache-2.0) over IndexedDB, with `dexie-react-hooks` for `useLiveQuery`. Rationale and matrix: ADR-0006 (runner-up: SQLite WASM on OPFS).
+**Dexie 4.4** (Apache-2.0) over IndexedDB. React reads live queries through the app's own `useObservable` hook on `useSyncExternalStore` (§8.5); `dexie-react-hooks` is not used (v0.3: one mechanism instead of two). Rationale and matrix: ADR-0006 (runner-up: SQLite WASM on OPFS).
 
 | Database | Purpose | Notes |
 |---|---|---|
 | `powr` | All user data (raw) and derived caches | Versioned by `dataVersion`. Opened only by the page and the engine worker. |
-| `powr-runtime` | Tiny key-value store shared with the service worker: `activeSession`, timer `fired` flags, update-gate info | Separate so that the service worker never holds a connection to `powr`; an open connection would block version upgrades. Schema frozen forever. |
+| `powr-runtime` | Tiny key-value store shared with the service worker: `activeSession`, timer `fired` flags, update-gate info | Separate so that the service worker never holds a connection to `powr`; an open connection would block version upgrades. Plain IndexedDB without Dexie, so the service worker stays small and Dexie-free (lint rule). Schema frozen forever: version 1, one object store `kv`. |
 | `powr-safety` | The latest 2 safety snapshots (backup ZIP Blobs) taken before imports and migrations | Shown in Settings → Data → "Safety copies" with download and delete. Auto-pruned after 30 days or after a newer regular backup. |
 | `powr-diag` | Diagnostics log ring buffer and performance aggregates (§8.17) | Never contains training data. |
 
 "Delete all data" (DAT-13) deletes all four databases, clears `localStorage` and `sessionStorage`, closes notifications, and returns to first-run onboarding. A Playwright test then asserts that `indexedDB.databases()` returns nothing for the origin.
 
 #### 8.2.2 Schema and indexes (`dataVersion` 1, MVP)
+
+**M0 state (v0.3).** `powr` version 1 holds only the four walking-skeleton tables `meta`, `settings`, `sessions` and `sets` (WP0.5). Indexes use **nested key paths** on the stored `InstantTz` instead of denormalized millisecond fields: `sessions` is `id, localDate, status, startedAt.epochMs`; `sets` is `id, sessionId, [exerciseId+performedAt.epochMs], localDate`. This avoids duplicated fields that could drift. The table below uses the same convention for later tables. Before the first beta with user data it is decided whether the remaining MVP tables extend version 1 (possible while no user data exists) or arrive as version 2 with a migration (TD-19).
 
 | Table | Primary key | Indexes | Contents | Kind |
 |---|---|---|---|---|
@@ -1133,9 +1164,9 @@ DST and clock changes: "same local wall-clock time" logic always uses `Temporal.
 | `exerciseUserData` | `exerciseId` | `*flags` (multi-entry: `fav`, `hidden`, `avoid`) | Favorite, hidden, avoided, setup notes, per-exercise rest override, last exercise note; mapping overrides (v1.3) | raw |
 | `plans` | `id` | `status` | Plan with mesocycles, week templates, periodization model, `VersionStamp` | raw |
 | `plannedSessions` | `id` | `localDate`, `[planId+localDate]`, `status` | Scheduled instance with slots and prescriptions, revision counter (for `.ics` `SEQUENCE`) | raw |
-| `sessions` | `id` | `localDate`, `status`, `startedAtMs`, `plannedSessionId` | `Session` (exercises, cursor, timer, versions) | raw |
-| `sets` | `id` | `sessionId`, `[exerciseId+performedAtMs]`, `localDate` | `LoggedSet` (about 40,000 in the reference dataset) | raw |
-| `bodyweights` | `id` | `localDate`, `measuredAtMs` | Mass, time, note | raw |
+| `sessions` | `id` | `localDate`, `status`, `startedAt.epochMs`, `plannedSessionId` | `Session` (exercises, cursor, timer, versions) | raw |
+| `sets` | `id` | `sessionId`, `[exerciseId+performedAt.epochMs]`, `localDate` | `LoggedSet` (about 40,000 in the reference dataset) | raw |
+| `bodyweights` | `id` | `localDate`, `measuredAt.epochMs` | Mass, time, note | raw |
 | `measurements` | `id` | `[kind+localDate]` | Circumferences and skinfolds | raw |
 | `readiness` | `id` | `localDate` | Check-in items | raw |
 | `breaks` | `id` | `startDate` | Planned breaks (PLN-12), retroactive break weeks (MOT-04) | raw |
@@ -1148,7 +1179,7 @@ DST and clock changes: "same local wall-clock time" logic always uses `Temporal.
 
 Later releases add `photos` and `photoBlobs` (v1.2), `phaseGoals` and `annotations` (v1.2), `attemptPlans` (v1.1) and `pain` (v1.3). Their record schemas are already reserved in `@powr/formats` so that importing a newer backup into an older app is rejected cleanly rather than half-understood.
 
-Index design follows the hot queries: the active session (`status`); the exercise history and the last-time panel (`[exerciseId+performedAtMs]`, newest first with `reverse().limit(n)`); the calendar month (`localDate` range); this week's volume (`dWeekly` by key). Charts read `dSessionE1rm` (at most about 1,300 points per exercise for 5 years), never raw sets.
+Index design follows the hot queries: the active session (`status`); the exercise history and the last-time panel (`[exerciseId+performedAt.epochMs]`, newest first with `reverse().limit(n)`); the calendar month (`localDate` range); this week's volume (`dWeekly` by key). Charts read `dSessionE1rm` (at most about 1,300 points per exercise for 5 years), never raw sets.
 
 #### 8.2.3 Schema versioning and migrations (DAT-14, NFR-MNT-03, R-13)
 
@@ -1268,7 +1299,7 @@ interface BackupManifest {
 #### 8.3.5 Validation and limits (NFR-SEC-02)
 
 - Zod `strictObject` schemas: unknown keys are an error within a known `dataVersion`. Numbers are range-checked (reps 0–1,000, RIR 0–10 in 0.5 steps, loads −500…2,000 kg-equivalent). Strings are length-limited (notes ≤ 2,000 characters, names ≤ 120).
-- Archive limits: data part ≤ 200 MB compressed; ≤ 64 entries in a data part; total uncompressed ≤ 1 GB; per-entry compression ratio ≤ 200 (zip-bomb guard). Unzip runs entry by entry with these checks.
+- Archive limits: data part ≤ 200 MB compressed; ≤ 64 entries in a data part; total uncompressed ≤ 1 GB; per-entry compression ratio ≤ 200 for entries larger than 1 MiB (zip-bomb guard; small, highly repetitive JSON legitimately compresses better than 200:1, v0.3). The limits are checked from the ZIP central directory before anything is inflated.
 - Everything is parsed with `JSON.parse` only; nothing is evaluated. Restored text is rendered only as React text nodes.
 
 #### 8.3.6 Photos (v1.2, DAT-09) and encryption (v1.3, DAT-10)
@@ -1295,7 +1326,7 @@ Restore entry points: file picker (MVP); share target receiving `application/zip
 
 ### 8.4 Offline operation and service worker (TC-04, PWA-01…05, PWA-03, NFR-REL-08, ADR-0008)
 
-**Tooling.** `vite-plugin-pwa` 2.0 (supports Vite 8; verified from its `peerDependencies`) in **`injectManifest`** mode, with a hand-written service worker `src/sw/service-worker.ts` that uses Workbox 7.4 modules (`workbox-precaching`, `workbox-routing`). The manifest (`manifest.webmanifest`) is generated by the plugin from typed config. Icons and maskable icons come from `@vite-pwa/assets-generator` (MIT, build-time) using an original logo.
+**Tooling.** `vite-plugin-pwa` 2.0 (supports Vite 8; verified from its `peerDependencies`) in **`injectManifest`** mode, with a hand-written service worker `src/sw/sw.ts` that uses Workbox 7.4 modules (`workbox-precaching`, `workbox-routing`). The plugin derives the output name `/sw.js` from the source file name; the worker is built as an IIFE (a classic script, no module service worker needed). The manifest (`manifest.webmanifest`) is generated by the plugin from typed config. Icons and the maskable icon come from the own generator `tools/icons` (`pnpm icons`: Node with a `zlib`-based PNG encoder, output committed) using original placeholder artwork, recorded in `assets-inventory.yaml` as `LicenseRef-Own-Work` (v0.3). `@vite-pwa/assets-generator` is not used: it depends on sharp, whose prebuilt libvips binary is LGPL-3.0.
 
 **Caching strategy.**
 
@@ -1320,14 +1351,14 @@ self.addEventListener('activate', (event) => event.waitUntil(precacheController.
 
 **Update flow** (PWA-04; sequence in §6.3):
 
-- `registerType: 'prompt'` via `virtual:pwa-register/react` (`useRegisterSW`). `onNeedRefresh` sets `appUi.updateAvailable`.
-- The banner fetches `changelog.json` and shows the entries newer than the running version.
-- `updateServiceWorker(true)` is only callable when no session is active. The service worker responds to the `SKIP_WAITING` message; the page reloads on `controllerchange`.
+- `registerType: 'prompt'` with **own registration code** (`src/infrastructure/pwa/registration.ts`, about 90 lines; `injectRegister: false`, no `workbox-window` dependency; v0.3). It registers `/sw.js` after first render, reports "offline ready" when `navigator.serviceWorker.ready` resolves, watches every `updatefound` and sets `appUi.updateAvailable` when a new worker reaches `installed`. `virtual:pwa-register` (built on `workbox-window`) is not used: `workbox-window` stops listening to `updatefound` after the first update it considers external, and an install rejected by the gate mid-workout is exactly that, so the post-workout update would never be offered.
+- The banner fetches `changelog.json` and shows the entries newer than the running version. `changelog.json` is generated from the first release on (`tools/release-notes`, TD-20); M0 ships `version.json` only.
+- `applyUpdate()` is only callable when no session is active. It posts `SKIP_WAITING` to the waiting worker; the page reloads on `controllerchange`.
 - Update checks run on app start, on return to the foreground (at most every 6 h), and right after a session finishes.
 
 **Other service-worker duties.** Hidden-state rest alerts (`ARM_REST` / `DISARM` messages, §8.8.4); `notificationclick` (focus an existing client or open `/session`); share target POST handler (v1.3: stores the received file in `powr-runtime` and redirects to `/data/restore?source=share`). The service worker never touches `powr`. Size budget ≤ 20 KB compressed.
 
-**Development.** The service worker is off in `vite dev` and on in `vite preview` and E2E runs. A "Reset app files" developer action (`?debug=1`) unregisters the worker and clears Cache Storage without touching data.
+**Development.** The service worker is off in `vite dev` and on in `vite preview` and E2E runs. Lazily loaded chunks, such as the backup chunk (§8.19), are precached like every other build asset. A "Reset app files" developer action (`?debug=1`) unregisters the worker and clears Cache Storage without touching data.
 
 ### 8.5 State management (ADR-0005)
 
@@ -1359,7 +1390,7 @@ Rules:
    ```
 
    An effect runner in infrastructure executes the effects. Because the reducer is pure, property tests can replay random event sequences (fast-check) and check invariants: the cursor is always valid, no set is lost, and undo restores the exact previous state.
-4. React Compiler (`babel-plugin-react-compiler` 1.0) handles memoization; there are no hand-written `useMemo`/`useCallback` unless a profile shows a need. Hook correctness is linted by oxlint's native `rules-of-hooks` and `exhaustive-deps` rules. The React Compiler's own lint rules (shipped in `eslint-plugin-react-hooks`) have no native oxlint equivalent. They run through oxlint's alpha JS plugins as non-blocking warnings and become blocking once oxlint JS plugins are stable (resolved 2026-11-24, OQ-T10). The build also uses the compiler's `logger` option to write a report of components it skipped (CI artifact).
+4. React Compiler (`babel-plugin-react-compiler` 1.0) handles memoization; there are no hand-written `useMemo`/`useCallback` unless a profile shows a need. Hook correctness is linted by oxlint's native `rules-of-hooks` and `exhaustive-deps` rules. The React Compiler's own lint rules (shipped in `eslint-plugin-react-hooks`) run through oxlint's alpha JS plugins as non-blocking warnings and become blocking once oxlint JS plugins are stable (resolved 2026-11-24, OQ-T10). **v0.3:** oxlint 1.95 also ships native ports of most of them in its `correctness` category (`react/purity`, `refs`, `immutability`, `set-state-in-render`, `set-state-in-effect`, `static-components`, `use-memo`, `preserve-manual-memoization`, `incompatible-library`, `globals`, `error-boundaries`), and with `correctness: 'error'` they already run **blocking** (verified with a `Math.random()`-in-render probe: native error plus alpha warning). `react/unsupported-syntax` is in the `restriction` category and off. Verifying parity rule by rule, dropping the duplicated alpha rules and narrowing OQ-T10 accordingly is TD-10. The build also uses the compiler's `logger` option to write a report of components it skipped (CI artifact).
 
 ### 8.6 Rules registry and evidence traceability (PRG-18, NFR-MNT-01, LEG-05, ADR-0012)
 
@@ -1691,11 +1722,23 @@ TanStack Router 1.170 with file-based route definitions (`@tanstack/router-plugi
 - **Domain components** built on top: `LoadStepper` (increment-aware), `RepsStepper`, `RirChips` (0, 1, 2, 3, 4, 5+; plain-language label for novices), `SetRow`, `PlateBar` (WKT-07 visual), `TimerRing`, `MiniTimerBar`, `WhySheet`, `EvidenceBadge`, `BodyMap`, `HeatLegend`, `EmptyState`, `CapabilityNotice`.
 - **Drag to reorder** (PLN-06, WKT-09) uses `@dnd-kit/core` (MIT, 6.3.1). Every drag has a tap alternative (Move up / Move down in the item menu, NFR-A11Y-04).
 
+**Adding components with the shadcn CLI (v0.3; `#ui/*` alias approved by the product owner on 2026-11-24).**
+
+- **Alias.** `apps/web/package.json` declares Node subpath imports: `"#ui/cn": "./src/ui/cn.ts"` and `"#ui/*": "./src/ui/*.tsx"`. TypeScript 7 (`moduleResolution: "bundler"`), Vite, Vitest, oxlint and knip resolve them natively, so there is still no `paths`, `baseUrl` or `resolve.alias` configuration (ADR-0002). The wildcard target ends in `.tsx`, so the CLI writes extensionless imports (`#ui/button`) that resolve exactly. Lib and hook files get their own entries (`"#ui/lib/*"`, `"#ui/hooks/*"` with a `.ts` target) together with the first such file; knip reports unused entries.
+- **`components.json`:** style `base-nova` (Base UI), `iconLibrary: lucide`, CSS `src/ui/app.css`, aliases `components` and `ui` → `#ui`, `utils` → `#ui/cn`, `lib` → `#ui/lib`, `hooks` → `#ui/hooks`. `shadcn init` is not used: it adds the Geist web font (conflicts with the system font stack, OQ-T7) and the `tw-animate-css` and `shadcn` packages.
+- **Workflow:** `pnpm --filter @powr/web ui:add <component>` runs `pnpm dlx shadcn@4.23.0 add` (the CLI version is pinned in the script and is not a dependency). Then review the CLI's diff before committing:
+  1. Registry items (late 2026) import `cn` from the `cn` npm package and the CLI adds that package. Replace the import with `#ui/cn` and remove the package: `#ui/cn` (clsx + tailwind-merge) already provides class merging (decision on adopting `cn`: TD-21).
+  2. Replace shadcn token names with POWR tokens (`border-input` → `border-border`, `bg-background` → `bg-bg`, `text-muted-foreground` → `text-fg-muted`, `border-destructive` → `border-danger`, …); unknown token classes generate no CSS, so nothing fails loudly.
+  3. Workout controls get ≥ 48 px targets (`min-h-target`); the global `:focus-visible` outline replaces shadcn's `outline-none` + ring.
+  4. Remove `dark:` classes: the tokens follow the app theme through `light-dark()`, whereas Tailwind's `dark:` variant follows the OS setting.
+  5. No web fonts and no extra packages unless the component genuinely needs them; every new dependency passes the licence gate (§8.21).
+- The first CLI component is `Input` (`src/ui/input.tsx`, Base UI `Input`), which replaced the hand-written text inputs. Button, the segmented control (ToggleGroup) and NumberField were written by hand in shadcn style in M0.
+
 #### 8.9.3 Theming and design tokens (SET-01, PWA-14, NFR-A11Y-05)
 
 - Tokens are CSS custom properties in `src/ui/tokens.css` and are mapped into Tailwind with `@theme inline`. Semantic tokens only in components: `--bg`, `--surface`, `--fg`, `--fg-muted`, `--primary`, `--on-primary`, `--danger`, `--success`, `--focus`, `--heat-0…5`, `--chart-1…8`, `--pr-accent`.
 - Light and dark values via `light-dark()` (Chrome Android 123+, Samsung Internet 27+ per MDN BCD; inside the baseline) with `color-scheme` on `:root`. The theme setting (`light | dark | system`) sets `data-theme` on `<html>`, which pins `color-scheme`.
-- No flash on load: a tiny external script in `<head>` reads `localStorage['powr.theme']` before first paint (CSP-compliant, no inline script).
+- No flash on load: a tiny external script in `<head>` (`public/theme-init.js`, a classic synchronous script, served `no-cache` because it is not content-hashed) reads `localStorage['powr.theme']` before first paint (CSP-compliant, no inline script).
 - `theme-color`: two `<meta name="theme-color" media="(prefers-color-scheme: …)">` tags, updated by JavaScript when the user overrides the system theme (PWA-14).
 - **Contrast gate:** `tools/tokens-check` computes WCAG contrast for every foreground/background token pair in both themes (≥ 4.5:1 text, ≥ 3:1 UI and graphics) and fails CI otherwise.
 
@@ -1884,12 +1927,12 @@ Focus management: route changes move focus to the page `<h1>`; sheets trap focus
 
 ### 8.15 Internationalisation readiness and formatting (TC-16, NFR-MNT-04, NFR-L10N-01/02, ADR-0016)
 
-- **Lingui 6** (MIT): `t` and `<Trans>` macros, ICU MessageFormat (plurals: "1 set" / "3 sets"), PO catalogs in `src/i18n/locales/en/messages.po`, compiled at build time (runtime about 2.4 KB gzipped). Requires `@lingui/vite-plugin` (supports Vite 8) and the Babel macro plugin through `@rolldown/plugin-babel` (verified in peer dependencies; build integration checked in M0).
+- **Lingui 6** (MIT): `t` and `<Trans>` macros, ICU MessageFormat (plurals: "1 set" / "3 sets"), PO catalogs in `src/i18n/locales/en/messages.po`, compiled at build time (runtime about 2.4 KB gzipped). Requires `@lingui/vite-plugin` (supports Vite 8) and the Babel macro plugin through `@rolldown/plugin-babel` (verified in peer dependencies; M0 confirmed it under Rolldown: macros compiled, catalogs loaded). Lingui 6.12 now recommends its native `macroTransform` and prints a warning for the Babel path, which the build suppresses (`LINGUI_SUPPRESS_BABEL_WARNING`). Babel stays for now because the React Compiler needs it anyway; evaluating the native transform is TD-09.
 - **Message IDs:** UI copy uses source-string IDs (English text). Engine explanations, warnings and evidence labels use **explicit, stable IDs** (`why.progression.double.topReached`), because `@powr/domain` returns IDs and arguments, never English strings.
 - **Enforcement** (re-designed in v0.2 for oxlint, ADR-0016):
-  1. oxlint's native `react/jsx-no-literals` rule on `apps/web/src/**` (blocking). It catches literal text in JSX, which is where almost all UI copy lives. It is configured with an allow-list for symbols such as "·" and "×" and for non-text props (`className`, `data-testid`, route paths).
-  2. Strings outside JSX (toasts, `aria-label` values built in code, notification texts) must go through Lingui's `t` macro. This is a code-review checklist item. `eslint-plugin-lingui`'s `no-unlocalized-strings` runs through oxlint's alpha JS plugins as a **non-blocking warning** and becomes blocking once JS plugins are stable (resolved 2026-11-24, OQ-T10). Native rules and the Lingui catalog check stay blocking.
-  3. CI runs `lingui extract` and fails if the English catalog is out of date.
+  1. oxlint's native `react/jsx-no-literals` rule on `apps/web/src/**` (blocking). It catches literal text in JSX, which is where almost all UI copy lives. Configuration (v0.3, as implemented): `noStrings: false`, because in oxlint `noStrings: true` flags every attribute literal (`className`, `to`, …); `restrictedAttributes` for the text-bearing attributes `aria-label`, `title`, `placeholder`, `alt` and `label`; `allowedStrings` for symbols such as "·", "×" and "–"; `<Trans>` and `<Plural>` allowed as elements. The developer harness pages (`src/features/debug`, English-only diagnostics) are exempt.
+  2. Strings outside JSX (toasts, `aria-label` values built in code, notification texts) must go through Lingui's `t` macro. This is a code-review checklist item. `eslint-plugin-lingui`'s `no-unlocalized-strings` runs through oxlint's alpha JS plugins as a **non-blocking warning**, scoped to `features`, `ui` and `routes`, with identifier-like strings (no spaces, no capitals) ignored, and becomes blocking once JS plugins are stable (resolved 2026-11-24, OQ-T10). Native rules and the Lingui catalog check stay blocking.
+  3. CI runs `lingui extract` and fails if the English catalog is out of date. `pnpm build` runs the same check first (v0.3): production macros drop the source messages, so a stale catalog would show message hashes in the UI, and `failOnMissing` does not catch messages that were never extracted.
   4. The domain-message coverage test (§8.7.3).
 - **Formatting:** one module `src/i18n/format.ts` wraps `Intl.NumberFormat`, `Intl.DateTimeFormat`, `Intl.RelativeTimeFormat`, `Intl.PluralRules` and duration formatting. It uses the **device locale** (`navigator.languages[0]`) for numbers and dates while the UI language stays English (NFR-L10N-01). Units are part of messages (`{value} kg`), never string-concatenated.
 - **Week start:** default from `new Intl.Locale(locale).getWeekInfo().firstDay` (Chrome Android 130+, Samsung Internet 28+ per MDN BCD), fallback Monday, user override (SET-11).
@@ -1925,7 +1968,7 @@ Expected failures are typed `Result<T, E>` values in `@powr/application`. Except
 |---|---|
 | XSS through imported data or content | React text rendering only; no `dangerouslySetInnerHTML`; Markdown compiled to an AST at build time; strict CSP without `unsafe-inline` or `unsafe-eval`; Trusted Types in dev/E2E (prod later, TD-03) |
 | Malicious backup file | Size and zip-bomb limits; strict schemas; hashes; atomic apply; preview before apply (§8.3.5) |
-| Supply-chain compromise | Minimal dependencies (each new runtime dependency needs a licence, maintenance and size check); committed lockfile with `--frozen-lockfile`; pnpm blocks dependency build scripts unless allowlisted (`allowBuilds` in `pnpm-workspace.yaml`; it replaced `onlyBuiltDependencies` in pnpm 11); `minimumReleaseAge: 10080` (7 days; pnpm's default is 1 day) for new versions; Dependabot; `pnpm audit --prod` gate before each release (NFR-SEC-01) |
+| Supply-chain compromise | Minimal dependencies (each new runtime dependency needs a licence, maintenance and size check); committed lockfile with `--frozen-lockfile`; pnpm blocks dependency build scripts unless allowlisted (`allowBuilds` in `pnpm-workspace.yaml`; it replaced `onlyBuiltDependencies` in pnpm 11); `minimumReleaseAge: 10080` (7 days; pnpm's default is 1 day) for new versions, with a temporary `minimumReleaseAgeExclude` list for exact versions this concept pinned while they were younger than 7 days (to be removed after 2026-12-01, ADR-0021, TD-18); Dependabot; `pnpm audit --prod` gate before each release (NFR-SEC-01) |
 | Server or account compromise serving altered code | Server hardening (§7.6: SSH keys only, Hetzner Cloud Firewall, automatic security updates, timely Coolify and base-image updates); 2FA on GitHub, Hetzner and Coolify; Coolify API token limited to the Deploy permission; production deploys need GitHub environment approval; read-only registry token on the server; HSTS; release notes publish SHA-256 checksums of the deployed files and the image digest |
 | Device theft or shared phone | OS encryption and screen lock (NFR-SEC-03, stated in the privacy notice); blurred photo thumbnails (v1.2); app lock is a Later item; backup encryption (v1.3) |
 | CSV formula injection when a user opens an export | Prefixing rule (§8.13) |
@@ -1949,7 +1992,7 @@ Expected failures are typed `Result<T, E>` values in `@powr/application`. Except
 
 | Budget | Target | How measured |
 |---|---|---|
-| Entry JS (Home route, first wave) | ≤ 230 KB gzipped (React, router, Dexie, Temporal ponyfill, used Base UI parts, app code); calibrated in M0 | `size-limit` (MIT, 14.3) in CI per chunk |
+| Entry JS (Home route, first wave) | ≤ 230 KB gzipped (React, router, Dexie, Temporal ponyfill, used Base UI parts, app code); calibrated in M0: 211.4 KB, then **202.5 KB** after the backup path became a lazy chunk (v0.3). Zod's core (about 25 KB gzipped) is still in it, because the M0 content stub is parsed at startup and `@powr/rules` exports its schemas from the package root (TD-17) | `size-limit` (MIT, 14.3) in CI: `index.html`'s entry chunk plus its `modulepreload`s |
 | Entry CSS | ≤ 30 KB gzipped | `size-limit` |
 | Full precache (NFR-PERF-07) | ≤ 2.0 MB compressed (stricter than the PRD's 3 MB, leaving headroom for v1.x) | Build script sums the precache manifest; CI fails above budget |
 | Cold start to interactive Home (NFR-PERF-01) | ≤ 2.0 s, first content ≤ 1.0 s (p75 of 10 runs, S22, installed, airplane mode, reference dataset) | `performance.mark('home-interactive')` after Home data render; manual S22 runs with remote DevTools; Lighthouse CI (mobile preset) on preview builds as a regression guard |
@@ -1962,6 +2005,8 @@ Expected failures are typed `Result<T, E>` values in `@powr/application`. Except
 | Plan generation (NFR-PERF-09) | ≤ 1 s | Vitest bench (worst matrix case) + S22 |
 | Idle energy (NFR-PERF-10) | No timers, polling or wake locks when idle | E2E test build instruments `setInterval`/`setTimeout`/`requestAnimationFrame` and asserts none remain 5 s after a session ends |
 
+**Lazy chunks (v0.3).** Routes are split by TanStack Router. Code that a screen needs only after an explicit action is a separate package entry loaded with `import()`. The first one is the backup path: `@powr/application/backup` → `@powr/formats/backup` (codec, Zod record and manifest schemas, fflate), 9.5 KB gzipped, loaded on the first export or import. oxlint forbids static value imports of these entries in app code (§5.2), so the boundary cannot erode silently. The service worker precaches every chunk; an E2E test stops the server, exports and restores, and checks that the chunk was not loaded before the first export.
+
 The **reference dataset** (A-11) comes from `tools/dataset`, a seeded generator producing a realistic 5-year history (1,300 sessions, 40,000 sets, 1,800 bodyweight entries, plans, PRs, breaks) as a backup ZIP. It is used by E2E performance tests and imported on the S22 for manual measurements. CI uses relative thresholds (fail if more than 20% slower than the stored baseline); absolute budgets are confirmed on the device.
 
 ### 8.20 Testing strategy (TC-13, NFR-MNT-02/03/05, NFR-A11Y-11, ADR-0010)
@@ -1972,9 +2017,9 @@ The **reference dataset** (A-11) comes from `tools/dataset`, a seeded generator 
 | Property-based | fast-check 4.11 inside Vitest | Invariants of plate math, rounding, units, e1RM, volume, session reducer, generator, migrations, backup round-trip, `.ics` | Every push (fixed seed in CI, random seed nightly) |
 | Content and rules | Vitest + build scripts | Schemas, lint, coverage, ID locks, excluded sources, plan matrix | Every push |
 | Migration | Vitest + `fake-indexeddb` 6.2 (Apache-2.0) | Dexie upgrade from every historical `dataVersion` fixture; backup import of every fixture ZIP | Every push |
-| Component | Vitest browser mode (`@vitest/browser-playwright` 5.1, real Chromium) + Testing Library 16.3 + user-event 14.6 + axe-core 4.14 | Steppers, RIR chips, session screen states, sheets, body map semantics, chart table view, forms | Every push |
-| E2E | Playwright 1.65 (Chromium with Android device emulation, 360 × 780, DPR 3) against `vite preview` with the service worker | Onboarding → plan; full workout; offline checklist (`context.setOffline(true)`); update flow (serve N, start session, swap to N+1, verify gate, finish, accept); interruption recovery (close context after set N, reopen at N+1); backup round-trip via download and upload; delete-all; network-log privacy test; axe scans; timers with Playwright's clock API and simulated visibility changes | Every push to `main` and PRs |
-| Performance | Playwright + reference dataset; Vitest bench; Lighthouse CI 0.16 | Budgets in §8.19 (relative in CI) | `main` and nightly |
+| Component | Vitest browser mode (`@vitest/browser-playwright` 5.1, real Chromium) + Testing Library 16.3 + user-event 14.6 + axe-core 4.14 | Steppers, RIR chips, session screen states, sheets, body map semantics, chart table view, forms | Every push (from M1; not built in M0, TD-11) |
+| E2E | Playwright 1.65 (Chromium with Android device emulation, 360 × 780, DPR 3) against the production build with the service worker, served by `e2e/static-server.ts` with the headers from `deploy/security-headers.conf` and nginx's cache rules and SPA fallback (v0.3; `vite preview` sends no CSP). Each test gets its own server and origin, so a test can stop the server or deploy N+1 on the same origin. The same suite runs against the nginx image with `E2E_BASE_URL` (tests that stop or swap the server are skipped there). | Onboarding → plan; full workout; offline checklist (`context.setOffline(true)`); update flow (serve N, start session, swap to N+1, verify gate, finish, accept); interruption recovery (close context after set N, reopen at N+1); backup round-trip via download and upload, including the first export and restore offline; delete-all; network-log privacy and CSP-violation check in every test; axe scans; timers with Playwright's clock API and simulated visibility changes | Every push to `main` and PRs |
+| Performance | Playwright + reference dataset; Vitest bench; Lighthouse CI 0.16 (from M1, TD-12) | Budgets in §8.19 (relative in CI) | `main` and nightly |
 | Device (manual) | S22 Chrome and Samsung Internet + one other Android; written protocol in `docs/device-tests/` | V-01 (timers), V-02 (`.ics`), V-07 (capabilities), offline checklist (M9), TalkBack audit, 200% font scale, battery saver, performance budgets | Before each release; S-1/S-2 spikes early |
 | Usability (manual) | Moderated sessions (n ≥ 8) | M1–M4, M13 | MVP beta |
 
@@ -2002,7 +2047,7 @@ Coverage targets: `@powr/domain` ≥ 95% lines and branches; `@powr/formats` and
 
 ### 8.21 Build, CI/CD, code quality, dependency and licence policy (NFR-MNT-08, TC-18, ADR-0017, ADR-0018)
 
-**Toolchain:** pnpm 12 workspaces (resolved 2026-11-24: A, OQ-T8); **TypeScript 7.0.x** (native compiler; `tsc -b` with project references; ADR-0002); Vite 8; oxlint 1.95 with `oxlint-tsgolint` for type-aware rules; oxfmt 0.80 (beta) for formatting; Node 26 in CI (the even-numbered LTS line; the developer machine runs 26.13).
+**Toolchain:** pnpm 12 workspaces (resolved 2026-11-24: A, OQ-T8); **TypeScript 7.0.x** (native compiler; `tsc -b` with project references; ADR-0002); Vite 8; oxlint 1.95 with `oxlint-tsgolint` for type-aware rules; oxfmt 0.80 (beta) for formatting; Node 26 in CI (the even-numbered LTS line; the developer machine runs 26.13). GitHub workflows are checked locally with actionlint 1.7.12 through its official Docker image (`rhysd/actionlint`, MIT); the image also bundles shellcheck (GPL-3.0) as a separate tool, which is used only locally and never becomes a dependency or ships.
 
 **CI pipeline** (`.github/workflows/ci.yml`):
 
@@ -2025,13 +2070,15 @@ deploy-prod (tag vX.Y.Z, manual approval): retag tested image → Coolify deploy
 rollback (workflow_dispatch: tag) → Coolify redeploy of an earlier immutable image
 ```
 
+**M0 state (v0.3).** `ci.yml` runs the jobs quality (lint, format, knip, catalog), typecheck, test, build (licence gate, size budgets, image, header smoke test) and E2E (test server, then the image). Component tests and Lighthouse CI join in M1 (TD-11, TD-12). Actions are pinned by commit SHA; Dependabot covers npm, GitHub Actions and Docker. `pnpm verify` runs the same steps locally (`pnpm ci` is a pnpm built-in).
+
 **Code quality:**
 
 - **oxlint** (`oxlint.config.ts`), see ADR-0017:
   - Native rule groups: correctness, suspicious, `typescript`, `react` (including `rules-of-hooks`, `exhaustive-deps`, `jsx-no-literals`), `jsx-a11y`, `import` (including `no-cycle`), `unicorn` subsets.
   - Type-aware rules (for example `no-floating-promises`, `no-misused-promises`) via `--type-aware` with `oxlint-tsgolint`, which uses TypeScript 7.0's Go implementation; 60 of the 62 typescript-eslint type-aware rules are supported [Verified: oxc.rs type-aware page].
   - Layer rules as path `overrides` (§5.2).
-  - Alpha JS plugins (`eslint-plugin-lingui`, `eslint-plugin-react-hooks` compiler rules) as non-blocking warnings now, blocking once oxlint JS plugins are stable (resolved 2026-11-24, OQ-T10).
+  - Alpha JS plugins (`eslint-plugin-lingui`, `eslint-plugin-react-hooks` compiler rules) as non-blocking warnings now, blocking once oxlint JS plugins are stable (resolved 2026-11-24, OQ-T10). Most compiler rules also exist natively and already block (§8.5, TD-10). ESLint 10 is installed only as the auto-installed peer of these two plugins and is never run (ADR-0017).
 - **oxfmt** for all formatting (TS/TSX, JSON, YAML, CSS, Markdown, HTML), with `sortTailwindcss` and `sortImports` enabled and the version pinned exactly. Formatter upgrades land as separate "chore: reformat" commits. There is no Prettier in the repository.
 - **Editor:** the Oxc VS Code extension (`oxc.oxc-vscode`) runs both oxlint and oxfmt through their language servers. It is recommended in `.vscode/extensions.json`, and `.vscode/settings.json` sets it as default formatter with format on save [Verified: oxc.rs editors page]. TypeScript 7's language service comes from the TypeScript 7 VS Code extension.
 - `knip` (ISC, 6.48; parses with oxc and is built against TypeScript 7.0.2) for unused files, exports and dependencies.
@@ -2041,24 +2088,34 @@ rollback (workflow_dispatch: tag) → Coolify redeploy of an earlier immutable i
 
 **Licence gate (LEG-08, NFR-MNT-08, TC-18), `tools/licence`:**
 
-1. A small Vite/Rolldown plugin collects the module IDs of every emitted chunk in `generateBundle` and maps them to packages (`name@version`), resolving the nearest `package.json`. The result is the **exact set of distributed packages**, not an over-approximation.
+1. A small Vite/Rolldown plugin (`licenceCollector`) collects the module IDs of every emitted chunk in `generateBundle` and maps them to packages (`name@version`), resolving the nearest `package.json`. The result is the **exact set of distributed packages**, not an over-approximation. It runs in both builds (v0.3): the app build writes its package list; the service-worker build runs last, merges both lists, writes `attributions.json` into `dist` and fails the build on a disallowed licence, all before Workbox builds the precache manifest, so `attributions.json` is precached.
 2. For each package it reads the SPDX expression from `package.json`, the licence and NOTICE files, and the copyright lines.
-3. It evaluates every package against `licence-policy.yaml` with `spdx-expression-parse` and `spdx-satisfies` (MIT). For dual licences, the permissive option is selected and recorded (for example `jszip`'s `MIT OR GPL-3.0-or-later` → MIT; jszip is not used, but this is the rule).
+3. It evaluates every package against `licence-policy.yaml` with `spdx-expression-parse` (MIT) and an own evaluator over its syntax tree. `spdx-satisfies` is not used (v0.3): the evaluator must record which alternative of an `OR` expression was chosen and apply glob deny patterns such as `GPL-*`. For dual licences, the permissive option is selected and recorded (for example `jszip`'s `MIT OR GPL-3.0-or-later` → MIT; jszip is not used, but this is the rule).
 4. It merges `assets-inventory.yaml` (artwork, icons, fonts if any, data sources such as the IPF coefficient documents and later the percentile dataset).
-5. It **fails the build** on: a missing or unparseable licence, any denied licence, any licence not on the allowlist without an approved exception entry (reviewer, date, scope, rationale).
+5. It **fails the build** on: a missing or unparseable licence, any denied licence, any licence not on the allowlist without an approved exception entry (reviewer, product-owner approval, date, scope, rationale). An exception without a recorded `approval` is ignored (v0.3).
 6. It emits `licence-inventory.json` (all components: distributed runtime, plus build-only tools from `pnpm licenses list --json` marked `distributed: false`), a release artifact, and `attributions.json` (distributed only, with full licence and NOTICE texts where required). The second file is precached and rendered by Settings → About → "Open-source licences / attributions" (LEG-06). An E2E test asserts that the screen lists exactly the inventory's distributed entries.
 
 ```yaml
-# licence-policy.yaml (excerpt)
-allowed: [MIT, ISC, BSD-2-Clause, BSD-3-Clause, Apache-2.0, 0BSD, Zlib, CC0-1.0, Unlicense, OFL-1.1, CC-BY-4.0, BlueOak-1.0.0, Python-2.0]
+# licence-policy.yaml (excerpt, v0.3)
+allowed: [MIT, ISC, BSD-2-Clause, BSD-3-Clause, Apache-2.0, 0BSD, Zlib, CC0-1.0, Unlicense, OFL-1.1, CC-BY-4.0, BlueOak-1.0.0, Python-2.0,
+          LicenseRef-Own-Work]   # own original assets; approved by product owner Simeon Zimmermann, 2026-11-24
 denied:  [GPL-*, AGPL-*, LGPL-*, MPL-*, EPL-*, EUPL-*, CDDL-*, CC-BY-SA-*, CC-BY-NC-*, SSPL-*, BUSL-*]
 devOnlyAllowed: [MPL-2.0]          # e.g. axe-core 4.14 for tests; never distributed
-exceptions: []                      # { package, version, licence, scope, reviewer, date, rationale }
+exceptions:                         # { package, version, licence, scope, reviewer, approval, date, rationale }
+  - package: spdx-exceptions        # SPDX exception-ID list read by the licence tool at build time
+    version: 2.5.0
+    licence: CC-BY-3.0
+    scope: build-only
+    reviewer: implementation agent
+    approval: approved by product owner Simeon Zimmermann, 2026-11-24
+    date: 2026-11-24
 ```
+
+Each asset with `LicenseRef-Own-Work` (the generated app icons, the M0 content stub) is listed in `assets-inventory.yaml` with the same approval.
 
 ### 8.22 Feature flags and release tags (OC-02, PRD §10)
 
-- `apps/web/src/features.ts` declares every feature with its release tag and requirement IDs:
+- `apps/web/src/feature-flags.ts` declares every feature with its release tag and requirement IDs (named so it is not confused with the `features/` folder; v0.3):
 
   ```ts
   export const FEATURES = {
@@ -2093,7 +2150,6 @@ exceptions: []                      # { package, version, licence, scope, review
 | Share target (v1.3) | Manifest only | File-picker restore | MDN BCD: Chrome 76+, Samsung 12+; ZIP **[Device test]** |
 | Badging API | Not used | — | Not supported on Chrome Android or Samsung Internet (MDN BCD) |
 | File Handling | Not used | — | Not supported on Android (MDN BCD; PRD P-10) |
-| Traefik | Reverse proxy used by Coolify; terminates TLS with Let's Encrypt certificates |
 | Temporal | Not detected; ponyfill always used | — | Native only in Chrome 144+ / Samsung 31+ (MDN BCD) |
 
 Detection runs at boot and on permission changes (`navigator.permissions.query` where available). The results are combined with the shipped device-test matrix to produce Settings → About → Device support (PWA-13) and the Alerts status (TMR-06).
@@ -2106,27 +2162,27 @@ The decisions are recorded as lightweight MADR files in `docs/adr/` (index: `doc
 
 | ADR | Decision | Runner-up | Status |
 |---|---|---|---|
-| [0001](adr/0001-repository-structure-pnpm-monorepo.md) | pnpm-workspace monorepo: `domain`, `rules`, `content`, `formats`, `application`, `apps/web`, `tools` | Single app with lint-enforced folders | Accepted (v0.2: boundaries via pnpm + TS project references + oxlint overrides + arch test) |
-| [0002](adr/0002-frontend-framework-and-build-tooling.md) | React 19.3 + **TypeScript 7.0** + Vite 8.3, React Compiler | Rsbuild | Accepted (v0.2: TypeScript 6.0 → 7.0) |
-| [0003](adr/0003-ui-component-library.md) | shadcn/ui on Base UI 1.9 | Mantine 9 | Accepted |
+| [0001](adr/0001-repository-structure-pnpm-monorepo.md) | pnpm-workspace monorepo: `domain`, `rules`, `content`, `formats`, `application`, `apps/web`, `tools` | Single app with lint-enforced folders | Accepted (v0.2: boundaries via pnpm + TS project references + oxlint overrides + arch test; v0.3: lazy package entries, deferred `rules` → `domain` dependency) |
+| [0002](adr/0002-frontend-framework-and-build-tooling.md) | React 19.3 + **TypeScript 7.0** + Vite 8.3, React Compiler | Rsbuild | Accepted (v0.2: TypeScript 6.0 → 7.0; v0.3: `#ui/*` subpath imports as the one alias) |
+| [0003](adr/0003-ui-component-library.md) | shadcn/ui on Base UI 1.9 | Mantine 9 | Accepted (v0.3: `#ui/*` alias and shadcn CLI workflow) |
 | [0004](adr/0004-styling-and-design-tokens.md) | Tailwind CSS 4.3 + CSS-variable tokens (`light-dark()`) | CSS Modules + CSS variables | Accepted |
 | [0005](adr/0005-state-management.md) | Dexie `liveQuery` + Zustand 5 + URL state + pure session reducer | Dexie `liveQuery` + Jotai | Accepted |
-| [0006](adr/0006-indexeddb-library-and-persistence.md) | Dexie 4.4, strict durability, separate runtime/safety/diag DBs, photos as IDB Blobs | SQLite WASM on OPFS | Accepted (photos: revisit after S-3) |
+| [0006](adr/0006-indexeddb-library-and-persistence.md) | Dexie 4.4, strict durability, separate runtime/safety/diag DBs, photos as IDB Blobs | SQLite WASM on OPFS | Accepted (photos: revisit after S-3; v0.3: no `dexie-react-hooks`, M0 schema) |
 | [0007](adr/0007-charts.md) | Apache ECharts 6.1 (modular, lazy) + own SVG sparklines | Recharts 3 | Accepted (confirm in S-4) |
-| [0008](adr/0008-pwa-tooling-and-service-worker-strategy.md) | vite-plugin-pwa 2.0 `injectManifest` + Workbox 7.4 precaching, prompt-only updates, install gate | Serwist 9 | Accepted |
-| [0009](adr/0009-validation-schema-library.md) | Zod 4 (`jitless`) | Valibot 1.5 | Accepted |
-| [0010](adr/0010-testing-stack.md) | Vitest 5 + fast-check 4 + Testing Library + Playwright 1.65 + axe-core | Jest + Cypress | Accepted |
+| [0008](adr/0008-pwa-tooling-and-service-worker-strategy.md) | vite-plugin-pwa 2.0 `injectManifest` + Workbox 7.4 precaching, prompt-only updates, install gate | Serwist 9 | Accepted (v0.3: own registration code, `sw.ts`, own icon generator) |
+| [0009](adr/0009-validation-schema-library.md) | Zod 4 (`jitless`) | Valibot 1.5 | Accepted (v0.3: per-package `zod.ts` wrapper, lazy backup schemas) |
+| [0010](adr/0010-testing-stack.md) | Vitest 5 + fast-check 4 + Testing Library + Playwright 1.65 + axe-core | Jest + Cypress | Accepted (v0.3: E2E test server with production headers) |
 | [0011](adr/0011-hosting.md) | **Hetzner Cloud VPS (Germany) + self-hosted Coolify 4.7**: Traefik + Let's Encrypt, own nginx image, GitHub Actions → GHCR → Coolify webhook | Cloudflare Pages | Accepted (product-owner decision 2026-11-24; setup in S-7) |
 | [0012](adr/0012-rules-registry.md) | YAML parameter tables + Zod schema → versioned `rules.json`; user overrides layered | TypeScript constant tables | Accepted |
-| [0013](adr/0013-backup-file-format.md) | ZIP container (fflate) + manifest + SHA-256 + shared migration chain; AES-GCM in v1.3 | Single JSON file | Accepted (resolved 2026-11-24: A, OQ-T6) |
+| [0013](adr/0013-backup-file-format.md) | ZIP container (fflate) + manifest + SHA-256 + shared migration chain; AES-GCM in v1.3 | Single JSON file | Accepted (resolved 2026-11-24: A, OQ-T6; v0.3: synchronous fflate API, canonical JSON) |
 | [0014](adr/0014-router.md) | TanStack Router 1.170 | React Router 8 | Accepted |
 | [0015](adr/0015-date-and-time-handling.md) | Temporal via `temporal-polyfill` 1.0 (ponyfill) | date-fns 4 + `@date-fns/tz` | Accepted |
-| [0016](adr/0016-internationalisation.md) | Lingui 6 + `Intl`; literal strings caught by oxlint `react/jsx-no-literals` | i18next + react-i18next | Accepted (v0.2: enforcement re-designed) |
-| [0017](adr/0017-lint-and-format.md) | **oxlint 1.95** (type-aware via oxlint-tsgolint) + **oxfmt 0.80** (beta) | ESLint 10 + Prettier 3 | Accepted (product-owner decision 2026-11-24) |
-| [0018](adr/0018-licence-compliance-tooling.md) | Own inventory from the bundle graph + SPDX policy gate + attributions JSON | `rollup-plugin-license` | Accepted |
+| [0016](adr/0016-internationalisation.md) | Lingui 6 + `Intl`; literal strings caught by oxlint `react/jsx-no-literals` | i18next + react-i18next | Accepted (v0.2: enforcement re-designed; v0.3: `jsx-no-literals` configuration, build-time catalog check) |
+| [0017](adr/0017-lint-and-format.md) | **oxlint 1.95** (type-aware via oxlint-tsgolint) + **oxfmt 0.80** (beta) | ESLint 10 + Prettier 3 | Accepted (product-owner decision 2026-11-24; v0.3: ESLint only as an unused peer, native React Compiler rules) |
+| [0018](adr/0018-licence-compliance-tooling.md) | Own inventory from the bundle graph + SPDX policy gate + attributions JSON | `rollup-plugin-license` | Accepted (v0.3: own SPDX evaluator; licence exceptions approved by the product owner 2026-11-24) |
 | [0019](adr/0019-timer-and-alert-architecture.md) | Timestamp timers; wake lock; Web Audio + vibration visible; page + SW timers + notifications hidden; honest status | Visible-only alerts | Accepted (calibrated by S-1; audio keep-alive tested, Labs only: OQ-T3 = B) |
 | [0020](adr/0020-calculation-engine-design.md) | Pure functional core, injected `ResolvedRuleSet`, `Explained<T>` results, worker for heavy work | Generic rules-engine library | Accepted |
-| [0021](adr/0021-package-manager.md) | pnpm 12 | Bun | Accepted (resolved 2026-11-24: A, OQ-T8) |
+| [0021](adr/0021-package-manager.md) | pnpm 12 | Bun | Accepted (resolved 2026-11-24: A, OQ-T8; v0.3: `minimumReleaseAgeExclude` until 2026-12-01) |
 
 ---
 
@@ -2218,7 +2274,7 @@ PRD risks with a technical side are carried over (IDs kept); new technical risks
 | T-05 | Cold start mid-session with a waiting update activates N+1 mid-workout | L | M | Install gate; pre-session update prompt; migrations preserve active sessions; version-pinning fallback design (§6.3) |
 | T-06 | Mismatched files during a deploy | L | L | Container swap after health check (Coolify) makes deploys atomic; nginx returns 404 (never `index.html`) for missing hashed assets; precache makes the window tiny |
 | T-07 | Strict IndexedDB durability adds latency on the S22 | L | L | Measured in M0 and S-3; budget 500 ms has a wide margin; relaxed only for derived data |
-| T-08 | Lingui macro or React Compiler Babel plugins misbehave under Vite 8 / Rolldown | L | M | Verified peer ranges; validated in the M0 skeleton; fallbacks: Lingui without macros (`i18n._` with explicit IDs), compiler off |
+| T-08 | Lingui macro or React Compiler Babel plugins misbehave under Vite 8 / Rolldown | L | M | Verified peer ranges; validated in the M0 skeleton (v0.3: works; Lingui 6.12 recommends its native macro transform, TD-09); fallbacks: Lingui without macros (`i18n._` with explicit IDs), compiler off |
 | T-09 | Workbox maintenance slows | L | L | Only `workbox-precaching` and `workbox-routing` used; Serwist (Workbox fork, active) is a drop-in runner-up |
 | T-10 | Derived-cache invalidation bugs show wrong numbers | M | M | Version stamps; dirty scopes; "Verify data" diff; property tests comparing incremental vs full rebuild |
 | T-11 | Content authoring effort (150+ exercises, mappings, cues) delays MVP | H | M | Mapping templates from EB tables; lint and coverage tests guide completion; start content in M1 in parallel with the engine |
@@ -2226,7 +2282,7 @@ PRD risks with a technical side are carried over (IDs kept); new technical risks
 | T-13 | Android freezes background pages earlier than 5 minutes, making SW and page timers useless when locked | M | M | Only discoverable on device (S-1); status note reflects results; background-audio keep-alive tested in S-1 and offered as opt-in Labs only if it clearly works (OQ-T3 = B) |
 | T-14 | **Single VPS is a single point of failure** | M | L | Installed clients run offline from the SW cache, so an outage blocks only first visits, installs and updates; external uptime monitoring; snapshot and rebuild runbook (≤ 2 h); optional EU CDN or second VPS later (§7.7) |
 | T-15 | Server security and operations burden on a solo developer (unpatched OS, outdated Coolify, leaked deploy token) | M | M | §7.6: SSH keys only, Hetzner Cloud Firewall, unattended upgrades, monthly Coolify updates with snapshots, Deploy-only tokens, 2FA everywhere; the server holds no user data |
-| T-16 | oxlint JS plugins are alpha, so Lingui and React Compiler lint coverage is weaker than with ESLint | M | L | Native `react/jsx-no-literals`, `rules-of-hooks`, `exhaustive-deps`, `jsx-a11y`; JS-plugin rules as non-blocking warnings; `lingui extract` check; compiler bail-out report; promote to blocking when JS plugins are stable (OQ-T10) |
+| T-16 | oxlint JS plugins are alpha, so Lingui and React Compiler lint coverage is weaker than with ESLint | M | L | Native `react/jsx-no-literals`, `rules-of-hooks`, `exhaustive-deps`, `jsx-a11y`; since oxlint 1.95 native, blocking ports of most React Compiler rules (TD-10); JS-plugin rules as non-blocking warnings; `lingui extract` check; compiler bail-out report; promote to blocking when JS plugins are stable (OQ-T10) |
 | T-17 | oxfmt is beta, so formatting may change between versions or differ from Prettier in edge cases | M | L | Pin the exact version; upgrades as separate reformat commits; formatting is cosmetic and covered by `oxfmt --check` |
 
 ### 11.2 Technical debt accepted on purpose
@@ -2241,6 +2297,19 @@ PRD risks with a technical side are carried over (IDs kept); new technical risks
 | TD-06 | Personal load–rep curve uses a simple shrinkage fit, not a full Bayesian model | Enough for MVP; data scarce | v1.3 with PRG-15 |
 | TD-07 | No whole-workspace dependency graph tool (dependency-cruiser dropped: it does not support TypeScript 7.0) | Boundaries are still enforced by pnpm, TS project references, oxlint overrides and the arch test | When TypeScript 7.1 ships (dependency-cruiser 18.9 already accepts ≥ 7.1) |
 | TD-08 | Literal-string enforcement outside JSX relies on review and a non-blocking alpha JS-plugin rule | oxlint has no native equivalent of `lingui/no-unlocalized-strings` | When oxlint JS plugins are stable |
+| TD-09 | The Lingui macro runs through Babel (`@rolldown/plugin-babel`); Lingui 6.12 recommends its native `macroTransform` and the build suppresses its warning | Concept decision; Babel is needed for the React Compiler anyway, and the Babel path is verified | M1: evaluate the native transform (faster, one Babel plugin fewer); switch if macros, extraction and the catalog check behave the same |
+| TD-10 | The React Compiler rules run twice: natively in oxlint 1.95's `correctness` category (blocking) and through the alpha `eslint-plugin-react-hooks` JS plugin (warnings) | Found in M0; the native ports are verified present and blocking, but not yet compared rule by rule | M1: verify parity, enable the native rules explicitly, drop the duplicated alpha rules and narrow OQ-T10 to the rules without a native port |
+| TD-11 | No component tests yet (Vitest browser mode with `@vitest/browser-playwright`, Testing Library) and no Lingui pseudo-locale expansion test (§8.15, §8.20) | Not part of M0's work packages | M1 |
+| TD-12 | Lighthouse CI, the token contrast gate (`tools/tokens-check`, §8.9.3) and Trusted Types in dev/E2E builds are not in CI yet | Not part of M0's work packages | M1 (Trusted Types in production stays TD-03) |
+| TD-13 | QS-01 is only partly automated: reload and an abrupt close of a persistent browser profile, not 200 randomized process kills (`SIGKILL`) | Needs the full session flow to be meaningful | M3 (session screen) |
+| TD-14 | Update and recovery UI not built: the pre-session "Update first" offer (§6.3 rule 2), the safety-copy UI (download, delete) and the "POWR was updated in another window" handling (§6.8) | The start sheet and the data screens arrive later | M3 (start sheet), M5 (data screens) |
+| TD-15 | Backups are delivered as a download only; no save-picker delivery yet (§6.4, §8.3.7) | Waits for device test S-2 on Android Chrome 132+ | M5, after S-2 |
+| TD-16 | The backup codec runs synchronously on the main thread (fflate `zipSync`/`unzipSync`), because fflate's async API uses `blob:` workers that `worker-src 'self'` blocks | Fast enough for M0 data sizes | Before the reference-dataset performance test (NFR-PERF-08): run the codec in the engine worker |
+| TD-17 | Zod's core (about 25 KB gzipped) is still in the entry chunk: the M0 content stub is parsed with Zod at startup, and `@powr/rules` exports its schemas from the package root | Within the budget (202.5 of 230 KB) | M1: with build-time validation of content and rules (§8.6, §8.12), keep the runtime startup path schema-free (same subpath-entry split as the backup path) |
+| TD-18 | `pnpm-workspace.yaml` has a `minimumReleaseAgeExclude` list for versions that were younger than 7 days when M0 was set up | Exact versions were pinned by this concept | Remove the excludes after 2026-12-01 (ADR-0021) |
+| TD-19 | Dexie `powr` version 1 holds only the four M0 tables | Smaller M0 scope (WP0.5) | Before the first beta with user data: decide whether the remaining MVP tables extend version 1 or become version 2 with a migration (§8.2.2) |
+| TD-20 | `changelog.json` is not generated yet; the update notice has no release notes | No release exists before the first release | With the first release (`tools/release-notes`, §8.4) |
+| TD-21 | Every `shadcn add` needs the manual review of §8.9.2: shadcn registry items import `cn` from the `cn` npm package and use shadcn token names | Adopting `cn` (pre-1.0) would replace clsx + tailwind-merge; a token bridge would add a second set of colour names to ADR-0004's tokens | When several components are added (M2/M3): decide on adopting `cn` and on a token-name bridge in `app.css` (product owner) |
 
 ---
 
@@ -2285,7 +2354,9 @@ Technical terms only. Domain terms (e1RM, RIR, mesocycle, …) are defined in th
 | `ResolvedRuleSet` | The registry after applying context variants and user overrides, with provenance |
 | Service worker | Background script that intercepts network requests and enables offline use |
 | SPDX | Standard identifiers and expressions for software licences (e.g. `MIT OR Apache-2.0`) |
+| Subpath imports | Node's `imports` field in `package.json`: private specifiers starting with `#` (here `#ui/*`) that map to files of the same package; resolved by Node, TypeScript and Vite without alias configuration |
 | Temporal | Modern JavaScript date-time API (`PlainDate`, `ZonedDateTime`, `Instant`) |
+| Traefik | Reverse proxy used by Coolify; terminates TLS with Let's Encrypt certificates |
 | Trusted Types | Browser API that blocks DOM-XSS sinks unless values pass a policy |
 | UUIDv7 | Time-ordered UUID format |
 | VPS | Virtual private server (here a Hetzner Cloud instance) |
@@ -2312,7 +2383,7 @@ Durations below are indicative for one developer **[Assumption]** and only show 
 |---|---|---|
 | WP0.1 | Repository: pnpm workspace, TypeScript 7.0 `tsconfig` project references, oxlint (type-aware, layer overrides, JS-plugin warnings), oxfmt, Oxc VS Code settings, Vitest, Playwright, knip, architecture test | `pnpm lint && pnpm test` green on an empty slice; a forbidden cross-layer import fails |
 | WP0.2 | CI workflow (§8.21) including the **licence gate** (`tools/licence` v1) and `size-limit` | A GPL test fixture makes CI fail; a clean build passes |
-| WP0.3 | App shell: Vite 8, React 19 + React Compiler, TanStack Router, Tailwind v4 tokens, shadcn/Base UI init, Lingui (macro under Rolldown verified), light/dark/system theme, CSP-compatible `index.html` | Shell renders with theme switch; no CSP violations in E2E |
+| WP0.3 | App shell: Vite 8, React 19 + React Compiler, TanStack Router, Tailwind v4 tokens, shadcn/Base UI setup (`components.json`, `#ui/*` alias, CLI-added components; `shadcn init` is not used, §8.9.2), Lingui (macro under Rolldown verified), light/dark/system theme, CSP-compatible `index.html` | Shell renders with theme switch; no CSP violations in E2E |
 | WP0.4 | PWA: manifest, icons, `injectManifest` service worker with **install gate**, update prompt, offline navigation | Playwright: install → offline reload works; update test passes |
 | WP0.5 | Persistence: Dexie `powr` v1 (meta, settings, sessions, sets), `powr-runtime`, `UnitOfWork` with strict durability; a minimal "log one set" screen with a content stub (3 exercises) | Set survives process kill (QS-01 basic) |
 | WP0.6 | Backup: ZIP + manifest + SHA-256 + Zod + migration-chain skeleton; import preview and atomic replace-all | Round-trip property test green; tampered-file test rejects |
@@ -2320,6 +2391,8 @@ Durations below are indicative for one developer **[Assumption]** and only show 
 | WP0.8 | Diagnostics ring buffer, `?debug=1`, `/debug/alerts` harness (for S-1), capability probe page (for S-2) | Harness exports results as a file |
 
 **M0 exit:** installable on the S22 (Chrome and Samsung Internet), works offline, one logged set survives a kill, backup round-trip works, CI green.
+
+**M0 status (v0.3):** WP0.1–WP0.8 are implemented; the evidence per work package, the deviations from this document and the open items are in `IMPLEMENTATION_NOTES.md` §2–§4. The parts that need the real server (S-7) or the phone (S-1, S-2, S-8) remain.
 
 ### A.3 Early spikes
 
@@ -2381,17 +2454,19 @@ flowchart LR
 
 ## Appendix B. Technology stack (versions and licences checked on the npm registry, 2026-11-23)
 
+v0.3: versions as installed in M0 (lockfile of 2026-11-24). Where a pinned version was younger than pnpm's 7-day `minimumReleaseAge`, the previous release was installed (tailwind-merge 3.7.0) or the version was excluded temporarily (ADR-0021, TD-18).
+
 | Concern | Choice (version) | Licence | Runner-up | Distributed? |
 |---|---|---|---|---|
 | Language | TypeScript 7.0.2 (native compiler, stable since 2026-07-08; `tsc -b`); fallback `@typescript/typescript6` 6.0.2 via npm alias only for a tool that needs the classic API | Apache-2.0 | TypeScript 6.0 | No |
 | UI framework | React 19.3.1 + react-dom | MIT | — (given) | Yes |
-| Build tool | Vite 8.3.8 (Rolldown), `@vitejs/plugin-react` 6.3, `babel-plugin-react-compiler` 1.0 | MIT | Rsbuild | No |
-| PWA plugin / SW | vite-plugin-pwa 2.0.0 (`injectManifest`), workbox-precaching / -routing / -window 7.4.1 | MIT | Serwist 9.5 | SW: yes |
-| Router | @tanstack/react-router 1.170.46 (+ router-plugin) | MIT | react-router 8.5 | Yes |
-| UI components | shadcn/ui (CLI 4.23, code copied in) on @base-ui/react 1.9.0 | MIT | Mantine 9.8 | Yes |
-| Styling | Tailwind CSS 4.3.5, `tailwind-merge` 3.7, `clsx` 2.1, `class-variance-authority` 0.7 (Apache-2.0) | MIT / Apache-2.0 | CSS Modules | CSS + small runtime |
+| Build tool | Vite 8.3.8 (Rolldown), `@vitejs/plugin-react` 6.3, `babel-plugin-react-compiler` 1.0, `@rolldown/plugin-babel` 0.3.1 with `@babel/core` 8.1.2 (8.1.3 was too new) | MIT | Rsbuild | No |
+| PWA plugin / SW | vite-plugin-pwa 2.0.0 (`injectManifest`), workbox-precaching / -routing 7.4.1 (no workbox-window: own registration code, §8.4) | MIT | Serwist 9.5 | SW: yes |
+| Router | @tanstack/react-router 1.170.46 (+ @tanstack/router-plugin 1.169.0, build-time) | MIT | react-router 8.5 | Yes |
+| UI components | shadcn/ui (CLI `shadcn@4.23.0` through `pnpm dlx`, not a dependency; code copied in through the `#ui/*` alias, §8.9.2) on @base-ui/react 1.9.0 | MIT | Mantine 9.8 | Yes |
+| Styling | Tailwind CSS 4.3.5, `tailwind-merge` 3.7.0, `clsx` 2.1, `class-variance-authority` 0.7 (Apache-2.0) | MIT / Apache-2.0 | CSS Modules | CSS + small runtime |
 | State | zustand 5.1.0 + Dexie `liveQuery` | MIT | jotai 3.0 | Yes |
-| IndexedDB | dexie 4.4.7, dexie-react-hooks 4.4.0 | Apache-2.0 | @sqlite.org/sqlite-wasm 3.54 | Yes |
+| IndexedDB | dexie 4.4.7 (live queries through the own `useObservable` hook; no dexie-react-hooks) | Apache-2.0 | @sqlite.org/sqlite-wasm 3.54 | Yes |
 | Validation | zod 4.6.7 (`jitless`) | MIT | valibot 1.5 | Yes |
 | Forms | react-hook-form 7.92.0, @hookform/resolvers 7.0.8 | MIT | @tanstack/react-form 1.33 | Yes |
 | Date and time | temporal-polyfill 1.0.8 (ponyfill) | MIT | date-fns 4.4 + @date-fns/tz 1.5 | Yes |
@@ -2408,12 +2483,13 @@ flowchart LR
 | E2E | @playwright/test 1.65.1 | Apache-2.0 | cypress 16 | No |
 | Accessibility tests | axe-core 4.14.1 (dev-only, MPL-2.0 allowed as non-distributed tool) | MPL-2.0 | — | No |
 | IndexedDB in Node tests | fake-indexeddb 6.2.8 | Apache-2.0 | — | No |
-| Lint | oxlint 1.95.0 + oxlint-tsgolint 7.0.2008 (type-aware); optional JS plugins (alpha, warnings only): eslint-plugin-lingui 0.16.0, eslint-plugin-react-hooks 7.1.1; knip 6.48.0 | MIT / ISC | ESLint 10 + typescript-eslint 8 | No |
+| Lint | oxlint 1.95.0 + oxlint-tsgolint 7.0.2008 (type-aware); optional JS plugins (alpha, warnings only): eslint-plugin-lingui 0.16.0, eslint-plugin-react-hooks 7.1.1 (their peer ESLint 10.15.0 is installed but never run); knip 6.48.0 | MIT / ISC | ESLint 10 + typescript-eslint 8 | No |
 | Format | oxfmt 0.80.0 (beta since 2026-02-24; TS/TSX, JSON, YAML, CSS, Markdown, HTML; built-in Tailwind class sorting) | MIT | Prettier 3.10 | No |
 | Editor integration | Oxc VS Code extension `oxc.oxc-vscode` (oxlint + oxfmt language servers); TypeScript 7 VS Code extension | — | — | No |
-| Licence tooling | own `tools/licence` + spdx-expression-parse 5.0.0 + spdx-satisfies 6.0.1 + `pnpm licenses` | MIT | rollup-plugin-license 3.7 | No |
+| Licence tooling | own `tools/licence` (own SPDX evaluator) + spdx-expression-parse 5.0.0 + yaml 2.9.1 + `pnpm licenses`; build-only data `spdx-exceptions` 2.5.0 (CC-BY-3.0, approved exception) | MIT / ISC | rollup-plugin-license 3.7 | No |
 | Budgets | size-limit 14.3.0, @lhci/cli 0.16.1 | MIT / Apache-2.0 | — | No |
-| Build-time content | yaml 2.9.1, svgo 4.1.0, @vite-pwa/assets-generator 2.0.0, colorjs.io 0.7.1 (tests) | ISC / MIT | — | No |
+| Build-time content | yaml 2.9.1, svgo 4.1.0, colorjs.io 0.7.1 (tests); app icons from the own `tools/icons` generator (Node `zlib`; `@vite-pwa/assets-generator` would bring sharp with an LGPL-3.0 libvips binary) | ISC / MIT | — | No |
+| Type definitions | @types/node 26.6.6, @types/react 19.3.0, @types/react-dom 19.3.0 | MIT | — | No |
 | Package manager | pnpm 12.23.0 (resolved 2026-11-24: A, OQ-T8) | MIT | Bun | No |
 | Hosting server | Hetzner Cloud VPS, Nuremberg (Germany), Ubuntu 24.04 LTS, ≥ 2 vCPU / 4 GB | Service | Cloudflare Pages | Server-side |
 | Deployment platform | Coolify 4.7.6 (self-hosted; released 2026-11-19) | Apache-2.0 | Plain Docker Compose + Caddy | Server-side |
@@ -2434,12 +2510,12 @@ Server-side components (Coolify, Traefik, nginx, Alpine packages) run on the pub
 | @base-ui/react | 2026-10-09 | ≈ 32 M | Very active (shadcn default base since July 2026) |
 | tailwindcss | 2026-11-23 | ≈ 190 M | Very active |
 | zustand | 2026-11-06 | ≈ 97 M | Very active |
-| dexie | 2026-10-23 | ≈ 3.6 M | Active; dexie-react-hooks last updated 2026-03-26 (stable) |
+| dexie | 2026-10-23 | ≈ 3.6 M | Active |
 | zod | 2026-10-12 | ≈ 470 M | Very active |
 | react-hook-form | 2026-11-21 | ≈ 68 M | Very active |
 | temporal-polyfill | 2026-11-04 | ≈ 8.8 M | Active |
 | echarts | 2026-05-19 | ≈ 11.4 M | Active (Apache project; 6.1 in May 2026) |
-| workbox-precaching / -routing / -window | 2026-05-04 | ≈ 12.7 M | Maintained, slower cadence (risk T-09) |
+| workbox-precaching / -routing | 2026-05-04 | ≈ 12.7 M | Maintained, slower cadence (risk T-09) |
 | lucide-react | 2026-11-23 | ≈ 144 M | Very active |
 | @lingui/core | 2026-11-03 | n/a | Active |
 | fflate | 2026-07-20 | n/a | Stable, low churn |
@@ -2553,6 +2629,7 @@ Minimum versions; "current" per BCD = Chrome for Android 158, Samsung Internet 3
 **OQ-T10 · oxlint's alpha JS plugins.** **Resolved 2026-11-24: warn now, block later.**
 - `eslint-plugin-lingui` (`no-unlocalized-strings`) and the React Compiler rules of `eslint-plugin-react-hooks` run through oxlint's alpha JS plugins as **non-blocking warnings**. They become blocking once oxlint JS plugins are stable.
 - Native oxlint rules (including `react/jsx-no-literals`, `rules-of-hooks`, `exhaustive-deps`, `jsx-a11y` and the layer rules) and the Lingui catalog check **stay blocking** (§8.15, §8.21, ADR-0016, ADR-0017; risk T-16, TD-08).
+- v0.3: oxlint 1.95 ships native, blocking ports of most React Compiler rules (§8.5). Narrowing the alpha-plugin scope of this decision to the rules without a native port is TD-10.
 
 **OQ-T11 · Business domain and DNS for the beta subdomain.** **Resolved 2026-11-24.**
 - DNS stays at the business domain's current provider. The records to add are A/AAAA for `beta.<business-domain>` and `coolify.<business-domain>`, plus a CAA record allowing Let's Encrypt (§7.6).

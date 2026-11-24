@@ -1,6 +1,6 @@
 # ADR-0006: IndexedDB library and persistence model: Dexie 4
 
-- Status: Accepted (photo storage revisited after spike S-3b)
+- Status: Accepted (photo storage revisited after spike S-3b; v0.3, 2026-11-24: amended after M0, see below)
 - Date: 2026-11-23
 - Related: technical concept §8.2, §6.3, §6.5, §6.8; PRD DAT-01…04, DAT-14, NFR-REL-01…08, TC-01, TC-14
 
@@ -43,3 +43,11 @@ Facts checked 2026-11-23:
 - Negative: no SQL for ad-hoc analytics; mitigated by derived tables designed for the hot queries.
 - Negative: strict durability adds write latency; measured in spike S-3a (budget 500 ms leaves a wide margin).
 - Runner-up: **SQLite WASM on OPFS** if analytics queries over raw data become a bottleneck (would require a worker-only data layer and reactive invalidation done by hand).
+
+## Amendment (v0.3, 2026-11-24)
+
+- **No `dexie-react-hooks`.** React reads live queries through the app's own `useObservable` hook on `useSyncExternalStore` (ADR-0005), one mechanism instead of two. The package was never installed; knip confirms there are no unused dependencies.
+- **M0 schema.** `powr` version 1 holds the four walking-skeleton tables `meta`, `settings`, `sessions` and `sets` (WP0.5). Indexes use nested key paths on the stored `InstantTz` (`startedAt.epochMs`, `[exerciseId+performedAt.epochMs]`) instead of denormalized `startedAtMs`/`performedAtMs` fields. Before the first beta with user data it is decided whether the remaining MVP tables extend version 1 or arrive as version 2 with a migration (TD-19).
+- **`powr-runtime`** is plain IndexedDB without Dexie (version 1, one `kv` store), so the service worker stays small and Dexie-free.
+
+Source: `IMPLEMENTATION_NOTES.md` §3 (repository root), which records each deviation with its reason.

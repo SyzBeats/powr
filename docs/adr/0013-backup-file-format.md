@@ -1,6 +1,6 @@
 # ADR-0013: Backup file format: ZIP container with JSON tables, manifest and SHA-256
 
-- Status: Accepted (resolved 2026-11-24: A, OQ-T6; confirmed by the product owner)
+- Status: Accepted (resolved 2026-11-24: A, OQ-T6; confirmed by the product owner; v0.3, 2026-11-24: amended after M0, see below)
 - Date: 2026-11-23
 - Related: technical concept §8.3, §6.4, §6.5; PRD DAT-05…11, NFR-REL-02/06, NFR-SEC-02, NFR-MNT-03, TC-06, P-04
 
@@ -37,3 +37,12 @@ Backups are the only way to move data between devices. The file must contain all
 - Negative: slightly more code than a single JSON file (zip handling, limits); fflate is small (about 12 KB gzipped).
 - Negative: checksums are not authentication; authenticity comes only with encryption (v1.3).
 - Runner-up: a single JSON file, if photos were never needed.
+
+## Amendment (v0.3, 2026-11-24)
+
+- **Synchronous fflate API.** The codec uses `zipSync`/`unzipSync`, not fflate's async API, which starts its workers from `blob:` URLs that the CSP's `worker-src 'self'` blocks. For large backups the codec moves into the engine worker (TD-16).
+- **Canonical JSON.** Besides sorting arrays by primary key, object keys are sorted, so equal data gives equal bytes and hashes regardless of property order. To be stated in `docs/formats/backup-format.md` when that document is written.
+- **Zip-bomb ratio.** The per-entry ratio limit of 200 applies to entries larger than 1 MiB; small, highly repetitive JSON legitimately compresses better. All limits are checked from the central directory before inflating.
+- **Lazy chunk.** The codec, its Zod schemas and fflate are the separate entry `@powr/formats/backup` (use cases: `@powr/application/backup`), loaded on the first export or import and precached by the service worker.
+
+Source: `IMPLEMENTATION_NOTES.md` §3 (repository root), which records each deviation with its reason.
