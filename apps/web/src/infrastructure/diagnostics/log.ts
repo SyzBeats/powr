@@ -12,6 +12,7 @@ const DIAGNOSTIC_CODES = {
   'db.error': ['name'],
   'content.error': ['name'],
   'rules.error': ['name'],
+  'i18n.error': ['name'],
   'set.logged': ['commitMs', 'startedSession'],
   'session.finished': [],
   'backup.exported': ['bytes', 'ms'],

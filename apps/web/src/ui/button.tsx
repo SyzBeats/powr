@@ -10,7 +10,8 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary: 'bg-primary text-on-primary',
-        secondary: 'border border-border bg-surface text-fg',
+        secondary: 'border border-control bg-surface text-fg',
+        info: 'border-2 border-info bg-surface text-info',
         ghost: 'bg-transparent text-fg',
         danger: 'bg-danger text-on-danger',
       },
@@ -25,6 +26,11 @@ const buttonVariants = cva(
 );
 
 export type ButtonProps = ComponentProps<typeof BaseButton> & VariantProps<typeof buttonVariants>;
+
+/** Button styles for links that look like buttons (`<Link className={buttonClass(…)}>`). */
+export function buttonClass(options: VariantProps<typeof buttonVariants> = {}, className?: string) {
+  return cn(buttonVariants(options), className);
+}
 
 export function Button({ className, variant, size, ...props }: ButtonProps) {
   return <BaseButton className={cn(buttonVariants({ variant, size }), className)} {...props} />;

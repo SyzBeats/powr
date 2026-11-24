@@ -113,6 +113,67 @@ describe('plan generation properties (PLN-01, EQP-04, EXL-08)', () => {
     );
   }, 120_000);
 
+  it('lowers targets for the time budget only with a budget, never below the minimum dose or for a priority muscle', () => {
+    fc.assert(
+      fc.property(request, (input) => {
+        const proposal = generate(input).value;
+        if (!proposal) return;
+        const rules = rulesFor(input.level, input.style);
+        const minimumDose = rules['volume.hypertrophy.minimumDose'].value.setsPerWeek;
+        const lowered = proposal.targets.filter((target) => target.source === 'timeBudget');
+        expect(input.sessionMinutes === null ? lowered : []).toEqual([]);
+        for (const target of lowered) {
+          expect({ ...target, priority: input.priorities.includes(target.muscle) }).toEqual({
+            ...target,
+            priority: false,
+          });
+          expect(target.sets).toBeGreaterThanOrEqual(minimumDose);
+          expect(target.full).toBeGreaterThan(target.sets);
+        }
+        for (const target of proposal.targets) {
+          expect(target.full === undefined).toBe(target.source !== 'timeBudget');
+        }
+        expect(
+          proposal.notes.some((note) => note.rule === 'plan.volume.budget'),
+          'a budget note exactly when a target was lowered',
+        ).toBe(lowered.length > 0);
+      }),
+      { numRuns: runs(100) },
+    );
+  }, 120_000);
+
+  it('offers a longer session (or "90+") and another day for every time-budget issue', () => {
+    fc.assert(
+      fc.property(request, (input) => {
+        const proposal = generate(input).value;
+        if (!proposal || input.sessionMinutes === null) return;
+        const budget = input.sessionMinutes;
+        const issues = proposal.report.issues.filter(
+          (issue) =>
+            issue.why.rule === 'validate.volume.timeBudget' ||
+            ((issue.why.rule === 'validate.volume.low' ||
+              issue.why.rule === 'validate.volume.belowFloor') &&
+              issue.cause === 'timeBudget'),
+        );
+        for (const issue of issues) {
+          const longer = issue.fixes.find((fix) => fix.kind === 'sessionMinutes');
+          const minutes = longer?.kind === 'sessionMinutes' ? longer.minutes : undefined;
+          expect({
+            key: issue.key,
+            // A longer session than now, at most 90 minutes, or null ("90+").
+            longer:
+              minutes === null || (minutes !== undefined && minutes > budget && minutes <= 90),
+            addDay: issue.fixes.some((fix) => fix.kind === 'addDay'),
+          }).toEqual({ key: issue.key, longer: true, addDay: proposal.days.length < 6 });
+        }
+        expect(
+          proposal.report.issues.filter((issue) => issue.why.rule === 'validate.volume.timeBudget'),
+        ).toHaveLength(proposal.targets.filter((target) => target.source === 'timeBudget').length);
+      }),
+      { numRuns: runs(100) },
+    );
+  }, 120_000);
+
   it('either plans without avoidable violations or explains why it cannot', () => {
     fc.assert(
       fc.property(request, (input) => {

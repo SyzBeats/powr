@@ -13,6 +13,7 @@ export {
   type LogSetResult,
 } from './usecases/session';
 export { setTheme } from './usecases/settings';
+export { firstRunState, setWeekStart, type LegalVersions } from './usecases/first-run';
 export {
   getStorageStatus,
   requestPersistentStorage,

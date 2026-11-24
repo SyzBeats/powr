@@ -1,4 +1,4 @@
-import { expect, test, waitForOfflineReady } from './fixtures';
+import { expect, skipOnboarding, test, waitForOfflineReady } from './fixtures';
 
 test.describe('offline (WP0.4, PWA-03)', () => {
   test('after the service worker installs, the app reloads and works offline', async ({
@@ -6,6 +6,7 @@ test.describe('offline (WP0.4, PWA-03)', () => {
     context,
     server,
   }) => {
+    await skipOnboarding(page);
     await page.goto('/');
     await waitForOfflineReady(page);
 
@@ -49,6 +50,8 @@ test.describe('offline (WP0.4, PWA-03)', () => {
       start_url: '/',
       scope: '/',
     });
+    // WCAG 2.2 AA 1.3.4: the installed app must not lock the orientation (TD-35).
+    expect(manifest).not.toHaveProperty('orientation');
     expect(manifest.icons).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ sizes: '192x192', purpose: 'any' }),

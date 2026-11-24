@@ -10,7 +10,7 @@ import type { Param, ParamId, ParamValues, RuleSet } from '../../src/rules';
 export const EB_DEFAULTS: ParamValues = {
   'load.e1rm.equation': 'wathan',
   'load.curve.classMap': {
-    benchLike: 'equation',
+    equation: 'equation',
     legPressLike: 'nuzzoLegPress',
     pooled: 'nuzzoPooled',
   },
@@ -146,6 +146,7 @@ export const EB_DEFAULTS: ParamValues = {
   'volume.strength.weeklyHeavySetsPerLift': { min: 4, max: 10 },
   'volume.startingVolume.maxFactor': 1.2,
   'volume.maintenance': { volumeFraction: 0.33, minSessionsPerWeek: 1 },
+  'volume.hypertrophy.minimumDose': { setsPerWeek: 4 },
   'volume.repRange.hypertrophy': {
     compound: { min: 6, max: 15 },
     isolation: { min: 8, max: 20 },
@@ -376,6 +377,10 @@ export const EB_DEFAULTS: ParamValues = {
   'planning.rotation.perMuscle': { min: 1, max: 2 },
   'planning.variety.pool': 3,
   'planning.missed.mergePriorities': ['primary'],
+  'planning.timeBudget.fallback': {
+    keepFull: ['priorities', 'template'],
+    templateSlots: ['primary'],
+  },
   'ranking.effectiveness': {
     weights: { credit: 0.4, evidence: 0.15, stretch: 0.15, overload: 0.2, subRegion: 0.1 },
     evidenceScore: { H: 1, EMG: 0.5, C: 0 },

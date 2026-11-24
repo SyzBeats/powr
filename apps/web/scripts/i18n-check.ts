@@ -19,7 +19,10 @@ const readCatalogs = () =>
   );
 
 const before = readCatalogs();
-execFileSync('pnpm', ['exec', 'lingui', 'extract', '--clean'], { cwd: webRoot, stdio: 'ignore' });
+execFileSync('pnpm', ['exec', 'lingui', 'extract', '--clean', '--overwrite'], {
+  cwd: webRoot,
+  stdio: 'ignore',
+});
 const after = readCatalogs();
 
 const changed = Object.keys(after).filter((locale) => before[locale] !== after[locale]);

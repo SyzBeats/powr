@@ -1,0 +1,15 @@
+{
+  "local": {
+    "measuredAt": "2026-11-24",
+    "lighthouse": "13.6.0",
+    "runs": 5,
+    "benchmarkIndex": 2708,
+    "metrics": {
+      "first-contentful-paint": 901,
+      "largest-contentful-paint": 901,
+      "speed-index": 1678,
+      "interactive": 4528,
+      "total-blocking-time": 27
+    }
+  }
+}

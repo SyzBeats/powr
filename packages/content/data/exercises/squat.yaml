@@ -30,8 +30,8 @@
     - { muscle: mu.adductors, credit: 0.5, evidence: H, source: src.kubo2019 }
     # "Squats don't count toward hamstrings" (MRI evidence).
     - { muscle: mu.hamstrings, credit: 0, evidence: H, source: src.kubo2019 }
-  # curveClass benchLike = Wathan/RTS equation for competition squat/deadlift and close variants (product-owner decision 2026-11-24; replaced by the personal curve later)
-  load: { type: barbell, curveClass: benchLike, unilateral: false, bodyweightLoaded: false }
+  # curveClass equation = the user's e1RM equation (Wathan/RTS) for competition squat/deadlift and close variants (product-owner decision 2026-11-24; replaced by the personal curve later)
+  load: { type: barbell, curveClass: equation, unilateral: false, bodyweightLoaded: false }
   defaults:
     repRange: { hypertrophy: [6, 12], strength: [1, 6] }
     restClass: strength
@@ -61,8 +61,8 @@
     - { muscle: mu.glutes.max, credit: 0.5, evidence: H, source: src.plotkin2023 }
     - { muscle: mu.adductors, credit: 0.5, evidence: H, source: src.kubo2019 }
     - { muscle: mu.hamstrings, credit: 0, evidence: H, source: src.kubo2019 }
-  # curveClass benchLike = Wathan/RTS equation for competition squat/deadlift and close variants (product-owner decision 2026-11-24; replaced by the personal curve later)
-  load: { type: barbell, curveClass: benchLike, unilateral: false, bodyweightLoaded: false }
+  # curveClass equation = the user's e1RM equation (Wathan/RTS) for competition squat/deadlift and close variants (product-owner decision 2026-11-24; replaced by the personal curve later)
+  load: { type: barbell, curveClass: equation, unilateral: false, bodyweightLoaded: false }
   defaults:
     repRange: { hypertrophy: [6, 12], strength: [1, 6] }
     restClass: strength

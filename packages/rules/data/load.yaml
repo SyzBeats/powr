@@ -14,18 +14,23 @@
   verified: true
   userOverridable: true
   note: >-
-    Applies to bench-like exercises (load.curve.classMap). "rts" selects the exact RTS lookup,
-    which the EB shows tracks Wathan within about 0.6 points for 2–10 effective reps.
+    Applies to exercises of curve class equation (load.curve.classMap; TD-30). "rts" selects the
+    exact RTS lookup, which the EB shows tracks Wathan within about 0.6 points for 2–10 effective
+    reps.
 
 - id: load.curve.classMap
-  value: { benchLike: equation, legPressLike: nuzzoLegPress, pooled: nuzzoPooled }
+  value: { equation: equation, legPressLike: nuzzoLegPress, pooled: nuzzoPooled }
   unit: none
   evidence: [MA, INF]
   sources: [src.nuzzo2024, src.powr-eb-load]
   ebRef: 'EB §Load › Reps at %1RM (load-for-target hierarchy); §Gaps #5; technical concept §8.7.4 (E-3)'
   verified: true
   userOverridable: false
-  note: "Replaced per exercise by the user's fitted curve once enough data exist (not in M1)."
+  note: >-
+    The class equation (renamed from benchLike, TD-30) selects the user's e1RM equation (Wathan or
+    RTS); it covers bench-like exercises and, by the product-owner decision of 2026-11-24, the
+    competition squat and deadlift and their close variants. Replaced per exercise by the user's
+    fitted curve once enough data exist (not in M1).
 
 - id: load.curve.nuzzoPooled
   value:

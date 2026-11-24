@@ -1,4 +1,4 @@
-import { controllerBuild, expect, test, waitForOfflineReady } from './fixtures';
+import { controllerBuild, expect, skipOnboarding, test, waitForOfflineReady } from './fixtures';
 
 /**
  * QS-04 / PWA-04: version N+1 is deployed while a workout runs on N. The install gate keeps N
@@ -9,6 +9,7 @@ test('never updates during a workout; offers and applies the update afterwards',
   server,
 }) => {
   test.skip(!server, 'needs the local test server to deploy a second version');
+  await skipOnboarding(page);
   await page.goto('/');
   await waitForOfflineReady(page);
   // The first install does not take over the open page; a reload makes it the controller.
@@ -67,6 +68,7 @@ test('shows the update but keeps it disabled while a workout is active', async (
   server,
 }) => {
   test.skip(!server, 'needs the local test server to deploy a second version');
+  await skipOnboarding(page);
   await page.goto('/');
   await waitForOfflineReady(page);
   await page.reload();

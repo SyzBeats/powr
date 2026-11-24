@@ -2,14 +2,17 @@ import * as fc from 'fast-check';
 import { strFromU8, strToU8, unzipSync, zipSync } from 'fflate';
 import { describe, expect, it } from 'vitest';
 
+import type { Plan } from '@powr/domain';
+
 import { RAW_TABLE_NAMES, emptyRawTables, type RawTables } from '../src';
 import {
   DEFAULT_ARCHIVE_LIMITS,
   decodeBackup,
   encodeBackup,
+  validateRawTables,
   type BackupSource,
 } from '../src/backup';
-import { rawTables } from './arbitraries';
+import { plan, rawTables } from './arbitraries';
 
 /** `FC_NUM_RUNS=5000 pnpm vitest run --project formats` for a long run (vitest.setup.ts). */
 const runs = (fallback: number) => fc.readConfigureGlobal().numRuns ?? fallback;
@@ -40,6 +43,9 @@ function sorted(tables: RawTables): RawTables {
     bodyweights: byId(tables.bodyweights),
   };
 }
+
+/** Whether a plan record passes the strict v2 schema. */
+const validPlan = (record: Plan) => validateRawTables({ ...emptyRawTables(), plans: [record] }).ok;
 
 /** Rewrites entries of an existing backup without touching anything else. */
 function rezip(bytes: Uint8Array, change: (files: Record<string, Uint8Array>) => void): Uint8Array {
@@ -179,6 +185,32 @@ describe('backup import rejects bad files before anything is written', () => {
     const extra = { ...tables, settings: [{ id: 'me', theme: 'dark', script: '<b>' }] };
     const { bytes } = await encodeBackup(extra as unknown as RawTables, source);
     expect(await decodeBackup(bytes)).toMatchObject({ ok: false, error: { kind: 'invalidData' } });
+  });
+
+  it('checks dismissed warning keys and time-budget targets on plan records (PLN-09, PLN-14)', () => {
+    const [base] = fc.sample(plan('p1', 'e1', 'active'), { numRuns: 1, seed: 7 });
+    const mesocycle = base!.mesocycles[0]!;
+    const withTargets = (targets: readonly unknown[]) =>
+      ({ ...base!, mesocycles: [{ ...mesocycle, targets }] }) as unknown as Plan;
+    expect(
+      validPlan({
+        ...withTargets([{ muscle: 'mu.glutes', sets: 6, source: 'timeBudget', full: 15 }]),
+        dismissedIssues: ['volume.timeBudget:mu.glutes:6/6/15', 'time.overBudget:d0:68'],
+      }),
+    ).toBe(true);
+    const { dismissedIssues: _omitted, ...withoutKeys } = base!;
+    expect(validPlan(withoutKeys as Plan)).toBe(false);
+    expect(validPlan({ ...base!, dismissedIssues: [''] })).toBe(false);
+    expect(validPlan({ ...base!, dismissedIssues: ['k'.repeat(301)] })).toBe(false);
+    expect(
+      validPlan({ ...base!, dismissedIssues: Array.from({ length: 501 }, (_, i) => `key:${i}`) }),
+    ).toBe(false);
+    expect(
+      validPlan(withTargets([{ muscle: 'mu.glutes', sets: 6, source: 'band', full: 15 }])),
+    ).toBe(false);
+    expect(validPlan(withTargets([{ muscle: 'mu.glutes', sets: 6, source: 'timeBudget' }]))).toBe(
+      false,
+    );
   });
 
   it('rejects files from a newer app version', async () => {

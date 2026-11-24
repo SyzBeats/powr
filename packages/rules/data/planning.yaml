@@ -95,3 +95,19 @@
   verified: false
   userOverridable: true
   note: 'POWR reading of "key work": the primary slots; the per-session caps still apply.'
+
+- id: planning.timeBudget.fallback
+  value: { keepFull: [priorities, template], templateSlots: [primary] }
+  unit: none
+  evidence: [INF]
+  sources: [src.powr-prd, src.iversen2021]
+  ebRef: 'PRD PLN-03 (priority muscles in the upper part of the band, de-prioritized muscles at the floor or maintenance level) and PLN-14 (time budget); EB §Volume › Minimum and maintenance doses; §Session › Session duration and time-cap mode'
+  verified: false
+  userOverridable: false
+  note: >-
+    POWR design value (product-owner decision, M2b): when the session time budget cannot fit
+    every weekly target, the first non-empty group in keepFull keeps its full target: the user's
+    priority muscles, else the template's emphasis (the display groups its hypertrophy slots of a
+    templateSlots priority target). Every other muscle falls back towards
+    volume.hypertrophy.minimumDose; the plan says so and suggests more minutes per session or
+    another training day.

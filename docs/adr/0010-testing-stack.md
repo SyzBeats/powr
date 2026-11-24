@@ -1,6 +1,6 @@
 # ADR-0010: Testing stack
 
-- Status: Accepted (v0.3, 2026-11-24: E2E test server, see below)
+- Status: Accepted (v0.3, 2026-11-24: E2E test server, see below; amended v0.5)
 - Date: 2026-11-23, amended 2026-11-24
 - Related: technical concept §8.20, §10.2; PRD NFR-MNT-02/03/05, NFR-A11Y-11, TC-13, M9–M12
 
@@ -55,3 +55,14 @@ End-to-end tests:
 - **Not built in M0:** Vitest browser-mode component tests with Testing Library and the Lingui pseudo-locale expansion test (M1, TD-11).
 
 Source: `IMPLEMENTATION_NOTES.md` §3 (repository root), which records each deviation with its reason.
+
+## Amendment (v0.5, 2026-11-24)
+
+The decision stands. Component tests exist since M2b (TD-11): Vitest browser mode (`@vitest/browser-playwright` 5.1.1, real Chromium) with Testing Library 16.3, user-event 14.6 and axe-core 4.14 (a development-only MPL-2.0 dependency the licence policy allows). The project reuses the app's Vite configuration (Lingui, React Compiler, Tailwind), renders at 360 × 780 and runs the screens against the real container and a real IndexedDB; it is part of `pnpm test`. The Lingui expansion test (+30%) builds its own expanded catalog, because Lingui's pseudo-locale only accents characters (technical concept §8.15, §8.20). The E2E suite runs axe in both themes on every new screen and reflow checks at 320 px and 200% text. Because the component tests run in a real Chromium, the CI `test` job runs `pnpm --filter @powr/web exec playwright install --with-deps chromium` before `pnpm test`.
+
+v0.5 also folds in the M2 tooling (TD-09 native Lingui macro, TD-10 native React Compiler lint rules, TD-12 Lighthouse CI and Trusted Types in dev/E2E) and the Sentry package block list. For this ADR:
+
+- **The E2E server enforces Trusted Types.** `e2e/static-server.ts` appends `require-trusted-types-for 'script'; trusted-types powr-sw` (defined once in `apps/web/scripts/trusted-types.ts`) to the CSP from `deploy/security-headers.conf` (`startStaticServer({ trustedTypes })`, on by default). Every E2E test therefore runs with Trusted Types enforced, and the fixture's CSP-violation check covers them. `e2e/trusted-types.spec.ts` passes the first-run gate (`skipOnboarding`), then asserts the header, the registered service worker, and that string script sinks, an unknown policy and a second `powr-sw` policy throw. It is skipped against the nginx image, which does not send the directives until TD-03. The production headers in `deploy/` are unchanged.
+- **Lighthouse CI with per-environment baselines.** `apps/web/scripts/lighthouse.ts` (`pnpm lighthouse`) runs Lighthouse CI 0.16.1 (Lighthouse 13.6.0, mobile preset, 3 runs, median) against the production build, served by the same test server with `trustedTypes: false`, so exactly with the production headers. FCP, LCP, Speed Index, TTI and TBT fail at more than 20% above the stored baseline, with a minimum margin of 100 ms (TTI 150 ms). Baselines are kept per environment in `apps/web/lighthouse-baseline.json` (`local`, later `ci`), because simulated throttling scales the CPU time of the measuring machine. Without a baseline a run only reports. The CI job `lighthouse` runs on `main`, nightly and on demand, never on pull requests. Lighthouse CI is not part of `pnpm verify` and is not a device measurement (technical concept §8.19, §8.21).
+
+Source: `IMPLEMENTATION_NOTES.md` (repository root), sections "M2b screens" and "M2 tooling (TD-09, TD-10, TD-12)".

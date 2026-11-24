@@ -243,6 +243,10 @@ export function editsForFix(fix: PlanFix, days: readonly PlanDay[]): readonly Pl
           exerciseId: fix.exerciseId,
         },
       ];
+    case 'sessionMinutes':
+    case 'addDay':
+      // Input fixes: the caller regenerates the plan with the changed answers (PLN-14).
+      return [];
     default:
       // Supersets, technique sets and time-saver rests are session features (WKT-17, M3).
       return [];

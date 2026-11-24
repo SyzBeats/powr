@@ -1,6 +1,6 @@
 # ADR-0017: Lint and format: oxlint (type-aware) + oxfmt
 
-- Status: Accepted (product-owner decision 2026-11-24; supersedes the v0.1 decision "ESLint 10 + typescript-eslint + Prettier"; v0.3, 2026-11-24: amended after M0, see below)
+- Status: Accepted (product-owner decision 2026-11-24; supersedes the v0.1 decision "ESLint 10 + typescript-eslint + Prettier"; v0.3, 2026-11-24: amended after M0; v0.5, 2026-11-24: React Compiler rules native only, see below)
 - Date: 2026-11-23, rewritten 2026-11-24
 - Related: technical concept §5.2, §8.5, §8.14, §8.15, §8.21; ADR-0001 (boundaries), ADR-0002 (TypeScript 7.0), ADR-0016 (i18n); PRD NFR-MNT-04, NFR-A11Y-01
 
@@ -89,3 +89,18 @@ The matrix still favours ESLint + Prettier on rule coverage and plugin maturity.
 - **oxfmt `sortImports`** has a `subpath` group for the `#ui/*` alias (ADR-0002): built-in → external → `@powr/*` → `#ui/*` → relative.
 
 Source: `IMPLEMENTATION_NOTES.md` §3 (repository root), which records each deviation with its reason.
+
+## Amendment (v0.5, 2026-11-24)
+
+The decision stands. v0.5 folds in the M2 tooling (TD-09 native Lingui macro, TD-10 native React Compiler lint rules, TD-12 Lighthouse CI and Trusted Types in dev/E2E) and the Sentry package block list; for this ADR that is TD-10:
+
+- **React Compiler rules run natively only (TD-10 closed).** Parity was checked rule by rule. A scratch configuration enabled every compiler rule twice, natively and through the alpha plugin (`eslint-plugin-react-hooks` 7.1.1), on 30 probe files with at least one per rule plus a clean control. Every rule the alpha plugin ran has a native port that fires on the same code and reports the same reason. The rules without a port (`memoized-effect-dependencies`, which 7.1.1 never raises; `config` and `gating`, which only validate the ESLint plugin's compiler options; `fbt`, not used) lose nothing.
+- **Configuration in `oxlint.config.ts`, each rule set explicitly:**
+  - 13 rules block: `react/purity`, `refs`, `immutability`, `globals`, `set-state-in-render`, `set-state-in-effect`, `static-components`, `use-memo`, `void-use-memo`, `preserve-manual-memoization`, `incompatible-library`, `error-boundaries` and `unsupported-syntax` (an alpha warning before; `void-use-memo` was not in the alpha set).
+  - 4 rules warn: `hooks` and `memo-dependencies`, because `rules-of-hooks` and `exhaustive-deps` already block; `capitalized-calls`; and `exhaustive-effect-dependencies`, which the alpha plugin never ran and is stricter natively.
+  - Off: `no-deriving-state-in-effects`, `todo` (a compiler limitation, not a bug), `rule-suppression`, `syntax` and `invariant` (internal compiler errors; the build's bail-out report covers them).
+- **Alpha plugin removed.** `eslint-plugin-react-hooks`, its 12 rule entries and the root devDependency are gone. `eslint-plugin-lingui` is the only alpha JS plugin. ESLint 10 stays installed only as its peer and is never run. OQ-T10 now covers only `eslint-plugin-lingui`.
+- **Probe test.** `tools/arch-test/test/boundary-probes.test.ts` writes a file with five violating components and asserts that lint fails with `react(purity)`, `refs`, `set-state-in-render`, `immutability` and `unsupported-syntax` errors and no `react-hooks-js` output.
+- **Consequences.** The negative consequence "the React Compiler rules are only available as alpha JS-plugin warnings" no longer applies; risk T-16 now concerns only Lingui's `no-unlocalized-strings` (TD-08).
+
+Source: `IMPLEMENTATION_NOTES.md` (repository root), section "M2 tooling (TD-09, TD-10, TD-12)".

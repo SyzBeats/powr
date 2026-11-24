@@ -7,17 +7,688 @@ msgstr ""
 "X-Generator: @lingui/cli\n"
 "Language: pseudo\n"
 
+#: src/features/equipment/SubstitutionReview.tsx
+msgid " or "
+msgstr ""
+
+#. placeholder {0}: day.slots.length
+#: src/features/plan/parts.tsx
+msgid "{0, plural, one {# exercise} other {# exercises}}"
+msgstr ""
+
+#. placeholder {0}: profile.items.length
+#: src/features/equipment/EquipmentEditor.tsx
+msgid "{0, plural, one {# item selected} other {# items selected}}"
+msgstr ""
+
+#. placeholder {0}: missed.length
+#: src/features/plan/PlanScreen.tsx
+msgid "{0, plural, one {# missed session} other {# missed sessions}}"
+msgstr ""
+
+#. placeholder {0}: fix.sets
+#: src/features/plan/format.ts
+msgid "{0, plural, one {Add # set of {name}} other {Add # sets of {name}}}"
+msgstr ""
+
+#. placeholder {0}: outcome.spacing.length
+#: src/features/plan/PlanScreen.tsx
+msgid "{0, plural, one {Heads-up: # muscle or lift now has less than the usual recovery time. Consider another day.} other {Heads-up: # muscles or lifts now have less than the usual recovery time. Consider another day.}}"
+msgstr ""
+
+#. placeholder {0}: fix.sets
+#: src/features/plan/format.ts
+msgid "{0, plural, one {Remove # set of {name}} other {Remove # sets of {name}}}"
+msgstr ""
+
 #. placeholder {0}: backup.preview.counts.sets
 #: src/features/data/DataScreen.tsx
 msgid "{0, plural, one {Restoring replaces all data on this phone with this backup (# set). A safety copy of the current data is kept.} other {Restoring replaces all data on this phone with this backup (# sets). A safety copy of the current data is kept.}}"
+msgstr ""
+
+#. placeholder {0}: hidden.length
+#: src/features/plan/PlanEditorScreen.tsx
+msgid "{0, plural, one {Show # dismissed warning} other {Show # dismissed warnings}}"
+msgstr ""
+
+#. placeholder {0}: Math.round((goal - sets) * 10) / 10
+#: src/features/plan/parts.tsx
+msgid "{0} below target"
+msgstr ""
+
+#. placeholder {0}: schedule.weekdays.length
+#: src/features/onboarding/steps.tsx
+msgid "{0} days selected"
+msgstr ""
+
+#. placeholder {0}: target.name
+#: src/features/equipment/EquipmentScreens.tsx
+msgid "{0} deleted."
+msgstr ""
+
+#. placeholder {0}: profile.name
+#: src/features/equipment/EquipmentScreens.tsx
+msgid "{0} is now your default equipment."
+msgstr ""
+
+#. placeholder {0}: itemCount(profile)
+#: src/features/equipment/EquipmentScreens.tsx
+msgid "{0} items"
+msgstr ""
+
+#. placeholder {0}: labels.breakReason(current.reason)
+#. placeholder {1}: formatLocalDate(current.startDate)
+#: src/features/plan/PlanScreen.tsx
+msgid "{0} since {1}"
+msgstr ""
+
+#. placeholder {0}: other.name.en
+#. placeholder {1}: formatLocalDate(other.localDate)
+#: src/features/plan/PlanScreen.tsx
+msgid "{0}, {1}"
+msgstr ""
+
+#. placeholder {0}: labels.breakReason(current.reason)
+#. placeholder {1}: formatLocalDate(current.startDate)
+#. placeholder {2}: formatLocalDate(current.endDate)
+#: src/features/plan/PlanScreen.tsx
+msgid "{0}: {1} to {2}"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.plan.time.trimmed.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.plan.time.trimmed"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.deload.postponed"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.deload.postponed.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.progression.double.topReached"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.progression.double.topReached.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.equipment.availability.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.equipment.availability"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.plan.lift.unavailable"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.plan.lift.unavailable.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.validate.order.lift"
 msgstr ""
 
 #: src/features/home/HomeScreen.tsx
 msgid "{count, plural, one {# set logged} other {# sets logged}}"
 msgstr ""
 
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.plan.duration"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.plan.duration.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.e1rm.session"
+msgstr ""
+
+#: src/features/equipment/SubstitutionReview.tsx
+msgid "{exercise} ({day})"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.validate.avoided"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.plan.slot.preferred"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.validate.equipment.unavailable"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.ranking.effectiveness"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.plan.slot.exercise.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.progression.linear.stallReset"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.volume.sessionCap.exceeded"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.volume.sessionCap.within"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.volume.sessionCap.within.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.validate.spacing.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.progression.rpe.load"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.e1rm.loadForTarget"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.plan.slot.kept"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.plan.slot.kept.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.plan.prescription"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.validate.sessionCap.muscle"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.validate.volume.timeBudget.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.validate.volume.low.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.validate.volume.high.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.validate.volume.veryHigh.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.validate.volume.high"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.validate.volume.belowFloor"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.validate.volume.low"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.validate.volume.veryHigh"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.validate.volume.belowFloor.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.validate.volume.timeBudget"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.plan.next.volume.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.validate.frequency.muscle"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.validate.frequency.muscle.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.plan.next.volume"
+msgstr ""
+
+#: src/features/plan/PlanScreen.tsx
+msgid "{name}, planned {date}"
+msgstr ""
+
+#: src/features/plan/PlanEditorScreen.tsx
+msgid "{name}: {sets} sets"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.progression.percent.load"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.loading.round"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.loading.round.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.plan.template.none.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.plan.template.none"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.progression.rpe.backoff"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.plan.slot.dropped.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.plan.slot.dropped"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.e1rm.set.excluded"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.plan.slot.rotated"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.plan.slot.rotated.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.plan.prescription.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.rest.default"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.validate.coverage.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.validate.coverage"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.volume.band.high.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.volume.band.hardWarning.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.volume.band.softWarning.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.volume.band.belowFloor.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.volume.band.default.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.volume.band.low.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.validate.sessionCap.lift"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.volume.band.belowFloor"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.volume.band.high"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.volume.band.hardWarning"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.volume.band.low"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.volume.band.default"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.volume.band.softWarning"
+msgstr ""
+
+#: src/features/plan/format.ts
+msgid "{sets} × {durationS} s"
+msgstr ""
+
+#: src/features/plan/format.ts
+msgid "{sets} × {reps} at {load}"
+msgstr ""
+
+#: src/features/plan/format.ts
+msgid "{sets} × {reps} reps · {rir}"
+msgstr ""
+
+#: src/features/plan/format.ts
+msgid "{sets} × {reps} reps (technique set)"
+msgstr ""
+
+#: src/features/plan/format.ts
+msgid "{sets} × {reps} reps at {pct}%"
+msgstr ""
+
+#: src/features/plan/parts.tsx
+msgid "{sets} heavy sets on {sessions} days"
+msgstr ""
+
+#: src/features/plan/parts.tsx
+msgid "{sets} of {goal} sets a week"
+msgstr ""
+
+#: src/features/plan/parts.tsx
+msgid "{sets} of {target} heavy sets on {sessions} days"
+msgstr ""
+
+#: src/features/plan/parts.tsx
+msgid "{sets} sets a week"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.plan.volume.target.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.plan.volume.target"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.warmup.compound"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.warmup.isolation"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.warmup.isolation.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.validate.spacing"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.schedule.missed.merge"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.schedule.missed.merge.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.volume.setCredit"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.plan.template.levelMismatch"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.plan.template.levelMismatch.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.plan.template.default"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.validate.prescription.effort.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.validate.prescription.effort"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.bodyweight.trend"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.volume.notHardSet"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.volume.notHardSet.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.scoring.ipfGl"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.scoring.ipfPoints"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.plan.mesocycle"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.plan.mesocycle.simple"
+msgstr ""
+
+#: src/features/onboarding/steps.tsx
+msgid "{value} min"
+msgstr ""
+
+#: src/features/plan/format.ts
+msgid "{value} reps left"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.plan.slot.exercise"
+msgstr ""
+
+#: src/features/plan/PlanEditorScreen.tsx
+msgid "{violations} need attention, {warnings} worth a look."
+msgstr ""
+
+#: src/features/plan/PlanPreviewView.tsx
+msgid "{weeks} weeks of training, then a lighter week"
+msgstr ""
+
 #: src/features/session/LogSetScreen.tsx
 msgid "{weight} {unit} × {reps} · {time}"
+msgstr ""
+
+#. placeholder {0}: plate.pairs
+#: src/features/equipment/EquipmentEditor.tsx
+msgid "{weight} × {0} pairs"
+msgstr ""
+
+#: src/features/plan/format.ts
+msgid "1 × {topReps} top set · {topRir}, then {sets} × {reps}"
+msgstr ""
+
+#: src/features/plan/format.ts
+msgid "1 set, as many reps as possible"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "1–2 months ago"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "1–2 weeks ago"
+msgstr ""
+
+#: src/features/plan/format.ts
+msgid "10–20 sets"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "2 to 5 years"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "2–4 weeks ago"
+msgstr ""
+
+#: src/features/plan/format.ts
+msgid "21–30 sets"
+msgstr ""
+
+#: src/features/plan/format.ts
+msgid "4–9 sets"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "6 months to 2 years"
+msgstr ""
+
+#: src/features/onboarding/steps.tsx
+msgid "90+ min"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.progression.linear.stallReset.simple"
 msgstr ""
 
 #: src/features/shell/UpdateBanner.tsx
@@ -32,24 +703,460 @@ msgstr ""
 msgid "About"
 msgstr ""
 
+#: src/features/plan/parts.tsx
+msgid "about {duration}"
+msgstr ""
+
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "Accept and edit"
+msgstr ""
+
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "Accept plan"
+msgstr ""
+
+#: src/features/plan/NextMesocycleScreen.tsx
+msgid "Accept the next block"
+msgstr ""
+
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "Accepting replaces your current plan from today; logged training stays."
+msgstr ""
+
+#: src/features/labels.ts
+msgid "Accessories"
+msgstr ""
+
+#: src/features/equipment/EquipmentEditor.tsx
+msgid "Add"
+msgstr ""
+
+#: src/features/equipment/EquipmentEditor.tsx
+msgid "Add a plate weight"
+msgstr ""
+
+#: src/features/plan/format.ts
+msgid "Add a training day"
+msgstr ""
+
+#: src/features/equipment/EquipmentScreens.tsx
+msgid "Add equipment"
+msgstr ""
+
+#. placeholder {0}: days[index]!.name.en
+#: src/features/plan/PlanEditorScreen.tsx
+msgid "Add exercise to {0}"
+msgstr ""
+
+#: src/features/equipment/EquipmentEditor.tsx
+msgid "Add item"
+msgstr ""
+
+#. placeholder {0}: day.name.en
+#: src/features/plan/PlanEditorScreen.tsx
+msgid "Add to {0}"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.ranking.factor.subRegion.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.ranking.factor.stretch.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.ranking.factor.credit.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.ranking.factor.overload.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.ranking.factor.evidence.simple"
+msgstr ""
+
+#: src/features/onboarding/steps.tsx
+msgid "Adjust the equipment list"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "advanced"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.break.return.resume"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.break.return.reduce"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.break.return.reentry"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.break.return.recalibrate"
+msgstr ""
+
+#: src/features/onboarding/steps.tsx
+msgid "After a break, the first weeks start a little lighter."
+msgstr ""
+
+#: src/features/plan/PlanEditorScreen.tsx
+msgid "All checks pass."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.scoring.allometric"
+msgstr ""
+
+#: src/features/plan/format.ts
+msgid "Allow {minutes} per session"
+msgstr ""
+
+#: src/features/plan/format.ts
+msgid "Allow sessions of more than 90 minutes"
+msgstr ""
+
+#: src/features/plan/PlanScreen.tsx
+msgid "Already postponed once"
+msgstr ""
+
+#: src/features/equipment/EquipmentEditor.tsx
+msgid "Anything not in the list, e.g. a specific machine. Custom exercises can use it later."
+msgstr ""
+
+#: src/features/why/WhySheet.tsx
+msgid "App estimate"
+msgstr ""
+
+#: src/features/equipment/SubstitutionReview.tsx
+msgid "Apply all replacements"
+msgstr ""
+
+#: src/features/equipment/SubstitutionReview.tsx
+msgid "Apply the chosen replacements"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "APRE"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.progression.apre.session"
+msgstr ""
+
+#: src/features/onboarding/steps.tsx
+msgid "Are you trying to change your body weight?"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.progression.linear.advancedHold"
+msgstr ""
+
+#: src/features/onboarding/OnboardingFlow.tsx
+#: src/features/plan/PlanEditorScreen.tsx
+msgid "Back"
+msgstr ""
+
+#: src/features/equipment/SubstitutionReview.tsx
+msgid "Back to the equipment"
+msgstr ""
+
+#: src/features/plan/NextMesocycleScreen.tsx
+#: src/features/plan/PlanEditorScreen.tsx
+msgid "Back to the plan"
+msgstr ""
+
 #: src/features/data/DataScreen.tsx
 msgid "Backup"
+msgstr ""
+
+#: src/features/legal/LegalScreens.tsx
+msgid "Backup files you export are under your control. If you store or share them elsewhere, for example in a cloud drive, that service's terms apply. Clearing your browser data, uninstalling or the browser freeing space can delete your data, so keep backups."
+msgstr ""
+
+#: src/features/legal/LegalScreens.tsx
+msgid "Backups and data loss"
+msgstr ""
+
+#: src/features/equipment/EquipmentEditor.tsx
+msgid "Band label"
+msgstr ""
+
+#: src/features/equipment/EquipmentEditor.tsx
+msgid "Bands"
+msgstr ""
+
+#: src/features/equipment/EquipmentEditor.tsx
+msgid "Bands assist or add resistance; they never count towards your strength estimates."
+msgstr ""
+
+#: src/features/equipment/EquipmentEditor.tsx
+msgid "Bar weights"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "Bars"
+msgstr ""
+
+#: src/features/why/WhySheet.tsx
+msgid "Based on"
+msgstr ""
+
+#: src/features/plan/PlanScreen.tsx
+msgid "Based on practitioner surveys and expert consensus."
+msgstr ""
+
+#: src/features/labels.ts
+msgid "bench press"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "Benches"
+msgstr ""
+
+#: src/features/equipment/SubstitutionReview.tsx
+#: src/features/plan/PlanEditorScreen.tsx
+msgid "Best match"
+msgstr ""
+
+#: src/features/onboarding/steps.tsx
+msgid "Birth year"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "block"
+msgstr ""
+
+#: src/features/plan/PlanPreviewView.tsx
+msgid "Block"
+msgstr ""
+
+#: src/features/onboarding/steps.tsx
+msgid "Body weight"
+msgstr ""
+
+#: src/features/onboarding/steps.tsx
+msgid "Body-weight goal (optional)"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "Bodybuilding"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "Bodyweight"
+msgstr ""
+
+#: src/features/plan/PlanPreviewView.tsx
+msgid "Bodyweight plan"
+msgstr ""
+
+#: src/features/onboarding/steps.tsx
+msgid "Both: strength on the big three plus muscle-building work. Example week: two strength days and two size days."
+msgstr ""
+
+#: src/features/plan/PlanScreen.tsx
+msgid "Break"
+msgstr ""
+
+#: src/features/plan/PlanScreen.tsx
+msgid "Breaks"
+msgstr ""
+
+#. placeholder {0}: check.week
+#: src/features/plan/PlanScreen.tsx
+msgid "Bring the lighter week forward to week {0}"
+msgstr ""
+
+#: src/features/onboarding/steps.tsx
+msgid "Build muscle size. Example week: upper body, lower body, upper, lower."
+msgstr ""
+
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "Building your plan…"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "Cables"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "calf raise"
+msgstr ""
+
+#: src/features/plan/PlanScreen.tsx
+msgid "Calibration: start conservatively so POWR can learn your loads."
+msgstr ""
+
+#: src/features/equipment/EquipmentScreens.tsx
+#: src/features/plan/PlanScreen.tsx
+msgid "Cancel"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "Cardio"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "carry"
+msgstr ""
+
+#: src/features/onboarding/steps.tsx
+msgid "Centimetres (cm)"
+msgstr ""
+
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "Change days"
+msgstr ""
+
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "Change days or time"
+msgstr ""
+
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "Change equipment"
+msgstr ""
+
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "Change goal"
+msgstr ""
+
+#: src/features/plan/format.ts
+msgid "Change the plan"
+msgstr ""
+
+#: src/features/plan/PlanEditorScreen.tsx
+msgid "Change weekly targets"
+msgstr ""
+
+#: src/features/equipment/EquipmentScreens.tsx
+msgid "Check the highlighted fields: every item needs a name."
+msgstr ""
+
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "Check your birth year and body weight."
+msgstr ""
+
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "Check your goal."
+msgstr ""
+
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "Check your training days and session time."
+msgstr ""
+
+#: src/features/plan/PlanEditorScreen.tsx
+msgid "Checking…"
+msgstr ""
+
+#: src/features/plan/PlanEditorScreen.tsx
+msgid "Checks"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "chest fly"
 msgstr ""
 
 #: src/features/data/DataScreen.tsx
 msgid "Choose a POWR backup file (.zip)"
 msgstr ""
 
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "Choose how familiar RIR and RPE are to you."
+msgstr ""
+
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "Choose how long you have trained."
+msgstr ""
+
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "Choose what you want from training."
+msgstr ""
+
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "Choose when you last trained regularly."
+msgstr ""
+
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "Choose where you train, or start from an empty list."
+msgstr ""
+
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "Choose your equipment"
+msgstr ""
+
+#: src/features/equipment/EquipmentScreens.tsx
+#: src/features/plan/PlanEditorScreen.tsx
+#: src/features/plan/PlanScreen.tsx
+#: src/features/why/WhySheet.tsx
+msgid "Close"
+msgstr ""
+
+#: src/features/why/WhySheet.tsx
+msgid "Coaching convention"
+msgstr ""
+
+#: src/features/equipment/EquipmentEditor.tsx
+msgid "Collar weight (each)"
+msgstr ""
+
 #: src/features/session/LogSetScreen.tsx
 msgid "Confirm set"
+msgstr ""
+
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "Confirm that you are 16 or older."
+msgstr ""
+
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "Continue"
 msgstr ""
 
 #: src/features/home/HomeScreen.tsx
 msgid "Continue workout"
 msgstr ""
 
+#: src/features/labels.ts
+msgid "core"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.volume.muscles"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.ranking.factor.subRegion"
+msgstr ""
+
 #: src/features/data/DataScreen.tsx
 msgid "Created"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "curl"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "daily undulating"
 msgstr ""
 
 #: src/features/settings/SettingsScreen.tsx
@@ -61,12 +1168,185 @@ msgstr ""
 msgid "Data and backups"
 msgstr ""
 
+#: src/features/labels.ts
+msgid "deadlift"
+msgstr ""
+
 #: src/features/session/LogSetScreen.tsx
 msgid "Decrease load"
 msgstr ""
 
+#: src/features/equipment/EquipmentScreens.tsx
+#: src/features/why/WhySheet.tsx
+msgid "Default"
+msgstr ""
+
+#: src/features/why/WhySheet.tsx
+msgid "Default for your situation"
+msgstr ""
+
+#: src/features/equipment/EquipmentScreens.tsx
+msgid "Delete"
+msgstr ""
+
+#. placeholder {0}: deleting?.name ?? ''
+#: src/features/equipment/EquipmentScreens.tsx
+msgid "Delete {0}?"
+msgstr ""
+
+#: src/features/why/WhySheet.tsx
+msgid "Details"
+msgstr ""
+
+#: src/features/plan/PlanEditorScreen.tsx
+msgid "Discard"
+msgstr ""
+
+#: src/features/plan/parts.tsx
+msgid "Dismiss"
+msgstr ""
+
+#: src/features/plan/PlanScreen.tsx
+msgid "Do {name} today"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.warmup.compound.simple"
+msgstr ""
+
+#: src/features/plan/PlanScreen.tsx
+msgid "Do I need it sooner?"
+msgstr ""
+
+#: src/features/plan/PlanScreen.tsx
+msgid "Do it today"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.validate.order.lift.simple"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "Done"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.scoring.dots"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "double progression (more reps, then more weight)"
+msgstr ""
+
+#: src/features/equipment/EquipmentEditor.tsx
+msgid "Dumbbell weights"
+msgstr ""
+
+#: src/features/equipment/EquipmentEditor.tsx
+msgid "Dumbbells"
+msgstr ""
+
+#: src/features/equipment/EquipmentEditor.tsx
+msgid "e.g. Red, light"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.validate.deload.missing"
+msgstr ""
+
+#: src/features/plan/PlanScreen.tsx
+msgid "Easing back in"
+msgstr ""
+
+#. placeholder {0}: adjustment.daysOff ?? 0
+#: src/features/plan/PlanScreen.tsx
+msgid "Easing back in after {0} days off: lighter loads and fewer sets this time."
+msgstr ""
+
+#: src/features/equipment/EquipmentScreens.tsx
+msgid "Edit"
+msgstr ""
+
+#. placeholder {0}: profile.name
+#: src/features/equipment/EquipmentScreens.tsx
+msgid "Edit {0}"
+msgstr ""
+
+#: src/features/equipment/EquipmentScreens.tsx
+msgid "Edit equipment"
+msgstr ""
+
+#: src/features/plan/PlanEditorScreen.tsx
+#: src/features/plan/PlanScreen.tsx
+msgid "Edit plan"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "effort-based loading (RPE)"
+msgstr ""
+
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "Enter a four-digit year, e.g. 1990, or leave it empty."
+msgstr ""
+
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "Enter your body weight as a positive number, or leave it empty."
+msgstr ""
+
+#: src/features/equipment/EquipmentScreens.tsx
+#: src/features/settings/SettingsScreen.tsx
+msgid "Equipment"
+msgstr ""
+
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "Equipment missing"
+msgstr ""
+
+#: src/features/equipment/EquipmentScreens.tsx
+msgid "Equipment saved and your plan updated."
+msgstr ""
+
+#: src/features/equipment/EquipmentScreens.tsx
+msgid "Equipment saved."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.e1rm.set"
+msgstr ""
+
+#: src/features/plan/NextMesocycleScreen.tsx
+#: src/features/plan/PlanPreviewView.tsx
+msgid "Every check passed."
+msgstr ""
+
+#: src/features/plan/NextMesocycleScreen.tsx
+msgid "Every exercise stays: your plan keeps what works."
+msgstr ""
+
+#: src/features/legal/LegalScreens.tsx
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "Everything you enter is stored only on this device. We never receive it: there is no account, analytics or tracking. Only you can export it, as a backup file."
+msgstr ""
+
+#: src/features/labels.ts
+msgid "evidence band"
+msgstr ""
+
 #: src/features/session/LogSetScreen.tsx
 msgid "Exercise"
+msgstr ""
+
+#: src/features/plan/NextMesocycleScreen.tsx
+msgid "Exercise changes"
+msgstr ""
+
+#: src/features/plan/PlanEditorScreen.tsx
+msgid "Exercises with your equipment for the same movement, best match first."
 msgstr ""
 
 #: src/features/placeholder/screens.tsx
@@ -78,16 +1358,142 @@ msgstr ""
 msgid "Export backup"
 msgstr ""
 
+#: src/features/onboarding/steps.tsx
+msgid "Female"
+msgstr ""
+
+#: src/features/onboarding/steps.tsx
+msgid "Female reference values"
+msgstr ""
+
 #: src/features/session/LogSetScreen.tsx
 msgid "Fewer reps"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.deload.reactive.none"
+msgstr ""
+
+#: src/features/onboarding/steps.tsx
+msgid "Find an exercise to avoid"
 msgstr ""
 
 #: src/features/session/LogSetScreen.tsx
 msgid "Finish workout"
 msgstr ""
 
+#: src/features/settings/SettingsScreen.tsx
+msgid "First day of the week"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.progression.double.noHistory.simple"
+msgstr ""
+
+#: src/features/onboarding/steps.tsx
+msgid "For an injury or a dislike. POWR never plans or suggests them."
+msgstr ""
+
+#: src/features/labels.ts
+msgid "Free weights"
+msgstr ""
+
+#: src/features/plan/PlanScreen.tsx
+msgid "From"
+msgstr ""
+
+#: src/features/plan/PlanEditorScreen.tsx
+msgid "From the next block"
+msgstr ""
+
+#: src/features/plan/PlanEditorScreen.tsx
+msgid "From the next session"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "Full body"
+msgstr ""
+
+#. placeholder {0}: target.full
+#: src/features/plan/parts.tsx
+msgid "full target {0}"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "Gaining (bulk)"
+msgstr ""
+
+#: src/features/home/HomeScreen.tsx
+msgid "Get a plan for your days, time and equipment, with every choice explained."
+msgstr ""
+
+#: src/features/onboarding/steps.tsx
+msgid "Get stronger in squat, bench press and deadlift. Example week: heavy, light and medium days for each lift."
+msgstr ""
+
+#: src/features/equipment/EquipmentEditor.tsx
+msgid "Give this equipment a name, e.g. \"Home gym\"."
+msgstr ""
+
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "Give your equipment a name."
+msgstr ""
+
 #: src/features/shell/NotFound.tsx
 msgid "Go to Home"
+msgstr ""
+
+#: src/features/plan/PlanScreen.tsx
+msgid "Going on holiday or feeling ill? Pause the plan so nothing counts as missed."
+msgstr ""
+
+#: src/features/plan/PlanPreviewView.tsx
+msgid "Hard sets per week; a set for a helping muscle counts half. Most people grow well with 10 to 20."
+msgstr ""
+
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "Health and safety"
+msgstr ""
+
+#: src/features/legal/LegalScreens.tsx
+#: src/features/settings/SettingsScreen.tsx
+msgid "Health and safety notice"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.warmup.heavy.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.warmup.heavy"
+msgstr ""
+
+#: src/features/onboarding/steps.tsx
+msgid "Height"
+msgstr ""
+
+#: src/features/plan/PlanEditorScreen.tsx
+msgid "Hide dismissed warnings"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "hip abduction"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "hip adduction"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "hip extension"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "hip hinge"
 msgstr ""
 
 #: src/features/home/HomeScreen.tsx
@@ -95,24 +1501,248 @@ msgstr ""
 msgid "Home"
 msgstr ""
 
+#: src/features/labels.ts
+msgid "horizontal push"
+msgstr ""
+
+#: src/features/legal/LegalScreens.tsx
+msgid "Hosting"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.ranking.factor.credit"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.ranking.factor.overload"
+msgstr ""
+
+#: src/features/onboarding/steps.tsx
+msgid "How familiar are \"reps in reserve\" (RIR) and RPE?"
+msgstr ""
+
+#: src/features/why/WhySheet.tsx
+msgid "How it was worked out"
+msgstr ""
+
+#: src/features/onboarding/steps.tsx
+msgid "How long can a session be?"
+msgstr ""
+
+#: src/features/onboarding/steps.tsx
+msgid "How long have you trained regularly?"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.ranking.effectiveness.simple"
+msgstr ""
+
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "I am 16 or older."
+msgstr ""
+
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "I have read the health notice and the privacy summary."
+msgstr ""
+
+#: src/features/labels.ts
+msgid "I know a bit"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "I trained in the last week"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "I use it regularly"
+msgstr ""
+
+#: src/features/plan/PlanScreen.tsx
+msgid "I'm back: end the break"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "Illness"
+msgstr ""
+
+#: src/features/legal/LegalScreens.tsx
+msgid "In short"
+msgstr ""
+
+#: src/features/why/WhySheet.tsx
+msgid "In technical terms"
+msgstr ""
+
+#: src/features/onboarding/steps.tsx
+msgid "Inches (in)"
+msgstr ""
+
+#: src/features/plan/PlanScreen.tsx
+msgid "Includes key work from a missed session."
+msgstr ""
+
 #: src/features/session/LogSetScreen.tsx
 msgid "Increase load"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "Injury"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "intermediate"
+msgstr ""
+
+#: src/features/equipment/EquipmentEditor.tsx
+msgid "Item name"
+msgstr ""
+
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "Just let me log"
+msgstr ""
+
+#: src/features/plan/PlanEditorScreen.tsx
+msgid "Keep {name} in the next block"
+msgstr ""
+
+#: src/features/equipment/SubstitutionReview.tsx
+msgid "Keep it for now"
+msgstr ""
+
+#: src/features/equipment/EquipmentEditor.tsx
+msgid "Kettlebell weights"
+msgstr ""
+
+#: src/features/equipment/EquipmentEditor.tsx
+msgid "Kettlebells"
 msgstr ""
 
 #: src/features/session/LogSetScreen.tsx
 msgid "kg"
 msgstr ""
 
+#: src/features/equipment/EquipmentEditor.tsx
+#: src/features/onboarding/steps.tsx
+msgid "Kilograms (kg)"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "knee extension"
+msgstr ""
+
 #: src/features/data/DataScreen.tsx
 msgid "Last backup: {lastText}"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.progression.linear.increase"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "lateral raise"
+msgstr ""
+
+#: src/features/plan/PlanScreen.tsx
+msgid "Leave empty if you do not know yet."
+msgstr ""
+
+#: src/features/labels.ts
+msgid "leg curl"
+msgstr ""
+
+#: src/features/legal/LegalScreens.tsx
+msgid "Legal framework"
+msgstr ""
+
+#: src/features/onboarding/steps.tsx
+msgid "Lengths in"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "Less than 6 months"
+msgstr ""
+
+#: src/features/plan/PlanPreviewView.tsx
+msgid "Level"
+msgstr ""
+
+#. placeholder {0}: labels.level(mesocycle.level)
+#: src/features/plan/NextMesocycleScreen.tsx
+msgid "Level: {0}"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "Life event"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.schedule.missed.doToday"
+msgstr ""
+
+#: src/features/legal/LegalScreens.tsx
+msgid "Lifting heavy weights carries a risk of injury. Use safe technique, a spotter or safety equipment such as rack safeties."
 msgstr ""
 
 #: src/features/settings/SettingsScreen.tsx
 msgid "Light"
 msgstr ""
 
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.deload.week"
+msgstr ""
+
+#: src/features/plan/PlanScreen.tsx
+msgid "Lighter week"
+msgstr ""
+
+#: src/features/plan/PlanScreen.tsx
+msgid "Lighter week (deload)"
+msgstr ""
+
+#: src/features/plan/PlanScreen.tsx
+msgid "lighter week (deload), week {blockWeek} of {weeks}"
+msgstr ""
+
+#: src/features/plan/PlanScreen.tsx
+msgid "Lighter week: fewer sets and more reps in reserve, so you recover and come back stronger."
+msgstr ""
+
+#: src/features/settings/SettingsScreen.tsx
+msgid "Like this phone ({localeDay})"
+msgstr ""
+
+#: src/features/why/WhySheet.tsx
+msgid "Limited research"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "linear"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "linear (a little more weight each session)"
+msgstr ""
+
 #: src/features/session/LogSetScreen.tsx
 msgid "Load"
+msgstr ""
+
+#: src/features/equipment/EquipmentScreens.tsx
+#: src/features/onboarding/OnboardingFlow.tsx
+#: src/features/plan/PlanEditorScreen.tsx
+#: src/features/plan/PlanScreen.tsx
+msgid "Loading…"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.ranking.factor.stretch"
 msgstr ""
 
 #: src/features/home/HomeScreen.tsx
@@ -124,37 +1754,447 @@ msgstr ""
 msgid "Log your first set. Everything stays on this phone."
 msgstr ""
 
+#: src/features/labels.ts
+msgid "Losing fat (cut)"
+msgstr ""
+
+#: src/features/plan/PlanEditorScreen.tsx
+msgid "Lower the target for {name}"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "lunge"
+msgstr ""
+
+#: src/features/equipment/EquipmentEditor.tsx
+msgid "Machine and cable steps"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "Machines"
+msgstr ""
+
 #: src/features/shell/BottomNav.tsx
 msgid "Main"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "Maintaining"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "maintenance"
+msgstr ""
+
+#: src/features/equipment/EquipmentScreens.tsx
+msgid "Make default"
+msgstr ""
+
+#: src/features/onboarding/steps.tsx
+msgid "Male"
+msgstr ""
+
+#: src/features/onboarding/steps.tsx
+msgid "Male reference values"
+msgstr ""
+
+#: src/features/plan/PlanScreen.tsx
+msgid "Merge {name} into the next session"
+msgstr ""
+
+#: src/features/plan/PlanScreen.tsx
+msgid "Merge into next"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "Merged into another session"
+msgstr ""
+
+#: src/features/equipment/EquipmentEditor.tsx
+msgid "Microplates"
+msgstr ""
+
+#: src/features/equipment/EquipmentEditor.tsx
+msgid "Models differ: check the weight on your bar."
 msgstr ""
 
 #: src/features/session/LogSetScreen.tsx
 msgid "More reps"
 msgstr ""
 
+#: src/features/labels.ts
+msgid "More than 2 months ago"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "More than 5 years"
+msgstr ""
+
+#: src/features/plan/PlanEditorScreen.tsx
+msgid "Move {name} down"
+msgstr ""
+
+#: src/features/plan/PlanEditorScreen.tsx
+msgid "Move {name} up"
+msgstr ""
+
+#: src/features/plan/PlanScreen.tsx
+msgid "Move to another day"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.schedule.moved.simple"
+msgstr ""
+
+#: src/features/onboarding/steps.tsx
+msgid "Movement patterns to avoid"
+msgstr ""
+
+#: src/features/onboarding/steps.tsx
+msgid "Movements to avoid"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "muscle size"
+msgstr ""
+
+#: src/features/onboarding/steps.tsx
+msgid "Muscles to prioritise (up to 3)"
+msgstr ""
+
+#: src/features/equipment/EquipmentScreens.tsx
+#: src/features/onboarding/OnboardingFlow.tsx
+#: src/features/onboarding/steps.tsx
+msgid "My equipment"
+msgstr ""
+
 #: src/features/session/LogSetScreen.tsx
 msgid "n/a"
+msgstr ""
+
+#: src/features/equipment/EquipmentEditor.tsx
+msgid "Name"
+msgstr ""
+
+#: src/features/plan/parts.tsx
+msgid "Needs attention"
+msgstr ""
+
+#: src/features/equipment/SubstitutionReview.tsx
+msgid "Needs: {missing}"
+msgstr ""
+
+#: src/features/equipment/EquipmentScreens.tsx
+msgid "New equipment"
 msgstr ""
 
 #: src/features/home/HomeScreen.tsx
 msgid "New phone? Restore your training data from a backup file."
 msgstr ""
 
+#: src/features/plan/PlanScreen.tsx
+msgid "New plan"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "New to me"
+msgstr ""
+
+#: src/features/plan/NextMesocycleScreen.tsx
+#: src/features/plan/PlanScreen.tsx
+msgid "Next block"
+msgstr ""
+
+#: src/features/home/HomeScreen.tsx
+msgid "Next planned session"
+msgstr ""
+
+#: src/features/plan/PlanScreen.tsx
+msgid "Next week"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.plan.slot.substituted.simple"
+msgstr ""
+
 #: src/features/data/DataScreen.tsx
 msgid "No backup yet."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.progression.double.noHistory"
+msgstr ""
+
+#: src/features/equipment/EquipmentScreens.tsx
+msgid "No equipment yet. Add what your gym has."
+msgstr ""
+
+#: src/features/equipment/SubstitutionReview.tsx
+msgid "No exercise with your equipment trains the same muscles. It stays in the plan and is marked as unavailable until you change it in the plan editor."
+msgstr ""
+
+#: src/features/plan/PlanEditorScreen.tsx
+msgid "No exercise with your equipment trains this muscle directly."
+msgstr ""
+
+#: src/features/plan/NextMesocycleScreen.tsx
+msgid "No longer possible with your equipment or avoid list"
+msgstr ""
+
+#: src/features/plan/PlanEditorScreen.tsx
+msgid "No other exercise fits this slot with your equipment."
+msgstr ""
+
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "No plan fits these answers yet"
+msgstr ""
+
+#: src/features/equipment/EquipmentEditor.tsx
+msgid "No plates yet. Add the weights you have below."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.schedule.missed.doToday.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.schedule.missed.skip.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.e1rm.set.unknownEffort"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.warmup.none.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.warmup.none"
+msgstr ""
+
+#: src/features/plan/format.ts
+msgid "None"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.progression.linear.retry.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.progression.linear.retry"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.trend.change.insufficientData"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.bodyweight.rate.insufficientData"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.progression.double.repsUp"
+msgstr ""
+
+#: src/features/plan/NextMesocycleScreen.tsx
+msgid "Not now"
+msgstr ""
+
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "Not quite right?"
 msgstr ""
 
 #: src/features/session/LogSetScreen.tsx
 msgid "Not saved. Check the values and try again."
 msgstr ""
 
+#: src/features/labels.ts
+msgid "Not tracking"
+msgstr ""
+
+#: src/features/plan/PlanScreen.tsx
+msgid "Nothing is dropped without you deciding. Choose for each one:"
+msgstr ""
+
+#: src/features/home/HomeScreen.tsx
+msgid "Nothing planned in the next three weeks."
+msgstr ""
+
+#: src/features/legal/LegalScreens.tsx
+msgid "Notifications are only used for rest-timer alerts, and only after you allow them. POWR asks for nothing else without a reason you can see."
+msgstr ""
+
+#: src/features/labels.ts
+msgid "novice"
+msgstr ""
+
+#: src/features/legal/LegalScreens.tsx
+msgid "Nutrition targets and weight-cut guidance are estimates for healthy adults. They are not suitable for people with an eating disorder, during pregnancy or for minors."
+msgstr ""
+
+#: src/features/why/WhySheet.tsx
+msgid "Official standard"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "On break"
+msgstr ""
+
+#: src/features/equipment/EquipmentEditor.tsx
+msgid "One pair fewer of {weight}"
+msgstr ""
+
+#: src/features/equipment/EquipmentEditor.tsx
+msgid "One pair more of {weight}"
+msgstr ""
+
+#: src/features/plan/PlanEditorScreen.tsx
+msgid "One set fewer of {name}"
+msgstr ""
+
+#: src/features/plan/PlanEditorScreen.tsx
+msgid "One set more of {name}"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.break.return.resume.simple"
+msgstr ""
+
+#: src/features/home/HomeScreen.tsx
+msgid "Open the plan"
+msgstr ""
+
+#: src/features/onboarding/steps.tsx
+msgid "Optional. Used for strength scores and body-weight trends; it stays on this phone."
+msgstr ""
+
+#: src/features/labels.ts
+msgid "Other"
+msgstr ""
+
+#: src/features/plan/format.ts
+msgid "Over 30 sets"
+msgstr ""
+
+#: src/features/plan/parts.tsx
+msgid "over your time"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "overhead push"
+msgstr ""
+
 #: src/features/shell/NotFound.tsx
 msgid "Page not found"
 msgstr ""
 
-#: src/features/placeholder/screens.tsx
+#: src/features/plan/format.ts
+msgid "Pair {first} and {second} as a superset"
+msgstr ""
+
+#: src/features/legal/LegalScreens.tsx
+msgid "Permissions"
+msgstr ""
+
+#: src/features/onboarding/steps.tsx
+msgid "Pick 2 to 6 days. Rest days in between help recovery."
+msgstr ""
+
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "Pick 2 to 6 training days."
+msgstr ""
+
+#: src/features/equipment/SubstitutionReview.tsx
+msgid "Pick a replacement for each one. The best match for the same muscles comes first. Changes apply from your next session."
+msgstr ""
+
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "Pick at most three priority muscles."
+msgstr ""
+
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "Pick between 2 and 6 training days."
+msgstr ""
+
+#: src/features/plan/PlanScreen.tsx
 #: src/features/shell/BottomNav.tsx
 msgid "Plan"
+msgstr ""
+
+#: src/features/plan/PlanScreen.tsx
+msgid "Plan a break"
+msgstr ""
+
+#: src/features/plan/NextMesocycleScreen.tsx
+#: src/features/plan/PlanPreviewView.tsx
+msgid "Plan checks"
+msgstr ""
+
+#: src/features/home/HomeScreen.tsx
+#: src/features/plan/PlanScreen.tsx
+msgid "Plan not set up"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "Planned"
+msgstr ""
+
+#. placeholder {0}: formatLocalDate(deloadStart, 'long')
+#: src/features/plan/PlanScreen.tsx
+msgid "Planned from {0}: fewer sets and easier efforts, so you recover."
+msgstr ""
+
+#: src/features/plan/NextMesocycleScreen.tsx
+msgid "Planned variety between blocks"
+msgstr ""
+
+#: src/features/equipment/EquipmentScreens.tsx
+msgid "Plans and exercise suggestions only use what your default equipment has."
+msgstr ""
+
+#: src/features/equipment/EquipmentEditor.tsx
+msgid "Plate inventory"
+msgstr ""
+
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "Please check your answers"
+msgstr ""
+
+#. placeholder {0}: fixText(fix, slotName)
+#: src/features/plan/parts.tsx
+msgid "Possible fix: {0}"
+msgstr ""
+
+#: src/features/plan/PlanScreen.tsx
+msgid "Postpone one week"
+msgstr ""
+
+#: src/features/equipment/EquipmentEditor.tsx
+#: src/features/onboarding/steps.tsx
+msgid "Pounds (lb)"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "Powerbuilding"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "Powerlifting"
 msgstr ""
 
 #: src/features/shell/AppShell.tsx
@@ -165,11 +2205,61 @@ msgstr ""
 msgid "POWR could not open its data"
 msgstr ""
 
+#: src/features/legal/LegalScreens.tsx
+msgid "POWR gives general fitness information and training suggestions. It is not medical advice and does not replace a doctor, physiotherapist, dietitian or qualified coach."
+msgstr ""
+
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "POWR gives general training suggestions, not medical advice. Check with a doctor before you start or change training, especially with a health condition, an injury or a pregnancy. Stop and get help if you feel chest pain, dizziness or sharp pain. You decide what you do with the suggestions."
+msgstr ""
+
+#: src/features/legal/LegalScreens.tsx
+msgid "POWR suggests; you confirm. You are responsible for the decisions you make with its suggestions."
+msgstr ""
+
+#: src/features/onboarding/steps.tsx
+msgid "Prefer not to say"
+msgstr ""
+
+#: src/features/why/WhySheet.tsx
+msgid "Preliminary value"
+msgstr ""
+
 #: src/features/home/HomeScreen.tsx
 msgid "Preparing offline use…"
 msgstr ""
 
+#: src/features/plan/NextMesocycleScreen.tsx
+msgid "Preparing the next block…"
+msgstr ""
+
+#: src/features/plan/PlanScreen.tsx
+msgid "Previous week"
+msgstr ""
+
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "Priorities"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "priority muscle"
+msgstr ""
+
+#: src/features/onboarding/steps.tsx
+msgid "Priority muscles"
+msgstr ""
+
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "Privacy in short"
+msgstr ""
+
+#: src/features/legal/LegalScreens.tsx
+#: src/features/settings/SettingsScreen.tsx
+msgid "Privacy notice"
+msgstr ""
+
 #: src/features/placeholder/screens.tsx
+#: src/features/plan/PlanPreviewView.tsx
 #: src/features/shell/BottomNav.tsx
 msgid "Progress"
 msgstr ""
@@ -178,8 +2268,40 @@ msgstr ""
 msgid "Protect my data"
 msgstr ""
 
+#: src/features/labels.ts
+msgid "pull-down or pull-up"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "Push/pull/legs"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "Racks"
+msgstr ""
+
+#: src/features/plan/PlanEditorScreen.tsx
+msgid "Raise the target for {name}"
+msgstr ""
+
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "Read the full health notice"
+msgstr ""
+
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "Read the full privacy notice"
+msgstr ""
+
 #: src/features/home/HomeScreen.tsx
 msgid "Ready for offline use"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "rear-delt fly"
+msgstr ""
+
+#: src/features/plan/PlanScreen.tsx
+msgid "Reason"
 msgstr ""
 
 #: src/app/StartupError.tsx
@@ -187,12 +2309,46 @@ msgstr ""
 msgid "Reload"
 msgstr ""
 
+#. placeholder {0}: item.name
+#: src/features/equipment/EquipmentEditor.tsx
+msgid "Remove {0}"
+msgstr ""
+
+#: src/features/plan/PlanEditorScreen.tsx
+msgid "Remove {name}"
+msgstr ""
+
+#: src/features/plan/format.ts
+msgid "Remove {name} from this day"
+msgstr ""
+
+#. placeholder {0}: band.label
+#: src/features/equipment/EquipmentEditor.tsx
+msgid "Remove band {0}"
+msgstr ""
+
+#: src/features/plan/PlanEditorScreen.tsx
+msgid "Remove this day"
+msgstr ""
+
 #: src/features/data/DataScreen.tsx
 msgid "REPLACE"
 msgstr ""
 
+#: src/features/equipment/SubstitutionReview.tsx
+msgid "Replace {exercise} with"
+msgstr ""
+
+#: src/features/plan/format.ts
+msgid "Replace {from} with {to}"
+msgstr ""
+
 #: src/features/data/DataScreen.tsx
 msgid "Replace all data"
+msgstr ""
+
+#: src/features/plan/NextMesocycleScreen.tsx
+msgid "replaced by"
 msgstr ""
 
 #: src/features/session/LogSetScreen.tsx
@@ -201,6 +2357,19 @@ msgstr ""
 
 #: src/features/session/LogSetScreen.tsx
 msgid "Reps in reserve"
+msgstr ""
+
+#: src/features/plan/format.ts
+msgid "rest {minutes}:{seconds}"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.rest.default.simple"
+msgstr ""
+
+#: src/features/plan/PlanScreen.tsx
+msgid "Rest day"
 msgstr ""
 
 #: src/features/data/DataScreen.tsx
@@ -212,6 +2381,34 @@ msgstr ""
 msgid "Restored. {sets} sets imported."
 msgstr ""
 
+#: src/features/labels.ts
+msgid "reverse wrist curl"
+msgstr ""
+
+#: src/features/equipment/EquipmentScreens.tsx
+msgid "Review plan changes"
+msgstr ""
+
+#: src/features/onboarding/steps.tsx
+msgid "RIR (\"reps in reserve\") is how many more reps you could have done when you stopped a set. 2 RIR means two more were possible. RPE (rate of perceived exertion) says the same on a 1–10 scale: RPE 8 equals 2 RIR. POWR asks in plain words if you are new to it."
+msgstr ""
+
+#: src/features/plan/format.ts
+msgid "RIR {value}"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "row"
+msgstr ""
+
+#: src/features/plan/PlanEditorScreen.tsx
+msgid "Save changes"
+msgstr ""
+
+#: src/features/equipment/EquipmentScreens.tsx
+msgid "Save equipment"
+msgstr ""
+
 #: src/features/data/DataScreen.tsx
 msgid "Saved to Downloads as {name}. Copy it off the phone, for example to cloud storage."
 msgstr ""
@@ -221,8 +2418,59 @@ msgstr ""
 msgid "Saved: {name}, {weight} kg × {0}"
 msgstr ""
 
+#: src/features/equipment/EquipmentEditor.tsx
+msgid "Search equipment"
+msgstr ""
+
+#: src/features/equipment/EquipmentEditor.tsx
+msgid "Search, e.g. hex bar"
+msgstr ""
+
+#: src/features/equipment/EquipmentEditor.tsx
+msgid "Separate the weights with commas, e.g. 2.5, 5, 7.5, 10."
+msgstr ""
+
+#: src/features/equipment/EquipmentEditor.tsx
+msgid "Separate the weights with commas, e.g. 8, 12, 16."
+msgstr ""
+
+#: src/features/onboarding/steps.tsx
+msgid "Session length in minutes"
+msgstr ""
+
+#: src/features/plan/PlanPreviewView.tsx
+msgid "Sessions"
+msgstr ""
+
+#: src/features/plan/PlanScreen.tsx
+msgid "Sessions in a break do not count as missed. When you are back, the first weeks ease you in."
+msgstr ""
+
+#. placeholder {0}: set.index + 1
+#. placeholder {1}: set.load ? formatMass(set.load.value, set.load.unit) : '–'
+#. placeholder {2}: set.reps ?? '–'
+#. placeholder {3}: set.rir !== null ? ` @ RIR ${set.rir}` : ''
+#: src/features/why/WhySheet.tsx
+msgid "Set {0}: {1} × {2}{3}"
+msgstr ""
+
+#: src/features/home/HomeScreen.tsx
+#: src/features/onboarding/OnboardingFlow.tsx
+#: src/features/plan/PlanScreen.tsx
+msgid "Set up a plan"
+msgstr ""
+
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "Set up my plan"
+msgstr ""
+
 #: src/features/data/DataScreen.tsx
 msgid "Sets"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.plan.volume.sets"
 msgstr ""
 
 #: src/features/settings/SettingsScreen.tsx
@@ -230,8 +2478,132 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "Setup progress"
+msgstr ""
+
+#: src/features/onboarding/steps.tsx
+msgid "Sex"
+msgstr ""
+
+#: src/features/plan/PlanEditorScreen.tsx
+msgid "Show them again"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "shrug"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.deload.reactive.propose"
+msgstr ""
+
+#: src/features/legal/LegalScreens.tsx
+msgid "Simeon Zimmermann, SZ WEB DEVELOPMENT, Switzerland. Postal address and e-mail: to be added before the public release."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.trend.change.veryLikely"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.trend.change.likely"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.trend.change.none"
+msgstr ""
+
+#: src/features/plan/PlanScreen.tsx
+msgid "Skip {name}"
+msgstr ""
+
+#: src/features/onboarding/steps.tsx
+msgid "Skip for now"
+msgstr ""
+
+#: src/features/plan/PlanScreen.tsx
+msgid "Skip it"
+msgstr ""
+
+#: src/features/plan/PlanScreen.tsx
+msgid "Skip it this block"
+msgstr ""
+
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "Skip this step"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "Skipped"
+msgstr ""
+
+#: src/features/plan/PlanScreen.tsx
+msgid "Skipped this block. Your sessions stay as planned."
+msgstr ""
+
+#: src/features/equipment/SubstitutionReview.tsx
+msgid "Some planned exercises need equipment you removed"
+msgstr ""
+
 #: src/features/shell/RouteError.tsx
 msgid "Something went wrong"
+msgstr ""
+
+#. placeholder {0}: param.sources.map(sourceName).join('; ')
+#: src/features/why/WhySheet.tsx
+msgid "Sources: {0}"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "squat"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "Squat, bench, deadlift"
+msgstr ""
+
+#: src/features/equipment/EquipmentScreens.tsx
+msgid "Start from a preset"
+msgstr ""
+
+#: src/features/plan/PlanScreen.tsx
+msgid "Start the break"
+msgstr ""
+
+#: src/features/onboarding/steps.tsx
+msgid "Start times for your calendar (optional)"
+msgstr ""
+
+#: src/features/plan/PlanPreviewView.tsx
+msgid "Starts"
+msgstr ""
+
+#. placeholder {0}: formatLocalDate(mesocycle.startDate, 'long')
+#: src/features/plan/PlanScreen.tsx
+msgid "starts {0}"
+msgstr ""
+
+#. placeholder {0}: formatLocalDate(mesocycle.startDate, 'long')
+#: src/features/plan/NextMesocycleScreen.tsx
+msgid "Starts {0}"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.progression.double.repsUp.simple"
+msgstr ""
+
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "Step {position} of {count}"
+msgstr ""
+
+#: src/features/legal/LegalScreens.tsx
+msgid "Stop training and get medical help if you feel chest pain, dizziness, shortness of breath or sharp pain."
 msgstr ""
 
 #: src/features/data/DataScreen.tsx
@@ -246,12 +2618,198 @@ msgstr ""
 msgid "Storage protected: Yes"
 msgstr ""
 
+#: src/features/labels.ts
+msgid "strength"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.ranking.factor.evidence"
+msgstr ""
+
+#: src/features/onboarding/steps.tsx
+msgid "Strength scores and some formulas differ by sex. You can skip this."
+msgstr ""
+
+#: src/features/why/WhySheet.tsx
+msgid "Strong research"
+msgstr ""
+
+#: src/features/plan/PlanEditorScreen.tsx
+msgid "Swap {name}"
+msgstr ""
+
+#: src/features/plan/PlanScreen.tsx
+msgid "Swap days with"
+msgstr ""
+
 #: src/features/settings/SettingsScreen.tsx
 msgid "System"
 msgstr ""
 
+#: src/features/legal/LegalScreens.tsx
+msgid "Talk to a doctor before you start or change a training or nutrition programme, especially if you have a known condition, are pregnant or have had an injury."
+msgstr ""
+
+#: src/features/plan/parts.tsx
+msgid "Target met"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.validate.sessionCap.muscle.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.validate.sessionCap.lift.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.volume.sessionCap.exceeded.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.validate.strength.weeklyLow.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.validate.strength.weeklyHigh"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.validate.strength.belowMinimum"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.validate.strength.weeklyLow"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.validate.strength.weeklyHigh.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.plan.volume.liftTarget.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.validate.strength.belowMinimum.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.validate.frequency.lift"
+msgstr ""
+
+#: src/features/legal/LegalScreens.tsx
+msgid "The app files are served from a server in Germany that we rent from Hetzner Online GmbH and operate ourselves. We do not keep access logs. Your training data never reaches this server."
+msgstr ""
+
+#: src/features/plan/PlanScreen.tsx
+msgid "The break could not be ended. Check its dates."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.plan.schedule.weekdays"
+msgstr ""
+
+#: src/features/plan/PlanScreen.tsx
+msgid "the deload check"
+msgstr ""
+
+#: src/features/plan/PlanScreen.tsx
+msgid "The end date must be on or after the start date."
+msgstr ""
+
+#: src/features/plan/parts.tsx
+msgid "The exercises for it already have the most sets that make sense."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.validate.volume.targetOutsideBand.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.deload.skipped"
+msgstr ""
+
+#: src/features/plan/NextMesocycleScreen.tsx
+msgid "the next block"
+msgstr ""
+
+#: src/features/plan/NextMesocycleScreen.tsx
+msgid "The next block cannot be proposed for this plan."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.validate.prescription.reps.simple"
+msgstr ""
+
+#: src/features/plan/NextMesocycleScreen.tsx
+msgid "The plan changed meanwhile. Open this page again."
+msgstr ""
+
+#: src/features/plan/PlanScreen.tsx
+msgid "The plan changed meanwhile. Try again."
+msgstr ""
+
+#: src/features/equipment/EquipmentScreens.tsx
+msgid "The plan could not be updated. Try again from the plan editor."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.validate.prescription.reps"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.schedule.missed.skip"
+msgstr ""
+
+#: src/features/plan/parts.tsx
+msgid "The sessions already hold as much for this muscle as is useful."
+msgstr ""
+
+#: src/features/legal/LegalScreens.tsx
+msgid "The Swiss Federal Act on Data Protection (revFADP) applies. Whether the EU GDPR also applies is being confirmed in a legal review; this notice is written to meet both."
+msgstr ""
+
+#: src/features/plan/PlanPreviewView.tsx
+msgid "the time budget"
+msgstr ""
+
 #: src/features/settings/SettingsScreen.tsx
 msgid "Theme"
+msgstr ""
+
+#: src/features/plan/PlanScreen.tsx
+msgid "There is no later session this week to merge it into. Do it today or skip it."
+msgstr ""
+
+#: src/features/plan/PlanEditorScreen.tsx
+msgid "There is no plan to edit yet."
+msgstr ""
+
+#: src/features/plan/NextMesocycleScreen.tsx
+msgid "There is no plan yet."
+msgstr ""
+
+#: src/features/onboarding/steps.tsx
+msgid "They get more sets and come first in a session. If time is short, they keep their full volume."
 msgstr ""
 
 #: src/features/data/DataScreen.tsx
@@ -266,8 +2824,36 @@ msgstr ""
 msgid "This backup was made by a newer version of POWR. Update the app first."
 msgstr ""
 
+#: src/features/plan/PlanScreen.tsx
+msgid "this change"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.validate.novice.exercises"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.validate.novice.exercises.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.validate.time.overBudget"
+msgstr ""
+
+#: src/features/equipment/EquipmentScreens.tsx
+msgid "This equipment profile does not exist."
+msgstr ""
+
 #: src/features/data/DataScreen.tsx
 msgid "This file is too large or malformed to restore safely. Nothing was changed."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.deload.week.simple"
 msgstr ""
 
 #: src/features/data/DataScreen.tsx
@@ -282,24 +2868,163 @@ msgstr ""
 msgid "This part of POWR is not built yet."
 msgstr ""
 
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.validate.lift.missing"
+msgstr ""
+
+#: src/features/plan/parts.tsx
+msgid "This plan layout has no exercise for it."
+msgstr ""
+
+#: src/features/equipment/EquipmentScreens.tsx
+msgid "This profile no longer exists."
+msgstr ""
+
+#: src/features/plan/PlanScreen.tsx
+msgid "This session changed meanwhile. Close and try again."
+msgstr ""
+
+#: src/features/plan/PlanScreen.tsx
+msgid "This session changed meanwhile. Try again."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.schedule.moved"
+msgstr ""
+
+#: src/features/plan/parts.tsx
+msgid "this warning"
+msgstr ""
+
+#: src/features/plan/PlanScreen.tsx
+msgid "This week"
+msgstr ""
+
 #: src/features/session/LogSetScreen.tsx
 msgid "This workout"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.validate.time.overBudget.simple"
+msgstr ""
+
+#: src/features/onboarding/steps.tsx
+msgid "Three priorities chosen. Deselect one to pick another."
+msgstr ""
+
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "Tick that you have read the health notice and the privacy summary."
+msgstr ""
+
+#: src/features/labels.ts
+msgid "time budget"
+msgstr ""
+
+#: src/features/home/HomeScreen.tsx
+#: src/features/plan/PlanScreen.tsx
+msgid "today"
+msgstr ""
+
+#: src/features/plan/PlanScreen.tsx
+msgid "Today"
+msgstr ""
+
+#: src/features/onboarding/steps.tsx
+msgid "Toggle what you have access to. You can change this any time in Settings."
 msgstr ""
 
 #: src/features/shell/BottomNav.tsx
 msgid "Train"
 msgstr ""
 
+#: src/features/plan/PlanEditorScreen.tsx
+msgid "Training day"
+msgstr ""
+
+#. placeholder {0}: day.name.en
+#: src/features/plan/PlanEditorScreen.tsx
+msgid "Training day for {0}"
+msgstr ""
+
 #: src/features/data/DataScreen.tsx
+#: src/features/onboarding/steps.tsx
 msgid "Training days"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "triceps extension"
 msgstr ""
 
 #: src/features/data/DataScreen.tsx
 msgid "Type {confirmWord} to confirm"
 msgstr ""
 
+#: src/features/equipment/EquipmentEditor.tsx
+msgid "Type a name for the item first."
+msgstr ""
+
+#: src/features/onboarding/steps.tsx
+msgid "Type at least two letters."
+msgstr ""
+
+#: src/features/plan/format.ts
+msgid "Under 4 sets"
+msgstr ""
+
+#: src/features/plan/PlanEditorScreen.tsx
+msgid "Undo last change"
+msgstr ""
+
+#: src/features/equipment/EquipmentEditor.tsx
+msgid "Unit of your plates and dumbbells"
+msgstr ""
+
+#: src/features/onboarding/steps.tsx
+msgid "Units"
+msgstr ""
+
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "Units and body"
+msgstr ""
+
+#: src/features/plan/PlanEditorScreen.tsx
+msgid "Unlock {name}"
+msgstr ""
+
+#: src/features/plan/PlanScreen.tsx
+msgid "Until (optional)"
+msgstr ""
+
 #: src/features/shell/UpdateBanner.tsx
 msgid "Update"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "Upper/lower"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "Upper/lower + push/pull/legs"
+msgstr ""
+
+#: src/features/plan/format.ts
+msgid "Use a time-saving technique set for {name}"
+msgstr ""
+
+#: src/features/plan/format.ts
+msgid "Use shorter rests on isolation exercises"
+msgstr ""
+
+#: src/features/equipment/EquipmentScreens.tsx
+#: src/features/onboarding/steps.tsx
+msgid "Use this preset"
+msgstr ""
+
+#: src/features/equipment/EquipmentScreens.tsx
+msgid "used by your plan"
 msgstr ""
 
 #. placeholder {0}: formatBytes(status.estimate.usage)
@@ -308,10 +3033,163 @@ msgstr ""
 msgid "Using {0} of {1}"
 msgstr ""
 
+#: src/features/equipment/EquipmentEditor.tsx
+msgid "Usually 0. Competition collars weigh 2.5 kg each."
+msgstr ""
+
+#: src/features/labels.ts
+msgid "Vacation"
+msgstr ""
+
 #. placeholder {0}: APP_INFO.version
 #. placeholder {1}: APP_INFO.build
 #: src/features/settings/SettingsScreen.tsx
 msgid "Version {0} ({1})"
+msgstr ""
+
+#: src/features/legal/LegalScreens.tsx
+msgid "Version {version}"
+msgstr ""
+
+#: src/features/legal/LegalScreens.tsx
+msgid "Version {version}. Draft, pending legal review."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.plan.schedule.weekdays.simple"
+msgstr ""
+
+#: src/features/legal/LegalScreens.tsx
+msgid "We do not collect, receive or process your training data. There is no account, no analytics, no telemetry and no tracking."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.plan.template.default.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.progression.level.trainingAge.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.plan.volume.sets.simple"
+msgstr ""
+
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "We updated our notices"
+msgstr ""
+
+#: src/features/plan/PlanScreen.tsx
+msgid "week {blockWeek} of {weeks}"
+msgstr ""
+
+#. placeholder {0}: formatLocalDate(shown, 'long')
+#: src/features/plan/PlanScreen.tsx
+msgid "Week of {0}"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.plan.volume.liftTarget"
+msgstr ""
+
+#: src/features/plan/NextMesocycleScreen.tsx
+#: src/features/plan/PlanEditorScreen.tsx
+#: src/features/plan/PlanPreviewView.tsx
+msgid "Weekly sets per muscle"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "weekly undulating"
+msgstr ""
+
+#: src/features/onboarding/steps.tsx
+msgid "Weights in"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.break.return.reentry.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.break.return.reduce.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.break.return.recalibrate.simple"
+msgstr ""
+
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "Welcome to POWR"
+msgstr ""
+
+#: src/features/onboarding/steps.tsx
+msgid "What do RIR and RPE mean?"
+msgstr ""
+
+#: src/features/onboarding/steps.tsx
+msgid "What do you want from training?"
+msgstr ""
+
+#: src/features/legal/LegalScreens.tsx
+msgid "What POWR stores, where and why"
+msgstr ""
+
+#: src/features/onboarding/steps.tsx
+msgid "When did you last train regularly?"
+msgstr ""
+
+#: src/features/plan/PlanEditorScreen.tsx
+msgid "When should the changes start?"
+msgstr ""
+
+#: src/features/equipment/EquipmentScreens.tsx
+msgid "Where do you train?"
+msgstr ""
+
+#: src/features/onboarding/steps.tsx
+msgid "Which days can you train?"
+msgstr ""
+
+#: src/features/plan/PlanEditorScreen.tsx
+msgid "Which muscle should it train?"
+msgstr ""
+
+#: src/features/onboarding/steps.tsx
+msgid "Which reference values should scores use?"
+msgstr ""
+
+#: src/features/legal/LegalScreens.tsx
+msgid "Who is responsible"
+msgstr ""
+
+#: src/features/why/WhySheet.tsx
+msgid "Why: {subject}"
+msgstr ""
+
+#: src/features/why/WhySheet.tsx
+msgid "Why?"
+msgstr ""
+
+#: src/features/why/WhySheet.tsx
+msgid "Why? {subject}"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.scoring.wilks"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.scoring.wilks2020"
 msgstr ""
 
 #: src/features/data/DataScreen.tsx
@@ -330,10 +3208,254 @@ msgstr ""
 msgid "Workouts"
 msgstr ""
 
+#: src/features/plan/parts.tsx
+msgid "Worth a look"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "wrist curl"
+msgstr ""
+
+#: src/features/plan/PlanScreen.tsx
+msgid "You are logging freely. Answer a few questions and POWR builds a plan for your days, time and equipment, and explains every choice."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.validate.avoided.simple"
+msgstr ""
+
+#: src/features/legal/LegalScreens.tsx
+msgid "You can delete all your data at any time in Settings, Data and backups."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.plan.template.chosen"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.progression.apre.adjust"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.validate.frequency.lift.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.validate.equipment.unavailable.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.progression.linear.increase.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.plan.slot.preferred.simple"
+msgstr ""
+
+#: src/features/equipment/EquipmentScreens.tsx
+msgid "You need at least one equipment profile."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.plan.template.chosen.simple"
+msgstr ""
+
+#: src/features/plan/PlanPreviewView.tsx
+msgid "You saved your equipment list empty, so this plan uses bodyweight exercises only. Add equipment any time in Settings and POWR offers to swap exercises in."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.deload.skipped.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.warmup.feeder.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.warmup.feeder"
+msgstr ""
+
+#: src/features/equipment/EquipmentScreens.tsx
+msgid "Your active plan uses this equipment. Make another profile the plan's equipment first."
+msgstr ""
+
 #: src/app/StartupError.tsx
 msgid "Your data has not been changed. Close other POWR windows, then reload."
 msgstr ""
 
 #: src/features/shell/RouteError.tsx
 msgid "Your data is saved. Reload to continue."
+msgstr ""
+
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "Your equipment"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.plan.slot.substituted"
+msgstr ""
+
+#: src/features/plan/parts.tsx
+msgid "Your equipment has no exercise for this."
+msgstr ""
+
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "Your experience"
+msgstr ""
+
+#: src/features/plan/PlanPreviewView.tsx
+msgid "Your first week"
+msgstr ""
+
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "Your goal"
+msgstr ""
+
+#: src/features/plan/NextMesocycleScreen.tsx
+#: src/features/plan/PlanPreviewView.tsx
+msgid "your level"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.progression.level.slope"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.progression.level.trainingAge"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.progression.level.slope.simple"
+msgstr ""
+
+#: src/features/equipment/EquipmentScreens.tsx
+msgid "Your logged training stays. This only removes the equipment list."
+msgstr ""
+
+#: src/features/labels.ts
+msgid "your logged volume"
+msgstr ""
+
+#: src/features/plan/parts.tsx
+msgid "Your number of training days does not allow it."
+msgstr ""
+
+#: src/features/equipment/EquipmentEditor.tsx
+msgid "Your own items"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "your own target"
+msgstr ""
+
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "Your plan"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.validate.lift.missing.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.plan.level.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.plan.level"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.validate.deload.missing.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.deload.reactive.propose.simple"
+msgstr ""
+
+#: src/features/labels.ts
+msgid "your recent volume"
+msgstr ""
+
+#. placeholder {0}: formatMinutes(budget)
+#: src/features/plan/PlanPreviewView.tsx
+msgid "Your session budget: {0}"
+msgstr ""
+
+#: src/features/plan/parts.tsx
+msgid "Your session time does not allow more."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.plan.volume.budget"
+msgstr ""
+
+#: src/features/plan/PlanPreviewView.tsx
+msgid "Your session time is tight"
+msgstr ""
+
+#: src/features/why/WhySheet.tsx
+msgid "Your setting"
+msgstr ""
+
+#: src/features/why/WhySheet.tsx
+msgid "Your setting for this exercise"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.trend.series"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.validate.volume.targetOutsideBand"
+msgstr ""
+
+#: src/features/legal/LegalScreens.tsx
+msgid "Your training (plans, sessions and sets), body data you choose to enter (such as body weight), check-ins and settings. They are stored in your browser's storage on this device, only to run the app for you."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.deload.reactive.none.simple"
+msgstr ""
+
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "Your training planner and log. It works offline, needs no account, and your data stays on this phone."
+msgstr ""
+
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "Your week"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.bodyweight.rate"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.plan.volume.budget.simple"
 msgstr ""

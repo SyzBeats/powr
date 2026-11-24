@@ -180,15 +180,49 @@ describe('alpha JS-plugin rules report warnings without blocking (OQ-T10)', () =
     expect(output).toMatch(/warning lingui\(no-unlocalized-strings\)/);
     expect(status).toBe(0);
   });
+});
 
-  it('runs the React Compiler rules of eslint-plugin-react-hooks as warnings', () => {
+describe('React Compiler rules are native and blocking (§8.5, TD-10)', () => {
+  it('fails the lint on impure, ref, state and mutation errors in render, without the JS plugin', () => {
     const file = probe(
-      'apps/web/src/features/__probe__/probe.tsx',
-      ['export function Probe() {', '  return <output>{Math.random()}</output>;', '}', ''].join(
-        '\n',
-      ),
+      'apps/web/src/hooks/__probe__.tsx',
+      [
+        "import { useRef, useState } from 'react';",
+        'export function Impure() {',
+        '  return <output>{Math.random()}</output>;',
+        '}',
+        'export function RefInRender() {',
+        '  const ref = useRef(0);',
+        '  ref.current = 1;',
+        '  return <output>{ref.current}</output>;',
+        '}',
+        'export function SetStateInRender() {',
+        '  const [count, setCount] = useState(0);',
+        '  setCount(1);',
+        '  return <output>{count}</output>;',
+        '}',
+        'export function MutatesState() {',
+        '  const [state] = useState({ count: 0 });',
+        '  state.count = 1;',
+        '  return <output>{state.count}</output>;',
+        '}',
+        'export function Unsupported() {',
+        "  return <output>{eval('1')}</output>;",
+        '}',
+        '',
+      ].join('\n'),
     );
-    const { output } = lint(file);
-    expect(output).toMatch(/warning react-hooks-js\(purity\)/);
+    const { status, output } = lint(file);
+    expect(status).not.toBe(0);
+    for (const rule of [
+      'purity',
+      'refs',
+      'set-state-in-render',
+      'immutability',
+      'unsupported-syntax',
+    ]) {
+      expect(output).toMatch(new RegExp(`error react\\(${rule}\\)`));
+    }
+    expect(output).not.toContain('react-hooks-js');
   });
 });

@@ -7,9 +7,9 @@
 | Field | Value |
 |---|---|
 | Title | POWR (working title): Product Requirements Document |
-| Version | 0.3 |
+| Version | 0.4 |
 | Date | 2026-11-23 |
-| Status | Draft v0.3. All open questions resolved on 2026-11-23 (§11.1). Only validation tasks remain (§11.2). Baseline for the technical concept. |
+| Status | Draft v0.4. All open questions resolved on 2026-11-23 (§11.1). Only validation tasks remain (§11.2). Baseline for the technical concept. |
 | Owner / publisher | Simeon Zimmermann, SZ WEB DEVELOPMENT, Switzerland (product owner and publisher). Drafted by the requirements agent. |
 | Audience | Product owner, the technical-concept author, designers, testers |
 | Sources | (1) User braindump `app.requirements.md`. (2) User answers to clarification questions (2026-11-23); these are authoritative and override the braindump where it is ambiguous. (3) Evidence base `reports/Strength and hypertrophy evidence base.md` (consolidated report, "EB"), backed by the six files in `research_notes/Strength and hypertrophy evidence base/`. (4) Platform documentation checked on 2026-11-23 (Appendix C). (5) User decisions on all open questions and publisher details, 2026-11-23 (§11.1). |
@@ -23,6 +23,7 @@
 | 0.1 | 2026-11-23 | First complete draft from braindump, clarification answers and evidence base |
 | 0.2 | 2026-11-23 | All open questions OQ-01…OQ-10 resolved by the user (§11.1): pure-PWA timer-alert baseline; MVP cut confirmed; web-only distribution; **free, closed source** (new licence policy LEG-08, reworked attributions screen LEG-06, no AGPL code, scoring reimplemented from official sources); no telemetry; Chrome + Samsung Internet; percentile data and media sources re-evaluated for closed source; composite effectiveness ranking; minimum age 16; publisher Simeon Zimmermann, SZ WEB DEVELOPMENT, Switzerland (revFADP/nDSG primary, GDPR to be confirmed in legal review; new LEG-09, §8.6). Affected requirements, constraints (C-09…C-15), non-goals (NG-14…NG-17), assumptions, risks (R-01 lowered; R-09 revised; R-17, R-18 new), TC-18, release plan and traceability (A.3) updated. Validation tasks listed in §11.2. |
 | 0.3 | 2026-11-24 | §7.1 movement patterns extended by five joint actions already used by the content and engine (shoulder horizontal adduction/abduction, shrug, wrist flexion/extension); EXL-04 load-curve class "bench-like" renamed "equation (Wathan/RTS)" (TD-30, rename in code planned for M2b). Both approved by the product owner on 2026-11-24. |
+| 0.4 | 2026-11-24 | PLN-14: time-budget rule (priority muscles keep their full target, the others fall back towards about 4 weekly sets; also for next-block proposals) with reason and fixes. EQP-02 and ONB-06: Custom (empty) opens the equipment checklist first; an empty list gives a bodyweight-only plan with the reason. Both approved by the product owner on 2026-11-24 (M2b). |
 
 ---
 
@@ -231,6 +232,7 @@ The app captures: training days per week (2–6), which weekdays, a preferred st
 The user picks a gym preset (EQP-02) and then refines a checklist of equipment (EQP-01), including load details such as bar weight, plate pairs, dumbbell range and stack increments (EQP-03).
 - At least one preset can be confirmed without editing in ≤ 3 taps.
 - After this step, every exercise the app suggests is executable with the selected equipment (EQP-04).
+- With Custom (empty), the checklist comes first and the plan follows from it (EQP-02).
 
 **ONB-07 · Priorities and exclusions** · Should · MVP
 The user can mark up to 3 priority muscles and add exercises or movement patterns to avoid (injury or dislike, for example "deep knee flexion under load").
@@ -283,6 +285,7 @@ The app provides a structured catalog of gym equipment that the user can check o
 **EQP-02 · Gym presets** · Must · MVP
 Presets pre-select typical equipment: **Commercial gym (full)**, **Home/garage gym (barbell)**, **Dumbbells and bench**, **Bodyweight and bands**, **Hotel gym** and **Custom (empty)**.
 - Choosing a preset and confirming takes ≤ 3 taps. Every preset can be refined.
+- Choosing **Custom (empty)** opens the equipment checklist (EQP-01) before a plan is generated. If the list is saved empty, the plan uses bodyweight exercises only and says why. A strength style that needs a barbell gets no plan; the app gives the reason and offers to change the equipment or the style.
 
 **EQP-03 · Load-relevant equipment details** · Must · MVP
 Where the load matters, the inventory captures details used for prescriptions, rounding and the plate calculator:
@@ -512,6 +515,7 @@ At the end of a mesocycle the app proposes the next one. It carries over e1RMs, 
 **PLN-14 · Session duration estimate and time budget** · Must · MVP
 Every planned and in-progress session shows an estimated duration. The estimate is the sum over sets of (reps × rep duration + rest after set), plus warm-up time and transitions per exercise. Once data exists, the user's logged rest times replace the defaults (`EB §Session › Duration & time-cap`).
 - Plans exceeding the budget by > 10% are flagged with concrete fixes (fewer sets on lowest-priority slots, supersets, technique sets), see WKT-17.
+- When the session budget cannot fit every muscle's weekly target, the user's priority muscles keep their full target and the other muscles fall back towards the evidence minimum of about 4 weekly sets per muscle (`EB §Volume › Minimum & maintenance`). Without priorities, the muscles the template emphasises keep theirs. The same rule applies to every next-block proposal (PLN-13). The plan states the reason (time budget) and offers concrete fixes: the session length that would fit, or another training day.
 
 **PLN-15 · Freestyle mode** · Must · MVP
 The user can log sessions without an active plan by choosing exercises ad hoc. Progression suggestions (PRG-03) still work from history, and volume, PRs and analytics work as usual.

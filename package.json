@@ -15,6 +15,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "e2e": "pnpm --filter @powr/web e2e",
+    "lighthouse": "pnpm --filter @powr/web lighthouse",
     "knip": "knip",
     "i18n:extract": "pnpm --filter @powr/web i18n:extract",
     "i18n:check": "pnpm --filter @powr/web i18n:check",
@@ -24,15 +25,15 @@
     "icons": "node tools/icons/src/generate.ts",
     "content:build": "node tools/content-build/src/cli.ts",
     "content:check": "node tools/content-build/src/cli.ts --check",
+    "tokens:check": "node tools/tokens-check/src/cli.ts",
     "docker:build": "docker build -f deploy/Dockerfile -t powr-web:local .",
     "docker:run": "docker run --rm --name powr-web -p 8080:8080 powr-web:local",
     "docker:smoke": "node deploy/smoke.ts http://localhost:8080",
-    "verify": "pnpm lint && pnpm format:check && pnpm knip && pnpm i18n:check && pnpm typecheck && pnpm test && pnpm build && pnpm licence && pnpm size && pnpm e2e"
+    "verify": "pnpm lint && pnpm format:check && pnpm tokens:check && pnpm knip && pnpm i18n:check && pnpm typecheck && pnpm test && pnpm build && pnpm licence && pnpm size && pnpm e2e"
   },
   "devDependencies": {
     "@types/node": "26.6.6",
     "eslint-plugin-lingui": "0.16.0",
-    "eslint-plugin-react-hooks": "7.1.1",
     "fast-check": "4.11.0",
     "knip": "6.48.0",
     "oxfmt": "0.80.0",

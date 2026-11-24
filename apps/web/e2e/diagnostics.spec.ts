@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 
 import type { Download, Page } from '@playwright/test';
 
-import { expect, test, waitForOfflineReady } from './fixtures';
+import { expect, skipOnboarding, test, waitForOfflineReady } from './fixtures';
 
 async function downloadedJson(download: Download): Promise<Record<string, unknown>> {
   expect(download.suggestedFilename()).toMatch(/\.txt$/);
@@ -85,6 +85,7 @@ test.describe('diagnostics and device harnesses (WP0.8)', () => {
     baseURL,
   }) => {
     await context.grantPermissions(['notifications'], { origin: baseURL! });
+    await skipOnboarding(page);
     await page.goto('/');
     await waitForOfflineReady(page);
     await page.goto('/debug/alerts');

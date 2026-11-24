@@ -9,6 +9,7 @@
   },
   "include": [
     "vite.config.ts",
+    "vitest.components.config.ts",
     "playwright.config.ts",
     "lingui.config.ts",
     "package.json",

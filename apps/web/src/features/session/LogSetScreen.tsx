@@ -148,7 +148,7 @@ function ExercisePicker({
       {exercises.map((exercise) => (
         <label
           key={exercise.id}
-          className="flex min-h-target items-center gap-3 rounded-xl border border-border px-3 has-[:checked]:border-primary has-[:checked]:bg-surface-raised"
+          className="flex min-h-target items-center gap-3 rounded-xl border border-control px-3 has-[:checked]:border-primary has-[:checked]:bg-surface-raised"
         >
           <input
             type="radio"

@@ -1,6 +1,6 @@
 # ADR-0018: Licence compliance tooling: own inventory from the bundle graph + SPDX policy gate
 
-- Status: Accepted (v0.3, 2026-11-24: own SPDX evaluator; licence exceptions approved; v0.4, 2026-11-24: content entries approved, see below)
+- Status: Accepted (v0.3, 2026-11-24: own SPDX evaluator; licence exceptions approved; v0.4, 2026-11-24: content entries approved; v0.5, 2026-11-24: package block list with no Sentry (product-owner decision), two build-only packages removed by pnpm `overrides`, see below)
 - Date: 2026-11-23, amended 2026-11-24
 - Related: technical concept §8.21, §8.12; PRD LEG-06, LEG-08, NFR-MNT-08, TC-18, V-04, R-09
 
@@ -58,3 +58,19 @@ Source: `IMPLEMENTATION_NOTES.md` §3 (repository root), which records each devi
 - **Decision (product owner, 2026-11-24): the four content entries are approved as own work.** The entries' `approval` field records this; because the build writes these entries, the approval text belongs in the build's inventory template (`tools/content-build/src/inventory.ts`) so that `pnpm content:check` stays green.
 
 Source: `IMPLEMENTATION_NOTES.md` (repository root): §3 rows marked "Docs amended in v0.4" and the sections "M1-B content" and "M1-A engine and rules".
+
+## Amendment (v0.5, 2026-11-24)
+
+The decision stands. v0.5 folds in the M2 tooling (TD-09 native Lingui macro, TD-10 native React Compiler lint rules, TD-12 Lighthouse CI and Trusted Types in dev/E2E) and the Sentry package block list. For this ADR:
+
+- **Decision (product owner, 2026-11-24): no Sentry anywhere.** No Sentry SDK, CLI or internal package may be in the dependency tree, shipped or build-only.
+  - **Block list.** `licence-policy.yaml` has a block list, `deniedPackages`. Each entry is a package name or a `prefix*` pattern with a reason. It refuses `sentry`, `sentry-*`, `@sentry/*` and `@sentry-internal/*`.
+  - **Evaluation.** `tools/licence/src/policy.ts` checks the block list first, before the licence and the exceptions. A matching package fails the gate whatever its licence, whether it is distributed or build-only, and no exception overrides it, approved or not.
+  - **Unit test.** A policy test refuses a blocked package with an allowed licence when it is shipped, when it is build-only and when an approved exception matches it.
+- **Two build-only packages kept out of the install.** Lighthouse CI (TD-12, build-only) brought two transitive packages that the gate rejected:
+  - `sentry@0.49.0`, licensed `FSL-1.1-Apache-2.0` (source-available), through Lighthouse → `@sentry/node` 11 → `@sentry/bundler-plugins`;
+  - `argparse@3.0.4`, licensed `PSF-2.0` (not on the allowlist), through `@lhci/utils` → `js-yaml` 5.
+
+  Neither is ever loaded: Lighthouse imports `@sentry/node` only with `--enable-error-reporting`, and js-yaml uses argparse only in its own command-line binary. pnpm `overrides` in `pnpm-workspace.yaml` remove both from the install (`'lighthouse>@sentry/node': '-'`, `'js-yaml@5>argparse': '-'`; ADR-0021). There is no exception entry and no allowlist change. For `argparse` the product owner chose this exclusion over allowing `PSF-2.0`. For Sentry, the override keeps Lighthouse's optional error reporting out of the install, and the block list fails the gate if any Sentry package returns through another path.
+
+Source: `IMPLEMENTATION_NOTES.md` (repository root), section "M2 tooling (TD-09, TD-10, TD-12)", and the product-owner decision of 2026-11-24 on Sentry.

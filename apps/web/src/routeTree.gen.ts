@@ -12,12 +12,21 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DataRouteImport } from './routes/data'
 import { Route as ExploreRouteImport } from './routes/explore'
-import { Route as PlanRouteImport } from './routes/plan'
 import { Route as ProgressRouteImport } from './routes/progress'
 import { Route as SessionRouteImport } from './routes/session'
-import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as DebugAlertsRouteImport } from './routes/debug/alerts'
 import { Route as DebugCapabilitiesRouteImport } from './routes/debug/capabilities'
+import { Route as LegalDisclaimerRouteImport } from './routes/legal/disclaimer'
+import { Route as LegalPrivacyRouteImport } from './routes/legal/privacy'
+import { Route as OnboardingIndexRouteImport } from './routes/onboarding/index'
+import { Route as OnboardingStepRouteImport } from './routes/onboarding/$step'
+import { Route as PlanIndexRouteImport } from './routes/plan/index'
+import { Route as PlanEditRouteImport } from './routes/plan/edit'
+import { Route as PlanNextRouteImport } from './routes/plan/next'
+import { Route as SettingsIndexRouteImport } from './routes/settings/index'
+import { Route as PlanSetupStepRouteImport } from './routes/plan/setup/$step'
+import { Route as SettingsEquipmentIndexRouteImport } from './routes/settings/equipment/index'
+import { Route as SettingsEquipmentProfileIdRouteImport } from './routes/settings/equipment/$profileId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -34,11 +43,6 @@ const ExploreRoute = ExploreRouteImport.update({
   path: '/explore',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PlanRoute = PlanRouteImport.update({
-  id: '/plan',
-  path: '/plan',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ProgressRoute = ProgressRouteImport.update({
   id: '/progress',
   path: '/progress',
@@ -47,11 +51,6 @@ const ProgressRoute = ProgressRouteImport.update({
 const SessionRoute = SessionRouteImport.update({
   id: '/session',
   path: '/session',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SettingsRoute = SettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DebugAlertsRoute = DebugAlertsRouteImport.update({
@@ -64,40 +63,123 @@ const DebugCapabilitiesRoute = DebugCapabilitiesRouteImport.update({
   path: '/debug/capabilities',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LegalDisclaimerRoute = LegalDisclaimerRouteImport.update({
+  id: '/legal/disclaimer',
+  path: '/legal/disclaimer',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LegalPrivacyRoute = LegalPrivacyRouteImport.update({
+  id: '/legal/privacy',
+  path: '/legal/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OnboardingIndexRoute = OnboardingIndexRouteImport.update({
+  id: '/onboarding/',
+  path: '/onboarding/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OnboardingStepRoute = OnboardingStepRouteImport.update({
+  id: '/onboarding/$step',
+  path: '/onboarding/$step',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlanIndexRoute = PlanIndexRouteImport.update({
+  id: '/plan/',
+  path: '/plan/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlanEditRoute = PlanEditRouteImport.update({
+  id: '/plan/edit',
+  path: '/plan/edit',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlanNextRoute = PlanNextRouteImport.update({
+  id: '/plan/next',
+  path: '/plan/next',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsIndexRoute = SettingsIndexRouteImport.update({
+  id: '/settings/',
+  path: '/settings/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlanSetupStepRoute = PlanSetupStepRouteImport.update({
+  id: '/plan/setup/$step',
+  path: '/plan/setup/$step',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsEquipmentIndexRoute = SettingsEquipmentIndexRouteImport.update({
+  id: '/settings/equipment/',
+  path: '/settings/equipment/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsEquipmentProfileIdRoute =
+  SettingsEquipmentProfileIdRouteImport.update({
+    id: '/settings/equipment/$profileId',
+    path: '/settings/equipment/$profileId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/data': typeof DataRoute
   '/explore': typeof ExploreRoute
-  '/plan': typeof PlanRoute
   '/progress': typeof ProgressRoute
   '/session': typeof SessionRoute
-  '/settings': typeof SettingsRoute
   '/debug/alerts': typeof DebugAlertsRoute
   '/debug/capabilities': typeof DebugCapabilitiesRoute
+  '/legal/disclaimer': typeof LegalDisclaimerRoute
+  '/legal/privacy': typeof LegalPrivacyRoute
+  '/onboarding/$step': typeof OnboardingStepRoute
+  '/plan/edit': typeof PlanEditRoute
+  '/plan/next': typeof PlanNextRoute
+  '/onboarding/': typeof OnboardingIndexRoute
+  '/plan/': typeof PlanIndexRoute
+  '/settings/': typeof SettingsIndexRoute
+  '/plan/setup/$step': typeof PlanSetupStepRoute
+  '/settings/equipment/$profileId': typeof SettingsEquipmentProfileIdRoute
+  '/settings/equipment/': typeof SettingsEquipmentIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/data': typeof DataRoute
   '/explore': typeof ExploreRoute
-  '/plan': typeof PlanRoute
   '/progress': typeof ProgressRoute
   '/session': typeof SessionRoute
-  '/settings': typeof SettingsRoute
   '/debug/alerts': typeof DebugAlertsRoute
   '/debug/capabilities': typeof DebugCapabilitiesRoute
+  '/legal/disclaimer': typeof LegalDisclaimerRoute
+  '/legal/privacy': typeof LegalPrivacyRoute
+  '/onboarding/$step': typeof OnboardingStepRoute
+  '/plan/edit': typeof PlanEditRoute
+  '/plan/next': typeof PlanNextRoute
+  '/onboarding': typeof OnboardingIndexRoute
+  '/plan': typeof PlanIndexRoute
+  '/settings': typeof SettingsIndexRoute
+  '/plan/setup/$step': typeof PlanSetupStepRoute
+  '/settings/equipment/$profileId': typeof SettingsEquipmentProfileIdRoute
+  '/settings/equipment': typeof SettingsEquipmentIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/data': typeof DataRoute
   '/explore': typeof ExploreRoute
-  '/plan': typeof PlanRoute
   '/progress': typeof ProgressRoute
   '/session': typeof SessionRoute
-  '/settings': typeof SettingsRoute
   '/debug/alerts': typeof DebugAlertsRoute
   '/debug/capabilities': typeof DebugCapabilitiesRoute
+  '/legal/disclaimer': typeof LegalDisclaimerRoute
+  '/legal/privacy': typeof LegalPrivacyRoute
+  '/onboarding/$step': typeof OnboardingStepRoute
+  '/plan/edit': typeof PlanEditRoute
+  '/plan/next': typeof PlanNextRoute
+  '/onboarding/': typeof OnboardingIndexRoute
+  '/plan/': typeof PlanIndexRoute
+  '/settings/': typeof SettingsIndexRoute
+  '/plan/setup/$step': typeof PlanSetupStepRoute
+  '/settings/equipment/$profileId': typeof SettingsEquipmentProfileIdRoute
+  '/settings/equipment/': typeof SettingsEquipmentIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -105,46 +187,82 @@ export interface FileRouteTypes {
     | '/'
     | '/data'
     | '/explore'
-    | '/plan'
     | '/progress'
     | '/session'
-    | '/settings'
     | '/debug/alerts'
     | '/debug/capabilities'
+    | '/legal/disclaimer'
+    | '/legal/privacy'
+    | '/onboarding/$step'
+    | '/plan/edit'
+    | '/plan/next'
+    | '/onboarding/'
+    | '/plan/'
+    | '/settings/'
+    | '/plan/setup/$step'
+    | '/settings/equipment/$profileId'
+    | '/settings/equipment/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/data'
     | '/explore'
-    | '/plan'
     | '/progress'
     | '/session'
-    | '/settings'
     | '/debug/alerts'
     | '/debug/capabilities'
+    | '/legal/disclaimer'
+    | '/legal/privacy'
+    | '/onboarding/$step'
+    | '/plan/edit'
+    | '/plan/next'
+    | '/onboarding'
+    | '/plan'
+    | '/settings'
+    | '/plan/setup/$step'
+    | '/settings/equipment/$profileId'
+    | '/settings/equipment'
   id:
     | '__root__'
     | '/'
     | '/data'
     | '/explore'
-    | '/plan'
     | '/progress'
     | '/session'
-    | '/settings'
     | '/debug/alerts'
     | '/debug/capabilities'
+    | '/legal/disclaimer'
+    | '/legal/privacy'
+    | '/onboarding/$step'
+    | '/plan/edit'
+    | '/plan/next'
+    | '/onboarding/'
+    | '/plan/'
+    | '/settings/'
+    | '/plan/setup/$step'
+    | '/settings/equipment/$profileId'
+    | '/settings/equipment/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DataRoute: typeof DataRoute
   ExploreRoute: typeof ExploreRoute
-  PlanRoute: typeof PlanRoute
   ProgressRoute: typeof ProgressRoute
   SessionRoute: typeof SessionRoute
-  SettingsRoute: typeof SettingsRoute
   DebugAlertsRoute: typeof DebugAlertsRoute
   DebugCapabilitiesRoute: typeof DebugCapabilitiesRoute
+  LegalDisclaimerRoute: typeof LegalDisclaimerRoute
+  LegalPrivacyRoute: typeof LegalPrivacyRoute
+  OnboardingStepRoute: typeof OnboardingStepRoute
+  PlanEditRoute: typeof PlanEditRoute
+  PlanNextRoute: typeof PlanNextRoute
+  OnboardingIndexRoute: typeof OnboardingIndexRoute
+  PlanIndexRoute: typeof PlanIndexRoute
+  SettingsIndexRoute: typeof SettingsIndexRoute
+  PlanSetupStepRoute: typeof PlanSetupStepRoute
+  SettingsEquipmentProfileIdRoute: typeof SettingsEquipmentProfileIdRoute
+  SettingsEquipmentIndexRoute: typeof SettingsEquipmentIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -170,13 +288,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ExploreRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/plan': {
-      id: '/plan'
-      path: '/plan'
-      fullPath: '/plan'
-      preLoaderRoute: typeof PlanRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/progress': {
       id: '/progress'
       path: '/progress'
@@ -189,13 +300,6 @@ declare module '@tanstack/react-router' {
       path: '/session'
       fullPath: '/session'
       preLoaderRoute: typeof SessionRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/settings': {
-      id: '/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/debug/alerts': {
@@ -212,6 +316,83 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DebugCapabilitiesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/legal/disclaimer': {
+      id: '/legal/disclaimer'
+      path: '/legal/disclaimer'
+      fullPath: '/legal/disclaimer'
+      preLoaderRoute: typeof LegalDisclaimerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/legal/privacy': {
+      id: '/legal/privacy'
+      path: '/legal/privacy'
+      fullPath: '/legal/privacy'
+      preLoaderRoute: typeof LegalPrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/onboarding/': {
+      id: '/onboarding/'
+      path: '/onboarding'
+      fullPath: '/onboarding/'
+      preLoaderRoute: typeof OnboardingIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/onboarding/$step': {
+      id: '/onboarding/$step'
+      path: '/onboarding/$step'
+      fullPath: '/onboarding/$step'
+      preLoaderRoute: typeof OnboardingStepRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/plan/': {
+      id: '/plan/'
+      path: '/plan'
+      fullPath: '/plan/'
+      preLoaderRoute: typeof PlanIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/plan/edit': {
+      id: '/plan/edit'
+      path: '/plan/edit'
+      fullPath: '/plan/edit'
+      preLoaderRoute: typeof PlanEditRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/plan/next': {
+      id: '/plan/next'
+      path: '/plan/next'
+      fullPath: '/plan/next'
+      preLoaderRoute: typeof PlanNextRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings/': {
+      id: '/settings/'
+      path: '/settings'
+      fullPath: '/settings/'
+      preLoaderRoute: typeof SettingsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/plan/setup/$step': {
+      id: '/plan/setup/$step'
+      path: '/plan/setup/$step'
+      fullPath: '/plan/setup/$step'
+      preLoaderRoute: typeof PlanSetupStepRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings/equipment/': {
+      id: '/settings/equipment/'
+      path: '/settings/equipment'
+      fullPath: '/settings/equipment/'
+      preLoaderRoute: typeof SettingsEquipmentIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings/equipment/$profileId': {
+      id: '/settings/equipment/$profileId'
+      path: '/settings/equipment/$profileId'
+      fullPath: '/settings/equipment/$profileId'
+      preLoaderRoute: typeof SettingsEquipmentProfileIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -219,12 +400,21 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DataRoute: DataRoute,
   ExploreRoute: ExploreRoute,
-  PlanRoute: PlanRoute,
   ProgressRoute: ProgressRoute,
   SessionRoute: SessionRoute,
-  SettingsRoute: SettingsRoute,
   DebugAlertsRoute: DebugAlertsRoute,
   DebugCapabilitiesRoute: DebugCapabilitiesRoute,
+  LegalDisclaimerRoute: LegalDisclaimerRoute,
+  LegalPrivacyRoute: LegalPrivacyRoute,
+  OnboardingStepRoute: OnboardingStepRoute,
+  PlanEditRoute: PlanEditRoute,
+  PlanNextRoute: PlanNextRoute,
+  OnboardingIndexRoute: OnboardingIndexRoute,
+  PlanIndexRoute: PlanIndexRoute,
+  SettingsIndexRoute: SettingsIndexRoute,
+  PlanSetupStepRoute: PlanSetupStepRoute,
+  SettingsEquipmentProfileIdRoute: SettingsEquipmentProfileIdRoute,
+  SettingsEquipmentIndexRoute: SettingsEquipmentIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

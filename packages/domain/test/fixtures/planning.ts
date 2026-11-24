@@ -58,7 +58,7 @@ export function exercise(id: string, spec: ExerciseSpec): ExerciseDef {
     })),
     load: {
       type: spec.type ?? 'barbell',
-      curveClass: 'benchLike',
+      curveClass: 'equation',
       unilateral: false,
       bodyweightLoaded: false,
     },

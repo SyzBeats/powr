@@ -1,4 +1,5 @@
 import {
+  MAX_DISMISSED_ISSUES,
   daysBetween,
   type EquipmentProfile,
   type IsoWeekday,
@@ -172,6 +173,7 @@ export function planRecords(
     createdAt: deps.clock.now(),
     versions: preview.versions,
     revision: 0,
+    dismissedIssues: [],
   };
   const from = today(deps) > startDate ? today(deps) : startDate;
   const sessions = materializeMesocycle(
@@ -465,6 +467,41 @@ function rematerialize(
     sessions,
     removed: existing.filter((session) => !kept.has(session.id)).map((session) => session.id),
   };
+}
+
+export type DismissIssueError = { readonly kind: 'notFound' };
+
+/**
+ * PLN-09 "warnings are dismissible and are not shown again for the same plan state": stores the
+ * issue's `key` (it encodes the numbers, so a changed plan shows the warning again) on the plan.
+ * Idempotent; not a plan edit, so the revision stays. The oldest keys go beyond
+ * `MAX_DISMISSED_ISSUES`.
+ */
+export async function dismissPlanIssue(
+  deps: Deps,
+  input: { readonly planId: PlanId; readonly key: string },
+): Promise<Result<void, DismissIssueError>> {
+  return deps.uow.write(['plans'], async (repos) => {
+    const plan = await repos.plans.get(input.planId);
+    if (!plan) return err({ kind: 'notFound' });
+    if (plan.dismissedIssues.includes(input.key)) return ok(undefined);
+    const dismissedIssues = [...plan.dismissedIssues, input.key].slice(-MAX_DISMISSED_ISSUES);
+    await repos.plans.put({ ...plan, dismissedIssues });
+    return ok(undefined);
+  });
+}
+
+/** Shows every dismissed warning of the plan again (PLN-09). */
+export async function restorePlanIssues(
+  deps: Deps,
+  input: { readonly planId: PlanId },
+): Promise<Result<void, DismissIssueError>> {
+  return deps.uow.write(['plans'], async (repos) => {
+    const plan = await repos.plans.get(input.planId);
+    if (!plan) return err({ kind: 'notFound' });
+    if (plan.dismissedIssues.length > 0) await repos.plans.put({ ...plan, dismissedIssues: [] });
+    return ok(undefined);
+  });
 }
 
 /** The equipment profile a plan uses (or the default one). */

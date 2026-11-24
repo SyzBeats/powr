@@ -103,7 +103,10 @@ export interface PlanDay {
   readonly slots: readonly PlanSlot[];
 }
 
-/** Where a weekly muscle target came from (PLN-03). */
+/**
+ * Where a weekly muscle target came from (PLN-03). `timeBudget`: lowered towards the minimum
+ * dose because the session time budget cannot fit the full target (PLN-14).
+ */
 export const TARGET_SOURCES = [
   'band',
   'priority',
@@ -111,6 +114,7 @@ export const TARGET_SOURCES = [
   'recent',
   'logged',
   'user',
+  'timeBudget',
 ] as const;
 export type TargetSource = (typeof TARGET_SOURCES)[number];
 
@@ -119,6 +123,8 @@ export interface MuscleTarget {
   readonly muscle: MuscleId;
   readonly sets: number;
   readonly source: TargetSource;
+  /** The full target before the time budget lowered it; present only for source `timeBudget`. */
+  readonly full?: number;
 }
 
 /** Weekly direct heavy sets for one competition lift (PLN-03, strength). */
@@ -166,6 +172,9 @@ export interface PlanSchedule {
 export const PLAN_STATUSES = ['active', 'ended'] as const;
 export type PlanStatus = (typeof PLAN_STATUSES)[number];
 
+/** At most this many dismissed warning keys are kept per plan; the oldest go first (PLN-09). */
+export const MAX_DISMISSED_ISSUES = 500;
+
 export interface Plan {
   readonly id: PlanId;
   readonly status: PlanStatus;
@@ -185,6 +194,11 @@ export interface Plan {
   readonly versions: VersionStamp;
   /** Bumped by every saved edit. */
   readonly revision: number;
+  /**
+   * Keys of the validation warnings the user dismissed (PLN-09: "not shown again for the same
+   * plan state"); a key encodes the numbers it is about, so a changed plan shows it again.
+   */
+  readonly dismissedIssues: readonly string[];
 }
 
 export const PLANNED_SESSION_STATUSES = [

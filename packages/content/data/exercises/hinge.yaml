@@ -23,8 +23,8 @@
     - { muscle: mu.adductors, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
     - { muscle: mu.upper-traps, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
     - { muscle: mu.forearms.flexors, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
-  # curveClass benchLike = Wathan/RTS equation for competition squat/deadlift and close variants (product-owner decision 2026-11-24; replaced by the personal curve later)
-  load: { type: barbell, curveClass: benchLike, unilateral: false, bodyweightLoaded: false }
+  # curveClass equation = the user's e1RM equation (Wathan/RTS) for competition squat/deadlift and close variants (product-owner decision 2026-11-24; replaced by the personal curve later)
+  load: { type: barbell, curveClass: equation, unilateral: false, bodyweightLoaded: false }
   defaults:
     repRange: { hypertrophy: [6, 10], strength: [1, 6] }
     restClass: strength
@@ -59,8 +59,8 @@
     - { muscle: mu.adductors, credit: 1, evidence: C, source: src.powr-eb-mapping }
     - { muscle: mu.upper-traps, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
     - { muscle: mu.forearms.flexors, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
-  # curveClass benchLike = Wathan/RTS equation for competition squat/deadlift and close variants (product-owner decision 2026-11-24; replaced by the personal curve later)
-  load: { type: barbell, curveClass: benchLike, unilateral: false, bodyweightLoaded: false }
+  # curveClass equation = the user's e1RM equation (Wathan/RTS) for competition squat/deadlift and close variants (product-owner decision 2026-11-24; replaced by the personal curve later)
+  load: { type: barbell, curveClass: equation, unilateral: false, bodyweightLoaded: false }
   defaults:
     repRange: { hypertrophy: [6, 10], strength: [1, 6] }
     restClass: strength
@@ -92,8 +92,8 @@
     - { muscle: mu.adductors, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
     - { muscle: mu.upper-traps, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
     - { muscle: mu.forearms.flexors, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
-  # curveClass benchLike = Wathan/RTS equation for competition squat/deadlift and close variants (product-owner decision 2026-11-24; replaced by the personal curve later)
-  load: { type: barbell, curveClass: benchLike, unilateral: false, bodyweightLoaded: false }
+  # curveClass equation = the user's e1RM equation (Wathan/RTS) for competition squat/deadlift and close variants (product-owner decision 2026-11-24; replaced by the personal curve later)
+  load: { type: barbell, curveClass: equation, unilateral: false, bodyweightLoaded: false }
   defaults:
     repRange: { hypertrophy: [6, 10], strength: [1, 6] }
     restClass: strength

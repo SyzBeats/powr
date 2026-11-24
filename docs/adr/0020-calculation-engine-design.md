@@ -1,6 +1,6 @@
 # ADR-0020: Calculation engine design: pure functional core with injected rules and explanation traces
 
-- Status: Accepted (v0.4, 2026-11-24: engine as built in M1; curve class of the competition squat and deadlift, see below)
+- Status: Accepted (v0.4, 2026-11-24: engine as built in M1; curve class of the competition squat and deadlift, see below; amended v0.5)
 - Date: 2026-11-23, amended 2026-11-24
 - Related: technical concept §8.7, §8.6; PRD PRG-01…18, PRG-09, PLN-01, NFR-MNT-01/02, NFR-REL-03, TC-05, TC-15, §7.8; EB Conclusion
 
@@ -45,3 +45,14 @@ The decision stands. M1 built the engine as described in technical concept §8.7
 - **Not built yet:** personal curve fit and per-exercise correction (TD-26), PR detection and the calibration state machine (TD-27), English `why.*` messages (TD-28), mapping equipment presets to `Implement` (TD-29).
 
 Source: `IMPLEMENTATION_NOTES.md` (repository root): §3 rows marked "Docs amended in v0.4" and the sections "M1-B content" and "M1-A engine and rules".
+
+## Amendment (v0.5, 2026-11-24)
+
+The decision stands, with one deviation and two product-owner decisions (technical concept §8.7.10):
+
+- **Deviation:** plan generation and validation run in the lazy `@powr/application/planning` chunk on the main thread until the engine worker exists (a few milliseconds per plan; TD-32).
+- **Decision: time-budget prioritisation.** When the session budget cannot fit every weekly target, the user's priority muscles (else the template's emphasis) keep their full target and the others fall back towards the minimum dose of 4 weekly sets (`volume.hypertrophy.minimumDose`, Iversen 2021); the plan states the reason and suggests more minutes or another day. The fallback rule is a POWR design value (`planning.timeBudget.fallback`, `verified: false`).
+- **Decision: curve class `equation`.** `benchLike` is renamed `equation` ("the user's e1RM equation, Wathan/RTS") in the domain, the registry and the content (TD-30); rules 1.2.0, content 0.2.0.
+- **Explanations:** every `RuleId` has an English message, and a coverage test keeps it so (TD-28).
+
+Source: `IMPLEMENTATION_NOTES.md` (repository root), sections "M2a planning core" and "M2b screens".

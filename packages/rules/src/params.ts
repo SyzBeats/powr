@@ -2,6 +2,7 @@ import { SLOT_PRIORITIES } from '@powr/domain';
 import {
   E1RM_EQUATIONS,
   CURVE_SOURCES,
+  KEEP_FULL_SOURCES,
   PROGRESSION_MODELS,
   SCORE_FORMULAS,
   type ParamId,
@@ -103,7 +104,7 @@ export const PARAM_SCHEMAS = {
   // load.yaml
   'load.e1rm.equation': z.enum(E1RM_EQUATIONS),
   'load.curve.classMap': z.strictObject({
-    benchLike: z.enum(CURVE_SOURCES),
+    equation: z.enum(CURVE_SOURCES),
     legPressLike: z.enum(CURVE_SOURCES),
     pooled: z.enum(CURVE_SOURCES),
   }),
@@ -181,6 +182,7 @@ export const PARAM_SCHEMAS = {
   'volume.strength.weeklyHeavySetsPerLift': range(positive),
   'volume.startingVolume.maxFactor': z.number().min(1),
   'volume.maintenance': z.strictObject({ volumeFraction: fraction, minSessionsPerWeek: positive }),
+  'volume.hypertrophy.minimumDose': z.strictObject({ setsPerWeek: positive }),
   'volume.repRange.hypertrophy': z.strictObject({
     compound: range(positive),
     isolation: range(positive),
@@ -343,6 +345,13 @@ export const PARAM_SCHEMAS = {
   'planning.rotation.perMuscle': range(z.number().int().min(0)),
   'planning.variety.pool': z.number().int().min(1),
   'planning.missed.mergePriorities': z.array(z.enum(SLOT_PRIORITIES)).min(1),
+  'planning.timeBudget.fallback': z.strictObject({
+    keepFull: z
+      .array(z.enum(KEEP_FULL_SOURCES))
+      .min(1)
+      .refine((sources) => new Set(sources).size === sources.length, 'sources are unique'),
+    templateSlots: z.array(z.enum(SLOT_PRIORITIES)).min(1),
+  }),
   // ranking.yaml
   'ranking.effectiveness': z.strictObject({
     weights: z

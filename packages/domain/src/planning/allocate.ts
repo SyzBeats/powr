@@ -228,16 +228,29 @@ const PRIORITY_RANK: Readonly<Record<SlotPriority, number>> = {
 };
 
 /**
+ * The order in which a binding time budget is spent (PLN-14, `planning.timeBudget.fallback`):
+ * first every target muscle up to the minimum dose, then the keep-full group up to its full
+ * target, then everyone else.
+ */
+export interface AllocationTiers {
+  /** Weekly sets per muscle (`volume.hypertrophy.minimumDose`), capped at the muscle's target. */
+  readonly minimumDose: number;
+  readonly keepFull: ReadonlySet<MuscleId>;
+}
+
+/**
  * §8.7.6 step 4: adds hypertrophy sets one at a time where they close the largest weekly
  * deficit against the targets, as long as the slot stays within its set limit, the day within
  * the time budget and the per-session soft cap (~11 fractional, ~8 direct sets per muscle) and
  * no target muscle above its band. Ties go to primary slots, slots for a priority muscle, then
- * the earlier day and slot. Deterministic.
+ * the earlier day and slot. With `tiers`, the deficit is compared tier by tier (minimum dose,
+ * keep-full group, the rest) instead of in one sum. Deterministic.
  */
 export function allocateSets(
   ledger: SetLedger,
   targets: ReadonlyMap<MuscleId, number>,
   priorities: readonly MuscleId[],
+  tiers?: AllocationTiers,
 ): number {
   // The credit each slot gives each target muscle, computed once.
   const credits = new Map<WorkSlot, [MuscleId, number, number][]>();
@@ -255,22 +268,27 @@ export function allocateSets(
   const floor = ledger.floor;
   let added = 0;
   for (;;) {
-    let best: { day: number; slot: WorkSlot; gain: number; rank: number[] } | null = null;
+    let best: { day: number; slot: WorkSlot; rank: number[] } | null = null;
     ledger.days.forEach((day, dayIndex) => {
       day.slots.forEach((slot, slotIndex) => {
-        let gain = 0;
-        for (const [muscle, credit, target] of credits.get(slot) ?? []) {
-          gain += shortfall(ledger.fractional(muscle), target, floor, credit);
-        }
-        if (gain <= 1e-9 || ledger.blocker(dayIndex, slot) !== null) return;
+        const gains = tiers
+          ? tieredGain(ledger, credits.get(slot) ?? [], tiers)
+          : [
+              (credits.get(slot) ?? []).reduce(
+                (sum, [muscle, credit, target]) =>
+                  sum + shortfall(ledger.fractional(muscle), target, floor, credit),
+                0,
+              ),
+            ];
+        if (gains.every((gain) => gain <= 1e-9) || ledger.blocker(dayIndex, slot) !== null) return;
         const rank = [
-          -gain,
+          ...gains.map((gain) => -gain),
           PRIORITY_RANK[slot.plan.priority],
           slot.plan.targets.some((target) => priorities.includes(target)) ? 0 : 1,
           dayIndex,
           slotIndex,
         ];
-        if (best === null || lexLess(rank, best.rank)) best = { day: dayIndex, slot, gain, rank };
+        if (best === null || lexLess(rank, best.rank)) best = { day: dayIndex, slot, rank };
       });
     });
     if (best === null) return added;
@@ -278,6 +296,26 @@ export function allocateSets(
     ledger.add(chosen.day, chosen.slot);
     added++;
   }
+}
+
+/**
+ * What one more set of a slot closes, per tier: below the minimum dose (any target muscle),
+ * between the minimum dose and the target for the keep-full group, and for everyone else.
+ */
+function tieredGain(
+  ledger: SetLedger,
+  credits: readonly (readonly [MuscleId, number, number])[],
+  tiers: AllocationTiers,
+): [number, number, number] {
+  const gains: [number, number, number] = [0, 0, 0];
+  for (const [muscle, credit, target] of credits) {
+    const current = ledger.fractional(muscle);
+    const dose = Math.min(target, tiers.minimumDose);
+    gains[0] += Math.max(0, Math.min(current + credit, dose) - current);
+    const above = Math.max(0, Math.min(current + credit, target) - Math.max(current, dose));
+    gains[tiers.keepFull.has(muscle) ? 1 : 2] += above;
+  }
+  return gains;
 }
 
 /**
@@ -299,7 +337,8 @@ export function totalDeficit(ledger: SetLedger, targets: ReadonlyMap<MuscleId, n
   return deficit;
 }
 
-function lexLess(a: readonly number[], b: readonly number[]): boolean {
+/** Whether `a` comes before `b` in lexicographic order (differences below 1e-9 are ties). */
+export function lexLess(a: readonly number[], b: readonly number[]): boolean {
   for (let i = 0; i < a.length; i++) {
     if (Math.abs(a[i]! - b[i]!) > 1e-9) return a[i]! < b[i]!;
   }

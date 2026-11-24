@@ -62,8 +62,12 @@ export const LOAD_TYPES = [
 ] as const;
 export type LoadType = (typeof LOAD_TYPES)[number];
 
-/** e1RM load–rep curve class (EXL-04; technical concept §8.7.4, E-3). */
-export const CURVE_CLASSES = ['benchLike', 'legPressLike', 'pooled'] as const;
+/**
+ * e1RM load–rep curve class (EXL-04; technical concept §8.7.4, E-3; TD-30): `equation` = the
+ * user's e1RM equation (Wathan by default, or the RTS chart), `legPressLike` and `pooled` = the
+ * inverted Nuzzo tables (`load.curve.classMap` maps each class to its curve).
+ */
+export const CURVE_CLASSES = ['equation', 'legPressLike', 'pooled'] as const;
 export type CurveClass = (typeof CURVE_CLASSES)[number];
 
 /**

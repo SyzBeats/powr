@@ -23,7 +23,7 @@
     - { muscle: mu.chest.sternocostal, credit: 1, evidence: H, source: src.pmid24265879 }
     - { muscle: mu.triceps, credit: 0.5, evidence: H, source: src.pmid24265879 }
     - { muscle: mu.front-delts, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
-  load: { type: barbell, curveClass: benchLike, unilateral: false, bodyweightLoaded: false }
+  load: { type: barbell, curveClass: equation, unilateral: false, bodyweightLoaded: false }
   defaults:
     repRange: { hypertrophy: [6, 12], strength: [1, 6] }
     restClass: strength
@@ -54,7 +54,7 @@
     - { muscle: mu.chest.sternocostal, credit: 1, evidence: H, source: src.pmid24265879 }
     - { muscle: mu.triceps, credit: 0.5, evidence: H, source: src.pmid24265879 }
     - { muscle: mu.front-delts, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
-  load: { type: barbell, curveClass: benchLike, unilateral: false, bodyweightLoaded: false }
+  load: { type: barbell, curveClass: equation, unilateral: false, bodyweightLoaded: false }
   defaults:
     repRange: { hypertrophy: [6, 12], strength: [1, 6] }
     restClass: strength
@@ -84,7 +84,7 @@
     - { muscle: mu.triceps, credit: 1, evidence: C, source: src.powr-eb-mapping }
     - { muscle: mu.chest, credit: 1, evidence: C, source: src.powr-eb-mapping }
     - { muscle: mu.front-delts, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
-  load: { type: barbell, curveClass: benchLike, unilateral: false, bodyweightLoaded: false }
+  load: { type: barbell, curveClass: equation, unilateral: false, bodyweightLoaded: false }
   defaults:
     repRange: { hypertrophy: [6, 12], strength: [1, 6] }
     restClass: strength
@@ -110,7 +110,7 @@
     - { muscle: mu.chest.sternocostal, credit: 1, evidence: H, source: src.pmid24265879 }
     - { muscle: mu.triceps, credit: 0.5, evidence: H, source: src.pmid24265879 }
     - { muscle: mu.front-delts, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
-  load: { type: dumbbell, curveClass: benchLike, unilateral: false, bodyweightLoaded: false }
+  load: { type: dumbbell, curveClass: equation, unilateral: false, bodyweightLoaded: false }
   defaults:
     repRange: { hypertrophy: [6, 15], strength: [6, 12] }
     restClass: hypertrophyCompound
@@ -134,7 +134,7 @@
     - { muscle: mu.chest.clavicular, credit: 1, evidence: EMG, source: src.pmid34644424 }
     - { muscle: mu.front-delts, credit: 1, evidence: C, source: src.powr-eb-mapping }
     - { muscle: mu.triceps, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
-  load: { type: dumbbell, curveClass: benchLike, unilateral: false, bodyweightLoaded: false }
+  load: { type: dumbbell, curveClass: equation, unilateral: false, bodyweightLoaded: false }
   defaults:
     repRange: { hypertrophy: [6, 15], strength: [6, 12] }
     restClass: hypertrophyCompound
@@ -158,7 +158,7 @@
     - { muscle: mu.chest, credit: 1, evidence: C, source: src.powr-eb-mapping }
     - { muscle: mu.triceps, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
     - { muscle: mu.front-delts, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
-  load: { type: machine, curveClass: benchLike, unilateral: false, bodyweightLoaded: false }
+  load: { type: machine, curveClass: equation, unilateral: false, bodyweightLoaded: false }
   defaults:
     repRange: { hypertrophy: [8, 15], strength: [6, 12] }
     restClass: hypertrophyCompound
@@ -182,7 +182,7 @@
     - { muscle: mu.chest, credit: 1, evidence: C, source: src.powr-eb-mapping }
     - { muscle: mu.triceps, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
     - { muscle: mu.front-delts, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
-  load: { type: bodyweightAdded, curveClass: benchLike, unilateral: false, bodyweightLoaded: true }
+  load: { type: bodyweightAdded, curveClass: equation, unilateral: false, bodyweightLoaded: true }
   defaults:
     repRange: { hypertrophy: [8, 30], strength: [6, 12] }
     restClass: hypertrophyCompound

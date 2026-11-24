@@ -35,6 +35,9 @@
       "path": "tools/content-build"
     },
     {
+      "path": "tools/tokens-check"
+    },
+    {
       "path": "./tsconfig.root.json"
     }
   ]

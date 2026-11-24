@@ -30,6 +30,14 @@ allowBuilds: {}
 
 savePrefix: ''
 
+# Lighthouse CI (build-only, TD-12) pulls two packages that the licence gate rejects and that our
+# use never loads, so they are not installed at all: Lighthouse imports @sentry/node only with
+# --enable-error-reporting (its `sentry` CLI dependency is FSL-1.1-Apache-2.0, source-available),
+# and js-yaml 5 uses argparse (PSF-2.0, not on the allowlist) only in its own command-line binary.
+overrides:
+  'lighthouse>@sentry/node': '-'
+  'js-yaml@5>argparse': '-'
+
 # pnpm 12 asks before a package installs agent "skills"; we do not let dependencies do that.
 permissions:
   '@tanstack/react-router':

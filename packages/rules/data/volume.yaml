@@ -161,6 +161,22 @@
   verified: true
   userOverridable: true
 
+- id: volume.hypertrophy.minimumDose
+  value: { setsPerWeek: 4 }
+  unit: sets
+  evidence: [NARR]
+  sources: [src.iversen2021]
+  ebRef: 'EB §Volume › Minimum and maintenance doses are small if intensity stays high (Iversen: at least 4 weekly sets per muscle at 6–15RM); §Session › Session duration and time-cap mode'
+  verified: true
+  userOverridable: false
+  note: >-
+    Weekly fractional hard sets a muscle outside the keep-full group falls back to when the
+    session time budget cannot fit every weekly target (PLN-14; planning.timeBudget.fallback).
+    Sets at 6–15RM, the hypertrophy rep range; the EB "minimum" mode [INF] is 4–6 sets at 0–2
+    RIR. A row of its own rather than the floor of volume.hypertrophy.weeklyBands: the same number,
+    but the floor is the Pelland detectability boundary (preprint, verified false) the validator
+    flags against, while this is the published narrative-review dose the generator plans to.
+
 - id: volume.repRange.hypertrophy
   value:
     compound: { min: 6, max: 15 }

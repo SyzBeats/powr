@@ -109,11 +109,9 @@ const browserGlobalsBanned = (reason: string): RuleSetting<'no-restricted-global
 
 const config: OxlintConfig = {
   plugins: ['eslint', 'typescript', 'unicorn', 'oxc', 'react', 'jsx-a11y', 'import', 'vitest'],
-  jsPlugins: [
-    // Alpha JS plugins: warnings only until oxlint JS plugins are stable (OQ-T10).
-    'eslint-plugin-lingui',
-    { name: 'react-hooks-js', specifier: 'eslint-plugin-react-hooks' },
-  ],
+  // Alpha JS plugin: warnings only until oxlint JS plugins are stable (OQ-T10). The React Compiler
+  // rules of eslint-plugin-react-hooks are native in oxlint (below), so that plugin is gone (TD-10).
+  jsPlugins: ['eslint-plugin-lingui'],
   categories: {
     correctness: 'error',
     suspicious: 'warn',
@@ -146,6 +144,28 @@ const config: OxlintConfig = {
     'eslint/no-console': ['warn', { allow: ['warn', 'error'] }],
     'react/rules-of-hooks': 'error',
     'react/exhaustive-deps': 'error',
+    // React Compiler rules: oxlint's native ports of eslint-plugin-react-hooks 7.1's compiler rules,
+    // blocking (§8.5, TD-10; parity checked rule by rule, see IMPLEMENTATION_NOTES.md).
+    'react/purity': 'error',
+    'react/refs': 'error',
+    'react/immutability': 'error',
+    'react/globals': 'error',
+    'react/set-state-in-render': 'error',
+    'react/set-state-in-effect': 'error',
+    'react/static-components': 'error',
+    'react/use-memo': 'error',
+    'react/void-use-memo': 'error',
+    'react/preserve-manual-memoization': 'error',
+    'react/incompatible-library': 'error',
+    'react/error-boundaries': 'error',
+    // Restriction category (off by default); was an alpha warning before.
+    'react/unsupported-syntax': 'error',
+    // The compiler's versions of rules-of-hooks and exhaustive-deps (which stay the blocking
+    // hook rules), plus calls to capitalized non-components: advisory, as in the suspicious category.
+    'react/hooks': 'warn',
+    'react/memo-dependencies': 'warn',
+    'react/exhaustive-effect-dependencies': 'warn',
+    'react/capitalized-calls': 'warn',
     'react/no-danger': 'error',
     // Design-system inputs (src/ui) render a native <input>; wrapping labels may contain them.
     'jsx-a11y/label-has-associated-control': ['error', { controlComponents: ['Input'] }],
@@ -260,18 +280,6 @@ const config: OxlintConfig = {
             elementOverrides: { Trans: { allowElement: true }, Plural: { allowElement: true } },
           },
         ],
-        'react-hooks-js/purity': 'warn',
-        'react-hooks-js/refs': 'warn',
-        'react-hooks-js/immutability': 'warn',
-        'react-hooks-js/set-state-in-render': 'warn',
-        'react-hooks-js/set-state-in-effect': 'warn',
-        'react-hooks-js/static-components': 'warn',
-        'react-hooks-js/use-memo': 'warn',
-        'react-hooks-js/preserve-manual-memoization': 'warn',
-        'react-hooks-js/incompatible-library': 'warn',
-        'react-hooks-js/globals': 'warn',
-        'react-hooks-js/error-boundaries': 'warn',
-        'react-hooks-js/unsupported-syntax': 'warn',
       },
     },
     {

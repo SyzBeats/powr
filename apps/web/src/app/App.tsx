@@ -13,7 +13,7 @@ export function App({ container }: { container: Container }) {
       {/* Base UI must not inject <style> elements: the CSP has no 'unsafe-inline' (§7.3). */}
       <CSPProvider disableStyleElements>
         <ContainerContext value={container}>
-          <RouterProvider router={router} />
+          <RouterProvider router={router} context={{ container }} />
         </ContainerContext>
       </CSPProvider>
     </I18nProvider>

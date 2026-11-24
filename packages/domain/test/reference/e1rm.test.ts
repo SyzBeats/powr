@@ -22,7 +22,7 @@ import { rules } from '../fixtures/rules';
 
 const RULES = rules();
 const RTS_RULES = rules({ 'load.e1rm.equation': 'rts' });
-const bench: E1rmExercise = { type: 'barbell', curveClass: 'benchLike', bodyweightLoaded: false };
+const bench: E1rmExercise = { type: 'barbell', curveClass: 'equation', bodyweightLoaded: false };
 const entered = (rir: number): Effort => ({ rir, source: 'entered' });
 const none: Effort = { rir: null, source: 'none' };
 const set = (
@@ -63,8 +63,8 @@ const bar = (micro: boolean): Implement => ({
 describe('EB worked example: 4 reps @ RPE 8', () => {
   it('r_eff 6 → 83.7% (RTS) or 83.1% (Wathan)', () => {
     expect(effectiveReps(4, 2, RULES)).toBe(6);
-    expect(curvePct('benchLike', 6, RTS_RULES)! * 100).toBeCloseTo(83.7, 1);
-    expect(curvePct('benchLike', 6, RULES)! * 100).toBeCloseTo(83.1, 1);
+    expect(curvePct('equation', 6, RTS_RULES)! * 100).toBeCloseTo(83.7, 1);
+    expect(curvePct('equation', 6, RULES)! * 100).toBeCloseTo(83.1, 1);
   });
 });
 
@@ -216,7 +216,7 @@ describe('session e1RM', () => {
 });
 
 describe('properties', () => {
-  const curves = ['benchLike', 'legPressLike', 'pooled'] as const;
+  const curves = ['equation', 'legPressLike', 'pooled'] as const;
 
   it('e1RM is monotonic in load and in reps', () => {
     fc.assert(

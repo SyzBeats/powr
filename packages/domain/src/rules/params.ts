@@ -320,6 +320,20 @@ export interface StartPosition {
   readonly priority: number;
 }
 
+/**
+ * Where the group that keeps its full weekly target comes from when the session time budget
+ * cannot fit every target (PLN-14): the user's priority muscles, the template's emphasis (the
+ * display groups its hypertrophy slots of a `templateSlots` priority target); the first
+ * non-empty group wins.
+ */
+export const KEEP_FULL_SOURCES = ['priorities', 'template'] as const;
+export type KeepFullSource = (typeof KEEP_FULL_SOURCES)[number];
+
+export interface TimeBudgetFallback {
+  readonly keepFull: readonly KeepFullSource[];
+  readonly templateSlots: readonly ('primary' | 'secondary' | 'optional')[];
+}
+
 /** MAP-03 effectiveness: factor weights (sum 1) and the score of each mapping evidence code. */
 export interface RankingEffectiveness {
   readonly weights: {
@@ -338,7 +352,7 @@ export interface RankingEffectiveness {
 export interface ParamValues {
   // load.yaml
   'load.e1rm.equation': E1rmEquation;
-  'load.curve.classMap': Readonly<Record<'benchLike' | 'legPressLike' | 'pooled', CurveSource>>;
+  'load.curve.classMap': Readonly<Record<'equation' | 'legPressLike' | 'pooled', CurveSource>>;
   'load.curve.nuzzoPooled': readonly RepsAtPctRow[];
   'load.curve.nuzzoBench': readonly RepsAtPctRow[];
   'load.curve.nuzzoLegPress': readonly RepsAtPctRow[];
@@ -385,6 +399,7 @@ export interface ParamValues {
   'volume.strength.weeklyHeavySetsPerLift': Range;
   'volume.startingVolume.maxFactor': number;
   'volume.maintenance': { readonly volumeFraction: number; readonly minSessionsPerWeek: number };
+  'volume.hypertrophy.minimumDose': { readonly setsPerWeek: number };
   'volume.repRange.hypertrophy': RepRangesHypertrophy;
   'volume.repRange.strength': RepRangesStrength;
   'volume.load.hypertrophyMinPct1rm': number;
@@ -478,6 +493,7 @@ export interface ParamValues {
   'planning.rotation.perMuscle': Range;
   'planning.variety.pool': number;
   'planning.missed.mergePriorities': readonly ('primary' | 'secondary' | 'optional')[];
+  'planning.timeBudget.fallback': TimeBudgetFallback;
   // ranking.yaml
   'ranking.effectiveness': RankingEffectiveness;
   // bodyweight.yaml

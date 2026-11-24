@@ -10,6 +10,7 @@ export {
   type PlanOptions,
   type PlanningAnswers,
 } from './context';
+export { addCandidates, newPlanSlot, slotCandidates } from './candidates';
 export {
   applyEquipmentChange,
   deleteEquipmentProfile,
@@ -50,10 +51,13 @@ export {
 export {
   acceptPlan,
   currentMesocycle,
+  dismissPlanIssue,
   generatePlanPreview,
   previewPlanEdit,
+  restorePlanIssues,
   savePlanEdit,
   type AcceptPlanError,
+  type DismissIssueError,
   type EditScope,
   type PlanEditError,
   type PlanEditPreview,

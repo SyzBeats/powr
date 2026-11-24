@@ -2,6 +2,23 @@
 @import './tokens.css';
 
 /*
+ * Tailwind scans all of apps/web for class names; a utility-like word in a comment of a build
+ * script, test or config file would otherwise add CSS. Only UI sources count (paths are relative
+ * to this file).
+ */
+@source not '../../scripts';
+@source not '../../e2e';
+@source not '../../public';
+@source not '../../*.config.ts';
+@source not '../../vitest.setup.ts';
+@source not '../../.size-limit.ts';
+@source not '../../*.json';
+@source not '../i18n/locales';
+@source not '../sw';
+@source not '../infrastructure';
+@source not '../**/*.test.{ts,tsx}';
+
+/*
  * shadcn colour-name bridge (TD-21, product-owner decision 2026-11-24). Registry components use
  * shadcn's semantic colour names; here they alias the POWR tokens of tokens.css, so the components
  * follow the app theme through light-dark() and inherit the tokens' contrast (WCAG 2.2 AA in both
@@ -88,13 +105,24 @@
   --color-fg: var(--fg);
   --color-fg-muted: var(--fg-muted);
   --color-border: var(--border);
+  --color-control: var(--control);
   --color-primary: var(--primary);
   --color-on-primary: var(--on-primary);
+  --color-info: var(--info);
+  --color-on-info: var(--on-info);
+  --color-warning: var(--warning);
+  --color-on-warning: var(--on-warning);
   --color-danger: var(--danger);
   --color-on-danger: var(--on-danger);
   --color-success: var(--success);
   --color-focus: var(--focus);
   --color-pr-accent: var(--pr-accent);
+  --color-heat-0: var(--heat-0);
+  --color-heat-1: var(--heat-1);
+  --color-heat-2: var(--heat-2);
+  --color-heat-3: var(--heat-3);
+  --color-heat-4: var(--heat-4);
+  --color-heat-5: var(--heat-5);
   --spacing-target: var(--target-primary);
   --spacing-target-lg: var(--target-large);
   --spacing-target-min: var(--target-min);
@@ -111,6 +139,12 @@
 
   body {
     min-height: 100dvh;
+    /*
+     * At 320 px and 200% text a long word can be wider than its column; it breaks (with a
+     * hyphen where the browser can) instead of pushing the page sideways (NFR-A11Y-07, 1.4.10).
+     */
+    overflow-wrap: anywhere;
+    hyphens: auto;
   }
 
   /* Registry components draw bare `border`/`border-b` lines in the border colour, as in shadcn. */
@@ -125,6 +159,16 @@
   :focus-visible {
     outline: 3px solid var(--focus);
     outline-offset: 2px;
+  }
+
+  /*
+   * WCAG 2.4.11 (Focus Not Obscured): keyboard and switch focus scrolls clear of the sticky
+   * header and the fixed bottom navigation instead of hiding behind them. A sticky ActionBar
+   * (ui/action-bar.tsx) adds its measured height while it is on screen.
+   */
+  html {
+    scroll-padding-top: 4rem;
+    scroll-padding-bottom: calc(7rem + var(--action-bar-inset, 0px));
   }
 
   @media (prefers-reduced-motion: reduce) {

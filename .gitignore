@@ -13,6 +13,10 @@ licence-inventory.json
 apps/web/playwright-report/
 apps/web/test-results/
 apps/web/blob-report/
+# Vitest browser-mode failure screenshots
+.vitest/
+# Lighthouse CI reports
+apps/web/.lighthouseci/
 coverage/
 
 # Local environment and secrets

@@ -1,6 +1,6 @@
 # ADR-0021: Package manager: pnpm 12
 
-- Status: Accepted (resolved 2026-11-24: A, OQ-T8; confirmed by the product owner; v0.3, 2026-11-24: `minimumReleaseAgeExclude`, see below)
+- Status: Accepted (resolved 2026-11-24: A, OQ-T8; confirmed by the product owner; v0.3, 2026-11-24: `minimumReleaseAgeExclude`; v0.5, 2026-11-24: `overrides` for never-loaded build-only packages, see below)
 - Date: 2026-11-23
 - Related: technical concept §5.2, §8.18, §8.21; ADR-0001, ADR-0018
 
@@ -39,3 +39,14 @@ Use **pnpm 12** with `packageManager` pinned in the root `package.json`, a commi
 **Remove the excludes after 2026-12-01**, when every listed version is older than 7 days (TD-18; also an open item in `IMPLEMENTATION_NOTES.md` §4). Where an older version was acceptable, it was installed instead: `tailwind-merge` 3.7.0 (3.7.1 was 5 days old) and `@babel/core` 8.1.2 (8.1.3 was too new).
 
 Source: `IMPLEMENTATION_NOTES.md` §3 (repository root), which records each deviation with its reason.
+
+## Amendment (v0.5, 2026-11-24)
+
+The decision stands. v0.5 folds in the M2 tooling (TD-09 native Lingui macro, TD-10 native React Compiler lint rules, TD-12 Lighthouse CI and Trusted Types in dev/E2E) and the Sentry package block list. For this ADR:
+
+- **pnpm `overrides` in `pnpm-workspace.yaml`.** Lighthouse CI (build-only) pulls two transitive packages that the licence gate rejects and that our use never loads. Two overrides remove them from the install, with a comment in the file:
+  - `'lighthouse>@sentry/node': '-'` keeps out Lighthouse's optional error reporting and with it the `sentry` CLI (`FSL-1.1-Apache-2.0`). Lighthouse imports `@sentry/node` only with `--enable-error-reporting`.
+  - `'js-yaml@5>argparse': '-'` keeps out `argparse` (`PSF-2.0`), which js-yaml uses only in its own command-line binary.
+- **Product-owner decisions (2026-11-24).** There must be no Sentry package anywhere. The licence gate's block list `deniedPackages` enforces this beyond this override (ADR-0018). `argparse` is excluded rather than `PSF-2.0` being allowed.
+
+Source: `IMPLEMENTATION_NOTES.md` (repository root), section "M2 tooling (TD-09, TD-10, TD-12)", and the product-owner decision of 2026-11-24 on Sentry.

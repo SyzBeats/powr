@@ -268,8 +268,11 @@ describe('plate solver properties', () => {
         expect(down).toBeLessThanOrEqual(target + 0.005);
         expect(up).toBeGreaterThanOrEqual(target - 0.005);
         expect([down, up]).toContain(nearest);
+        // The solver compares on the 0.01 grid: the target moves up to 0.005 to its grid point,
+        // which can shift the two distances by 0.005 each, so a grid tie (ties go down) may be
+        // up to 0.01 farther from the raw target, e.g. 86.2525 → 86.25 → 85, not 87.5.
         expect(Math.abs(nearest - target)).toBeLessThanOrEqual(
-          Math.abs(target - (nearest === down ? up : down)) + 0.005,
+          Math.abs(target - (nearest === down ? up : down)) + 0.01 + 1e-9,
         );
         for (const load of [down, up, nearest]) {
           expect(roundToAchievable(kg(load), homeBar)).toMatchObject({
@@ -278,6 +281,8 @@ describe('plate solver properties', () => {
           });
         }
       }),
+      // A grid tie that failed with a 0.005 tolerance (floating point landed 1e-14 over).
+      { examples: [[86.25250000000001]] },
     );
   });
 });

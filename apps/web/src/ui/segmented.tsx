@@ -8,7 +8,10 @@ export interface SegmentedOption<T extends string> {
   readonly label: string;
 }
 
-/** Single-choice segmented control with large touch targets (theme switch, RIR chips). */
+/**
+ * Single-choice segmented control with large touch targets (theme switch, RIR chips). Options wrap
+ * onto a second row at 320 px or 200% text instead of overflowing (NFR-A11Y-07).
+ */
 export function Segmented<T extends string>({
   label,
   options,
@@ -30,13 +33,13 @@ export function Segmented<T extends string>({
         const selected = next[0];
         if (selected !== undefined) onChange(selected);
       }}
-      className={cn('flex gap-2', className)}
+      className={cn('flex flex-wrap gap-2', className)}
     >
       {options.map((option) => (
         <Toggle
           key={option.value}
           value={option.value}
-          className="min-h-target flex-1 rounded-xl border border-border bg-surface px-3 font-medium text-fg data-[pressed]:border-primary data-[pressed]:bg-primary data-[pressed]:text-on-primary"
+          className="min-h-target flex-1 basis-auto rounded-xl border border-control bg-surface px-3 font-medium text-fg data-[pressed]:border-primary data-[pressed]:bg-primary data-[pressed]:text-on-primary"
         >
           {option.label}
         </Toggle>

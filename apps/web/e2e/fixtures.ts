@@ -62,6 +62,21 @@ export const test = base.extend<{ recorded: Recorded; server: StaticServer | nul
 
 export { expect };
 
+/**
+ * The first-run path without a plan (ONB-01, PLN-15): the legal gate, then "Just let me log".
+ * Every training screen is behind it since M2b. Ends on the log screen.
+ */
+export async function skipOnboarding(page: Page): Promise<void> {
+  await page.goto('/');
+  await expect(page.getByRole('heading', { level: 1, name: 'Welcome to POWR' })).toBeVisible();
+  await page
+    .getByRole('checkbox', { name: 'I have read the health notice and the privacy summary.' })
+    .click();
+  await page.getByRole('checkbox', { name: 'I am 16 or older.' }).click();
+  await page.getByRole('button', { name: 'Just let me log' }).click();
+  await expect(page.getByRole('heading', { level: 1, name: 'Log a set' })).toBeVisible();
+}
+
 /** Waits until the service worker is active and the precache install has completed. */
 export async function waitForOfflineReady(page: Page): Promise<void> {
   await expect(page.getByTestId('offline-status')).toHaveText('Ready for offline use', {

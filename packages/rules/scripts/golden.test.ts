@@ -51,7 +51,7 @@ const barbell = (micro: boolean): Implement => ({
 describe('golden: load (EB §Load, PRD PRG-05)', () => {
   const bench = {
     type: 'barbell' as const,
-    curveClass: 'benchLike' as const,
+    curveClass: 'equation' as const,
     bodyweightLoaded: false,
   };
 

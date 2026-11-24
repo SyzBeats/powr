@@ -9,6 +9,7 @@ import {
   COMPETITION_LIFTS,
   GOALS,
   LIFT_INTENSITIES,
+  MAX_DISMISSED_ISSUES,
   MEET_DIVISIONS,
   MESOCYCLE_STATUSES,
   MOVEMENT_PATTERNS,
@@ -145,15 +146,26 @@ const planDaySchema = z.strictObject({
   slots: z.array(planSlotSchema).max(20),
 });
 
+const targetSetsSchema = z.number().min(0).max(60);
 const muscleTargetsSchema = z
   .array(
-    z.strictObject({
-      muscle: muscleIdSchema,
-      sets: z.number().min(0).max(60),
-      source: z.enum(TARGET_SOURCES),
-    }),
+    z
+      .strictObject({
+        muscle: muscleIdSchema,
+        sets: targetSetsSchema,
+        source: z.enum(TARGET_SOURCES),
+        // The full target a time budget lowered (PLN-14); only with source timeBudget.
+        full: targetSetsSchema.exactOptional(),
+      })
+      .refine(
+        (target) => (target.source === 'timeBudget') === (target.full !== undefined),
+        'full is present exactly when the source is timeBudget',
+      ),
   )
   .max(40);
+
+/** PLN-09: dismissed warning keys (rule, subject and the numbers of the plan state). */
+const ISSUE_KEY_MAX = 300;
 
 const mesocycleSchema = z.strictObject({
   index: z.number().int().min(0).max(1000),
@@ -210,6 +222,7 @@ export const planRecordSchema = z.strictObject({
   createdAt: instantTzSchema,
   versions: versionStampSchema,
   revision: z.number().int().min(0),
+  dismissedIssues: z.array(z.string().min(1).max(ISSUE_KEY_MAX)).max(MAX_DISMISSED_ISSUES),
 });
 
 export const plannedSessionRecordSchema = z.strictObject({

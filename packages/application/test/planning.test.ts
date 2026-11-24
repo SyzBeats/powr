@@ -1,10 +1,12 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  MAX_DISMISSED_ISSUES,
   addDays,
   type ExerciseId,
   type LocalDate,
   type MuscleId,
+  type PlanId,
   type PlannedSessionId,
   type PresetId,
   type SessionId,
@@ -21,6 +23,7 @@ import {
   checkReactiveDeload,
   completeOnboarding,
   deleteEquipmentProfile,
+  dismissPlanIssue,
   endBreak,
   equipmentProfileFromPreset,
   generatePlanPreview,
@@ -35,6 +38,7 @@ import {
   previewPlanEdit,
   proposeNextMesocycle,
   resolveMissedSession,
+  restorePlanIssues,
   saveEquipmentProfile,
   saveOnboardingDraft,
   savePlanEdit,
@@ -167,7 +171,7 @@ describe('onboarding (ONB-01, ONB-10, ONB-12)', () => {
   it('stamps the plan with the hashed rules version (TD-31)', async () => {
     const { plan } = await onboarded();
     expect(plan.versions.rules).toBe(testRules.version);
-    expect(plan.versions.rules).toMatch(/^1\.1\.0\+[0-9a-f]{12}$/);
+    expect(plan.versions.rules).toMatch(/^1\.2\.0\+[0-9a-f]{12}$/);
   });
 
   it('"Just let me log" stores the profile without a plan (PLN-15)', async () => {
@@ -358,6 +362,57 @@ describe('plan editor with live validation (PLN-09)', () => {
       day.slots.length - 1,
     );
     expect(test.data().plannedSessions).toEqual(before);
+  });
+});
+
+describe('dismissed warnings (PLN-09)', () => {
+  it('stores a dismissed warning key on the plan, once, without a new revision', async () => {
+    const test = await onboarded();
+    expect(test.plan.dismissedIssues).toEqual([]);
+    const warning = test.preview.proposal.report.issues.find(
+      (issue) => issue.severity === 'warning',
+    )!;
+    const input = { planId: test.plan.id, key: warning.key };
+    expect(await dismissPlanIssue(test.deps, input)).toEqual({ ok: true, value: undefined });
+    expect(await dismissPlanIssue(test.deps, input)).toEqual({ ok: true, value: undefined });
+    const stored = test.data().plans[0]!;
+    expect(stored.dismissedIssues).toEqual([warning.key]);
+    expect(stored.revision).toBe(test.plan.revision);
+
+    // Edits keep the list; the keys encode the plan state, so a changed warning shows again.
+    const day = stored.mesocycles[0]!.days[0]!;
+    await savePlanEdit(test.deps, {
+      planId: test.plan.id,
+      edits: [{ kind: 'setSets', dayKey: day.key, slotKey: day.slots[0]!.key, sets: 5 }],
+      scope: 'nextSession',
+    });
+    expect(test.data().plans[0]!.dismissedIssues).toEqual([warning.key]);
+
+    expect(await restorePlanIssues(test.deps, { planId: test.plan.id })).toEqual({
+      ok: true,
+      value: undefined,
+    });
+    expect(test.data().plans[0]).toMatchObject({ dismissedIssues: [], revision: 1 });
+  });
+
+  it('keeps the newest keys within the limit and refuses an unknown plan', async () => {
+    const test = await onboarded();
+    for (let index = 0; index <= MAX_DISMISSED_ISSUES; index++)
+      await dismissPlanIssue(test.deps, { planId: test.plan.id, key: `test:${index}` });
+    const kept = test.data().plans[0]!.dismissedIssues;
+    expect(kept).toHaveLength(MAX_DISMISSED_ISSUES);
+    expect(kept[0]).toBe('test:1');
+    expect(kept.at(-1)).toBe(`test:${MAX_DISMISSED_ISSUES}`);
+
+    const unknown = 'missing' as PlanId;
+    expect(await dismissPlanIssue(test.deps, { planId: unknown, key: 'k' })).toEqual({
+      ok: false,
+      error: { kind: 'notFound' },
+    });
+    expect(await restorePlanIssues(test.deps, { planId: unknown })).toEqual({
+      ok: false,
+      error: { kind: 'notFound' },
+    });
   });
 });
 

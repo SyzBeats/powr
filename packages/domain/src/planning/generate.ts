@@ -1,18 +1,21 @@
-import { explain, explained, type Explained, type Explanation } from '../explain';
+import { explain, explained, paramRef, type Explained, type Explanation } from '../explain';
 import type { ExerciseId, MuscleId } from '../ids';
 import type {
   CompetitionLift,
+  MuscleTarget,
   PlanDay,
   PlanSlot,
   SlotPriority,
   TemplateDef,
   TemplateSlot,
 } from '../model';
+import type { KeepFullSource } from '../rules';
 import { parentMuscle } from '../volume';
 import {
   SetLedger,
   allocateSets,
   daySeconds,
+  lexLess,
   liftTargets,
   muscleTargets,
   totalDeficit,
@@ -20,6 +23,7 @@ import {
   type WorkSlot,
 } from './allocate';
 import { setsOf, withSets } from './analysis';
+import { budgetBound, halfSetsDown, keepFullGroup } from './budget';
 import { mulberry32 } from './prng';
 import { effectiveness } from './rank';
 import {
@@ -33,6 +37,7 @@ import {
 import { assignWeekdays } from './spacing';
 import type {
   IssueCause,
+  PlanFix,
   PlanProposal,
   PlanRequest,
   PlanningCatalog,
@@ -41,7 +46,7 @@ import type {
   ValidationContext,
   ValidationReport,
 } from './types';
-import { validatePlan } from './validate';
+import { inputFixes, validatePlan } from './validate';
 
 /** A slot the generator had to leave out, and why (for the cause of the issues it leaves). */
 interface Drop {
@@ -195,15 +200,43 @@ export function generatePlan(
     ),
   );
   const targets = muscleTargets(hypertrophyMuscles, { ...request, maintenance }, rules);
+  const targetNotes = notes.length;
   notes.push(...targets.map((target) => target.why), ...liftGoals.map((goal) => goal.why));
   const targetMap = new Map(targets.map((target) => [target.value.muscle, target.value.sets]));
 
   fitTime(work, request.sessionMinutes, drops, notes, rules);
   const allocated = allocateWithRepair(work, targetMap, request, drops, notes, rules);
-  work.splice(0, work.length, ...allocated.work);
+  const budgeted = prioritiseForBudget(
+    allocated,
+    targets.map((target) => target.value),
+    { template, request, drops },
+    rules,
+  );
+  const final = budgeted ?? allocated;
+  work.splice(0, work.length, ...final.work);
+  const finalTargets = budgeted?.targets ?? targets.map((target) => target.value);
+  for (const [index, target] of finalTargets.entries()) {
+    if (target.source !== 'timeBudget') continue;
+    // The target explanation says it was lowered and from what (PLN-14).
+    const before = targets[index]!;
+    notes[targetNotes + index] = {
+      ...before.why,
+      args: {
+        ...before.why.args,
+        sets: target.sets,
+        source: 'timeBudget',
+        full: before.value.sets,
+      },
+      params: [
+        ...before.why.params,
+        paramRef(rules['volume.hypertrophy.minimumDose']),
+        paramRef(rules['planning.timeBudget.fallback']),
+      ],
+    };
+  }
   notes.push(
     explain('plan.volume.sets', {
-      args: { added: allocated.added, deficit: Math.round(allocated.deficit * 10) / 10 },
+      args: { added: final.added, deficit: Math.round(final.deficit * 10) / 10 },
       params: [
         rules['volume.hypertrophy.weeklyBands'],
         rules['volume.hypertrophy.perSessionSoftCap'],
@@ -230,7 +263,7 @@ export function generatePlan(
     sessionMinutes: request.sessionMinutes,
     equipment: request.equipment,
     avoid: request.avoid,
-    targets: targets.map((target) => target.value),
+    targets: finalTargets,
     liftTargets: liftGoals.map((goal) => goal.value),
     accumulationWeeks: mesocycle.value,
     deloadWeeks: template.mesocycle.deloadWeeks,
@@ -238,7 +271,26 @@ export function generatePlan(
     exercises: catalog.exercises,
     restRules,
   };
-  const report = annotate(validatePlan(placed.value, ctx, rules), drops);
+  let fixes: readonly PlanFix[] | undefined;
+  const budgetFixes = () => (fixes ??= inputFixes(placed.value, ctx, rules));
+  const report = annotate(validatePlan(placed.value, ctx, rules), drops, budgetFixes);
+  if (budgeted && budgeted.lowered > 0) {
+    const longer = budgetFixes().find((fix) => fix.kind === 'sessionMinutes');
+    notes.push(
+      explain('plan.volume.budget', {
+        args: {
+          lowered: budgeted.lowered,
+          minutes: longer?.kind === 'sessionMinutes' ? longer.minutes : null,
+          emphasis: budgeted.emphasis,
+        },
+        params: [
+          rules['volume.hypertrophy.minimumDose'],
+          rules['planning.timeBudget.fallback'],
+          rules['volume.hypertrophy.weeklyBands'],
+        ],
+      }),
+    );
+  }
   const proposal: PlanProposal = {
     template,
     level: request.level,
@@ -438,6 +490,14 @@ function fitTime(
   }
 }
 
+/** An allocated week: the slots before allocation (`start`), after it, and what it achieved. */
+interface Allocation {
+  readonly start: readonly WorkDay[];
+  readonly work: WorkDay[];
+  readonly added: number;
+  readonly deficit: number;
+}
+
 /**
  * §8.7.6 local repair: allocates the sets, then, while the time budget leaves target muscles
  * short, tries leaving out one optional accessory (whose warm-up and transition time then goes
@@ -450,7 +510,7 @@ function allocateWithRepair(
   drops: Drop[],
   notes: Explanation[],
   rules: PlanningRules,
-): { readonly work: WorkDay[]; readonly added: number; readonly deficit: number } {
+): Allocation {
   const run = (days: readonly WorkDay[]) => {
     const work = days.map((day) => ({
       key: day.key,
@@ -503,10 +563,116 @@ function allocateWithRepair(
 }
 
 /**
- * Names the cause of issues the generator could not avoid: a muscle whose slot was dropped
- * (no available exercise, the novice limit, the time budget) or whose sessions are full.
+ * PLN-14 time-budget prioritisation: when the budget leaves target muscles short, allocates the
+ * same slots again tier by tier (every target muscle to the minimum dose, the keep-full group to
+ * its full target, then the rest) and keeps that allocation if it is better in the same order
+ * (the one-set-at-a-time allocation is greedy, so it can lose). Then it lowers the stored target
+ * of each other muscle the budget still keeps short to what it gets, at least the minimum dose
+ * (`source: 'timeBudget'`, `full` the old target). Maintenance and priority targets are never
+ * lowered; keep-full muscles that stay short keep their target (and their low-volume issue).
+ * Null when the budget does not bind, so such plans come out exactly as without this step.
  */
-function annotate(report: ValidationReport, drops: readonly Drop[]): ValidationReport {
+function prioritiseForBudget(
+  allocated: Allocation,
+  targets: readonly MuscleTarget[],
+  input: {
+    readonly template: TemplateDef;
+    readonly request: PlanRequest;
+    readonly drops: readonly Drop[];
+  },
+  rules: PlanningRules,
+):
+  | (Allocation & {
+      readonly targets: readonly MuscleTarget[];
+      readonly lowered: number;
+      readonly emphasis: KeepFullSource;
+    })
+  | null {
+  const { request } = input;
+  if (request.sessionMinutes === null) return null;
+  const full = new Map(targets.map((target) => [target.muscle, target.sets]));
+  const timeDropped = new Set(
+    input.drops
+      .filter((drop) => drop.cause === 'timeBudget')
+      .flatMap((drop) => drop.targets.map(parentMuscle)),
+  );
+  const short = (ledger: SetLedger, target: MuscleTarget) =>
+    ledger.fractional(target.muscle) + 1e-9 < target.sets &&
+    budgetBound(target.muscle, ledger, timeDropped);
+  const current = new SetLedger(allocated.work, full, request.sessionMinutes, rules);
+  if (!targets.some((target) => short(current, target))) return null;
+
+  const keep = keepFullGroup(
+    targets,
+    { priorities: request.priorities, template: input.template },
+    rules,
+  );
+  const minimumDose = rules['volume.hypertrophy.minimumDose'].value.setsPerWeek;
+  // What is still missing per tier: below the minimum dose, keep-full group, everyone else.
+  const gaps = (candidate: SetLedger) => {
+    const missing = [0, 0, 0];
+    for (const target of targets) {
+      const sets = candidate.fractional(target.muscle);
+      const dose = Math.min(target.sets, minimumDose);
+      missing[0]! += Math.max(0, dose - sets);
+      missing[keep.muscles.has(target.muscle) ? 1 : 2]! += Math.max(
+        0,
+        target.sets - Math.max(sets, dose),
+      );
+    }
+    return missing;
+  };
+  const tiered = allocated.start.map((day) => ({
+    key: day.key,
+    slots: day.slots.map((slot) => ({ ...slot })),
+  }));
+  const tieredLedger = new SetLedger(tiered, full, request.sessionMinutes, rules);
+  const tieredAdded = allocateSets(tieredLedger, full, request.priorities, {
+    minimumDose,
+    keepFull: keep.muscles,
+  });
+  const better = lexLess(gaps(tieredLedger), gaps(current));
+  const work = better ? tiered : allocated.work;
+  const ledger = better ? tieredLedger : current;
+  const added = better ? tieredAdded : allocated.added;
+  let lowered = 0;
+  const stored = targets.map((target): MuscleTarget => {
+    if (
+      keep.muscles.has(target.muscle) ||
+      target.source === 'maintenance' ||
+      target.source === 'priority' ||
+      !short(ledger, target)
+    )
+      return target;
+    const sets = Math.min(
+      target.sets,
+      Math.max(minimumDose, halfSetsDown(ledger.fractional(target.muscle))),
+    );
+    if (sets >= target.sets) return target;
+    lowered++;
+    return { muscle: target.muscle, sets, source: 'timeBudget', full: target.sets };
+  });
+  return {
+    start: allocated.start,
+    work,
+    added,
+    deficit: totalDeficit(ledger, new Map(stored.map((target) => [target.muscle, target.sets]))),
+    targets: stored,
+    lowered,
+    emphasis: keep.emphasis,
+  };
+}
+
+/**
+ * Names the cause of issues the generator could not avoid: a muscle whose slot was dropped
+ * (no available exercise, the novice limit, the time budget) or whose sessions are full. A
+ * low-volume issue the time budget causes gets the input fixes (more minutes, another day).
+ */
+function annotate(
+  report: ValidationReport,
+  drops: readonly Drop[],
+  budgetFixes: () => readonly PlanFix[],
+): ValidationReport {
   const dropCause = new Map<MuscleId, IssueCause>();
   for (const drop of drops) {
     for (const target of drop.targets) {
@@ -518,7 +684,13 @@ function annotate(report: ValidationReport, drops: readonly Drop[]): ValidationR
     if (issue.subject.kind !== 'muscle') return issue;
     const cause = dropCause.get(issue.subject.muscle);
     if (cause === undefined || (issue.cause !== null && issue.cause !== 'template')) return issue;
-    return { ...issue, cause };
+    const lowVolume =
+      issue.why.rule === 'validate.volume.low' || issue.why.rule === 'validate.volume.belowFloor';
+    if (cause !== 'timeBudget' || !lowVolume) return { ...issue, cause };
+    const added = budgetFixes().filter(
+      (fix) => !issue.fixes.some((existing) => existing.kind === fix.kind),
+    );
+    return { ...issue, cause, fixes: [...issue.fixes, ...added] };
   });
   return {
     ...report,

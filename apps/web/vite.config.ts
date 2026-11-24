@@ -1,7 +1,7 @@
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
-import { lingui, linguiTransformerBabelPreset } from '@lingui/vite-plugin';
+import { lingui } from '@lingui/vite-plugin';
 import babel from '@rolldown/plugin-babel';
 import tailwindcss from '@tailwindcss/vite';
 import { tanstackRouter } from '@tanstack/router-plugin/vite';
@@ -13,6 +13,7 @@ import { licenceCollector, licenceFixturePlugin } from '@powr/tools-licence';
 
 import packageJson from './package.json' with { type: 'json' };
 import { compilerReport } from './scripts/compiler-report.ts';
+import { TRUSTED_TYPES_CSP } from './scripts/trusted-types.ts';
 
 const root = fileURLToPath(new URL('.', import.meta.url));
 const repoRoot = fileURLToPath(new URL('../..', import.meta.url));
@@ -28,8 +29,6 @@ const THEME_COLOR = { light: '#f6f6f4', dark: '#101214' };
 const compiler = compilerReport(`${root}.compiler-report.json`);
 // Explicit, so tools that load this config from the repository root (knip) find it too.
 const linguiConfig = { cwd: root, configPath: `${root}lingui.config.ts` };
-// We keep the Babel macro on purpose (technical concept §8.15); see IMPLEMENTATION_NOTES.md.
-process.env['LINGUI_SUPPRESS_BABEL_WARNING'] = '1';
 
 export default defineConfig({
   define: {
@@ -44,19 +43,22 @@ export default defineConfig({
     sourcemap: false,
   },
   preview: { port: 4173, strictPort: true },
-  server: { port: 5173, strictPort: true },
+  // Trusted Types only: the production CSP would reject Vite's dev preamble and its injected
+  // styles (TD-12).
+  server: {
+    port: 5173,
+    strictPort: true,
+    headers: { 'Content-Security-Policy': TRUSTED_TYPES_CSP },
+  },
   plugins: [
     tanstackRouter({ target: 'react', autoCodeSplitting: true }),
     react(),
-    babel({
-      // Babel applies presets last to first: Lingui macros expand before the React Compiler
-      // memoizes the result (§8.5, §8.15).
-      presets: [
-        reactCompilerPreset({ logger: compiler.logger }),
-        linguiTransformerBabelPreset({}, linguiConfig),
-      ],
-    }),
-    lingui({ ...linguiConfig, failOnMissing: true }),
+    // Order matters: Lingui's native macro plugin (`macroTransform`, TD-09) and the Babel plugin
+    // are both `enforce: 'pre'`, so they run in array order. Macros must expand before the React
+    // Compiler memoizes the result; the other way round it skips every component with a `t`
+    // template (§8.5, §8.15). Tailwind scans this file: a bare utility name in a comment adds CSS.
+    lingui({ ...linguiConfig, failOnMissing: true, macroTransform: true }),
+    babel({ presets: [reactCompilerPreset({ logger: compiler.logger })] }),
     tailwindcss(),
     VitePWA({
       strategies: 'injectManifest',
@@ -74,7 +76,7 @@ export default defineConfig({
         start_url: '/',
         scope: '/',
         display: 'standalone',
-        orientation: 'portrait',
+        // No `orientation` lock: WCAG 2.2 AA 1.3.4 (TD-35, product owner 2026-11-24).
         theme_color: THEME_COLOR.dark,
         background_color: THEME_COLOR.dark,
         categories: ['health', 'fitness', 'sports'],

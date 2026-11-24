@@ -1,0 +1,7 @@
+{
+  "name": "@powr/tools-tokens-check",
+  "version": "0.0.0",
+  "private": true,
+  "description": "WCAG contrast and colour-vision gate for the design tokens (§8.9.3, TD-12).",
+  "type": "module"
+}

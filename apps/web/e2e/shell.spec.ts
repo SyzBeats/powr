@@ -1,6 +1,6 @@
 import { AxeBuilder } from '@axe-core/playwright';
 
-import { expect, test } from './fixtures';
+import { expect, skipOnboarding, test } from './fixtures';
 
 test.describe('app shell (WP0.3)', () => {
   test('renders the mobile shell with bottom navigation under the production CSP', async ({
@@ -9,6 +9,10 @@ test.describe('app shell (WP0.3)', () => {
     const response = await page.goto('/');
     expect(response?.headers()['content-security-policy']).toContain("script-src 'self'");
 
+    // First run: the guard sends the user to the legal gate before any training screen (ONB-01).
+    await expect(page).toHaveURL(/\/onboarding\/welcome/);
+    await skipOnboarding(page);
+    await page.goto('/');
     await expect(page.getByRole('heading', { level: 1, name: 'Home' })).toBeVisible();
     const nav = page.getByRole('navigation', { name: 'Main' });
     for (const tab of ['Home', 'Plan', 'Train', 'Explore', 'Progress']) {
@@ -81,8 +85,8 @@ test.describe('app shell (WP0.3)', () => {
       });
     };
     // --input → --fg-muted: #54595f light, #a9afb6 dark (tokens.css).
-    const light = { border: 'rgb(84, 89, 95)', transparent: true };
-    const dark = { border: 'rgb(169, 175, 182)', transparent: false };
+    const light = { border: 'rgb(76, 88, 102)', transparent: true };
+    const dark = { border: 'rgb(169, 181, 194)', transparent: false };
 
     // The app theme wins over the OS setting, for the tokens and for `dark:` alike.
     expect(await styles('dark', 'Light')).toEqual(light);
@@ -93,6 +97,7 @@ test.describe('app shell (WP0.3)', () => {
   });
 
   test('deep links work and unknown routes show a not-found screen', async ({ page }) => {
+    await skipOnboarding(page);
     await page.goto('/data');
     await expect(page.getByRole('heading', { level: 1, name: 'Data and backups' })).toBeVisible();
     await page.goto('/does-not-exist');
@@ -100,6 +105,7 @@ test.describe('app shell (WP0.3)', () => {
   });
 
   test('the session route validates its search parameters', async ({ page }) => {
+    await skipOnboarding(page);
     // The manifest shortcut's URL; unknown parameters are ignored.
     for (const path of ['/session?source=shortcut', '/session?utm=x']) {
       await page.goto(path);
@@ -113,6 +119,7 @@ test.describe('app shell (WP0.3)', () => {
   });
 
   test('has no serious accessibility violations on the main screens', async ({ page }) => {
+    await skipOnboarding(page);
     for (const path of ['/', '/session', '/settings', '/data']) {
       await page.goto(path);
       await expect(page.getByRole('heading', { level: 1 })).toBeVisible();

@@ -1,17 +1,23 @@
 # Continuous integration (technical concept §8.21). Every step is a package script, so the
-# whole pipeline also runs locally: `pnpm verify`, then `pnpm docker:build` and `pnpm docker:smoke`.
+# whole pipeline also runs locally: `pnpm verify`, then `pnpm docker:build`, `pnpm docker:smoke`
+# and `pnpm lighthouse`.
 name: CI
 
 on:
   push:
     branches: [main]
   pull_request:
+  # Nightly run on main; the Lighthouse job runs only here and on pushes to main (§8.20).
+  schedule:
+    - cron: '30 2 * * *'
+  workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: ci-${{ github.ref }}
+  # The event is part of the group, so a nightly run never cancels a push run (or its deploy).
+  group: ci-${{ github.event_name }}-${{ github.ref }}
   cancel-in-progress: true
 
 env:
@@ -31,6 +37,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint
       - run: pnpm format:check
+      - run: pnpm tokens:check
       - run: pnpm knip
       - run: pnpm i18n:check
 
@@ -48,7 +55,7 @@ jobs:
       - run: pnpm typecheck
 
   test:
-    name: Unit, property, migration and architecture tests
+    name: Unit, property, migration, architecture and component tests
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -58,6 +65,8 @@ jobs:
           node-version-file: .node-version
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      # Component tests run in Vitest browser mode on Playwright's Chromium (TD-11).
+      - run: pnpm --filter @powr/web exec playwright install --with-deps chromium
       # Property tests use a fixed seed in CI (vitest.setup.ts); a nightly job may set FC_SEED=random.
       - run: pnpm test
 
@@ -146,3 +155,34 @@ jobs:
             apps/web/playwright-report
             apps/web/test-results
           retention-days: 14
+
+  lighthouse:
+    name: Lighthouse CI (mobile preset, budgets relative to the baseline)
+    # A performance regression guard on main and nightly, not on pull requests (§8.19, §8.20).
+    if: github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: dist
+          path: apps/web/dist
+      - run: pnpm --filter @powr/web exec playwright install --with-deps chromium
+      # Compares with the `ci` entry of apps/web/lighthouse-baseline.json; without one it only
+      # reports and leaves a baseline candidate in the artifact.
+      - name: Lighthouse against the tested build (production headers, Playwright's Chromium)
+        run: pnpm lighthouse
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: ${{ !cancelled() }}
+        with:
+          name: lighthouse
+          path: apps/web/.lighthouseci
+          include-hidden-files: true
+          retention-days: 30

@@ -4,10 +4,13 @@ import type { AddressInfo } from 'node:net';
 import { extname, join, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { TRUSTED_TYPES_CSP } from '../scripts/trusted-types.ts';
+
 /**
  * Serves the production build the way deploy/nginx.conf does: the same security headers (read
  * from deploy/security-headers.conf), cache rules and SPA fallback. E2E tests run against it;
- * the Docker image run proves the real nginx (WP0.7).
+ * the Docker image run proves the real nginx (WP0.7). Unlike production, its CSP also enforces
+ * Trusted Types (TD-12); Lighthouse (`pnpm lighthouse`) serves the exact production headers.
  */
 const repoRoot = fileURLToPath(new URL('../../..', import.meta.url));
 const distDir = fileURLToPath(new URL('../dist', import.meta.url));
@@ -25,12 +28,16 @@ const CONTENT_TYPES: Record<string, string> = {
 const NO_CACHE =
   /^\/(sw\.js|index\.html|manifest\.webmanifest|changelog\.json|version\.json|theme-init\.js)$/;
 
-function securityHeaders(): Record<string, string> {
+function securityHeaders(trustedTypes: boolean): Record<string, string> {
   const conf = readFileSync(join(repoRoot, 'deploy/security-headers.conf'), 'utf8');
   const headers: Record<string, string> = {};
   for (const match of conf.matchAll(/^add_header\s+(\S+)\s+"([^"]*)"\s+always;$/gm)) {
     headers[match[1]!] = match[2]!;
   }
+  const csp = headers['Content-Security-Policy'];
+  if (!csp) throw new Error('deploy/security-headers.conf has no Content-Security-Policy.');
+  // E2E builds enforce Trusted Types on top of the production headers (TD-12; production: TD-03).
+  if (trustedTypes) headers['Content-Security-Policy'] = `${csp}; ${TRUSTED_TYPES_CSP}`;
   return headers;
 }
 
@@ -41,11 +48,16 @@ export interface StaticServer {
   close(): Promise<void>;
 }
 
-export async function startStaticServer(): Promise<StaticServer> {
+export interface StaticServerOptions {
+  /** Append the Trusted Types directives to the CSP (default true; Lighthouse measures without). */
+  trustedTypes?: boolean;
+}
+
+export async function startStaticServer(options: StaticServerOptions = {}): Promise<StaticServer> {
   if (!existsSync(join(distDir, 'index.html'))) {
     throw new Error('apps/web/dist is missing. Run `pnpm build` before the E2E tests.');
   }
-  const headers = securityHeaders();
+  const headers = securityHeaders(options.trustedTypes ?? true);
   const build = (
     JSON.parse(readFileSync(join(distDir, 'version.json'), 'utf8')) as { build: string }
   ).build;

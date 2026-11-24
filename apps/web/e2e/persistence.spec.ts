@@ -4,10 +4,14 @@ import { join } from 'node:path';
 
 import { chromium, devices, type Page } from '@playwright/test';
 
-import { expect, test } from './fixtures';
+import { expect, skipOnboarding, test } from './fixtures';
 
 async function logOneSet(page: Page, reps: number) {
   await page.goto('/session');
+  // A fresh profile starts at the first-run guard (M2b).
+  const heading = page.getByRole('heading', { level: 1 });
+  await expect(heading).toHaveText(/^(Log a set|Welcome to POWR)$/);
+  if ((await heading.textContent()) === 'Welcome to POWR') await skipOnboarding(page);
   const repsInput = page.getByLabel('Reps', { exact: true });
   await repsInput.fill(String(reps));
   await page.getByRole('button', { name: 'Confirm set' }).click();

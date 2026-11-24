@@ -17,11 +17,10 @@ import type { MetaRecord } from '@powr/formats';
 import type { Deps } from '../deps';
 import { err, ok, type Result } from '../result';
 import type { PlanningAnswers } from './context';
+import { LEGAL_ACK_KEY, ONBOARDING_DRAFT_KEY } from './keys';
 import { endActivePlan, planRecords, type PlanPreview } from './plan';
 
-/** `meta` keys of onboarding (§6.1). */
-export const ONBOARDING_DRAFT_KEY = 'onboardingDraft';
-export const LEGAL_ACK_KEY = 'legalAck';
+export { LEGAL_ACK_KEY, ONBOARDING_DRAFT_KEY } from './keys';
 
 /** Every onboarding answer (ONB-02…09); the draft holds any part of them (ONB-12). */
 export interface OnboardingAnswers extends PlanningAnswers {
@@ -166,7 +165,9 @@ export async function completeOnboarding(
       'meets',
     ],
     async (repos) => {
-      await repos.profile.put(profile);
+      // Re-planning from the stored profile keeps its creation time.
+      const existing = await repos.profile.get();
+      await repos.profile.put(existing ? { ...profile, createdAt: existing.createdAt } : profile);
       const settings = await repos.settings.get();
       await repos.settings.put({
         ...settings,

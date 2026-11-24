@@ -1,6 +1,6 @@
 # ADR-0006: IndexedDB library and persistence model: Dexie 4
 
-- Status: Accepted (photo storage revisited after spike S-3b; v0.3, 2026-11-24: amended after M0, see below)
+- Status: Accepted (photo storage revisited after spike S-3b; v0.3, 2026-11-24: amended after M0, see below; amended v0.5)
 - Date: 2026-11-23
 - Related: technical concept §8.2, §6.3, §6.5, §6.8; PRD DAT-01…04, DAT-14, NFR-REL-01…08, TC-01, TC-14
 
@@ -51,3 +51,9 @@ Facts checked 2026-11-23:
 - **`powr-runtime`** is plain IndexedDB without Dexie (version 1, one `kv` store), so the service worker stays small and Dexie-free.
 
 Source: `IMPLEMENTATION_NOTES.md` §3 (repository root), which records each deviation with its reason.
+
+## Amendment (v0.5, 2026-11-24)
+
+The decision stands. TD-19 is decided: the MVP tables of M2 arrived as **`dataVersion` 2** (seven tables: `profile`, `equipmentProfiles`, `plans`, `plannedSessions`, `breaks`, `meets`, `bodyweights`; settings gain `weekStart` and `overrides`) with a pass-through migration from version 1, run by the Dexie upgrade and by backup import, so both paths are exercised before real user data exists (technical concept §8.2.2). Version 2 was still unreleased when M2b added `Plan.dismissedIssues` (dismissed plan warnings, PLN-09) and `MuscleTarget.full` (time-budget targets) to its record schemas, so no version 3 was needed.
+
+Source: `IMPLEMENTATION_NOTES.md` (repository root), sections "M2a planning core" and "M2b screens".

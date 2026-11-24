@@ -1,6 +1,6 @@
 # ADR-0016: Internationalisation: Lingui 6 + Intl
 
-- Status: Accepted (v0.2, 2026-11-24: literal-string enforcement re-designed for oxlint; v0.3, 2026-11-24: configuration as implemented, see below)
+- Status: Accepted (v0.2, 2026-11-24: literal-string enforcement re-designed for oxlint; v0.3, 2026-11-24: configuration as implemented; v0.5, 2026-11-24: native macro transform, see below)
 - Date: 2026-11-23, revised 2026-11-24
 - Related: technical concept §8.15, §8.7.3; PRD NFR-MNT-04, NFR-L10N-01/02, NG-10, C-06, TC-16
 
@@ -47,3 +47,14 @@ The UI is English only, but all user-facing strings must be externalized so that
 - **Babel macro path verified** under Rolldown. Lingui 6.12 recommends its native `macroTransform` and prints a warning for the Babel path, which the build suppresses (`LINGUI_SUPPRESS_BABEL_WARNING`). Evaluating the native transform is TD-09.
 
 Source: `IMPLEMENTATION_NOTES.md` §3 (repository root), which records each deviation with its reason.
+
+## Amendment (v0.5, 2026-11-24)
+
+The decision stands. v0.5 folds in the M2 tooling (TD-09 native Lingui macro, TD-10 native React Compiler lint rules, TD-12 Lighthouse CI and Trusted Types in dev/E2E) and the Sentry package block list; for this ADR that is TD-09:
+
+- **Native macro transform (TD-09 closed).** The `t` and `<Trans>` macros compile with Lingui's native transform: `lingui({ macroTransform: true })` from `@lingui/vite-plugin`, backed by `@lingui/native-tools` 0.2.0 (SWC-based, installed as a dependency of `@lingui/cli` and the Vite plugin). Babel (`@rolldown/plugin-babel`) now runs only the React Compiler. `linguiTransformerBabelPreset`, the warning suppression `LINGUI_SUPPRESS_BABEL_WARNING` and the app's `@lingui/babel-plugin-lingui-macro` devDependency are gone; the Lingui CLI's extractor still depends on that package itself.
+- **Plugin order.** `lingui()` must come before the Babel plugin in `vite.config.ts`. Both are `enforce: 'pre'` and run in array order; with Babel first, the React Compiler saw the raw macros and skipped four components.
+- **Evidence.** Compared with the Babel build chunk by chunk, 29 of 30 assets are identical; the session chunk differs only in the key order of one message's `values` object (the same object at runtime). In development the message descriptors (`id`, `message`, `values`) are identical. `pnpm i18n:extract` leaves the catalog unchanged, because extraction runs in the Lingui CLI and does not use the Vite transform; the catalog check passes.
+- **Consequences.** The Babel dependency noted under Consequences now concerns only the React Compiler; the fallback for risk T-08 (`i18n._()` with explicit IDs) is unchanged. `eslint-plugin-lingui` stays the only alpha JS plugin in the lint setup (OQ-T10, ADR-0017).
+
+Source: `IMPLEMENTATION_NOTES.md` (repository root), section "M2 tooling (TD-09, TD-10, TD-12)".

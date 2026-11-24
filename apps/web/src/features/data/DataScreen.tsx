@@ -141,7 +141,7 @@ function RestoreCard() {
           accept=".zip,application/zip"
           data-testid="restore-file"
           onChange={(event) => void pick(event.target.files?.[0])}
-          className="min-h-target text-sm file:mr-3 file:min-h-target file:rounded-xl file:border file:border-border file:bg-surface file:px-3"
+          className="min-h-target text-sm file:mr-3 file:min-h-target file:rounded-xl file:border file:border-control file:bg-surface file:px-3"
         />
       </label>
 

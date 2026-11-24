@@ -142,7 +142,7 @@ describe('double progression (PRG-04)', () => {
 describe('RPE-based loading and in-session back-offs (PRG-05)', () => {
   const bench = {
     type: 'barbell' as const,
-    curveClass: 'benchLike' as const,
+    curveClass: 'equation' as const,
     bodyweightLoaded: false,
   };
 

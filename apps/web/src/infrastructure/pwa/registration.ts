@@ -5,6 +5,8 @@
  * the first update it considers external, and the install gate makes exactly that happen
  * (a rejected install mid-session), so the post-session update would go unnoticed.
  */
+import { serviceWorkerScriptUrl } from '../security/trusted-types';
+
 const UPDATE_CHECK_INTERVAL_MS = 6 * 60 * 60 * 1000;
 
 export interface ServiceWorkerEvents {
@@ -37,7 +39,7 @@ export function registerServiceWorker(events: ServiceWorkerEvents): ServiceWorke
   };
 
   navigator.serviceWorker
-    .register('/sw.js', { scope: '/' })
+    .register(serviceWorkerScriptUrl(), { scope: '/' })
     .then((registered) => {
       registration = registered;
       if (registered.waiting && navigator.serviceWorker.controller) events.onUpdateAvailable();

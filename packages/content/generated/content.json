@@ -1,7 +1,7 @@
 {
   "format": 1,
-  "version": "0.1.0+sha.c3aa0c1a",
-  "hash": "c3aa0c1a4bfd29c5abc723e8b589af527c553923c58b2502454c30177cd08dc8",
+  "version": "0.2.0+sha.37ed9c7b",
+  "hash": "37ed9c7ba801f53c9499389c06604c5a3a87ac6c9482749cdcad25904b170934",
   "muscles": [
     {
       "id": "mu.chest",
@@ -1845,7 +1845,7 @@
       ],
       "load": {
         "type": "barbell",
-        "curveClass": "benchLike",
+        "curveClass": "equation",
         "unilateral": false,
         "bodyweightLoaded": false
       },
@@ -1945,7 +1945,7 @@
       ],
       "load": {
         "type": "barbell",
-        "curveClass": "benchLike",
+        "curveClass": "equation",
         "unilateral": false,
         "bodyweightLoaded": false
       },
@@ -2060,7 +2060,7 @@
       ],
       "load": {
         "type": "barbell",
-        "curveClass": "benchLike",
+        "curveClass": "equation",
         "unilateral": false,
         "bodyweightLoaded": false
       },
@@ -2172,7 +2172,7 @@
       ],
       "load": {
         "type": "barbell",
-        "curveClass": "benchLike",
+        "curveClass": "equation",
         "unilateral": false,
         "bodyweightLoaded": false
       },
@@ -2275,7 +2275,7 @@
       ],
       "load": {
         "type": "barbell",
-        "curveClass": "benchLike",
+        "curveClass": "equation",
         "unilateral": false,
         "bodyweightLoaded": false
       },
@@ -2677,7 +2677,7 @@
       ],
       "load": {
         "type": "barbell",
-        "curveClass": "benchLike",
+        "curveClass": "equation",
         "unilateral": false,
         "bodyweightLoaded": false
       },
@@ -3062,7 +3062,7 @@
       ],
       "load": {
         "type": "barbell",
-        "curveClass": "benchLike",
+        "curveClass": "equation",
         "unilateral": false,
         "bodyweightLoaded": false
       },
@@ -3159,7 +3159,7 @@
       ],
       "load": {
         "type": "barbell",
-        "curveClass": "benchLike",
+        "curveClass": "equation",
         "unilateral": false,
         "bodyweightLoaded": false
       },
@@ -3244,7 +3244,7 @@
       ],
       "load": {
         "type": "dumbbell",
-        "curveClass": "benchLike",
+        "curveClass": "equation",
         "unilateral": false,
         "bodyweightLoaded": false
       },
@@ -3328,7 +3328,7 @@
       ],
       "load": {
         "type": "dumbbell",
-        "curveClass": "benchLike",
+        "curveClass": "equation",
         "unilateral": false,
         "bodyweightLoaded": false
       },
@@ -3410,7 +3410,7 @@
       ],
       "load": {
         "type": "machine",
-        "curveClass": "benchLike",
+        "curveClass": "equation",
         "unilateral": false,
         "bodyweightLoaded": false
       },
@@ -3487,7 +3487,7 @@
       ],
       "load": {
         "type": "bodyweightAdded",
-        "curveClass": "benchLike",
+        "curveClass": "equation",
         "unilateral": false,
         "bodyweightLoaded": true
       },
@@ -3583,7 +3583,7 @@
       ],
       "load": {
         "type": "barbell",
-        "curveClass": "benchLike",
+        "curveClass": "equation",
         "unilateral": false,
         "bodyweightLoaded": false
       },
@@ -3669,7 +3669,7 @@
       ],
       "load": {
         "type": "dumbbell",
-        "curveClass": "benchLike",
+        "curveClass": "equation",
         "unilateral": false,
         "bodyweightLoaded": false
       },
@@ -3752,7 +3752,7 @@
       ],
       "load": {
         "type": "bodyweightAdded",
-        "curveClass": "benchLike",
+        "curveClass": "equation",
         "unilateral": false,
         "bodyweightLoaded": true
       },

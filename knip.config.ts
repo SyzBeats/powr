@@ -6,8 +6,9 @@ const config: KnipConfig = {
   ignoreExportsUsedInFile: { interface: true, type: true },
   workspaces: {
     'apps/web': {
-      entry: ['src/routes/**/*.tsx', 'scripts/*.ts'],
-      project: ['src/**/*.{ts,tsx,css}', 'e2e/**/*.ts', 'scripts/**/*.ts'],
+      // Unit tests and the browser-mode component tests (two Vitest projects) are entries too.
+      entry: ['src/routes/**/*.tsx', 'scripts/*.ts', 'src/**/*.test.ts', 'test/**/*.test.tsx'],
+      project: ['src/**/*.{ts,tsx,css}', 'e2e/**/*.ts', 'scripts/**/*.ts', 'test/**/*.{ts,tsx}'],
     },
     'packages/*': {
       entry: ['test/**/*.test.ts', 'scripts/**/*.test.ts'],

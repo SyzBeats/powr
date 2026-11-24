@@ -41,14 +41,14 @@ export function NumberField({
       <BaseNumberField.Group className="flex items-center gap-2">
         <BaseNumberField.Decrement
           aria-label={decrementLabel}
-          className="flex size-target items-center justify-center rounded-xl border border-border bg-surface"
+          className="flex size-target items-center justify-center rounded-xl border border-control bg-surface"
         >
           <Minus aria-hidden="true" />
         </BaseNumberField.Decrement>
-        <BaseNumberField.Input className="min-h-target w-full min-w-0 rounded-xl border border-border bg-surface px-3 text-center text-2xl font-semibold tabular" />
+        <BaseNumberField.Input className="min-h-target w-full min-w-0 rounded-xl border border-control bg-surface px-3 text-center text-2xl font-semibold tabular" />
         <BaseNumberField.Increment
           aria-label={incrementLabel}
-          className="flex size-target items-center justify-center rounded-xl border border-border bg-surface"
+          className="flex size-target items-center justify-center rounded-xl border border-control bg-surface"
         >
           <Plus aria-hidden="true" />
         </BaseNumberField.Increment>

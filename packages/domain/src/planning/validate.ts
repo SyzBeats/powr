@@ -5,6 +5,7 @@ import type { MuscleId } from '../ids';
 import type { CompetitionLift, ExerciseDef, MovementPattern, PlanDay, PlanSlot } from '../model';
 import { SetLedger, type SetBlocker, type WorkDay } from './allocate';
 import { analyzeWeek, dayMinutes, meanReps, repRangesOf, rirRangesOf, setsOf } from './analysis';
+import { MAX_TRAINING_DAYS, suggestedMinutes } from './budget';
 import { compareIds, creditFor, groupCredits, liftOf } from './credits';
 import { rankCandidates, isEligible } from './select';
 import { bestArrangement, spacingConflicts, weekOffset } from './spacing';
@@ -186,11 +187,32 @@ function checkVolume(
   const targets = new Map(ctx.targets.map((target) => [target.muscle, target.sets]));
   const work = workDays(days, ctx);
   const ledger = new SetLedger(work, targets, ctx.sessionMinutes, rules);
+  let fixes: readonly PlanFix[] | undefined;
+  const budgetFixes = () => (fixes ??= inputFixes(days, ctx, rules));
   for (const target of ctx.targets) {
     const week = analysis.muscles.find((muscle) => muscle.muscle === target.muscle);
     const fractional = week?.fractional ?? 0;
     const subject: IssueSubject = { kind: 'muscle', muscle: target.muscle };
     const args = { muscle: target.muscle, sets: round1(fractional), target: target.sets };
+    // PLN-14: a target the time budget lowered, while the week stays below the full target.
+    if (
+      target.source === 'timeBudget' &&
+      target.full !== undefined &&
+      ctx.sessionMinutes !== null &&
+      fractional + 1e-9 < target.full
+    ) {
+      add('volume', 'warning', subject, 'validate.volume.timeBudget', {
+        key: `${round1(fractional)}/${target.sets}/${target.full}`,
+        args: { ...args, full: target.full },
+        params: [
+          rules['volume.hypertrophy.minimumDose'],
+          rules['planning.timeBudget.fallback'],
+          bandsParam,
+        ],
+        cause: 'timeBudget',
+        fixes: budgetFixes(),
+      });
+    }
     if (target.sets < bands.floor || target.sets > bands.highHigh) {
       add('volume', 'warning', subject, 'validate.volume.targetOutsideBand', {
         key: String(target.sets),
@@ -216,7 +238,7 @@ function checkVolume(
             rules['planning.slot.sets'],
           ],
           cause: room.fix ? null : room.cause,
-          fixes: room.fix ? [room.fix] : [],
+          fixes: room.fix ? [room.fix] : room.cause === 'timeBudget' ? budgetFixes() : [],
         },
       );
     } else if (fractional > bands.hardWarnAbove) {
@@ -239,6 +261,28 @@ function checkVolume(
       );
     }
   }
+}
+
+/**
+ * The input fixes for a volume issue the time budget causes (PLN-14): the session budget that
+ * fits the full targets (`full ?? sets`; null = "90+"), and one more training day while the
+ * week has fewer than six. The plan is generated again with the changed answers.
+ */
+export function inputFixes(
+  days: readonly PlanDay[],
+  ctx: ValidationContext,
+  rules: PlanningRules,
+): PlanFix[] {
+  const fixes: PlanFix[] = [];
+  if (ctx.sessionMinutes !== null) {
+    const full = new Map(ctx.targets.map((target) => [target.muscle, target.full ?? target.sets]));
+    fixes.push({
+      kind: 'sessionMinutes',
+      minutes: suggestedMinutes(workDays(days, ctx), full, ctx.sessionMinutes, rules),
+    });
+  }
+  if (days.length < MAX_TRAINING_DAYS) fixes.push({ kind: 'addDay' });
+  return fixes;
 }
 
 /**

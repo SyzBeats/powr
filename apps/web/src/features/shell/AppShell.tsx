@@ -1,5 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
-import { Link, Outlet } from '@tanstack/react-router';
+import { Link, Outlet, useRouterState } from '@tanstack/react-router';
 import { Settings } from 'lucide-react';
 
 import { BottomNav } from './BottomNav';
@@ -8,6 +8,10 @@ import { UpdateBanner } from './UpdateBanner';
 /** Mobile-first shell: header, content, update notice and the bottom navigation (§8.9.4). */
 export function AppShell() {
   const { t } = useLingui();
+  // Onboarding is a focused flow: no tabs that the first-run guard would send back (ONB-01).
+  const onboarding = useRouterState({
+    select: (state) => state.location.pathname.startsWith('/onboarding'),
+  });
   return (
     <div className="flex min-h-dvh flex-col">
       <header className="sticky top-0 z-10 border-b border-border bg-bg pt-safe">
@@ -28,10 +32,10 @@ export function AppShell() {
         </div>
       </header>
       <UpdateBanner />
-      <main className="flex-1 pb-28">
+      <main className={onboarding ? 'flex-1 pb-8' : 'flex-1 pb-28'}>
         <Outlet />
       </main>
-      <BottomNav />
+      {onboarding ? null : <BottomNav />}
     </div>
   );
 }

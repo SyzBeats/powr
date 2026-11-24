@@ -156,8 +156,9 @@ On the phone:
 ## 4. Not done in M0 / open items
 
 - Vitest browser-mode component tests (`@vitest/browser-playwright`, Testing Library) and the Lingui
-  pseudo-locale expansion test.
-- Lighthouse CI, the token contrast gate (`tools/tokens-check`), Trusted Types in dev/E2E builds.
+  pseudo-locale expansion test: done in M2b (section "M2b screens").
+- Lighthouse CI and Trusted Types in dev/E2E builds; the token contrast gate (`tools/tokens-check`)
+  is done in M2b.
 - QS-01 in full: randomized process kills (200 runs, `SIGKILL` of the browser). M0 covers reload and an
   abrupt close of a persistent browser profile.
 - The pre-session "Update first" offer (§6.3 rule 2) needs the session start sheet (M3); the safety-copy
@@ -304,6 +305,8 @@ Member values are camelCase, like the existing unions (`TechniqueKind`, `curveCl
   amendments. Section 2: three rows; section 3: the M1 rows marked "Docs amended in v0.4" and five
   cleanup rows; section 4 updated; the M1-B and M1-A sections record the decisions.
 - 2026-11-24: M2a planning core (no UI): section "M2a planning core" at the end.
+- 2026-11-24: M2b screens and the M2 docs pass (technical concept v0.5): section "M2b screens" after
+  the M2a section; section 4 updated (component tests, pseudo-locale test and token gate done).
 
 ## M1-B content
 
@@ -784,3 +787,416 @@ raw) loads at boot, the resolver chunk on first use.
 - **Later:** generation in the engine worker; per-lift days since training for PRG-13 (now days
   since the last logged session); readiness and pain signals (M3, v1.3); PRG-16 volume steps (v1.x);
   peaking (PLN-16, v1.1); the `docs/` pass for M2.
+
+## M2b screens
+
+Written 2026-11-24 by the M2b work (roadmap A.4 "M2 Onboarding and planning", the screens on top
+of M2a, plus the product-owner decisions of 2026-11-24 listed below). Status: `pnpm verify` green.
+
+### What landed
+
+| Area                    | Where                                                                                                                                         |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| First-run guard         | Root route `beforeLoad` (`src/app/first-run.ts`, `firstRunState` in the `@powr/application` root, `src/features/legal/versions.ts`)           |
+| Lazy loader, live data  | `src/hooks/use-planning.ts`: `usePlanning()` (the one `import('@powr/application/planning')`), live queries, `useWeekStart()`                 |
+| Onboarding              | `src/features/onboarding/` (`OnboardingFlow.tsx`, `steps.tsx`, `answers.ts`), routes `/onboarding/$step` and `/plan/setup/$step`              |
+| Legal texts             | `src/features/legal/LegalScreens.tsx`, routes `/legal/privacy`, `/legal/disclaimer` (drafts for the legal review V-06)                        |
+| Equipment               | `src/features/equipment/` (editor, profile list, preset picker, substitution review), routes `/settings/equipment`, `…/$profileId`            |
+| Plan preview, editor    | `src/features/plan/` (`PlanPreviewView.tsx`, `PlanEditorScreen.tsx`, `parts.tsx`, `format.ts`), route `/plan/edit`                            |
+| Schedule, next block    | `src/features/plan/PlanScreen.tsx` (week view, missed sessions, breaks, deload), `NextMesocycleScreen.tsx`, routes `/plan`, `/plan/next`      |
+| "Why?"                  | `src/features/why/` (`WhySheet.tsx` reusable, `format.ts` arguments → words, `messages.ts` 117 rules, `args.ts`, `messages.test.ts`)          |
+| Labels                  | `src/features/labels.ts` (content names and enum labels)                                                                                      |
+| Design system           | `src/ui/tokens.css`, `app.css`, new `sheet.tsx`, `badge.tsx`, `choice.tsx`, `field.tsx`; `button.tsx`, `segmented.tsx`, `screen.tsx` edited   |
+| Token gate              | `tools/tokens-check` (`pnpm tokens:check`, in `pnpm verify` and the CI quality job)                                                           |
+| Use cases added         | `firstRunState`, `setWeekStart` (root); `slotCandidates`, `addCandidates`, `newPlanSlot` (planning entry, `src/planning/candidates.ts`)       |
+| Domain (delegated, M2b) | Time-budget prioritisation (`planning/budget.ts`), `equation` curve class, `Plan.dismissedIssues` with `dismissPlanIssue`/`restorePlanIssues` |
+| Tests                   | `apps/web/test/` (component tests), `apps/web/e2e/planning.spec.ts` and `planning.ts`, `packages/application/test/m2b.test.ts`                |
+
+Home shows the next planned session or "Plan not set up"; Settings gained Equipment, the week start
+and the legal texts. The existing E2E specs pass the first-run guard with `skipOnboarding` (the legal
+gate, then "Just let me log").
+
+### Product-owner decisions (2026-11-24) and what they became
+
+1. **The mock-up's look, accessibility first.** Tokens retuned (deep slate surfaces, green action,
+   teal `--info`, amber `--warning`, coral `--danger`, heat-map steps); WCAG 2.2 AA wins every
+   conflict (see "Mock-up vs accessibility" below). The token gate checks every pair.
+2. **Time budget: prioritise.** Priority muscles (else the template's primary-slot muscles) keep
+   their full target; the others fall back towards 4 weekly sets; the plan shows the reason and
+   the fixes (more minutes, an extra day). Evidence below.
+3. **Empty "Custom" preset:** picking it opens the editor ("Toggle what you have access to")
+   before a plan is generated; saved empty, the preview shows a bodyweight plan with the note "You
+   saved your equipment list empty, so this plan uses bodyweight exercises only…". Powerlifting
+   and powerbuilding without a barbell get no plan; the preview says why and offers "Change
+   equipment" and "Change goal".
+4. **Deload and maintenance defaults approved:** deload RIR +2 and sets −50%; maintenance a third
+   of normal, at least 4 sets and one session a week. No value changed.
+5. **TD-30:** `benchLike` → `equation` in `CURVE_CLASSES`, `load.curve.classMap`, the content
+   YAML and schema, `content.json`, tests and fixtures (no ID lock affected). Rules 1.1.0 → 1.2.0
+   (`1.2.0+4a41caaa2812`), content 0.1.0 → 0.2.0 (`0.2.0+sha.37ed9c7b`).
+
+### Evidence for the new parameters (rules 1.2.0: 125 → 127 parameters, 30 → 31 `verified: false`)
+
+| Parameter                        | Value                                                            | Evidence and sources                    | Verified | Why                                                                                                                                                                                                                                 |
+| -------------------------------- | ---------------------------------------------------------------- | --------------------------------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `volume.hypertrophy.minimumDose` | `{ setsPerWeek: 4 }`                                             | [NARR] `src.iversen2021`                | true     | EB §Volume › Minimum and maintenance doses: Iversen recommends at least 4 weekly sets per muscle at 6–15RM. A row of its own: `weeklyBands.floor` is the same number but a preprint detectability limit the validator flags against |
+| `planning.timeBudget.fallback`   | `{ keepFull: [priorities, template], templateSlots: [primary] }` | [INF] `src.powr-prd`, `src.iversen2021` | false    | POWR design value (product-owner decision): which muscles keep their full target when the budget is tight; the first non-empty group wins                                                                                           |
+
+**Plan-matrix snapshot diff** (`packages/application/test/__snapshots__/plan-matrix.test.ts.snap`,
+the 60-minute lines): 73 of 270 lines changed; exercise counts unchanged everywhere; total sets per
+plan unchanged in 45 lines, +1 in 24, +2 in 3, +4 in 1; violations in the changed lines 518 → 393
+(59 lines fewer, 2 lines one more: `bb-full-body-3day` with bodyweight and bands for intermediates
+and advanced, where abs and calves rise from below the floor to low and the front delts give sets
+to the minimum-dose step). 77 of 124 generated 60-minute plans now carry lowered targets (207
+targets; most often 15 → 4, 15 → 5.5, 15 → 5, 15 → 9, 15 → 14.5); none in powerlifting templates.
+Example `bb-full-body-2day | commercial-gym | intermediate`: 12 violations → 9; elbow flexors, side
+delts and triceps lowered 15 → 5 / 4 / 5; abs and calves rise from 3 / 2.5 to 4 / 4.75 sets. Whole
+matrix (every budget): 371 of 1,620 combinations changed, 346 plans with lowered targets (1,124
+targets), nothing changed at 90+, `report.ok` changed for no plan (all 744 still pass). Suggested
+budgets: 30 → 45 to 75; 45 → 60 to 90+; 60 → 75 to 90+; 90 → 90+.
+
+### PRD coverage (requirement → screen or element)
+
+| PRD                    | Screen or element                                                                                                                                                                                                                                                                                                            |
+| ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ONB-01, LEG-01…03      | `/onboarding/welcome`: what POWR is, privacy summary (3 sentences) with link, health notice with link, two confirmations (notices; 16 or older); nothing stored before; route guard; re-ask on a new version; `/legal/*`, Settings links                                                                                     |
+| ONB-02                 | Step "Units and body": weight and length units, sex with the reference-set question for "prefer not to say", birth year, height, body weight (first bodyweight entry)                                                                                                                                                        |
+| ONB-03                 | Step "Your goal": three styles with a one-sentence description and an example week; body-weight goal optional                                                                                                                                                                                                                |
+| ONB-04                 | Step "Your experience": training age, time off, RPE/RIR familiarity with an explanation on tap. Not asked: recent weekly sets per muscle (optional in the PRD; TD-34)                                                                                                                                                        |
+| ONB-05                 | Step "Your week": 2–6 days (chips in the locale's week order), 30–90+ minutes, optional start times                                                                                                                                                                                                                          |
+| ONB-06, EQP-02         | Step "Your equipment": six presets, pick and "Use this preset" (2 taps); "Adjust the equipment list"; Custom opens the editor                                                                                                                                                                                                |
+| ONB-07                 | Step "Priorities" (optional, skippable): up to 3 priority muscles, movement patterns and exercises to avoid                                                                                                                                                                                                                  |
+| ONB-08, ONB-09, ONB-11 | Not built (TD-34): baselines (the calibration fallback applies), meet details, the system set-up step (persistent storage stays on the Data screen)                                                                                                                                                                          |
+| ONB-10                 | Step "Your plan" (`PlanPreviewView`): template and level with "Why?", first week on the calendar, sessions with exercises, sets, reps, effort, rest, minutes, weekly sets per muscle against the band, progression, start date, checks; change days/time, goal or equipment and regenerate; "Accept plan", "Accept and edit" |
+| ONB-12                 | Draft saved after every step, `/onboarding/resume` continues it; "Skip this step"; "Just let me log" on every step; answers changeable through `/plan/setup/*` (prefilled)                                                                                                                                                   |
+| ONB-13                 | One profile, no account, no e-mail or name asked                                                                                                                                                                                                                                                                             |
+| EQP-01                 | Editor: categories with toggle rows, search by name and synonym ("hex bar" finds the trap bar). Item icons: category headings only (TD-34)                                                                                                                                                                                   |
+| EQP-03                 | Editor load details: bar weights (with "models differ"), collars, plate and microplate pairs with ±, dumbbells, kettlebells, machine and cable steps, bands                                                                                                                                                                  |
+| EQP-04                 | Every list (plan, swap, add, substitutions) comes from the use cases' `isAvailable` filter                                                                                                                                                                                                                                   |
+| EQP-05                 | Settings → Equipment → Edit → Save: `previewEquipmentChange`, then "Review plan changes" (best match preselected, or keep), then `applyEquipmentChange`                                                                                                                                                                      |
+| EQP-07                 | Editor "Your own items"                                                                                                                                                                                                                                                                                                      |
+| PLN-01, PLN-04         | "Plan checks" in the preview and "Checks" in the editor: severity, message, cause, fixes; schedule changes show a spacing heads-up                                                                                                                                                                                           |
+| PLN-02                 | Template chosen by the generator with its "Why?"; choosing another template is not offered yet (TD-34)                                                                                                                                                                                                                       |
+| PLN-03                 | Weekly sets per muscle against target and band (mini heat map), target source and full target; editor "Change weekly targets"                                                                                                                                                                                                |
+| PLN-05, PLN-06         | "Why?" per exercise (ranking factors); editor move up/down buttons                                                                                                                                                                                                                                                           |
+| PLN-07                 | Prescriptions in words (sets × reps, RIR or "reps left" for novices, rest)                                                                                                                                                                                                                                                   |
+| PLN-08                 | Plan card "week N of M", deload card with its dates; block length choice not offered (TD-34)                                                                                                                                                                                                                                 |
+| PLN-09                 | `/plan/edit`: `PlanEdit`s, live `previewPlanEdit`, one-tap fixes, dismiss (persisted), undo, scope question on save                                                                                                                                                                                                          |
+| PLN-11                 | `/plan` week view, session sheet (move, today, swap), missed sessions (do today, merge, skip), each change with its explanation                                                                                                                                                                                              |
+| PLN-12, PRG-13         | Breaks card: start (reason, dates), end ("I'm back") with the return ramp; "Easing back in" badges                                                                                                                                                                                                                           |
+| PLN-13, PRG-10         | `/plan/next`: proposal, rotations with reasons, level with "Why?", accept                                                                                                                                                                                                                                                    |
+| PLN-14                 | Minutes per session against the budget, "over your time" badge, time-budget note with "Allow N min per session" and "Add a training day"                                                                                                                                                                                     |
+| PLN-15                 | "Just let me log"; "Plan not set up" on Plan and Home                                                                                                                                                                                                                                                                        |
+| PRG-11, PRG-12         | Deload card: postpone (once), skip, "Do I need it sooner?" (reactive check) and "Bring the lighter week forward"                                                                                                                                                                                                             |
+| PRG-09, NFR-USE-04     | `WhyButton` / `WhySheet` everywhere a choice or warning shows                                                                                                                                                                                                                                                                |
+| SET-11, NFR-L10N-01    | Settings "First day of the week" (locale default from `Intl.Locale` week info)                                                                                                                                                                                                                                               |
+| PLN-10, SET-05, SET-08 | Not built (TD-34)                                                                                                                                                                                                                                                                                                            |
+
+### Mock-up vs accessibility (for comparing with the screenshots)
+
+| Mock-up                                              | Changed to (and why)                                                                                                                                                                                               |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| White text on the vibrant green button               | Dark text `#03200f` on green `#34d27b` in dark (8.75:1); light theme green `#137a3e` with white (5.41:1), which also passes as text on white                                                                       |
+| Dim grey captions ("No account required", "Last: …") | `--fg-muted` passes 4.5:1 on every surface in both themes (lowest 6.11:1)                                                                                                                                          |
+| Small teal labels                                    | `--info` `#0d7068` / `#3fc8bf` (5.0:1 / 7.1:1 at the lowest)                                                                                                                                                       |
+| Faint card and list outlines                         | Decorative `--border` for cards; controls (toggles, inputs, chips, buttons) get `--control` (≥ 3.88:1)                                                                                                             |
+| Dark navy "under 4 sets" heat step                   | Every step ≥ 3:1 on every surface and ≥ ΔE00 10.7 from its neighbours with simulated protanopia, deuteranopia and tritanopia; band numbers next to every swatch; "Target met" / "N below target" badges with icons |
+| Status by amber/coral colour                         | Icon plus words ("Needs attention", "Worth a look", "Target met")                                                                                                                                                  |
+| Plate inventory as disc pictures                     | Text rows "20 kg × 4 pairs" with ± buttons named "One pair more of 20 kg"                                                                                                                                          |
+| Check marks as the only toggle state                 | Real checkboxes (box plus check) with the item name as the label                                                                                                                                                   |
+| Portrait-only phone frames                           | The layouts reflow at 320 px and 200% text; the manifest's portrait lock conflicted with WCAG 1.3.4 and was removed at the merge (TD-35 closed)                                                                    |
+
+Also from the accessibility brief: unique page titles; focus clear of the sticky header and bottom
+navigation; sheets return focus to their trigger; errors in words next to the question plus a
+focused summary; polite live regions that change only when the content changes; move and reorder
+by buttons; reduced motion for sheets and transitions.
+
+**Fixed at merge (coordinator, 2026-11-24): focus behind the sticky action bars (WCAG 2.4.11).**
+The equipment editor and the plan editor stack a sticky Save/Cancel (Undo) bar on top of the
+bottom navigation, but the page's `scroll-padding-bottom` (7rem) only covered the navigation, so a
+checkbox reached by Tab could scroll fully behind the bar. Both screens now use
+`ui/action-bar.tsx` (`ActionBar`): it measures its own height with a `ResizeObserver` and sets
+`--action-bar-inset` on the root through the CSSOM, and `app.css` adds it to the scroll padding.
+That also covers the buttons wrapping at 320 px or 200% text. The E2E test "keyboard focus never
+hides behind the sticky action bar (WCAG 2.4.11)" tabs through the equipment editor at 100% and
+200% text and checks every focused field against the header and the bar. With the old fixed
+padding it fails, as it should.
+
+**Fixed at merge: a view swapped inside the same route kept the old scroll position.** After "Save
+equipment", the editor shows "Review plan changes" in the same route, so React kept the `Screen`:
+the review opened 857 px down, with its heading off screen and its first options under the
+sticky header (axe flagged a target-size violation). `Screen` now treats a title change as a new
+screen: it scrolls to the top and moves focus to the new h1. The first render still leaves the
+position to the router's scroll restoration. The EQP-05 test asserts that the review heading is
+in the viewport and focused.
+
+**Still needs a manual TalkBack pass on the S22** (axe cannot verify): the announcements of the
+editor's check summary and of schedule changes (once, not flooding); the sheets' focus trap and
+return with TalkBack gestures; radio cards whose name includes a long description; the weekday and
+muscle chips' pressed state; `<details>` explanations; the native date and time inputs and the
+weekday `<select>`; real 200% system font scaling (E2E uses root font size 200%); the reading order
+of the plan preview.
+
+### Decisions and deviations
+
+| Concept / brief says                                                       | What I did                                                                                                                                                                                                                                                     |
+| -------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Routes `/plan/week/$n`, `/plan/edit/$planId`, `/plan/session/$id` (§8.9.1) | `/plan?week=YYYY-MM-DD`, `/plan/edit` (the active plan), the planned session as a bottom sheet; added `/plan/setup/$step`, `/plan/next`, `/settings/equipment/*`, `/legal/*` (§8.9.1 amended in v0.5)                                                          |
+| Forms with React Hook Form + Zod (§8.5)                                    | React state; steps check only that required answers are given; the use cases validate ranges and return field errors that map to their step. No Zod in the app, no `src/zod.ts`                                                                                |
+| Re-planning                                                                | `/plan/setup/*` asks the onboarding questions again (prefilled) and stores through `completeOnboarding`, which now keeps the profile's `createdAt`                                                                                                             |
+| `--accent` token                                                           | `--info`: shadcn's `--accent` is the bridged hover surface in `app.css`                                                                                                                                                                                        |
+| Missed sessions                                                            | Derived on the screen from the live planned sessions with the domain's `missedSessions` (the rule `listMissedSessions` uses), so the list updates as soon as one is resolved                                                                                   |
+| The English catalog in the entry chunk                                     | A lazy chunk loaded at boot in parallel with the database, content and rules: the "Why?" texts and the new screens grew it by about 20 kB gzip (entry 202.75 → 178.29 kB); a failure shows the startup error (`i18n.error`)                                    |
+| `lingui extract --clean`                                                   | Also `--overwrite` (script and catalog check): Lingui keeps the old text of a changed explicit-ID message otherwise                                                                                                                                            |
+| Lingui pseudo-locale for the +30% test (§8.15)                             | It only accents characters; the component test builds an expanded catalog itself                                                                                                                                                                               |
+| Component tests next to the code                                           | `apps/web/test/`, outside `src`: they compose infrastructure (Dexie, the rules provider), which `src/features` may not import; Vitest project `apps/web/vitest.components.config.ts` reusing the app's Vite config, `LINGUI_CONFIG` set for runs from the root |
+| "Sources" in the Why sheet (§8.7.3)                                        | Short names from the source IDs and parameter IDs in words (TD-33)                                                                                                                                                                                             |
+| Tailwind class detection                                                   | `@source not` for scripts, E2E, public, configs, JSON, catalogs, the service worker, infrastructure and tests (only a dead `accent-foreground` utility left the CSS)                                                                                           |
+| `role="status"`                                                            | `<output>` (oxlint `prefer-tag-over-role`)                                                                                                                                                                                                                     |
+| Dismissed warning keys "in `meta`" (M2a open items)                        | On the plan record (`Plan.dismissedIssues`, the issue keys, at most 500), amending the unreleased version-2 record schema; `dismissPlanIssue` and `restorePlanIssues` in the planning entry                                                                    |
+| A flaky property test (`plates.test.ts`)                                   | Bound 0.005 → 0.01 + 1e-9 (the solver is right; 0.01-grid ties), counterexample pinned                                                                                                                                                                         |
+
+### Evidence
+
+`pnpm verify` green on 2026-11-24: lint (0 errors), format, token gate ("24 colours × 2 themes;
+170 pairs; lowest text 4.56, on fills 5.41, UI 3.88, heat map 3.13; heat-map steps ΔE00 ≥ 10.7"),
+knip, catalog check, typecheck, 615 tests in 58 files (603 unit, property and migration tests in 54
+files plus 12 component tests in 4 files), build, licence gate (33 distributed, 621 build-only,
+passed), size (entry JS **178.29 kB** gzip of 186 kB, CSS 5.78 kB, service worker 7.71 kB; precache
+80 files, 462.3 kB; startup path 7 scripts, 0 with Zod) and 32 E2E tests (10 new in
+`planning.spec.ts`: core path with "Why?", resume, "Just let me log", empty Custom, equipment
+change with substitution, plan edit with a live warning and a fix, missed session, offline
+onboarding, reflow at 320 px and 200% text, the remaining screens; axe in both themes on every new
+screen). Screenshots at 360 × 780, light and dark, were handed to the coordinator outside the
+repository.
+
+### Open items
+
+- TD-32…TD-36 (technical concept §11.2): generation in the engine worker; citations and parameter
+  labels in the Why sheet; the screens not built (ONB-08, ONB-09, ONB-11, PLN-02 template choice,
+  PLN-08 block length, PLN-10, SET-05, SET-08, equipment icons); the time-budget step in the
+  next-mesocycle proposal. TD-35 (portrait lock) is closed.
+
+**Product-owner answers after M2b (2026-11-24):**
+
+- Manifest orientation lock removed (WCAG 1.3.4, TD-35); `offline.spec.ts` asserts it stays absent.
+- en-US defaults to lb, every other locale to kg (units stay changeable in onboarding and settings).
+- The time-budget trade-off is accepted: keep-full muscles may lose about 1 set to the
+  minimum-dose step, and in full-body templates mostly arms, calves and side delts fall back.
+- The next-block proposal follows the same time-budget rule (TD-36).
+- A short **M2c** before M3: ONB-08 baselines, the PLN-02 template override, the PLN-08 block
+  length, TD-36 and the lint-warning clean-up.
+- PRD v0.4 adds both M2b decisions (PLN-14 time budget; EQP-02/ONB-06 Custom (empty)).
+- Dev databases with plans written by M2a builds lack `dismissedIssues` and fail the strict v2
+  schema on backup import: reset them (no released data is affected).
+- `pnpm --filter @powr/rules build -- --diff <old>` crashes when the old `rules.json` lacks a new
+  parameter (the new file is still written first).
+- If the catalog chunk itself fails to load, the startup error shows message IDs instead of its
+  text.
+
+## M2 tooling (TD-09, TD-10, TD-12)
+
+Written 2026-11-24 by the M2 tooling work, in parallel with the M2b screens. Scope: TD-09, TD-10
+and the Lighthouse CI and Trusted Types parts of TD-12. The token contrast gate
+(`tools/tokens-check`, the rest of TD-12) and TD-11 stay with M2b. Status: `pnpm verify` green;
+Lighthouse run locally.
+
+### What changed
+
+| TD    | Change                                                                                                                                                                                                                                                                                                                                                                                                                                                        | Files                                                                                                                                                                                                                                                   |
+| ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| TD-09 | Lingui macros through Lingui's native transform (`lingui({ macroTransform: true })`, `@lingui/native-tools` 0.2.0, SWC-based, already installed as a dependency of `@lingui/cli` and `@lingui/vite-plugin`). Babel keeps only the React Compiler preset. `linguiTransformerBabelPreset`, `LINGUI_SUPPRESS_BABEL_WARNING` and the app's `@lingui/babel-plugin-lingui-macro` devDependency are gone (the Lingui CLI's extractor depends on that package itself) | `apps/web/vite.config.ts`, `apps/web/package.json`, `pnpm-lock.yaml`                                                                                                                                                                                    |
+| TD-10 | The React Compiler rules run natively only: 13 rules explicitly blocking, 4 compiler versions of hook rules explicitly as warnings; the alpha `eslint-plugin-react-hooks` JS plugin, its 12 rule entries and the root devDependency are removed. OQ-T10 now covers `eslint-plugin-lingui` only. The OQ-T10 probe test that expected `react-hooks-js(purity)` warnings is replaced by a probe that proves five native rules block                              | `oxlint.config.ts`, `package.json`, `pnpm-lock.yaml`, `tools/arch-test/test/boundary-probes.test.ts`                                                                                                                                                    |
+| TD-12 | Lighthouse CI 0.16.1 (Lighthouse 13.6.0): `pnpm lighthouse` against the production build served with the production headers; budgets relative to a stored per-environment baseline; CI job on `main` pushes, nightly and on demand                                                                                                                                                                                                                            | `apps/web/scripts/lighthouse.ts`, `apps/web/lighthouse-baseline.json`, `apps/web/package.json`, `package.json`, `.github/workflows/ci.yml`, `.gitignore`, `pnpm-workspace.yaml` (overrides), `pnpm-lock.yaml`                                           |
+| TD-12 | Trusted Types in dev and E2E: `require-trusted-types-for 'script'; trusted-types powr-sw` on the Vite dev server and appended to the production CSP by the E2E server; one named policy for the only script sink (the service-worker URL); one E2E test proves enforcement. `deploy/` is unchanged (production stays TD-03)                                                                                                                                   | `apps/web/scripts/trusted-types.ts`, `apps/web/vite.config.ts`, `apps/web/e2e/static-server.ts`, `apps/web/e2e/trusted-types.spec.ts`, `apps/web/src/infrastructure/security/trusted-types.ts` (new), `apps/web/src/infrastructure/pwa/registration.ts` |
+
+### TD-09: native Lingui macro transform (switched)
+
+- **Plugin order matters.** Both `lingui()` (its macro plugin) and `@rolldown/plugin-babel` are
+  `enforce: 'pre'`, so they run in array order. With Babel first, the React Compiler saw the raw
+  macros and skipped four components ("(BuildHIR::lowerExpression) Handle tagged template with
+  interpolations": `LogSetScreen`, `DataScreen` ×3), and the data and session chunks lost their
+  memoization (8,126 → 7,174 and 23,974 → 21,885 bytes). `lingui()` now comes first, with a comment.
+- **Build output.** Two Babel builds were byte-identical (determinism check). The native build,
+  compared with the Babel build chunk by chunk with content hashes normalised: 29 of 30 assets
+  identical; the session chunk differs only in the key order of one message's `values` object
+  (`{0: …, name, weight}` vs `{name, weight, 0: …}`: the same object at runtime, integer keys
+  enumerate first). The compiler report has the same single bail-out as before
+  (`features/debug/CapabilityProbe.tsx`).
+- **Dev output** (`transformRequest` of three macro-heavy files): identical message descriptors
+  (`id`, `message`, `values`); only helper import names (`_useLingui` → `$_useLingui`, `_Trans` →
+  `Trans_`), property order, React Refresh signatures and the `jsxDEV` line numbers differ (one
+  lower in files where the native transform drops the macro import line; dev-only debug data).
+- **Catalog.** `pnpm i18n:extract` leaves `messages.po` unchanged (79 messages; extraction runs in
+  the Lingui CLI and does not use the Vite transform); `pnpm i18n:check` passes. No build warning.
+- **Tailwind gotcha found on the way.** Tailwind's automatic source detection scans all of
+  `apps/web`, including `vite.config.ts` and `scripts/`: a comment with the word "transform" added
+  the `.transform` utility and five `@property` rules to the CSS, and two words in a script comment
+  added two more utilities. The comments were reworded (final CSS identical to the baseline).
+  Proposal for M2b (owner of `src/ui/app.css`): exclude non-UI folders, e.g.
+  `@source not "../../scripts"; @source not "../../e2e";`.
+
+### TD-10: React Compiler lint parity (alpha plugin removed)
+
+Method: a scratch oxlint config enabled every compiler rule twice, natively (`react/*`, error) and
+through the alpha plugin (`eslint-plugin-react-hooks` 7.1.1 as JS plugin, warn), and linted 30
+probe files (at least one per rule, plus a clean control that neither flags). On the code base both sets reported nothing before the
+change, and the native set reports nothing after it.
+
+| Rule                             | Native oxlint 1.95           | Probe                                                       | Alpha fires                                                                                               | Native fires                                                            | Now                                  |
+| -------------------------------- | ---------------------------- | ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- | ------------------------------------ |
+| `purity`                         | correctness                  | `Math.random()`, `Date.now()` in render                     | 2                                                                                                         | 2 (same lines)                                                          | error                                |
+| `refs`                           | correctness                  | `ref.current` written in render                             | yes                                                                                                       | yes                                                                     | error                                |
+| `immutability`                   | correctness                  | mutate a `useState` object, props, a value passed to a hook | yes                                                                                                       | yes                                                                     | error                                |
+| `globals`                        | correctness                  | module variable reassigned in render                        | yes                                                                                                       | yes                                                                     | error                                |
+| `set-state-in-render`            | correctness                  | `setState` in the render body                               | yes                                                                                                       | yes                                                                     | error                                |
+| `set-state-in-effect`            | correctness                  | synchronous `setState` in `useEffect` (also derived state)  | yes                                                                                                       | yes                                                                     | error                                |
+| `static-components`              | correctness                  | component declared in render                                | yes                                                                                                       | yes                                                                     | error                                |
+| `use-memo`                       | correctness                  | `async` and parameterised `useMemo` callbacks               | yes                                                                                                       | yes                                                                     | error                                |
+| `void-use-memo`                  | correctness                  | `useMemo` without return, result unused                     | yes                                                                                                       | yes                                                                     | error (not in the alpha set before)  |
+| `preserve-manual-memoization`    | correctness                  | memo dependency mutated after a hook call                   | yes                                                                                                       | yes                                                                     | error                                |
+| `incompatible-library`           | correctness                  | `useVirtualizer` from `@tanstack/react-virtual`             | yes                                                                                                       | yes                                                                     | error                                |
+| `error-boundaries`               | correctness                  | JSX in `try`/`catch`                                        | yes                                                                                                       | yes                                                                     | error                                |
+| `unsupported-syntax`             | restriction (off by default) | `eval` in render                                            | yes                                                                                                       | yes                                                                     | error (was an alpha warning)         |
+| `hooks`                          | suspicious                   | hook in a condition                                         | yes                                                                                                       | yes                                                                     | warn (`rules-of-hooks` blocks)       |
+| `memo-dependencies`              | suspicious                   | missing `useMemo` dependency                                | yes                                                                                                       | yes                                                                     | warn (`exhaustive-deps` blocks)      |
+| `capitalized-calls`              | suspicious                   | call of a capitalized non-component                         | yes                                                                                                       | yes                                                                     | warn                                 |
+| `exhaustive-effect-dependencies` | suspicious                   | missing effect dependency                                   | never (behind the flag `eprh_enableExhaustiveEffectDependenciesCompilerLint`, `'off'` in 7.1.1)           | yes                                                                     | warn (native is stricter)            |
+| `no-deriving-state-in-effects`   | perf                         | state derived in an effect                                  | no (both report `set-state-in-effect`)                                                                    | no                                                                      | off (as before)                      |
+| `todo`                           | restriction                  | `try`/`finally` in a component                              | yes                                                                                                       | yes                                                                     | off (compiler limitation, not a bug) |
+| `rule-suppression`               | restriction                  | `eslint-disable` of `react-hooks/exhaustive-deps`           | no                                                                                                        | no                                                                      | off                                  |
+| `syntax`, `invariant`            | restriction                  | internal compiler errors                                    | not triggered                                                                                             | `invariant` fires on `CapabilityProbe.tsx` (the build's known bail-out) | off                                  |
+| `memoized-effect-dependencies`   | no port                      | non-memoized effect dependency                              | never (the compiler raises its category nowhere in 7.1.1)                                                 | —                                                                       | nothing lost                         |
+| `config`, `gating`               | no port                      | —                                                           | validate compiler options given to the ESLint plugin; oxlint gives none, the Vite build validates its own | —                                                                       | nothing lost                         |
+| `fbt`                            | no port                      | —                                                           | fbt is not used                                                                                           | —                                                                       | —                                    |
+
+Messages match too (native "Cannot call impure function during render", alpha the same reason with
+the compiler's long description). Every rule we ran through the alpha plugin has a native port that
+fires on the same code, so the plugin is removed instead of trimmed; ESLint 10 stays installed only
+as the peer of `eslint-plugin-lingui`. The probe test writes `apps/web/src/hooks/__probe__.tsx`
+(five violating components), asserts a failing lint with `error react(purity)`, `refs`,
+`set-state-in-render`, `immutability` and `unsupported-syntax` and no `react-hooks-js` output, and
+deletes the file.
+
+### TD-12: Lighthouse CI
+
+- **Runner** `apps/web/scripts/lighthouse.ts` (`pnpm lighthouse`, after `pnpm build`): starts the
+  E2E test server in-process with `trustedTypes: false` (exactly the production headers), writes a
+  temporary `lighthouserc.json` and runs `lhci collect`, `upload` (filesystem reports in
+  `apps/web/.lighthouseci/reports`, gitignored) and `assert`. Mobile preset (Lighthouse's default:
+  simulated slow 4G, 4× CPU), 3 runs (`--runs N`), median aggregation. Chrome: `CHROME_PATH` or
+  Playwright's Chromium (`chromium.executablePath()`), `--no-sandbox` as Playwright does. The
+  `lhci` calls are asynchronous: `spawnSync` blocks the in-process server and deadlocks the run.
+- **Budgets (§8.19, relative in CI).** FCP, LCP, Speed Index, TTI (`interactive`) and TBT fail when
+  the median is more than 20% above the baseline, with a minimum margin (100 ms; TTI 150 ms) so that
+  the ~25 ms of blocking time cannot fail on noise. CLS ≤ 0.1 and accessibility and best-practices
+  scores of 100 are warnings (not §8.19 budgets). The device budgets (first content ≤ 1.0 s,
+  interactive ≤ 2.0 s, S22, installed, offline) stay a device measurement.
+- **Baselines per environment** (`apps/web/lighthouse-baseline.json`: `local`, later `ci`;
+  `LIGHTHOUSE_BASELINE=<name>` picks another). Simulated throttling scales the CPU time measured on
+  the machine, so a baseline does not transfer between machines. Evidence (2 runs each, CPU slowdown
+  4× / 6× / 8×): FCP 901 / 901 / 901 ms, Speed Index 1.63 / 1.58 / 1.49 s, TTI 4.33 / 4.61 / 4.71 s,
+  TBT 26 / 111 / 212 ms. Without a baseline for its environment a run reports only, writes
+  `.lighthouseci/baseline-candidate.json` and passes (a `::warning::` on GitHub).
+  `pnpm lighthouse --update-baseline` stores the medians of the run. Assertion failures were checked
+  once with a deliberately tight baseline (FCP and TTI failed, exit code 1).
+- **Local result** (the committed `local` baseline: final build, 5 runs, benchmark index 2,708):
+  performance, accessibility, best practices and SEO 100 in every run; FCP 901, LCP 901, Speed
+  Index 1,678, TTI 4,528, TBT 27 ms; CLS 0; 781 kB over 17 requests. Spread over runs: FCP ±0.1%,
+  Speed Index between about 1,570 and 1,680 (two clusters), TTI −4%…0%, TBT 23–33 ms. A 3-run check
+  against it passed in 33 s (FCP 901, Speed Index 1,572, TTI 4,533, TBT 32 ms).
+  TTI is 4.5 s because the service worker's precache download (about 1 MB) follows the first render
+  on a cold, throttled load and Lighthouse waits for network quiet; it is a regression signal, not
+  the §8.19 number.
+- **Not in `pnpm verify`:** about 33 s for 3 runs, and hardware-dependent (above).
+- **CI:** job `lighthouse` in `ci.yml`, `needs: build` (measures the tested `dist` artifact), only
+  when `github.event_name != 'pull_request'`; the workflow gained `schedule` (02:30 UTC nightly, so
+  the whole pipeline runs nightly) and `workflow_dispatch`; the concurrency group now includes the
+  event name, so a nightly run never cancels a push run (and its beta deploy). Reports are uploaded
+  as the `lighthouse` artifact (`include-hidden-files`). actionlint 1.7.12 passes. Until a `ci`
+  baseline is committed the job only reports; once it is, a regression fails CI on `main` and so
+  holds back the beta deploy (deploy after green, §8.21).
+- **Licence gate.** The first install failed the gate on two build-only transitive packages:
+  `sentry@0.49.0` (`FSL-1.1-Apache-2.0`, source-available; lighthouse → `@sentry/node` 11.13 →
+  `@sentry/bundler-plugins`; every `@sentry/node` in Lighthouse's range `^11.8.0` has it) and `argparse@3.0.4` (`PSF-2.0`, not
+  on the allowlist; `@lhci/utils` → `js-yaml` 5.5). Neither is ever loaded: Lighthouse imports
+  `@sentry/node` only with `--enable-error-reporting`, inside a `try`; js-yaml uses argparse only in
+  its own command-line binary. `pnpm-workspace.yaml` `overrides` remove both (`'-'`), with a
+  comment. Gate: "33 distributed, 820 build-only; passed". Product-owner alternative: allow
+  `PSF-2.0` (permissive, OSI-approved) and drop that override.
+
+### TD-12: Trusted Types in dev and E2E builds
+
+- **Header** (one place: `apps/web/scripts/trusted-types.ts`): `require-trusted-types-for 'script';
+  trusted-types powr-sw`. The Vite dev server sends only these directives (the production CSP would
+  reject Vite's dev preamble and injected styles); the E2E server appends them to the CSP from
+  `deploy/security-headers.conf` (`startStaticServer({ trustedTypes })`, default on). `vite preview`
+  and the nginx image are unchanged; Lighthouse measures without them.
+- **What broke:** only `navigator.serviceWorker.register('/sw.js')`, a `TrustedScriptURL` sink. A
+  search of `src` and `public` found no other sink (`innerHTML`, `new Worker`, `eval`,
+  `importScripts`, `document.write` …), and the full E2E suite (React, TanStack Router, Base UI,
+  Dexie, Workbox in the service worker, which gets the same CSP) shows no violation.
+- **Fix:** `src/infrastructure/security/trusted-types.ts` creates the policy `powr-sw` once; its
+  `createScriptURL` returns `/sw.js` and throws for anything else. `registration.ts` passes
+  `serviceWorkerScriptUrl()` instead of the string. TypeScript 7.0's DOM types have no Trusted
+  Types, so the module types the factory structurally (no `@types/trusted-types`). Entry JS +0.1 kB
+  gzip.
+- **Evidence:** all 22 existing E2E tests pass under the header (the fixture fails any test with a
+  CSP violation). New `e2e/trusted-types.spec.ts` asserts the header, the registered service
+  worker, and that `innerHTML` and `script.src` string assignments, an unknown policy and a second
+  `powr-sw` policy all throw `TypeError`, with exactly those four violation reports (then cleared
+  from the fixture's list); skipped against the nginx image. Negative check: with the plain string
+  URL the offline test and this test fail ("Preparing offline use…", a `require-trusted-types-for`
+  violation). Dev server: `/`, `/session`, `/settings`, `/data`, `/plan`, `/progress`, `/explore`
+  and `/?debug=1` load in Chromium with no CSP violation, error or warning.
+
+### Deviations
+
+| Concept / brief says                                                                          | What I did                                                                                                         |
+| --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| "CI uses relative thresholds (fail if more than 20% slower than the stored baseline)" (§8.19) | 20% plus a minimum margin per metric (100 ms, TTI 150 ms); one baseline per environment; no baseline → report only |
+| Lighthouse in the CI pipeline before deploy (§8.21 diagram)                                   | Job in `ci.yml` after `build`, skipped on pull requests; nightly schedule added to the whole workflow              |
+| Licence gate on every build-only package (§8.21)                                              | Two never-loaded transitive packages removed with pnpm `overrides` instead of an exception or an allowlist change  |
+| Trusted Types "in development and E2E builds" (§7.3)                                          | Dev server: Trusted Types directives only, not the production CSP; E2E: production CSP plus the directives         |
+| `@lingui/vite-plugin` with the Babel macro plugin (§8.15, Appendix B)                         | Native macro transform; `@lingui/babel-plugin-lingui-macro` no longer a direct dependency                          |
+
+### Doc amendments for the docs pass
+
+- **§11.2:** TD-09 closed (native macro transform; evidence above). TD-10 closed (all compiler
+  rules native, alpha plugin removed). TD-12: Lighthouse CI and Trusted Types in dev/E2E done; what
+  remains is the token contrast gate (M2b; close TD-12 if M2b lands it) and committing the `ci`
+  Lighthouse baseline from the first `main` run (artifact `lighthouse`,
+  `baseline-candidate.json`). TD-03 unchanged (dev/E2E now enforce, production does not).
+- **§7.3** CSP notes: "Trusted Types are enforced in development and E2E builds: header in
+  `apps/web/scripts/trusted-types.ts`, one policy `powr-sw` for the service-worker URL
+  (`src/infrastructure/security/trusted-types.ts`); production later (TD-03)."
+- **§8.5** item 4: replace the v0.3 sentences on native ports and TD-10 with: the React Compiler
+  rules run natively in oxlint (13 blocking; `hooks`, `memo-dependencies`,
+  `exhaustive-effect-dependencies` and `capitalized-calls` as warnings), parity checked rule by
+  rule; `eslint-plugin-react-hooks` is no longer used; OQ-T10 covers only `eslint-plugin-lingui`.
+- **§8.15** (Lingui paragraph): macros compile with Lingui's native `macroTransform`
+  (`@lingui/native-tools`, SWC); Babel runs only the React Compiler; `lingui()` must precede the
+  Babel plugin (both `enforce: 'pre'`).
+- **§8.19:** Lighthouse CI as built (runner, mobile preset, relative budgets with minimum margins,
+  per-environment baselines, local numbers above, TTI caveat). **§8.20** Performance row:
+  "Lighthouse CI 0.16 (from M2)". **§8.21:** M0-state paragraph (Lighthouse CI joined in M2:
+  `main`, nightly, manual; component tests still TD-11), the alpha JS plugin bullet (only
+  `eslint-plugin-lingui`; ESLint 10 is its peer), licence-gate note on the two `overrides`.
+- **Risks:** T-08 (Lingui macro now native; Babel only for the compiler), T-16 (React Compiler lint
+  fully native; only Lingui rules are alpha).
+- **OQ-T10** entry: note that the alpha scope is `eslint-plugin-lingui` only.
+- **Appendix B:** Lint row without `eslint-plugin-react-hooks` 7.1.1; i18n row: native macro
+  transform (`@lingui/native-tools` 0.2.0, transitive) instead of
+  `@lingui/babel-plugin-lingui-macro`; Budgets row unchanged (`@lhci/cli` 0.16.1, Lighthouse 13.6.0).
+- **ADR amendments:** ADR-0016 (native macro transform), ADR-0017 (alpha React plugin removed,
+  native compiler rules, ESLint peer only for Lingui), ADR-0010 (E2E server enforces Trusted Types;
+  Lighthouse CI with per-environment baselines), ADR-0018 (the two build-only `overrides`),
+  ADR-0021 (pnpm `overrides` in `pnpm-workspace.yaml`).
+
+### Open items
+
+- Commit the `ci` baseline after the first `main` run (download the `lighthouse` artifact, copy
+  the `ci` entry of `baseline-candidate.json` into `apps/web/lighthouse-baseline.json`).
+- Tailwind source exclusion for `scripts/` and `e2e/` (proposal above; `src/ui/app.css` is M2b's).
+- Trusted Types in production (TD-03, v1.1): add the two directives to
+  `deploy/security-headers.conf` once ECharts' tooltip is confirmed compatible.

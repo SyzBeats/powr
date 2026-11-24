@@ -25,6 +25,8 @@ export default defineConfig({
           include: ['*/test/**/*.test.ts'],
         },
       },
+      // Component tests (TD-11): Vitest browser mode, configured next to the app.
+      'apps/web/vitest.components.config.ts',
       {
         test: {
           name: 'web',

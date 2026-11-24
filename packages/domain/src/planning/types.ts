@@ -177,7 +177,13 @@ export type PlanFix =
       readonly dayKey: string;
       readonly slotKey: string;
       readonly exerciseId: ExerciseId;
-    };
+    }
+  /**
+   * Input fixes (PLN-14): a longer session budget (null = "90+") or one more training day. They
+   * change the user's answers, not the week, so the plan is generated again with them.
+   */
+  | { readonly kind: 'sessionMinutes'; readonly minutes: number | null }
+  | { readonly kind: 'addDay' };
 
 export interface ValidationIssue {
   /**

@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import type { Page } from '@playwright/test';
 import { strFromU8, strToU8, unzipSync, zipSync } from 'fflate';
 
-import { expect, test, waitForOfflineReady } from './fixtures';
+import { expect, skipOnboarding, test, waitForOfflineReady } from './fixtures';
 
 /** Requests of this page for the lazy backup chunk (`@powr/application/backup`, §8.19). */
 async function backupChunkLoads(page: Page): Promise<string[]> {
@@ -21,7 +21,7 @@ test.describe('backup (WP0.6, DAT-05/06)', () => {
     browser,
     baseURL,
   }) => {
-    await page.goto('/session');
+    await skipOnboarding(page);
     await page.getByLabel('Reps', { exact: true }).fill('5');
     await page.getByRole('button', { name: 'Confirm set' }).click();
     await expect(page.getByTestId('log-status')).toContainText('× 5');
@@ -63,7 +63,7 @@ test.describe('backup (WP0.6, DAT-05/06)', () => {
   });
 
   test('rejects an edited backup and changes nothing (QS-17)', async ({ page }) => {
-    await page.goto('/session');
+    await skipOnboarding(page);
     await page.getByRole('button', { name: 'Confirm set' }).click();
     await expect(page.getByTestId('session-sets').getByRole('listitem')).toHaveCount(1);
     await page.goto('/data');
@@ -106,6 +106,7 @@ test.describe('backup (WP0.6, DAT-05/06)', () => {
     server,
   }) => {
     // Install first: an active session defers the service-worker install (§6.3).
+    await skipOnboarding(page);
     await page.goto('/');
     await waitForOfflineReady(page);
 

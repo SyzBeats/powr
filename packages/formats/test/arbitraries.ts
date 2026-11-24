@@ -267,10 +267,29 @@ const planDays: fc.Arbitrary<PlanDay[]> = fc
     ),
   );
 
-const plan = (id: string, equipmentProfileId: string, status: Plan['status']): fc.Arbitrary<Plan> =>
+export const plan = (
+  id: string,
+  equipmentProfileId: string,
+  status: Plan['status'],
+): fc.Arbitrary<Plan> =>
   fc
-    .record({ days: planDays, startDate: localDate, createdAt: instantTz, seed: fc.nat() })
-    .map(({ days, startDate, createdAt, seed }): Plan => ({
+    .record({
+      days: planDays,
+      startDate: localDate,
+      createdAt: instantTz,
+      seed: fc.nat(),
+      lowered: fc.boolean(),
+      dismissedIssues: fc.uniqueArray(
+        fc.constantFrom(
+          'volume.low:mu.quads:9',
+          'volume.timeBudget:mu.glutes:6/6/15',
+          'time.overBudget:d0:68',
+          'spacing:d1:mu.chest:d0',
+        ),
+        { maxLength: 3 },
+      ),
+    })
+    .map(({ days, startDate, createdAt, seed, lowered, dismissedIssues }): Plan => ({
       id: id as PlanId,
       status,
       name: { en: 'Upper/lower ×2' },
@@ -296,7 +315,19 @@ const plan = (id: string, equipmentProfileId: string, status: Plan['status']): f
           status: 'active',
           level: 'intermediate',
           days,
-          targets: [{ muscle: 'mu.quads' as MuscleId, sets: 15, source: 'band' }],
+          targets: [
+            { muscle: 'mu.quads' as MuscleId, sets: 15, source: 'band' },
+            ...(lowered
+              ? [
+                  {
+                    muscle: 'mu.glutes' as MuscleId,
+                    sets: 6,
+                    source: 'timeBudget' as const,
+                    full: 15,
+                  },
+                ]
+              : []),
+          ],
           liftTargets: [],
           deload: { postponed: false, skipped: false, broughtForward: false },
         },
@@ -304,6 +335,7 @@ const plan = (id: string, equipmentProfileId: string, status: Plan['status']): f
       createdAt,
       versions: { engine: '0.0.0', rules: '1.0.0+abcdef012345', content: '0.1.0+sha.0' },
       revision: 0,
+      dismissedIssues,
     }));
 
 const plannedSession = (id: string, planId: string): fc.Arbitrary<PlannedSession> =>

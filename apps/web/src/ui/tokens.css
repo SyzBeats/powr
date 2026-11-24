@@ -1,23 +1,58 @@
 /*
  * Semantic design tokens (§8.9.3, ADR-0004). Components use these names only, never raw colours.
  * light-dark() follows `color-scheme`, which data-theme pins when the user overrides the system.
+ *
+ * Visual language (product-owner decision 2026-11-24, docs/design-idea.jpg): deep slate surfaces,
+ * green for the main action, teal as the accent, amber and coral for status. WCAG 2.2 AA wins over
+ * the mock-up: text on a fill uses its `--on-*` token (dark text on the dark theme's green), the
+ * light theme uses a darker green that also passes as text, and `tools/tokens-check` (`pnpm
+ * tokens:check`, part of `pnpm verify`) gates every pair: 4.5:1 for text, 3:1 for controls and
+ * graphics, and colour-vision-safe steps of the volume heat map (NFR-A11Y-05, NFR-A11Y-10).
  */
 :root {
   color-scheme: light dark;
 
+  /* Surfaces */
   --bg: light-dark(#f6f6f4, #101214);
-  --surface: light-dark(#ffffff, #191c20);
-  --surface-raised: light-dark(#e9eae7, #252a30);
-  --fg: light-dark(#15171a, #f0f1f2);
-  --fg-muted: light-dark(#54595f, #a9afb6);
-  --border: light-dark(#cfd2d5, #3a4047);
-  --primary: light-dark(#1d4ed8, #8fb0ff);
-  --on-primary: light-dark(#ffffff, #0a1633);
-  --danger: light-dark(#b3261e, #ffb4ab);
-  --on-danger: light-dark(#ffffff, #3b0a07);
-  --success: light-dark(#166534, #86efac);
-  --focus: light-dark(#1d4ed8, #b4c9ff);
-  --pr-accent: light-dark(#a16207, #fcd34d);
+  --surface: light-dark(#ffffff, #161d26);
+  --surface-raised: light-dark(#e8ecf0, #202a36);
+
+  /* Text */
+  --fg: light-dark(#111820, #eef2f6);
+  --fg-muted: light-dark(#4c5866, #a9b5c2);
+
+  /* Lines: `--border` is decorative (cards, dividers); `--control` outlines controls (≥ 3:1). */
+  --border: light-dark(#d3d9df, #2a3542);
+  --control: light-dark(#6b7685, #7d8a99);
+
+  /*
+   * Main action (green), information and secondary emphasis (teal; named `--info` because
+   * shadcn's `--accent` is the bridged hover surface in app.css) and status fills, each with the
+   * text colour on it.
+   */
+  --primary: light-dark(#137a3e, #34d27b);
+  --on-primary: light-dark(#ffffff, #03200f);
+  --info: light-dark(#0d7068, #3fc8bf);
+  --on-info: light-dark(#ffffff, #03201e);
+  --warning: light-dark(#9a5200, #f6b84a);
+  --on-warning: light-dark(#ffffff, #261600);
+  --danger: light-dark(#b42318, #ff8b78);
+  --on-danger: light-dark(#ffffff, #330a04);
+  --success: light-dark(#137a3e, #4fd88a);
+  --focus: light-dark(#1d4ed8, #8cc8ff);
+  --pr-accent: light-dark(#8a5300, #fcd34d);
+
+  /*
+   * Weekly volume heat map (PLN-09 mini heat map, MAP-01): none, below the floor (< 4), under
+   * target, in target (10–20), high (20–30), very high (> 30). Always shown with a number or a
+   * label as well (colour is never the only carrier of meaning, NFR-A11Y-05).
+   */
+  --heat-0: light-dark(#737d8b, #66768a);
+  --heat-1: light-dark(#22357a, #5b8def);
+  --heat-2: light-dark(#3c78d8, #9fb6ff);
+  --heat-3: light-dark(#0d7a50, #38d39b);
+  --heat-4: light-dark(#a15c00, #f4b740);
+  --heat-5: light-dark(#9c1650, #ff6f7d);
 
   /* Touch targets (NFR-A11Y-02): primary workout controls >= 48 px, everything else >= 24 px. */
   --target-primary: 3rem;
