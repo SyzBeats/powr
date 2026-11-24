@@ -1,11 +1,9 @@
 import { createFileRoute } from '@tanstack/react-router';
 
 import { LogSetScreen } from '../features/session/LogSetScreen';
-import { z } from '../zod';
-
-const searchSchema = z.object({ source: z.enum(['shortcut']).optional() });
+import { validateSessionSearch } from '../features/session/search';
 
 export const Route = createFileRoute('/session')({
-  validateSearch: searchSchema,
+  validateSearch: validateSessionSearch,
   component: LogSetScreen,
 });

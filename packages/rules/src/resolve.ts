@@ -1,9 +1,12 @@
+// `@powr/rules/resolve`: validates a loaded `rules.json` and resolves it for one context. It builds
+// Zod schemas, so the app loads it lazily, never on the startup path (TD-17, §8.19).
 import type { Param, ParamId, ParamOrigin, RuleSet } from '@powr/domain/rules';
 
 import type { CompiledRules } from './compile';
 import { matchesCondition, type ResolveContext } from './context';
 import { PARAM_IDS, PARAM_SCHEMAS, isParamId } from './params';
 import { paramDefSchema, type ParamDef } from './schema';
+import { rulesStamp } from './version';
 import { z } from './zod';
 
 /** A user's own value (settings.overrides, §8.6.3); with `exerciseId` it applies to one exercise. */
@@ -112,11 +115,6 @@ export function resolveRules(
   // Every value passed its schema when the registry was compiled or parsed, and each override
   // when it was applied, so the record has exactly the RuleSet shape.
   return { version: rulesStamp(compiled), rules: rules as RuleSet, issues };
-}
-
-/** `version+hash12`, the string stored in `VersionStamp.rules`. */
-export function rulesStamp(compiled: Pick<CompiledRules, 'version' | 'hash'>): string {
-  return `${compiled.version}+${compiled.hash.slice(0, 12)}`;
 }
 
 const compiledRulesSchema = z.strictObject({

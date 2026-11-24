@@ -2,7 +2,9 @@ import { describe, expect, it } from 'vitest';
 
 import type { ExerciseId } from '@powr/domain';
 
-import { matchesCondition, paramDefSchema, resolveParam, type ParamDef } from '../src';
+import { matchesCondition, type ParamDef } from '../src';
+import { resolveParam } from '../src/resolve';
+import { paramDefSchema } from '../src/schema';
 
 const restStrength: ParamDef = paramDefSchema.parse({
   id: 'session.rest.strength',

@@ -11,6 +11,9 @@ import {
 } from '../src/backup';
 import { rawTables } from './arbitraries';
 
+/** `FC_NUM_RUNS=5000 pnpm vitest run --project formats` for a long run (vitest.setup.ts). */
+const runs = (fallback: number) => fc.readConfigureGlobal().numRuns ?? fallback;
+
 const source: BackupSource = {
   app: { version: '0.0.0', build: 'test' },
   rulesVersion: '0.0.0+m0',
@@ -85,7 +88,7 @@ describe('backup round-trip', () => {
           sets: tables.sets.length,
         });
       }),
-      { numRuns: 60 },
+      { numRuns: runs(60) },
     );
   }, 30_000);
 
@@ -99,7 +102,7 @@ describe('backup round-trip', () => {
         expect(second.manifest.entries).toEqual(first.manifest.entries);
         expect(second.manifest.contentDigest).toBe(first.manifest.contentDigest);
       }),
-      { numRuns: 30 },
+      { numRuns: runs(30) },
     );
   }, 30_000);
 

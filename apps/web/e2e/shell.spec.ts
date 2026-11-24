@@ -99,6 +99,19 @@ test.describe('app shell (WP0.3)', () => {
     await expect(page.getByRole('heading', { level: 1, name: 'Page not found' })).toBeVisible();
   });
 
+  test('the session route validates its search parameters', async ({ page }) => {
+    // The manifest shortcut's URL; unknown parameters are ignored.
+    for (const path of ['/session?source=shortcut', '/session?utm=x']) {
+      await page.goto(path);
+      await expect(page.getByRole('heading', { level: 1, name: 'Log a set' })).toBeVisible();
+    }
+    // An invalid value goes to the route error boundary, as with the earlier Zod schema.
+    await page.goto('/session?source=elsewhere');
+    await expect(
+      page.getByRole('heading', { level: 1, name: 'Something went wrong' }),
+    ).toBeVisible();
+  });
+
   test('has no serious accessibility violations on the main screens', async ({ page }) => {
     for (const path of ['/', '/session', '/settings', '/data']) {
       await page.goto(path);

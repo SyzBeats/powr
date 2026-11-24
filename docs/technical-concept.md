@@ -7,13 +7,13 @@
 | Field | Value |
 |---|---|
 | Title | POWR (working title): Technical Concept |
-| Version | 0.3 |
+| Version | 0.4 |
 | Date | 2026-11-24 |
-| Status | Draft v0.3: all open questions resolved; M0 (walking skeleton) implemented and its deviations folded in; only spikes/validation tasks remain |
+| Status | Draft v0.4: all open questions resolved; M0 (walking skeleton) and M1 (engine, rules registry, content pipeline) implemented and their deviations folded in; only spikes/validation tasks remain |
 | Owner / publisher | Simeon Zimmermann, SZ WEB DEVELOPMENT, Switzerland |
 | Author | Architecture agent, for the product owner (sole developer) |
 | Audience | Implementation agent, product owner, testers |
-| Sources | (1) **PRD v0.2** `docs/PRD.md`, authoritative for all requirements. (2) **Evidence base** `reports/Strength and hypertrophy evidence base.md` ("EB"), source of all training formulas and defaults. (3) Braindump `app.requirements.md` (background). (4) **npm registry metadata**, queried 2026-11-23: versions, licences and publish dates of every recommended package (Appendix B). (5) **MDN browser-compat-data 8.1.10**, which lists Chrome for Android 158 and Samsung Internet 31.0 (Blink 148, released 2026-09-23) as current: browser capability claims (Appendix C). (6) Vendor and platform documentation (Appendix D). (7) **Product-owner decisions of 2026-11-24** on the open questions (hosting on Hetzner + Coolify, oxlint and oxfmt instead of ESLint and Prettier, domain strategy, GitHub, Labs audio test); new facts re-checked on the npm registry, GitHub and vendor docs on 2026-11-24. (8) **M0 implementation log** `IMPLEMENTATION_NOTES.md` (repository root; §3 lists every deviation from v0.2) and the **product-owner decisions of 2026-11-24 on the M0 cleanup**: docs v0.3, lazy-loaded backup path, unused dependencies removed, `#ui/*` alias for the shadcn CLI approved, licence exceptions approved. |
+| Sources | (1) **PRD v0.2** `docs/PRD.md`, authoritative for all requirements. (2) **Evidence base** `reports/Strength and hypertrophy evidence base.md` ("EB"), source of all training formulas and defaults. (3) Braindump `app.requirements.md` (background). (4) **npm registry metadata**, queried 2026-11-23: versions, licences and publish dates of every recommended package (Appendix B). (5) **MDN browser-compat-data 8.1.10**, which lists Chrome for Android 158 and Samsung Internet 31.0 (Blink 148, released 2026-09-23) as current: browser capability claims (Appendix C). (6) Vendor and platform documentation (Appendix D). (7) **Product-owner decisions of 2026-11-24** on the open questions (hosting on Hetzner + Coolify, oxlint and oxfmt instead of ESLint and Prettier, domain strategy, GitHub, Labs audio test); new facts re-checked on the npm registry, GitHub and vendor docs on 2026-11-24. (8) **M0 implementation log** `IMPLEMENTATION_NOTES.md` (repository root; §3 lists every deviation from v0.2) and the **product-owner decisions of 2026-11-24 on the M0 cleanup**: docs v0.3, lazy-loaded backup path, unused dependencies removed, `#ui/*` alias for the shadcn CLI approved, licence exceptions approved. (9) **M1 implementation log** (`IMPLEMENTATION_NOTES.md` §5 "M1 shared contract", "M1-B content", "M1-A engine and rules") and the **product-owner decisions of 2026-11-24 on M1**: TD-21 resolved (keep `#ui/cn`, shadcn colour bridge), load–rep curve class of the competition squat and deadlift, content licence entries approved as own work. |
 | Structure | arc42 (sections 1–12) plus appendices. Architecture decisions are recorded as ADRs in `docs/adr/` (index: `docs/adr/README.md`). |
 
 ### 0.1 Conventions
@@ -40,6 +40,7 @@
 | 0.1 | 2026-11-23 | First complete draft: arc42 sections 1–12, appendices, 21 ADRs, 8 open questions |
 | 0.2 | 2026-11-24 | Product-owner decisions applied. **Resolved:** OQ-T1 = C (beta on a subdomain of the publisher's business domain; production domain chosen after the trademark check V-05, never changed afterwards); OQ-T2 = **Hetzner Cloud VPS (Germany) + self-hosted Coolify** (a new option: §7 and ADR-0011 rewritten, privacy wording changed from "Swiss hosting" to "EU hosting with a Swiss publisher", new operations section §7.6); OQ-T3 = B (background-audio keep-alive tested in S-1, opt-in Labs only if it clearly works); OQ-T5 = A (private GitHub + Actions). **Linting and formatting:** ESLint + typescript-eslint replaced by **oxlint** (type-aware via `oxlint-tsgolint`); Prettier replaced by **oxfmt** (ADR-0017). Consequences: layer boundaries re-designed (pnpm isolation + TypeScript project references + oxlint `no-restricted-imports` overrides + an architecture test; dependency-cruiser dropped, §5.2, ADR-0001); **TypeScript moved from 6.0 to 7.0** (ADR-0002); Lingui literal-string enforcement re-designed (§8.15, ADR-0016); Tailwind class sorting through oxfmt. **Adopted defaults, pending confirmation:** OQ-T4 = A, OQ-T6 = A, OQ-T7 = A, OQ-T8 = A. New open questions OQ-T9…OQ-T11. Roadmap spikes updated (S-1 includes the audio test, S-7 is now the Hetzner/Coolify setup). **Final 2026-11-24:** OQ-T4, T6, T7, T8 confirmed (A); OQ-T9 = hosted free-tier uptime monitor, preferably EU-based (service chosen in S-7); OQ-T10 = warn now, block later for the alpha JS-plugin rules; OQ-T11 = DNS stays at the current provider (`beta.`, `coolify.` and CAA records), business-domain name to be filled in by the product owner in S-7/WP0.7. All open questions are resolved. |
 | 0.3 | 2026-11-24 | **M0 implemented; deviations folded in** (each one is a row in `IMPLEMENTATION_NOTES.md` §3, marked "Docs amended in v0.3"). Changed sections: §5.1–§5.3 (backup entries `@powr/formats/backup` and `@powr/application/backup`, deferred `@powr/rules` → `@powr/domain` dependency, `sw.ts`, `feature-flags.ts`, `zod.ts`, `#ui/*` alias, lint additions); §6.4/§6.5 (synchronous fflate API because `worker-src 'self'` blocks `blob:` workers; canonical JSON; lazy backup chunk); §7.3 (nginx excerpt with `include mime.types`, gzip and `theme-init.js` as `no-cache`; `Permissions-Policy` without `bluetooth=()`; CSP notes for the per-package Zod wrapper and Base UI's `CSPProvider`); §8.2 (no `dexie-react-hooks`; M0 Dexie schema with four tables and nested-key indexes; `powr-runtime` without Dexie); §8.3.5 (zip-bomb ratio for entries over 1 MiB); §8.4 (own service-worker registration instead of `virtual:pwa-register`; own icon generator instead of `@vite-pwa/assets-generator`); §8.5 (native React Compiler rules in oxlint 1.95); §8.9.2 (shadcn CLI workflow with the `#ui/*` subpath imports, product-owner approval 2026-11-24); §8.15 (`jsx-no-literals` configuration, catalog check in the build); §8.18 (`minimumReleaseAgeExclude`); §8.19 (entry JS 211.4 → 202.5 KB with the lazy backup chunk); §8.20 (E2E test server with production headers); §8.21 (licence plugin flow, own SPDX evaluator, approved licence exceptions, ESLint only as an unused peer, M0 CI state); §8.22; §11.2 (TD-09…TD-21); Appendix B (versions as installed). ADRs 0001, 0002, 0003, 0006, 0008, 0009, 0010, 0013, 0016, 0017, 0018 and 0021 carry an "Amendment (v0.3, 2026-11-24)" section. Editorial: a stray Traefik row moved from §8.23 to the glossary. |
+| 0.4 | 2026-11-24 | **M1 implemented; folded in** (rows marked "Docs amended in v0.4" in `IMPLEMENTATION_NOTES.md` §3, and its sections "M1-B content" and "M1-A engine and rules"). Changed sections: §0 (sources); §4 (validation never on the startup path); §5.1–§5.4 (package entries as built: Zod-free `@powr/rules` root with `schema`, `resolve`, `sources`, `sources/node` and `build/node` subpaths; `@powr/domain` engine modules as subpath exports; `@powr/content` with `built-in` and `schema`; `tools/content-build`; no `src/zod.ts` in the app; lint rules and a build check that keep Zod off the startup path); §5.6 (the M1 shared contract: domain types and enums incl. five movement patterns beyond PRD §7.1, ID formats, content types in `@powr/content`); §6.5 and §8.3.5 (backup import hardening against `__proto__`, `constructor` and `prototype` keys, deep nesting and hostile ZIP entry names, found by the fast-check seed 637004341); §7.3 (Zod wrapper only in packages); §8.1 (source and parameter IDs); §8.5 and §8.9.1 (search params validated without Zod); §8.6 (registry as built: source directory and ID convention, loader location, EMG-only studies tagged OBS, `src.powr-eb-mapping`, 8 tables with 109 parameters of which 24 are `verified: false`, per-parameter value schemas, flat resolved record and context dimensions, `rules.json` with hash, `ids.lock.json`, golden tests, what is not shipped); §8.7.4, §8.7.7 and new §8.7.9 (engine as built; **product-owner decision**: the competition squat and deadlift and their close variants use the equation class until the personal curve fit exists); §8.9.2/§8.9.3 (**TD-21 resolved by the product owner**: `#ui/cn` stays, shadcn colour bridge); §8.12 (content pipeline as built; content licence entries **approved by the product owner**); §8.19 (entry JS 202.1 → 176.4 KB, `size-limit` budget 186 KB); §8.20 (hostile-backup tests, long property runs); §9; §11.2 (TD-17 and TD-21 closed, TD-09…TD-12 carried over, TD-22…TD-31 added); Appendix A.4 (M1 status). ADRs 0001, 0003, 0009, 0012, 0013, 0018 and 0020 carry an "Amendment (v0.4, 2026-11-24)" section. |
 
 ---
 
@@ -219,7 +220,7 @@ flowchart LR
 | Content | YAML exercise library, muscle taxonomy, equipment catalog, templates, validated and coverage-tested at build time | Q3 | ADR-0012 (shared pipeline), §8.12 |
 | Timers and alerts | Timestamp model persisted with the session; wake lock during workouts; Web Audio and vibration while visible; page timeout plus service-worker `waitUntil` timer plus notification when hidden; capability matrix drives an honest status | Q2 | ADR-0019 |
 | Backup | ZIP container (fflate), per-entry SHA-256, single record-migration chain shared with the local DB, Zod validation, atomic replace-all restore, safety snapshot; AES-GCM encryption in v1.3 | Q1, Q4 | ADR-0013 |
-| Validation | Zod 4 (JIT disabled for CSP by a `zod.ts` wrapper per package) for import, forms, content and rules schemas; backup schemas load lazily; JSON Schema export documents the backup format | Q1, Q4 | ADR-0009 |
+| Validation | Zod 4 (JIT disabled for CSP by a `zod.ts` wrapper per package) for import, forms, content and rules schemas, **never on the startup path** (v0.4: content and rules are validated at build time, backup and resolver schemas load lazily, search params use plain validators); JSON Schema export documents the backup format | Q1, Q4 | ADR-0009 |
 | Dates and time | Temporal API through the `temporal-polyfill` ponyfill (native Temporal exists only in Chrome 144+ and Samsung Internet 31+) | Q1, Q3 | ADR-0015 |
 | Charts | Apache ECharts 6 (tree-shaken, lazy-loaded) for analytics; hand-written SVG sparklines on Home | Q5 | ADR-0007 |
 | i18n | Lingui 6 (ICU messages, compiled catalogs, lint rule against literal strings) plus `Intl` formatters | TC-C06 | ADR-0016 |
@@ -269,13 +270,13 @@ flowchart TB
 
 | Package | Responsibility | May depend on | Must not contain | PRD |
 |---|---|---|---|---|
-| `@powr/domain` | Entities, value objects and **all calculations**: units and rounding, plate math, e1RM, trend filter, progression, warm-ups, volume accounting, deload/taper/return, readiness, PRs, streaks, scoring, bodyweight trend, nutrition (v1.2), plan generation and validation, explanation types. Owns the `RuleSet` *type* and the `ExerciseDef` *type*. | `temporal-polyfill` only | React, Dexie, DOM, `Date.now()`, `Math.random()`, `fetch`, Zod, any I/O | PRG-*, PLN-*, EXL-05, WKT-06/07, MOT-01/03/04, ANL-07, BOD-02…09, RDY-02 |
-| `@powr/rules` | Rules registry: YAML parameter tables, source registry, Zod schema, build script producing `rules.json` (versioned, hashed), resolver that applies context variants and user overrides and returns a `ResolvedRuleSet` with provenance | `@powr/domain` (declared in M1 with the `RuleSet` types; M0 imports nothing from it, and an unused declaration would fail knip), `zod` (build + resolver validation), `yaml` (build only) | Calculations | PRG-18, NFR-MNT-01, LEG-05 |
-| `@powr/content` | Exercise library, muscle taxonomy (§7.2 PRD), equipment catalog and presets, program templates, achievement definitions (v1.2), educational texts, body-map region IDs; schemas, linter, coverage tests; build output `content.json` | `@powr/domain`, `zod`, `yaml` (build only) | Calculations beyond validation | EXL-01…05, EQP-01/02, §7.1–7.6 PRD |
+| `@powr/domain` | Entities, value objects and **all calculations**: units and rounding, plate math, e1RM, trend filter, progression, warm-ups, volume accounting, deload/taper/return, readiness, PRs, streaks, scoring, bodyweight trend, nutrition (v1.2), plan generation and validation, explanation types. Owns the `RuleSet` *type* and the `ExerciseDef` *type*. As built (v0.4): the root holds the shared contract (IDs, enums, `ExerciseDef`, evidence tags) and the `units` and `time` helpers; every engine module is a subpath export (`@powr/domain/e1rm`, `/trend`, …, §5.4) | `temporal-polyfill` only | React, Dexie, DOM, `Date.now()`, `Math.random()`, `fetch`, Zod, any I/O | PRG-*, PLN-*, EXL-05, WKT-06/07, MOT-01/03/04, ANL-07, BOD-02…09, RDY-02 |
+| `@powr/rules` | Rules registry: YAML parameter tables, source registry, Zod schema, build script producing `rules.json` (versioned, hashed), resolver that applies context variants and user overrides and returns a `ResolvedRuleSet` with provenance. Entries (v0.4): the root is Zod-free (`RULES_VERSION`, `rulesStamp`, `matchesCondition`, types) and is the only one allowed on the app's startup path; `@powr/rules/schema` (row and per-parameter value schemas), `@powr/rules/resolve` (`parseCompiledRules`, `resolveRules`, `resolveParam`; lazy in the app from M2), `@powr/rules/sources` (source registry validator) and the Node entries `@powr/rules/sources/node` and `@powr/rules/build/node` (YAML loader, build) | `@powr/domain` (declared in M1 with the `RuleSet` types), `zod` (schema and resolve entries), `yaml` (build only) | Calculations | PRG-18, NFR-MNT-01, LEG-05 |
+| `@powr/content` | Exercise library, muscle taxonomy (§7.2 PRD), equipment catalog and presets, program templates, achievement definitions (v1.2), educational texts, body-map region IDs; schemas, linter, coverage tests; build output `content.json`. Entries (v0.4): the root holds the content types and `createContentCatalog` (no Zod, no data); `@powr/content/built-in` the compiled `content.json`, which the app loads with `import()` at boot; `@powr/content/schema` the Zod schemas (build time only). Build, lint and coverage live in `tools/content-build`, because the source check needs `@powr/rules`, which the content runtime must not depend on (§8.12) | `@powr/domain`, `zod` (schema entry only) | Calculations beyond validation | EXL-01…05, EQP-01/02, §7.1–7.6 PRD |
 | `@powr/formats` | Persisted record schemas per `dataVersion`, the **record migration chain** (used by the Dexie upgrade and by backup import), backup container codec (manifest, hashing, zip), `.ics` serializer, CSV serializer (v1.3), JSON Schema export of the backup format. Two entries (v0.3): the root is schema-free (`DATA_VERSION`, raw table names and keys, migration chain, record types) and sits on the startup path; `@powr/formats/backup` holds the codec, the Zod record and manifest schemas and fflate, and loads lazily (§8.19) | `@powr/domain`, `zod`, `fflate` | UI, Dexie | DAT-05…10, CAL-01…05, DAT-11, NFR-MNT-03 |
 | `@powr/application` | Use cases (commands and queries), **ports** (repository, clock, platform), the active-session reducer and effect descriptions, derivation and recompute orchestration, plan-generation orchestration, import/export orchestration. The backup use cases are a separate entry, `@powr/application/backup` (v0.3), which the app loads with `import()` | `@powr/domain`, `@powr/rules`, `@powr/content`, `@powr/formats` | React, Dexie, DOM APIs (only through ports) | All functional domains |
 | `apps/web` | React UI (routes, features, design system), infrastructure adapters (Dexie repositories, platform adapters for wake lock, audio, vibration, notifications, files, share, storage), composition root, service worker, engine Web Worker, i18n catalogs | Everything above | Business rules (they live in domain/application) | All UI requirements |
-| `tools/*` | Node/TS scripts: licence inventory and attributions generator, reference dataset generator, capability-matrix compiler, percentile derivation pipeline (v1.1, after V-03), release-notes compiler | Any (build-time only) | Anything shipped to users | LEG-06/08, PWA-13, ANL-08, NFR-MNT-07 |
+| `tools/*` | Node/TS scripts: licence inventory and attributions generator, content build, lint and coverage (`tools/content-build`, v0.4), reference dataset generator, capability-matrix compiler, percentile derivation pipeline (v1.1, after V-03), release-notes compiler | Any (build-time only) | Anything shipped to users | LEG-06/08, PWA-13, ANL-08, NFR-MNT-07 |
 
 ### 5.2 Dependency rules and how they are enforced
 
@@ -295,7 +296,7 @@ v0.2 replaces ESLint (and with it `eslint-plugin-boundaries`) by oxlint (ADR-001
    | `src/ui/**` (design system) | `ui` only (`#ui/*`), Base UI, Tailwind utilities | forbid `@powr/*`, `**/features/**`, `**/hooks/**`, `**/infrastructure/**` |
    | `src/sw/**` (service worker) | `workbox-*`, `src/infrastructure/runtime-db` only | forbid `react`, `dexie`, `zod`, `@powr/*`, `#ui/*`, everything under `src/` except `infrastructure/runtime-db` |
 
-   Every element above also forbids two things (v0.3): importing `zod` directly (only `src/zod.ts` may, §7.3), and static value imports of the lazy backup entries `@powr/application/backup` and `@powr/formats/backup` (type imports are allowed, §8.19). oxlint checks `import()` with the same rule, so the one loader in `src/hooks/use-data.ts` carries the only disable comment. The `#ui/*` alias is matched with `regex` patterns, because `#` starts a comment in gitignore-style `group` patterns.
+   Every element above also forbids (v0.3, extended in v0.4): importing `zod` at all (since v0.4 the app has no Zod and no `src/zod.ts`, because anything in `apps/web/src` may end up on the startup path, TD-17); static value imports of the lazy entries `@powr/application/backup`, `@powr/formats/backup` and `@powr/content/built-in` (type imports are allowed, §8.19); `@powr/content/schema`; and static value imports of every `@powr/rules/*` subpath, so only the Zod-free root of `@powr/rules` reaches the startup path (`packages/application` has the same rule). oxlint checks `import()` with the same rule, so each loader (`src/hooks/use-data.ts`, `src/app/boot.tsx`) carries the only disable comment. Lint sees only a file's own imports; the build check `apps/web/scripts/startup-check.ts` (run by `pnpm size`) fails when any first-wave script contains Zod, which also catches a package root that starts re-exporting a schema. The `#ui/*` alias is matched with `regex` patterns, because `#` starts a comment in gitignore-style `group` patterns.
 
    In `packages/domain/**`, `no-restricted-imports` forbids `react`, `dexie`, `zod` and every `@powr/*` package, `no-restricted-globals` bans `Date`, `performance`, `crypto`, `window`, `document`, `localStorage`, `setTimeout`, `setInterval`, `fetch`, and the native `no-restricted-properties` bans `Math.random` (v0.3). Time and IDs come in as arguments.
 5. **Architecture test (Vitest, `tools/arch-test`).** A small test runs with the unit tests and checks what lint rules cannot express:
@@ -330,7 +331,6 @@ powr/
 │  ├─ src/
 │  │  ├─ main.tsx               # bootstrap: capability probe, DB open/migrate gate, render
 │  │  ├─ feature-flags.ts       # release-tag feature flags (§8.22)
-│  │  ├─ zod.ts                 # z with JIT off (CSP, §7.3); the app's only direct zod import
 │  │  ├─ app/                   # container.ts (composition root), router.tsx, providers, error boundaries
 │  │  ├─ routes/                # TanStack Router route files (thin: params, loaders, lazy components)
 │  │  ├─ features/
@@ -353,15 +353,20 @@ powr/
 │  ├─ domain/src/   units/ time/ ids/ equipment/ loading/ e1rm/ trend/ progression/ warmup/
 │  │                volume/ planning/ deload/ readiness/ prs/ streaks/ scoring/ bodyweight/
 │  │                nutrition/ explain/ index.ts
-│  ├─ rules/        data/*.yaml  sources.yaml  src/schema.ts  src/resolve.ts  scripts/build.ts
-│  ├─ content/      data/exercises/*.yaml  data/muscles.yaml  data/equipment.yaml  data/presets.yaml
-│  │                data/templates/*.yaml  data/education/*.md  src/schema.ts  scripts/{build,lint}.ts
+│  │                (M1, v0.4: ids/ model/ units/ time/ loading/ e1rm/ trend/ progression/ warmup/
+│  │                 volume/ rest/ scoring/ bodyweight/ explain/ rules/ exist; engine modules are subpath exports)
+│  ├─ rules/        data/*.yaml (8 tables)  data/sources/*.yaml + README.md (source registry)  ids.lock.json
+│  │                src/index.ts (Zod-free root)  src/schema.ts  src/params.ts  src/resolve.ts  src/sources/
+│  │                scripts/ (Node TS project: build.ts → dist/rules.json, sources.ts, golden tests)
+│  ├─ content/      data/exercises/<pattern>.yaml  data/muscles.yaml  data/equipment.yaml  data/presets.yaml
+│  │                data/templates/*.yaml  data/education/*.md (later)  src/ (types, catalog, built-in.ts,
+│  │                schema/ = Zod, build time)  generated/content.json (committed)
 │  │                ids.lock.json   # every ID ever published (stability check)
 │  ├─ formats/      src/records/ (tables.ts schema-free; v1.ts … vN.ts Zod)  src/migrations/
 │  │                src/backup/ (entry @powr/formats/backup, lazy)  src/ics/  src/csv/  src/zod.ts
 │  └─ application/  src/ports/  src/usecases/ (backup.ts = entry @powr/application/backup)  src/session/
 │                   src/derivation/  src/importexport/
-└─ tools/  licence/  arch-test/  icons/  dataset/  capability-matrix/  release-notes/  percentiles/ (v1.1)
+└─ tools/  licence/  arch-test/  icons/  content-build/  dataset/  capability-matrix/  release-notes/  percentiles/ (v1.1)
 ```
 
 ### 5.4 Domain engine modules
@@ -386,6 +391,8 @@ powr/
 | `bodyweight` | EMA trend with gaps and winsorizing, regression rate | BOD-02 | §Nutrition › Trend smoothing |
 | `nutrition` | RMR hierarchy, TDEE recalibration, macros, guardrails, cut planner (v1.1/v1.2) | BOD-04…09 | §Nutrition |
 | `explain` | `Explanation`, `ParamRef`, `Fact` types and builders | PRG-09, MAP-03, LEG-05 | §How to read the evidence tags |
+
+**As built in M1 (v0.4).** `units` and `time` are part of the package root; every other module is a subpath export of `@powr/domain` (`package.json` `exports`), so a consumer pulls in only what it imports: `explain`, `loading`, `e1rm`, `trend`, `progression`, `warmup`, `volume`, `rest` (new: `restSeconds`, TMR-02), `scoring`, `bodyweight` and `rules` (the parameter types: `ParamValues`, `ParamId`, `RuleSet`, `RuleSlice<K>`, `TRAINEE_LEVELS`, `SEX_REFERENCES`, `PARAM_UNITS`, `TECHNIQUE_KINDS`). Not built yet: `equipment` (the availability check lives in `tools/content-build` for now, TD-29), `planning`, `deload`, `readiness`, `prs`, `streaks` and `nutrition` (TD-27; M2–v1.2). Details: §8.7.9.
 
 ### 5.5 Key interfaces (ports)
 
@@ -652,6 +659,14 @@ export interface LocalizedText { readonly en: string }   // translation-ready co
 export interface VersionStamp { readonly engine: string; readonly rules: string; readonly content: string }
 ```
 
+**M1 shared contract (v0.4).** The sketch above is implemented in `@powr/domain` (root exports from `ids/` and `model/`). Engine and content build on these names, so a change is a contract change for both (`IMPLEMENTATION_NOTES.md` §5):
+
+- **IDs:** `ex.<slug>`, `mu.<group>[.<sub-region>]` (one sub-region level), `eq.<slug>`, `src.<…>` (§8.1) with the format guards `isContentExerciseId`, `isMuscleId`, `isEquipmentId`, `isSourceId`; a slug is lowercase ASCII words joined by single hyphens. Content adds `preset.`, `tpl.` and `sg.` IDs.
+- **Enums** (`as const` arrays, union types derived from them, camelCase members): `MOVEMENT_PATTERNS` = the 18 patterns of PRD §7.1 plus **`shoulderHorizontalAdduction`, `shoulderHorizontalAbduction`, `shrug`, `wristFlexion`, `wristExtension`**, because EXL-01 needs a pattern for every exercise and the PRD §7.2 groups forearms, upper traps and rear delts (flies, rear-delt flies, shrugs) have none in the PRD list (amending PRD §7.1 is the product owner's call); `MECHANICS`; `COMPETITION_LIFTS` (`squat`, `bench`, `deadlift`); `LOAD_TYPES` (`barbell`, `dumbbell` per hand, `machine`, `bodyweightAdded`, `bodyweightAssisted`, `band`, `timed`); `CURVE_CLASSES` (`benchLike`, `legPressLike`, `pooled`; see §8.7.4 for the class each lift uses and TD-30 for a clearer name); `REST_CLASSES` (`strength`, `hypertrophyCompound`, `hypertrophyIsolation`; the other TMR-02 rows are registry variants); `CREDIT_VALUES` (1, 0.5, 0.25, 0); `OVERLOAD_SUITABILITY` (0–3); `EXERCISE_STATUSES`; `GOALS` (`hypertrophy`, `strength`); `TRAINING_STYLES`; `EVIDENCE_TAGS` and `MAPPING_EVIDENCE` (`H`, `EMG`, `C`) live in the domain so content and explanations need no rules dependency.
+- **`ExerciseDef`** follows the sketch; its inline parts got names (`EquipmentRequirement`, `LoadModel`, `ExerciseDefaults`, `ExerciseRanking`, `RepRange`). `MuscleCredit.source` is required, so custom exercises (EXL-04) will need a source for user-set credits.
+- **Tempo of the competition lifts:** `2-0-X-0` ("controlled down" = 2 s, inside the EB's 1–4 s; `X` = explosive); paused variants carry the pause in the second field (`2-2-X-0`, `2-3-X-0`).
+- **Content types** for the taxonomy, equipment, presets and templates (`MuscleGroupDef`, `EquipmentDef`, `EquipmentPresetDef`, `TemplateDef`, `ContentBundle`) live in `@powr/content` (`src/types.ts`) for now; what the engine needs moves into `@powr/domain` when the generator uses it (M2).
+
 Derived entities (`dExerciseState`, `dSessionE1rm`, `dPrs`, `dWeekly`, `dStreak`, later `dAchievements`) carry the `VersionStamp` they were computed with. A mismatch with the running versions marks them stale and triggers a background rebuild (§8.2.8).
 
 ---
@@ -804,13 +819,13 @@ sequenceDiagram
   participant W as Engine worker
   U->>UI: "Restore from backup" -> file picker (.zip)
   UI->>IM: File
-  IM->>IM: size guard (data part <= 200 MB), unzip with entry-count, size and ratio limits
-  IM->>F: parse manifest (Zod) -> check format, formatVersion, dataVersion
+  IM->>IM: size guard (data part <= 200 MB), unzip with entry-name, entry-count, size and ratio limits
+  IM->>F: parse manifest (reject reserved keys and deep nesting, then Zod) -> check format, formatVersion, dataVersion
   alt dataVersion > supported
     IM-->>UI: reject "Update the app first" (no change)
   end
   IM->>F: verify SHA-256 of each entry and contentDigest
-  IM->>F: parse tables -> migrate records dataVersion k -> current (pure chain) -> Zod-validate every record (strict) -> referential checks
+  IM->>F: parse tables (reject reserved keys and deep nesting) -> migrate records dataVersion k -> current (pure chain) -> Zod-validate every record (strict) -> referential checks
   IM-->>UI: ImportPreview {createdAt, counts, dateRange, warnings}
   U->>UI: confirm replace-all (typed confirmation)
   UI->>IM: applyImport(preview)
@@ -824,6 +839,7 @@ sequenceDiagram
 
 - Every failure before the transaction leaves the data untouched, and the transaction itself is atomic (no partial import).
 - Text fields are only ever rendered as React text nodes (no HTML, no Markdown from user data). Numeric fields are range-checked by the schemas.
+- **Hostile JSON (v0.4).** Every JSON file of the backup is checked for the reserved keys `__proto__`, `constructor` and `prototype` and for nesting deeper than 32 levels before any schema sees it, and ZIP entry names never become keys of a plain object (§8.3.5). A fast-check run (seed 637004341) had shown that Zod's record parser drops a `__proto__` key without an issue, so a crafted file passed every checksum and was restored with silently changed data; nesting of about 2,000 levels overflowed Zod's recursive JSON schema and made the import throw instead of reporting an error. No path polluted `Object.prototype`.
 - Import is offline-capable and needs no network. It uses the same lazy, precached backup chunk as export; unzipping uses fflate's synchronous `unzipSync` after the central-directory checks (§8.3.5). An E2E test exports and restores with the server stopped.
 
 ### 6.6 `.ics` export (CAL-01…05)
@@ -1014,7 +1030,7 @@ CSP notes (v0.3: updated from the M0 implementation):
 
 - No inline scripts or styles in `index.html`. The pre-paint theme script is the external classic script `public/theme-init.js`, loaded synchronously in `<head>`. It is not content-hashed, so nginx serves it with `no-cache`.
 - React sets inline styles through the CSSOM (`element.style`), which `style-src 'self'` does not block. ECharts behaves the same way. Base UI would also inject `<style>` elements, which `style-src 'self'` blocks; the app root wraps everything in Base UI's `CSPProvider` with `disableStyleElements`.
-- **Zod 4 must run JIT-less**, because Zod's JIT uses `new Function`, which this CSP forbids. A `z.config({ jitless: true })` call at startup is not enough: Zod 4.6 probes `new Function` as soon as an object schema is *created*, and schemas are created at module top level, which in a code-split bundle can run before any startup code. Therefore every package with schemas (`rules`, `content`, `formats`) and the app have a local `zod.ts` that calls `z.config({ jitless: true })` and re-exports `z`. All other files import `z` from there; oxlint's `no-restricted-imports` forbids importing `zod` directly in the packages and (since v0.3) everywhere in `apps/web` (ADR-0009). The content catalog is built on first use, not at import time.
+- **Zod 4 must run JIT-less**, because Zod's JIT uses `new Function`, which this CSP forbids. A `z.config({ jitless: true })` call at startup is not enough: Zod 4.6 probes `new Function` as soon as an object schema is *created*, and schemas are created at module top level, which in a code-split bundle can run before any startup code. Therefore every package with schemas (`rules`, `content`, `formats`) has a local `zod.ts` that calls `z.config({ jitless: true })` and re-exports `z`. All other files import `z` from there; oxlint's `no-restricted-imports` forbids importing `zod` directly in the packages. Since v0.4 the app itself imports no Zod at all (TD-17 closed), so `apps/web/src/zod.ts` is gone and the lint rule forbids `zod` everywhere in `apps/web` (ADR-0009). Zod reaches the browser only in lazy chunks (the backup path today, the rules resolver from M2).
 - `canvas-confetti` is used with `useWorker: false` (its worker uses a `blob:` URL).
 - `'wasm-unsafe-eval'` is added to `script-src` only if v1.3 adopts Argon2id via `hash-wasm` (§8.3.6).
 - Trusted Types are enforced in development and E2E builds now and in production later (TD-03).
@@ -1133,7 +1149,8 @@ DST and clock changes: "same local wall-clock time" logic always uses `Temporal.
 
 - User-created records use **UUIDv7** (time-ordered, which helps IndexedDB index locality), generated in infrastructure (`IdGenerator`).
 - Content IDs are human-readable, permanent slugs (`ex.barbell-back-squat`, `mu.hamstrings.biarticular`, `eq.trap-bar`, `tpl.pl-4day`, `rule.progression.double.topReached`). They are **never reused or removed**; deprecated items carry `status: 'deprecated'` and `replacedBy`. `packages/content/ids.lock.json` lists every published ID, and the content build fails if one disappears.
-- Rules parameter IDs (`rest.strength.default`) follow the same stability rule.
+- Rules parameter IDs (`session.rest.strength`, `load.curve.classMap`; v0.4: a topic prefix equal to the table file, then camelCase segments) follow the same stability rule: `packages/rules/ids.lock.json` lists every published ID and the rules build fails if one disappears.
+- Source IDs (v0.4): `src.<first author><year>[a|b]` (`src.kubo2019`, `src.barbalho2020a`); if the evidence base names no author, the registry name plus identifier (`src.pmid24265879`, `src.nct07360236`); POWR's own documents `src.powr-<topic>` (`src.powr-eb-mapping`). A preprint and its published version are two entries. `isSourceId` in `@powr/domain` checks the format; the full convention is in `packages/rules/data/sources/README.md`.
 
 ### 8.2 Persistence (TC-01, DAT-01…04, DAT-14, NFR-REL-01/02/04)
 
@@ -1301,6 +1318,8 @@ interface BackupManifest {
 - Zod `strictObject` schemas: unknown keys are an error within a known `dataVersion`. Numbers are range-checked (reps 0–1,000, RIR 0–10 in 0.5 steps, loads −500…2,000 kg-equivalent). Strings are length-limited (notes ≤ 2,000 characters, names ≤ 120).
 - Archive limits: data part ≤ 200 MB compressed; ≤ 64 entries in a data part; total uncompressed ≤ 1 GB; per-entry compression ratio ≤ 200 for entries larger than 1 MiB (zip-bomb guard; small, highly repetitive JSON legitimately compresses better than 200:1, v0.3). The limits are checked from the ZIP central directory before anything is inflated.
 - Everything is parsed with `JSON.parse` only; nothing is evaluated. Restored text is rendered only as React text nodes.
+- **Reserved keys and nesting (v0.4).** No JSON file in a backup (manifest or data) contains the object keys `__proto__`, `constructor` or `prototype` at any depth, or nests arrays and objects deeper than 32 levels. Import checks this right after `JSON.parse` with an iterative walk (`findUnsafeJson` in `@powr/formats`), before migration and schemas, and rejects the file (`invalidManifest` or `invalidData`, naming the key and its path). Reason: `JSON.parse` keeps `__proto__` as an ordinary own key, but code that copies objects by assignment (`out[key] = value`, `Object.assign`, Zod's record and object parsers) either replaces the copy's prototype or, as Zod 4 does deliberately, drops the key silently; recursive code (Zod's `z.json()`) overflows the stack on deep input. The `meta` value schema applies the same check before `z.json()`, and export refuses data holding such a key, so the app never writes a file it would reject.
+- **ZIP entry names (v0.4).** fflate returns the entries as a plain object keyed by entry name. Entry names `__proto__`, `constructor` and `prototype` and repeated names are rejected from the central directory before anything is inflated (`unsafeArchive`); the entries are then copied into a `Map`, and every name of the central directory must arrive there.
 
 #### 8.3.6 Photos (v1.2, DAT-09) and encryption (v1.3, DAT-10)
 
@@ -1366,9 +1385,9 @@ self.addEventListener('activate', (event) => event.waitUntil(precacheController.
 |---|---|---|---|
 | Persisted domain state | IndexedDB (`powr`) | Repository `observe*()` → Dexie `liveQuery` → `useObservable()` hook (built on `useSyncExternalStore`) | Active session, plan, exercise history, bodyweight entries, settings, derived weekly volume |
 | Ephemeral cross-screen UI state | **Zustand 5** stores (`appUi`, `sessionUi`) | Small, typed stores with selectors | Optimistic pending set, celebration queue, undo token, update-available flag, deferred `beforeinstallprompt` event, capability snapshot, toasts |
-| View state that belongs in the URL | TanStack Router search params (validated with Zod) | `Route.useSearch()` | Exercise filters, chart range, body-map view and mode, selected week |
+| View state that belongs in the URL | TanStack Router search params (validated by small typed functions; v0.4: no Zod on the startup path, TD-17) | `Route.useSearch()` | Exercise filters, chart range, body-map view and mode, selected week |
 | Local component state | React `useState` / `useReducer` | — | Open sheet, stepper focus |
-| Form state | React Hook Form + Zod resolver | — | Onboarding steps, plan editor dialogs, equipment editor, custom exercise |
+| Form state | React Hook Form + Zod resolver (the form schemas must stay in lazily loaded chunks; the first one needs a narrow exemption from the app-wide lint ban on `zod`, ADR-0009) | — | Onboarding steps, plan editor dialogs, equipment editor, custom exercise |
 
 Rules:
 
@@ -1406,41 +1425,46 @@ packages/rules/
 │  ├─ session.yaml      # rest, tempo, warm-up ramp, technique credits, duration model, ordering
 │  ├─ monitoring.yaml   # readiness thresholds, spacing, load spike, pain alert (v1.3)
 │  ├─ scoring.yaml      # Wilks, Wilks2020, DOTS, IPF Points, IPF GL coefficient sets and clamps
-│  ├─ nutrition.yaml    # (v1.2) protein, rates, RMR equations, guardrails, EMA alpha (MVP for BOD-02)
-│  └─ ranking.yaml      # effectiveness and focus weights (MAP-03), labelled [INF]
-├─ sources.yaml         # source registry (citation, URL, tag, status: active | excluded)
-├─ src/schema.ts        # Zod schema per parameter ID (types, units, ranges)
-├─ src/resolve.ts       # context variants + user overrides → ResolvedRuleSet (with provenance)
+│  ├─ bodyweight.yaml   # (v0.4) EMA alpha and regression window for BOD-02 (MVP)
+│  ├─ nutrition.yaml    # (v1.2) protein, rates, RMR equations, guardrails
+│  ├─ ranking.yaml      # (M4) effectiveness and focus weights (MAP-03), labelled [INF]
+│  └─ sources/          # source registry (v0.4: a directory): README.md, excluded.yaml,
+│                       #   exercise-mapping.yaml, one <topic>.yaml per table; content-*.yaml for content
+├─ ids.lock.json        # every published parameter ID (v0.4)
+├─ src/schema.ts        # row and condition schemas (entry @powr/rules/schema)
+├─ src/params.ts        # one Zod value schema per parameter ID (types, units, ranges)
+├─ src/resolve.ts       # context variants + user overrides → ResolvedRuleSet (entry @powr/rules/resolve)
+├─ src/sources/         # source registry validator (entry @powr/rules/sources)
 └─ scripts/build.ts     # validate → compile → dist/rules.json (+ version, hash) → registry diff report
 ```
 
-Example rows:
+Example rows (v0.4: as shipped in M1):
 
 ```yaml
 # data/session.yaml
-- id: rest.strength.default
-  value: { seconds: 180 }
+- id: session.rest.strength
+  value: 180
+  unit: seconds
   variants:
     - when: { competitionLift: [squat, deadlift] }
-      value: { seconds: 240 }
-  range: { min: { seconds: 150 }, max: { seconds: 300 } }
-  guard: { never_below: { seconds: 120 }, scope: competitionLift }   # WKT-17 rule
+      value: 240
+  range: { min: 150, max: 300 }
+  guard: { neverBelowSeconds: 120, scope: competitionLift }   # WKT-17 rule
   evidence: [SR]
-  sources: [grgic-2018-rest]
-  ebRef: "EB §Defaults › Session"
+  sources: [src.grgic2018b]
+  ebRef: 'EB §Defaults › Session (rest, strength 3:00, squat/deadlift 4:00, 2:30–5:00); PRD TMR-02'
   verified: true
   userOverridable: true
-  label: params.rest.strength
 
 # data/volume.yaml
 - id: volume.hypertrophy.perSessionSoftCap
-  value: { fractionalSets: 11, directSets: 8 }
+  value: { fractionalSets: 11, directSets: 8, nudge: { min: 10, max: 12 } }
+  unit: sets
   evidence: [PREPRINT]
-  sources: [remmert-2025-preprint]
-  ebRef: "EB §Volume › Per-session returns"
+  sources: [src.remmert2025]
+  ebRef: 'EB §Defaults › Volume (per-session cap, hypertrophy); §Volume › Per-session returns'
   verified: false              # E-2: recheck against the published paper
   userOverridable: true
-  label: params.volume.sessionCap
 ```
 
 ```ts
@@ -1453,14 +1477,24 @@ interface ParamDef<V> {
   blockedUntilVerified?: boolean;    // E-5: unverified equations are not resolvable at all
   userOverridable: boolean; label: string; since: string;
 }
-interface SourceDef { id: SourceId; citation: string; url?: string; tag: EvidenceTag; status: 'active' | 'excluded'; reason?: string }
+interface SourceDef { id: SourceId; citation: string; url?: string; seeAlso?: string[]; tag: EvidenceTag; status: 'active' | 'excluded'; reason?: string; note?: string }
 interface ResolvedParam<V> { id: ParamId; value: V; origin: 'default' | 'variant' | 'user'; meta: ParamMeta }
 ```
+
+**As built in M1 (v0.4).**
+
+- **Tables:** 8 files with **109 parameters**, **24** of them `verified: false`: `load` 25 (7), `volume` 21 (10), `progression` 14 (3), `deload` 6, `session` 23, `monitoring` 4, `scoring` 12 (4), `bodyweight` 4. `verified: false` marks preprint-derived values (Pelland tiers and bands, PUOS, Remmert caps, Robinson RIR slope), values the EB flags as unverified (RIR bias, §Gaps #26; APRE table; RTS chart from a secondary source; Wilks, Wilks2020, DOTS and GL coefficients until the cross-check) and POWR design values the EB gives only a direction for (set-order decay 0.85, Kalman process noise, novice widening, reference window, training-age mapping, calibration rule). A test fails if a row that cites a preprint is marked verified. IPF Points coefficients are verified (checked against the IPF document, incl. C4 = 67.4926).
+- **Row format:** `ParamDef` as above with these differences: `unit` is required (closed list `PARAM_UNITS`); `range` is checked with the parameter's own schema and drives the out-of-range note for user values; `guard` is a JSON object of UI warning thresholds; `sources` needs at least one ID; `label` defaults to `params.<id>`, `since` to `mvp`; optional `note`. Where the EB gives a range as a default, the row holds one value (the conservative end, otherwise the midpoint) and keeps the range in `range` or `guard`.
+- **Value schemas:** `src/params.ts` has one Zod schema per parameter ID, tied with `satisfies` to `ParamValues` in `@powr/domain/rules`, so data and engine types cannot drift. The registry is a closed set: a row without a schema and a schema without a row both fail.
+- **Sources:** the registry is the directory `data/sources/*.yaml` (not one `sources.yaml`), merged and validated as one registry; IDs are unique across files; one file per owner and topic avoids merge conflicts. 93 entries: 3 excluded (the Barbalho papers, with reasons), 19 for the exercise mapping, 71 in the topic files. `SourceDef` gained optional `seeAlso` (further links to the same work) and `note` (caveats); `reason` is required for excluded and forbidden for active entries; unknown keys fail. Studies the EB marks `[EMG]` (Ema 2016, PubMed 34644424) are tagged `OBS` with a note, because `[EMG]` is not an EB evidence tag and has no label in §8.6.4; EMG stays a muscle-credit evidence code (`MAPPING_EVIDENCE`). `src.powr-eb-mapping` (tag `INF`), the EB mapping table itself, is the sanctioned source of credits the EB rates C (convention), see §8.12.
+- **Where the code lives:** the pure validator (`sourceDefSchema`, `buildSourceRegistry`, `checkSourceRefs`) is the entry `@powr/rules/sources`; the Node loader (`loadSourceRegistry`, `SOURCES_DIR`) is `@powr/rules/sources/node` in `packages/rules/scripts/`, a separate TypeScript project with Node types, so `src/` keeps failing the type check on any Node import. The rules build and `tools/content-build` both use it; the `@powr/content` runtime does not depend on `@powr/rules`.
+- **Not shipped, on purpose:** Lombardi, Lander and O'Conner, regression equations with intercepts and the Marzagao weight-dependent formula (EB §Gaps #3–4); anything velocity-based (MVT priors, VL presets, load–velocity 1RM, Sánchez-Medina; NG-06, §Gaps #12–13); OPL's single-lift IPF constants (§Gaps #17); ACWR zones, Banister constants and "monotony > 2" (§Gaps #10–11); the RP landmark table (a coaching overlay for M4).
 
 #### 8.6.2 How the engine consumes it
 
 - The app loads `rules.<hash>.json` (precached). `RulesProvider.resolve(ctx, overrides)` produces a `ResolvedRuleSet`: a typed tree (`rs.rest.strength.default.value`) whose leaves also carry `ParamMeta` (evidence, sources, verified, origin).
 - `ctx` holds style, trainee level, sex reference, age band, release flags and the exercise context (competition lift, pattern, curve class). Variants are matched in declaration order; the first match wins.
+- **As built (v0.4):** `resolveRules(compiled, context, overrides)` in `@powr/rules/resolve` returns `{ version, rules, issues }`, where `rules` is a **flat record keyed by the stable parameter ID** (`rules['session.rest.strength'].value`) instead of a tree, with the same typing (`RuleSet` in `@powr/domain/rules`), so explanations and overrides use the same IDs. Engine functions take the slice they read (`RuleSlice<…>`). `ResolveContext` matches `level`, `style`, `goal`, `sex`, `timeSaver` and the exercise's `competitionLift`, `restClass`, `pattern`, `mechanics` and `curveClass`; a condition lists one or more values per key, and all keys present must match. Invalid or non-overridable overrides are ignored and reported in `issues`; `resolveParam` throws for a `blockedUntilVerified` row (E-5). `parseCompiledRules` validates a loaded `rules.json` (shape, every row, every value against its schema, the complete MVP set) before it is resolved.
 - Domain functions receive the resolved set (or the slice they need) **as an argument**. No global configuration exists. Each function adds the `ParamRef`s it used to its `Explanation` (§8.7.3).
 - Every plan, every suggestion snapshot (`LoggedSet.prescription`) and every derived record stores `VersionStamp.rules`, so outcomes can be traced to the registry version (PRG-18).
 
@@ -1482,20 +1516,22 @@ interface ResolvedParam<V> { id: ParamId; value: V; origin: 'default' | 'variant
 | App estimate | INF, MODEL |
 | Official standard | OFFICIAL |
 
-A parameter with `verified: false` additionally shows "preliminary value". The "How POWR decides" page is generated from the registry and the education texts, so it cannot drift from the shipped values.
+There is no `EMG` label: EMG-only studies are tagged `OBS` in the source registry (v0.4). A parameter with `verified: false` additionally shows "preliminary value". The "How POWR decides" page is generated from the registry and the education texts, so it cannot drift from the shipped values.
 
 #### 8.6.5 Change process and testing
 
 CI fails if any of these checks fails (`pnpm --filter @powr/rules build`):
 
 1. Every row matches its schema; IDs are unique and stable (`ids.lock.json`).
-2. Every source ID exists and none has `status: excluded`. The retracted Barbalho trials and the 2020 EJSS paper are in `sources.yaml` as excluded with reasons, so no parameter can cite them (EB §Gaps #23).
+2. Every source ID exists and none has `status: excluded`. The retracted Barbalho trials and the 2020 EJSS paper are in `data/sources/excluded.yaml` as excluded with reasons, so no parameter can cite them (EB §Gaps #23).
 3. Every `blockedUntilVerified` row is unreachable from MVP code paths (the resolver throws if one is requested).
 4. Golden tests: the engine reference suites (§8.20) run against the compiled registry.
 5. Plan-matrix snapshot: the generator test matrix (§8.7.6) produces a summary snapshot. A changed default that changes plans shows up as a reviewed snapshot diff.
 6. A **registry diff report** (markdown) lists added, removed and changed parameters with old and new values and evidence tags. It is attached to the CI run and copied into the release notes.
 
 A list of all `verified: false` rows is printed on every build. Before each release it is reviewed against §7.8 PRD (E-items).
+
+**As built (v0.4).** `pnpm --filter @powr/rules build` validates `data/*.yaml` and the source registry (checks 1–3), writes `dist/rules.json` (gitignored; `format`, `version` = `RULES_VERSION`, `hash` = SHA-256 of the canonical JSON of version and rows, rows sorted by ID) and prints the `verified: false` rows; `-- --diff <old.json>` adds the registry diff report (check 6). The build runs under plain Node 26 with a 20-line resolve hook (`scripts/ts-resolve.ts`) for the workspace's extensionless imports. The same checks, the ID lock and the hash run under Vitest on every `pnpm test`, together with the **golden tests** (`packages/rules/scripts/golden.test.ts`, check 4): the engine reference values (PRG-05 load for target, double progression, warm-ups, volume, rest, scoring, bodyweight EMA) recomputed from the compiled registry rather than from a test fixture, so a transcription error in the YAML fails. Check 5 (plan-matrix snapshot) waits for the generator (M2). `RULES_VERSION` is `1.0.0`; the compiled stamp is `1.0.0+<hash12>` (`rulesStamp`), which the app will store from M2 (TD-31).
 
 ### 8.7 Calculation engine design (TC-05, TC-15, PRG-*, NFR-MNT-02, ADR-0020)
 
@@ -1554,6 +1590,8 @@ session_e1RM(exercise) = weighted top-set estimate (the max of weight × e1RM ca
 
 - **Equations** (registry `load.e1rm.equation`): Wathan (default), Epley, Brzycki. The exact RTS lookup table is available as an alternative "RTS" mode. Lombardi, Lander and O'Conner are not exposed (EB §Gaps #4). The Marzagao weight-dependent formula is **not shipped** (EB §Gaps #3: unverified).
 - **Curve classes** (E-3): `benchLike` = Wathan/RTS; `legPressLike` = inverted Nuzzo 2024 leg-press means (table in the registry); `pooled` = inverted Nuzzo pooled means. Each content exercise declares its class.
+  - As built (v0.4): the mapping is data, `load.curve.classMap` = `{ benchLike: equation, legPressLike: nuzzoLegPress, pooled: nuzzoPooled }`, where `equation` means the user's equation setting (Wathan default, Epley, Brzycki or the RTS table). The Nuzzo tables are inverted piecewise-linearly, anchored at 1 rep = 100% and flat beyond the last row; the RTS chart beyond 13.5 effective reps follows Wathan scaled to meet the chart.
+  - **Product-owner decision 2026-11-24:** the competition squat and deadlift and their close variants (`ex.barbell-back-squat`, `ex.paused-back-squat`, `ex.barbell-deadlift`, `ex.sumo-deadlift`, `ex.deficit-deadlift`) use `curveClass: benchLike`, i.e. the Wathan/RTS equation, **not** the Nuzzo pooled curve, until the personal curve fit exists (TD-26). Reason: the pooled curve includes leg-press data and prescribed about 5–6% more load than the RTS chart for 5 @ RPE 8, and there are no squat- or deadlift-specific reps-vs-%1RM data. M1 shipped these lifts as `pooled`; the change is a content data change (no code change). The class name `benchLike` no longer describes what it selects; renaming it (e.g. to `equation`) is proposed as a contract change (TD-30).
 - **Personal curve:** once an exercise has ≥ 6 qualifying sets with entered effort, spread over ≥ 3 distinct r_eff values between 3 and 15, a two-parameter exponential `pct(r) = a + (1 − a)·e^(−b·(r − 1))` is fitted (Gauss-Newton, fixed 20 iterations, deterministic start values from the class prior). It is shrunk toward the class prior with weight `n / (n + n0)`, `n0` from the registry. Until then the class prior is used.
 - **Correction factor** (EB §Load › e1RM drift): each RPE ≥ 9 single or triple refreshes `heavyE1rm / formulaE1rm(recent high-rep sets)` per exercise (EWMA). It is applied only to the "all sets" trend, not to the strength trend.
 - **Load for target** (PRG-05): `load = e1RM_strength_smoothed × pct(targetReps + targetRIR)`, then `roundToAchievable`. Worked example (PRD PRG-05): e1RM 150 kg, 5 @ RPE 8 → r_eff 7 → Wathan 80.6% → 120.9 kg (RTS 81.1% → 121.7 kg) → 120 kg with 2.5 kg steps, or 121 kg with 0.25 kg microplates. This is a golden test.
@@ -1602,7 +1640,7 @@ A deterministic constructive algorithm with local repair:
 | Item | Handling in this architecture | Release |
 |---|---|---|
 | E-2 Preprint volume tiers and per-session caps | Rows ship with `verified: false` and show "preliminary value". Recheck against Pelland *Sports Med* 2026 and the published Remmert paper is a release-checklist item. | MVP |
-| E-3 Exercise-class curves | Three classes in the registry; personal curve with shrinkage (§8.7.4) | MVP |
+| E-3 Exercise-class curves | Three classes in the registry; personal curve with shrinkage (§8.7.4). v0.4: classes map to curves through `load.curve.classMap`; the competition squat and deadlift use the equation class until the personal fit exists (product owner, 2026-11-24; TD-26) | MVP |
 | E-4 0.25 credits and technique credits | Content mapping rows with credit 0.25 are tagged C and labelled "unvalidated convention". Technique credits are registry rows tagged [INF] and labelled "heuristic". Overridable from v1.3 (EXL-06, SET-07). | MVP |
 | E-5 Unverified body-fat and RMR equations (metric Navy, JP3 women, JP7, Brozek, Cunningham 1980, Roza & Shizgal, De Lorenzo, PAL multipliers) | `blockedUntilVerified: true`. The resolver refuses them; the UI offers only the verified equations (Navy inch form, Mifflin, Tinsley, ten Haaf, Cunningham 1991). | v1.2 |
 | E-6 IPF vs OPL coefficients | IPF document values (Women Equipped Bench C4 = 67.4926). OPL's single-lift IPF constants of unknown origin are not shipped. | MVP |
@@ -1619,6 +1657,32 @@ A deterministic constructive algorithm with local repair:
 - Plan generation, forward recomputes, full rebuilds and "Verify data" run in the engine worker. The worker loads `content.json` and `rules.json` itself from the precache.
 - PRG-03 budget (suggestions ≤ 200 ms per session): next-session suggestions for a planned session are computed when the session screen opens, from `dExerciseState` (no raw-set scan).
 - NFR-PERF-09 (plan generation ≤ 1 s) is measured in a Vitest benchmark against the worst matrix case and on the S22.
+
+#### 8.7.9 Engine as built in M1 (v0.4)
+
+| Subpath (`@powr/domain/…`) | Public API | PRD |
+|---|---|---|
+| root (`units`, `time`) | `roundToStep`, `displayMass`, `fromKg`, `cleanFloat`, `ROUNDING_MODES`; `Length`, `toCm`, `convertLength`; `addDays`, `daysBetween`, `weekStartOf`, `isoWeekOf`, `isoWeekKey` | SET-02, SET-05, SET-11, NFR-REL-07 |
+| `rules` | `ParamValues` (every parameter ID → value type), `ParamId`, `Param<V>`, `ParamMeta`, `RuleSet`, `RuleSlice<K>`, `TRAINEE_LEVELS`, `SEX_REFERENCES`, `PARAM_UNITS`, `TECHNIQUE_KINDS` | PRG-18 |
+| `explain` | `Explained<T>`, `Explanation`, `RULE_IDS`/`RuleId` (closed union), `ParamRef`, `Fact`, builders | PRG-09, LEG-05 |
+| `loading` | `Implement` (`barbell`, `list`, `steps`, `loosePlates`), `BarSpec`, `PlateInventory`, `roundToAchievable`, `nextLoadAbove`, `maxLoad`, `barbellTotal`, `effectiveLoadKg`, `externalLoadForTotal` | WKT-07, EQP-03, PRG-07, WKT-11 |
+| `e1rm` | `equationPct`, `rtsPct`, `tablePct`, `curvePct`, `effectiveReps`, `rirBias`, `setWeight`, `personalPriorRir`, `estimateSetE1rm`, `sessionE1rm`, `loadForTarget` | PRG-01, PRG-05 |
+| `trend` | `trendObservation`, `isStrengthSet`, `runTrend`, `labelChange` | PRG-02 |
+| `progression` | `suggestDoubleProgression`, `suggestRpeLoad`, `suggestBackoff`, `apreSession`, `suggestApre`, `suggestLinear`, `percentLoad`, `classifyTrainee`, `bodyRegionOf` | PRG-03…07, PRG-10 |
+| `warmup` | `generateWarmup` | WKT-06 |
+| `volume` | `isHardSet`, `setCredit`, `creditTable`, `parentMuscle`, `muscleVolume`, `weeklyMuscleVolume`, `classifyWeeklyVolume`, `checkSessionVolume` | EXL-05, WKT-04 |
+| `rest` | `restSeconds` | TMR-02 |
+| `scoring` | `score(formula, input, rules)` for `ipfGl`, `dots`, `ipfPoints`, `wilks`, `wilks2020`, `allometric` | ANL-07 |
+| `bodyweight` | `bodyweightTrend`, `bodyweightRate` | BOD-02 |
+
+- **Explanations:** every suggestion and derived value is an `Explained<T>` (§8.7.3) carrying the rule ID, a `why.<rule>` message ID, arguments, facts and the registry parameters used (evidence tags, sources, `verified`, origin). The English `why.*` messages and the PRG-09 coverage test come with the UI (TD-28).
+- **E-1 as implemented:** a set without entered effort takes the user's median entered RIR for the exercise over the last 8 weeks at a rep count within ±3 (`personalPriorRir`), or the registry default 2; its weight is halved; its trend noise is widened by the prior SD of 1.5 reps times the local curve slope, about 4.5% in quadrature. It never creates an e1RM PR (`load.unknownEffort.eligibleForE1rmPr: false`).
+- **Trend:** `runTrend` is the local-level Kalman filter on ln e1RM of §8.7.5. The 95% interval of Δ uses Var(Δ) = P_now + P_ref, which ignores the positive covariance of the filter states and is therefore conservative.
+- **Scoring** is implemented from the official formulas (IPF Points and GL documents, published Wilks, Wilks2020 and DOTS coefficients); no OpenPowerlifting code is used, and OPL/EB values serve only as test vectors. Bodyweight clamps and floors are registry rows tagged [INF].
+- **Other choices:** Brzycki in its original form `w / (1.0278 − 0.0278·r)`; the RIR bias applies in both directions (reported RIR in the e1RM, target RIR in load-for-target), so the two are exact inverses before rounding; warm-up reps are capped at working reps − 1 but never below 1; hard sets without effort count in every case (E-1 "RIR unknown counts"); plate math rounding modes are `nearestTiesDown`, `down`, `up`.
+- **Volume roll-up:** a set counts once for the parent `mu.<group>`, with the largest credit the exercise gives the group or any of its sub-regions. The content lint guarantees that no exercise credits a group together with one of its own sub-regions, so engine and content agree (§8.12).
+- **Versions:** `VersionStamp.rules` still uses `RULES_VERSION` (`1.0.0`); from M2 it stores the resolved, hashed version `1.0.0+<hash12>` of the loaded `rules.json` (TD-31).
+- **Not built in M1:** personal curve fit, per-exercise correction factor and rep-range artefact flag (TD-26); PR detection (MOT-01) and the calibration state machine (PRG-08), which have only their inputs (`prEligible`, `progression.calibration`); deload, return-from-break, readiness and spacing are registry data only (TD-27).
 
 ### 8.8 Timers, wake lock, vibration, notifications and audio (TC-03, TMR-01…15, PWA-06…08, ADR-0019)
 
@@ -1695,7 +1759,7 @@ No intervals, polling or wake locks exist outside an active session or running t
 
 #### 8.9.1 Routing and navigation (PWA-12)
 
-TanStack Router 1.170 with file-based route definitions (`@tanstack/router-plugin` for Vite), lazy route components, and Zod-validated search params.
+TanStack Router 1.170 with file-based route definitions (`@tanstack/router-plugin` for Vite), lazy route components, and validated search params. Route definitions (including `validateSearch`) are on the startup path while route components are split, so search params are validated by plain typed functions (v0.4; e.g. `src/features/session/search.ts`): unknown parameters are dropped and an invalid value throws, which the router turns into the route error boundary.
 
 | Route | Screen | Bottom-nav tab |
 |---|---|---|
@@ -1726,13 +1790,13 @@ TanStack Router 1.170 with file-based route definitions (`@tanstack/router-plugi
 
 - **Alias.** `apps/web/package.json` declares Node subpath imports: `"#ui/cn": "./src/ui/cn.ts"` and `"#ui/*": "./src/ui/*.tsx"`. TypeScript 7 (`moduleResolution: "bundler"`), Vite, Vitest, oxlint and knip resolve them natively, so there is still no `paths`, `baseUrl` or `resolve.alias` configuration (ADR-0002). The wildcard target ends in `.tsx`, so the CLI writes extensionless imports (`#ui/button`) that resolve exactly. Lib and hook files get their own entries (`"#ui/lib/*"`, `"#ui/hooks/*"` with a `.ts` target) together with the first such file; knip reports unused entries.
 - **`components.json`:** style `base-nova` (Base UI), `iconLibrary: lucide`, CSS `src/ui/app.css`, aliases `components` and `ui` → `#ui`, `utils` → `#ui/cn`, `lib` → `#ui/lib`, `hooks` → `#ui/hooks`. `shadcn init` is not used: it adds the Geist web font (conflicts with the system font stack, OQ-T7) and the `tw-animate-css` and `shadcn` packages.
-- **Workflow:** `pnpm --filter @powr/web ui:add <component>` runs `pnpm dlx shadcn@4.23.0 add` (the CLI version is pinned in the script and is not a dependency). Then review the CLI's diff before committing:
-  1. Registry items (late 2026) import `cn` from the `cn` npm package and the CLI adds that package. Replace the import with `#ui/cn` and remove the package: `#ui/cn` (clsx + tailwind-merge) already provides class merging (decision on adopting `cn`: TD-21).
-  2. Replace shadcn token names with POWR tokens (`border-input` → `border-border`, `bg-background` → `bg-bg`, `text-muted-foreground` → `text-fg-muted`, `border-destructive` → `border-danger`, …); unknown token classes generate no CSS, so nothing fails loudly.
-  3. Workout controls get ≥ 48 px targets (`min-h-target`); the global `:focus-visible` outline replaces shadcn's `outline-none` + ring.
-  4. Remove `dark:` classes: the tokens follow the app theme through `light-dark()`, whereas Tailwind's `dark:` variant follows the OS setting.
+- **Workflow** (v0.4: TD-21 resolved by the product owner on 2026-11-24, keep `#ui/cn` and bridge shadcn's colour names): `pnpm --filter @powr/web ui:add <component>` runs `apps/web/scripts/ui-add.ts`, which calls `pnpm dlx shadcn@4.23.0 add` (the CLI version is pinned in the script and is not a dependency), rewrites `import { cn } from "cn"` to `#ui/cn`, removes the `cn` package the CLI adds and formats `src/ui`. Then review the CLI's diff before committing:
+  1. `cn` is handled by the script: `#ui/cn` (clsx + tailwind-merge) already provides class merging, and `components.json` aliases cannot redirect a bare package import.
+  2. shadcn's colour names work as they are: `app.css` aliases them to POWR tokens (the colour bridge, §8.9.3), so registry classes such as `border-input` or `bg-background` render with POWR colours in both themes. Not bridged: shadcn's radius scale (`--radius`) and its chart colours (charts use ECharts with POWR's palette, §8.10).
+  3. Workout controls get ≥ 48 px targets (`min-h-target`); the global `:focus-visible` outline replaces shadcn's `outline-none` + translucent ring (`ring-ring/50` is below 3:1).
+  4. `dark:` classes may stay: `app.css` scopes Tailwind's `dark:` variant to the app theme (`data-theme="dark"`, or the OS setting when the theme is "system"), like the tokens' `light-dark()`.
   5. No web fonts and no extra packages unless the component genuinely needs them; every new dependency passes the licence gate (§8.21).
-- The first CLI component is `Input` (`src/ui/input.tsx`, Base UI `Input`), which replaced the hand-written text inputs. Button, the segmented control (ToggleGroup) and NumberField were written by hand in shadcn style in M0.
+- The first CLI component is `Input` (`src/ui/input.tsx`, Base UI `Input`), which replaced the hand-written text inputs; v0.4: re-added through `ui:add` with only the target, radius, focus and one `dark:` class edited. Button, the segmented control (ToggleGroup) and NumberField were written by hand in shadcn style in M0.
 
 #### 8.9.3 Theming and design tokens (SET-01, PWA-14, NFR-A11Y-05)
 
@@ -1740,6 +1804,7 @@ TanStack Router 1.170 with file-based route definitions (`@tanstack/router-plugi
 - Light and dark values via `light-dark()` (Chrome Android 123+, Samsung Internet 27+ per MDN BCD; inside the baseline) with `color-scheme` on `:root`. The theme setting (`light | dark | system`) sets `data-theme` on `<html>`, which pins `color-scheme`.
 - No flash on load: a tiny external script in `<head>` (`public/theme-init.js`, a classic synchronous script, served `no-cache` because it is not content-hashed) reads `localStorage['powr.theme']` before first paint (CSP-compliant, no inline script).
 - `theme-color`: two `<meta name="theme-color" media="(prefers-color-scheme: …)">` tags, updated by JavaScript when the user overrides the system theme (PWA-14).
+- **shadcn colour bridge (v0.4, TD-21):** `src/ui/app.css` defines shadcn's colour names as aliases of POWR tokens (`--background` → `--bg`, `--muted-foreground` → `--fg-muted`, `--ring` → `--focus`, …) and maps them into Tailwind's `@theme inline`. `--input` (form-control boundaries) maps to `--fg-muted`, because `--border` is decorative (< 3:1). The bridge adds no new colours: every value is a POWR token, so ADR-0004's token set stays the single source. `scripts/theme-bridge.test.ts` checks WCAG AA for the 18 bridged pairs, and an E2E test checks the shadcn `Input` in four theme × OS combinations.
 - **Contrast gate:** `tools/tokens-check` computes WCAG contrast for every foreground/background token pair in both themes (≥ 4.5:1 text, ≥ 3:1 UI and graphics) and fails CI otherwise.
 
 #### 8.9.4 Mobile-first patterns (NFR-A11Y-02/03/04, NFR-USE-05, WKT-02)
@@ -1820,7 +1885,9 @@ TanStack Router 1.170 with file-based route definitions (`@tanstack/router-plugi
 
 ### 8.12 Content pipeline (NFR-MNT-06, EXL-01…05, EQP-01/02, §7.1–7.6 PRD)
 
-**Authoring.** One YAML file per exercise under `packages/content/data/exercises/<pattern>/<id>.yaml`, so each change is a small diff. Shared files cover the muscle taxonomy, the equipment catalog and presets, templates, educational texts (Markdown with front matter) and, from v1.2, achievements.
+**Authoring.** One YAML file per exercise under `packages/content/data/exercises/<pattern>/<id>.yaml`, so each change is a small diff (v0.4: built as one file per movement pattern, `data/exercises/<pattern>.yaml`, see "As built" below). Shared files cover the muscle taxonomy, the equipment catalog and presets, templates, educational texts (Markdown with front matter) and, from v1.2, achievements.
+
+Design sketch (v0.1–v0.3; the shipped form of this entry follows under "As built"):
 
 ```yaml
 # data/exercises/squat/ex.barbell-back-squat.yaml
@@ -1855,7 +1922,7 @@ cues:
 1. **Schema validation** (Zod) of every file. Required fields per PRD §7.1.
 2. **Content lint** (EXL-01, NFR-MNT-06):
    - 3–6 cues of ≤ 140 characters each.
-   - Every muscle credit has an evidence tag and a source ID that exists in `@powr/rules/sources.yaml`, and the source is not excluded.
+   - Every muscle credit has an evidence tag and a source ID that exists in the source registry (`packages/rules/data/sources/`, v0.4), and the source is not excluded.
    - Credit 0.25 must be tagged C.
    - Every `equipment` ID exists in the catalog.
    - Every exercise is in at least one substitution group.
@@ -1887,6 +1954,21 @@ cues:
 5. Emit `percentiles.<datasetDate>.json` into the content package with provenance and the attribution text.
 
 Until V-03 clears, the app ships the fallback (points and bodyweight-multiple milestones).
+
+**As built in M1 (v0.4).**
+
+- **Layout:** `packages/content/data/` holds `muscles.yaml`, `equipment.yaml`, `presets.yaml`, `exercises/<pattern>.yaml` (one file per movement pattern, 22 files; the lint checks that each exercise is in its pattern's file) and `templates/<slug>.yaml`. Credits are written out per exercise (no `mappingTemplate`); each file header names the EB mapping rows it follows.
+- **Entries:** `@powr/content` (types in `src/types.ts`, `createContentCatalog(bundle)`; no Zod, no data), `@powr/content/built-in` (the compiled bundle) and `@powr/content/schema` (Zod; each schema `satisfies z.ZodType<…>` of its runtime type; build time only). The catalog implements `ContentCatalog` (§5.5) plus `template(id)`; it does not validate at runtime, only the format number, because the build validated and hashed the bundle.
+- **Build:** `tools/content-build` (`load`, `compile`, `lint`, `coverage`, `ids`, `inventory`, `build`, `cli`), not `packages/content/scripts`, because the source check needs `@powr/rules` (its `ALLOWED_DEPENDENCIES`: domain, rules, content). `pnpm content:build` writes `packages/content/generated/content.json`, appends new IDs to `packages/content/ids.lock.json` (200 IDs: exercises, substitution groups, muscles, equipment, presets, templates) and updates the `powr-content-*` entries of `assets-inventory.yaml`; `pnpm content:check` only checks. The CLI loads the pipeline through Vite's `runnerImport`, because plain `node` cannot resolve the workspace's extensionless imports.
+- **`content.json`** is committed (pretty JSON, excluded from oxfmt) so typecheck, Vitest, knip and Vite need no pre-build step, like the Lingui catalogs; a test fails when it, the ID lock or the inventory entries are stale. It carries `format`, `version` = `0.1.0+sha.<8 hex>` (package SemVer + content hash) and `hash` = SHA-256 of the canonical JSON.
+- **Loading:** `src/app/boot.tsx` loads `@powr/content/built-in` with `import()` in parallel with `db.open()` and passes the catalog to the container. The data is the lazy chunk `built-in-*.js` (16.5 KB gzipped), precached by the service worker; a failed load shows the startup error (`content.error`). oxlint allows the built-in entry only as a type import or through that one loader, and the schema entry never in app code.
+- **Schema checks:** ID formats (`ex.`, `mu.`, `eq.`, `preset.`, `tpl.`, `sg.`, `src.`), the enums of the shared contract (§5.6), unknown keys rejected, 3–6 cues of ≤ 140 characters that are sentences, tempo `e-p-c-p` (`X` allowed), rep ranges `[min, max]`, `anyOf` groups of ≥ 2 items, bar weights and stack increments in both kg and lb, preset inventories, template day count = days per week, half-point RIR 0–5 or RPE 5–10, mesocycles of 3–8 accumulation weeks (PLN-08).
+- **Lint rules** (on schema-valid content): unique IDs per kind and unique names and synonyms (case-insensitive); taxonomy shape and body-map regions; preset items and inventories; equipment exists and matches the load type; muscles exist, none twice, **never a group together with its own sub-region**; at least one credit of 1; 0.25 ⇒ C; **C ⇔ `src.powr-eb-mapping`** (H and EMG cite a study); ranking sub-regions are credited ≥ 0.5; `variantOf`/`replacedBy` resolve to active exercises, no variant of a variant; competition lifts and close variants have `fixedRom`, rest class `strength`, the lift's pattern and strength reps within 1–6; isolation ⇒ `hypertrophyIsolation`; rep ranges within the EB bands (hypertrophy 5–30, strength 1–12); sources exist and are not excluded; templates: at most one default per style × days, targets exist, goals fit the style, stated reps, RIR and RPE within the EB bands, every slot has a candidate; the ID lock. Each rule has a proof test in which it is the only issue reported.
+- **Coverage thresholds** (known gaps are exact lists, so closing a gap fails the test until the list shrinks): every display group credited ≥ 0.5 by ≥ 2 exercises (gap: `mu.tibialis`, no dorsiflexion pattern); every sub-region credited or ranked by ≥ 1; ≥ 15 available exercises per preset with equipment (smallest: bodyweight and bands, 19); per preset ≥ 2 exercises crediting each display group ≥ 0.5 (gaps: bodyweight-and-bands × calves, forearms, lower back, upper traps; dumbbells-and-bench × upper traps; hotel × upper traps); every competition lift has a close variant; every movement pattern has an exercise (gap: `carry`); one default template per PLN-02 cell (8 gaps, TD-24).
+- **Content set:** 19 display groups with 16 sub-regions; 49 equipment items in EQP-01 order and 6 presets (EQP-02) with kg and lb inventories; **74 exercises** (217 credits: 42 H, 4 EMG, 171 C), on the way to 150+ (TD-23); 7 default templates. Competition lifts: back squat, bench press, deadlift and **sumo deadlift as a second competition deadlift** (`competitionLift: deadlift`, not `variantOf`: it is a legal competition deadlift and the stance is a profile choice); close variants: paused squat, long-pause and close-grip bench, deficit deadlift. The competition squat and deadlift and their close variants use the equation curve class (§8.7.4).
+- **Volume roll-up:** a parent group gets the largest credit among itself and its sub-regions from one exercise; engine (§8.7.9) and content lint agree on this rule.
+- **Licence inventory:** the build owns the four `powr-content-*` entries of `assets-inventory.yaml` (exercises, muscle taxonomy, equipment, templates; `LicenseRef-Own-Work`; version = content SemVer). **The product owner approved the four entries as own work on 2026-11-24** (recorded in the entries' `approval` field, whose text comes from the build's inventory template; ADR-0018).
+- **Not yet:** educational texts and achievements; body-map `smallRegion` flags and pain regions (with the artwork, S-5); the EB rep, RIR and RPE bands are constants in the lint until it reads them from `rules.json`.
 
 ### 8.13 Calendar export (`.ics`) and CSV (TC-07, CAL-01…05, DAT-11)
 
@@ -1992,7 +2074,7 @@ Expected failures are typed `Result<T, E>` values in `@powr/application`. Except
 
 | Budget | Target | How measured |
 |---|---|---|
-| Entry JS (Home route, first wave) | ≤ 230 KB gzipped (React, router, Dexie, Temporal ponyfill, used Base UI parts, app code); calibrated in M0: 211.4 KB, then **202.5 KB** after the backup path became a lazy chunk (v0.3). Zod's core (about 25 KB gzipped) is still in it, because the M0 content stub is parsed at startup and `@powr/rules` exports its schemas from the package root (TD-17) | `size-limit` (MIT, 14.3) in CI: `index.html`'s entry chunk plus its `modulepreload`s |
+| Entry JS (Home route, first wave) | ≤ 230 KB gzipped (React, router, Dexie, Temporal ponyfill, used Base UI parts, app code); calibrated in M0: 211.4 KB, then 202.5 KB after the backup path became a lazy chunk (v0.3), and **176.4 KB** in v0.4 after the built-in content became a lazy chunk and Zod left the startup path (TD-17 closed). The `size-limit` budget is set to **186 KB** (measured + about 10 KB headroom) so regressions surface early; 230 KB stays the ceiling | `size-limit` (MIT, 14.3) in CI: `index.html`'s entry chunk plus its `modulepreload`s; `apps/web/scripts/startup-check.ts` fails if any of these scripts contains Zod |
 | Entry CSS | ≤ 30 KB gzipped | `size-limit` |
 | Full precache (NFR-PERF-07) | ≤ 2.0 MB compressed (stricter than the PRD's 3 MB, leaving headroom for v1.x) | Build script sums the precache manifest; CI fails above budget |
 | Cold start to interactive Home (NFR-PERF-01) | ≤ 2.0 s, first content ≤ 1.0 s (p75 of 10 runs, S22, installed, airplane mode, reference dataset) | `performance.mark('home-interactive')` after Home data render; manual S22 runs with remote DevTools; Lighthouse CI (mobile preset) on preview builds as a regression guard |
@@ -2005,7 +2087,7 @@ Expected failures are typed `Result<T, E>` values in `@powr/application`. Except
 | Plan generation (NFR-PERF-09) | ≤ 1 s | Vitest bench (worst matrix case) + S22 |
 | Idle energy (NFR-PERF-10) | No timers, polling or wake locks when idle | E2E test build instruments `setInterval`/`setTimeout`/`requestAnimationFrame` and asserts none remain 5 s after a session ends |
 
-**Lazy chunks (v0.3).** Routes are split by TanStack Router. Code that a screen needs only after an explicit action is a separate package entry loaded with `import()`. The first one is the backup path: `@powr/application/backup` → `@powr/formats/backup` (codec, Zod record and manifest schemas, fflate), 9.5 KB gzipped, loaded on the first export or import. oxlint forbids static value imports of these entries in app code (§5.2), so the boundary cannot erode silently. The service worker precaches every chunk; an E2E test stops the server, exports and restores, and checks that the chunk was not loaded before the first export.
+**Lazy chunks (v0.3).** Routes are split by TanStack Router. Code that a screen needs only after an explicit action is a separate package entry loaded with `import()`. The first one is the backup path: `@powr/application/backup` → `@powr/formats/backup` (codec, Zod record and manifest schemas, fflate), 9.5 KB gzipped, loaded on the first export or import. oxlint forbids static value imports of these entries in app code (§5.2), so the boundary cannot erode silently. v0.4: the second lazy chunk is the built-in content (`@powr/content/built-in`, 16.5 KB gzipped), loaded at boot in parallel with the database; the rules resolver (`@powr/rules/resolve`) follows the same pattern from M2. The entry chunk contains no Zod at all, checked after every build. The service worker precaches every chunk; an E2E test stops the server, exports and restores, and checks that the chunk was not loaded before the first export.
 
 The **reference dataset** (A-11) comes from `tools/dataset`, a seeded generator producing a realistic 5-year history (1,300 sessions, 40,000 sets, 1,800 bodyweight entries, plans, PRs, breaks) as a backup ZIP. It is used by E2E performance tests and imported on the S22 for manual measurements. CI uses relative thresholds (fail if more than 20% slower than the stored baseline); absolute budgets are confirmed on the device.
 
@@ -2014,7 +2096,7 @@ The **reference dataset** (A-11) comes from `tools/dataset`, a seeded generator 
 | Level | Tool | Scope | Runs |
 |---|---|---|---|
 | Unit, domain | Vitest 5.1 (Node environment) | Every engine module against EB reference values | Every push |
-| Property-based | fast-check 4.11 inside Vitest | Invariants of plate math, rounding, units, e1RM, volume, session reducer, generator, migrations, backup round-trip, `.ics` | Every push (fixed seed in CI, random seed nightly) |
+| Property-based | fast-check 4.11 inside Vitest | Invariants of plate math, rounding, units, e1RM, volume, session reducer, generator, migrations, backup round-trip, `.ics` | Every push (fixed seed in CI, random seed nightly; `FC_SEED=<n>` reproduces a failure, `FC_NUM_RUNS=<n>` runs the backup properties that often for a long local run, v0.4) |
 | Content and rules | Vitest + build scripts | Schemas, lint, coverage, ID locks, excluded sources, plan matrix | Every push |
 | Migration | Vitest + `fake-indexeddb` 6.2 (Apache-2.0) | Dexie upgrade from every historical `dataVersion` fixture; backup import of every fixture ZIP | Every push |
 | Component | Vitest browser mode (`@vitest/browser-playwright` 5.1, real Chromium) + Testing Library 16.3 + user-event 14.6 + axe-core 4.14 | Steppers, RIR chips, session screen states, sheets, body map semantics, chart table view, forms | Every push (from M1; not built in M0, TD-11) |
@@ -2039,7 +2121,7 @@ The **reference dataset** (A-11) comes from `tools/dataset`, a seeded generator 
 | Deload, taper, return | PRG-11 deload content; PRG-13 break table; PLN-16 taper (v1.1) |
 | Readiness | z-scores against a 28-day window; thresholds; no flags before 7–14 entries |
 | `.ics` | RFC 5545 structure, folding, escaping, DST (CAL-03) |
-| Backup | Round-trip: export → delete all → import gives identical raw entities and identical recomputed derived values (DAT-05, NFR-REL-06) |
+| Backup | Round-trip: export → delete all → import gives identical raw entities and identical recomputed derived values (DAT-05, NFR-REL-06). Hostile files (v0.4, `packages/formats/test/untrusted.test.ts`): crafted backups with recomputed checksums that carry `__proto__`, `constructor` or `prototype` keys, deep nesting, or reserved and repeated ZIP entry names are rejected with typed errors, never throw, and leave `Object.prototype` untouched; a property test asserts that import never changes data silently |
 
 **Property examples:** the plate solver never uses more plates than exist, and its result is loadable and on the correct side of the target for the rounding mode; `roundToAchievable` is idempotent; a kg↔lb display switch never changes stored values; e1RM is monotonic in load and in reps; fractional volume is additive over sets; any random valid onboarding input yields a plan whose exercises are all available; arbitrary session event sequences never lose a confirmed set, and undo restores the exact prior state; any generated dataset survives export → import unchanged.
 
@@ -2162,26 +2244,26 @@ The decisions are recorded as lightweight MADR files in `docs/adr/` (index: `doc
 
 | ADR | Decision | Runner-up | Status |
 |---|---|---|---|
-| [0001](adr/0001-repository-structure-pnpm-monorepo.md) | pnpm-workspace monorepo: `domain`, `rules`, `content`, `formats`, `application`, `apps/web`, `tools` | Single app with lint-enforced folders | Accepted (v0.2: boundaries via pnpm + TS project references + oxlint overrides + arch test; v0.3: lazy package entries, deferred `rules` → `domain` dependency) |
+| [0001](adr/0001-repository-structure-pnpm-monorepo.md) | pnpm-workspace monorepo: `domain`, `rules`, `content`, `formats`, `application`, `apps/web`, `tools` | Single app with lint-enforced folders | Accepted (v0.2: boundaries via pnpm + TS project references + oxlint overrides + arch test; v0.3: lazy package entries, deferred `rules` → `domain` dependency; v0.4: package entries as built in M1, Zod-free startup path) |
 | [0002](adr/0002-frontend-framework-and-build-tooling.md) | React 19.3 + **TypeScript 7.0** + Vite 8.3, React Compiler | Rsbuild | Accepted (v0.2: TypeScript 6.0 → 7.0; v0.3: `#ui/*` subpath imports as the one alias) |
-| [0003](adr/0003-ui-component-library.md) | shadcn/ui on Base UI 1.9 | Mantine 9 | Accepted (v0.3: `#ui/*` alias and shadcn CLI workflow) |
+| [0003](adr/0003-ui-component-library.md) | shadcn/ui on Base UI 1.9 | Mantine 9 | Accepted (v0.3: `#ui/*` alias and shadcn CLI workflow; v0.4: TD-21 resolved, `#ui/cn` kept, shadcn colour bridge) |
 | [0004](adr/0004-styling-and-design-tokens.md) | Tailwind CSS 4.3 + CSS-variable tokens (`light-dark()`) | CSS Modules + CSS variables | Accepted |
 | [0005](adr/0005-state-management.md) | Dexie `liveQuery` + Zustand 5 + URL state + pure session reducer | Dexie `liveQuery` + Jotai | Accepted |
 | [0006](adr/0006-indexeddb-library-and-persistence.md) | Dexie 4.4, strict durability, separate runtime/safety/diag DBs, photos as IDB Blobs | SQLite WASM on OPFS | Accepted (photos: revisit after S-3; v0.3: no `dexie-react-hooks`, M0 schema) |
 | [0007](adr/0007-charts.md) | Apache ECharts 6.1 (modular, lazy) + own SVG sparklines | Recharts 3 | Accepted (confirm in S-4) |
 | [0008](adr/0008-pwa-tooling-and-service-worker-strategy.md) | vite-plugin-pwa 2.0 `injectManifest` + Workbox 7.4 precaching, prompt-only updates, install gate | Serwist 9 | Accepted (v0.3: own registration code, `sw.ts`, own icon generator) |
-| [0009](adr/0009-validation-schema-library.md) | Zod 4 (`jitless`) | Valibot 1.5 | Accepted (v0.3: per-package `zod.ts` wrapper, lazy backup schemas) |
+| [0009](adr/0009-validation-schema-library.md) | Zod 4 (`jitless`) | Valibot 1.5 | Accepted (v0.3: per-package `zod.ts` wrapper, lazy backup schemas; v0.4: no Zod on the startup path, reserved keys checked before Zod) |
 | [0010](adr/0010-testing-stack.md) | Vitest 5 + fast-check 4 + Testing Library + Playwright 1.65 + axe-core | Jest + Cypress | Accepted (v0.3: E2E test server with production headers) |
 | [0011](adr/0011-hosting.md) | **Hetzner Cloud VPS (Germany) + self-hosted Coolify 4.7**: Traefik + Let's Encrypt, own nginx image, GitHub Actions → GHCR → Coolify webhook | Cloudflare Pages | Accepted (product-owner decision 2026-11-24; setup in S-7) |
-| [0012](adr/0012-rules-registry.md) | YAML parameter tables + Zod schema → versioned `rules.json`; user overrides layered | TypeScript constant tables | Accepted |
-| [0013](adr/0013-backup-file-format.md) | ZIP container (fflate) + manifest + SHA-256 + shared migration chain; AES-GCM in v1.3 | Single JSON file | Accepted (resolved 2026-11-24: A, OQ-T6; v0.3: synchronous fflate API, canonical JSON) |
+| [0012](adr/0012-rules-registry.md) | YAML parameter tables + Zod schema → versioned `rules.json`; user overrides layered | TypeScript constant tables | Accepted (v0.4: registry as built in M1, source directory) |
+| [0013](adr/0013-backup-file-format.md) | ZIP container (fflate) + manifest + SHA-256 + shared migration chain; AES-GCM in v1.3 | Single JSON file | Accepted (resolved 2026-11-24: A, OQ-T6; v0.3: synchronous fflate API, canonical JSON; v0.4: reserved keys, nesting and entry names) |
 | [0014](adr/0014-router.md) | TanStack Router 1.170 | React Router 8 | Accepted |
 | [0015](adr/0015-date-and-time-handling.md) | Temporal via `temporal-polyfill` 1.0 (ponyfill) | date-fns 4 + `@date-fns/tz` | Accepted |
 | [0016](adr/0016-internationalisation.md) | Lingui 6 + `Intl`; literal strings caught by oxlint `react/jsx-no-literals` | i18next + react-i18next | Accepted (v0.2: enforcement re-designed; v0.3: `jsx-no-literals` configuration, build-time catalog check) |
 | [0017](adr/0017-lint-and-format.md) | **oxlint 1.95** (type-aware via oxlint-tsgolint) + **oxfmt 0.80** (beta) | ESLint 10 + Prettier 3 | Accepted (product-owner decision 2026-11-24; v0.3: ESLint only as an unused peer, native React Compiler rules) |
-| [0018](adr/0018-licence-compliance-tooling.md) | Own inventory from the bundle graph + SPDX policy gate + attributions JSON | `rollup-plugin-license` | Accepted (v0.3: own SPDX evaluator; licence exceptions approved by the product owner 2026-11-24) |
+| [0018](adr/0018-licence-compliance-tooling.md) | Own inventory from the bundle graph + SPDX policy gate + attributions JSON | `rollup-plugin-license` | Accepted (v0.3: own SPDX evaluator; licence exceptions approved by the product owner 2026-11-24; v0.4: content entries approved as own work) |
 | [0019](adr/0019-timer-and-alert-architecture.md) | Timestamp timers; wake lock; Web Audio + vibration visible; page + SW timers + notifications hidden; honest status | Visible-only alerts | Accepted (calibrated by S-1; audio keep-alive tested, Labs only: OQ-T3 = B) |
-| [0020](adr/0020-calculation-engine-design.md) | Pure functional core, injected `ResolvedRuleSet`, `Explained<T>` results, worker for heavy work | Generic rules-engine library | Accepted |
+| [0020](adr/0020-calculation-engine-design.md) | Pure functional core, injected `ResolvedRuleSet`, `Explained<T>` results, worker for heavy work | Generic rules-engine library | Accepted (v0.4: engine as built in M1; curve class of the competition squat and deadlift) |
 | [0021](adr/0021-package-manager.md) | pnpm 12 | Bun | Accepted (resolved 2026-11-24: A, OQ-T8; v0.3: `minimumReleaseAgeExclude` until 2026-12-01) |
 
 ---
@@ -2297,19 +2379,29 @@ PRD risks with a technical side are carried over (IDs kept); new technical risks
 | TD-06 | Personal load–rep curve uses a simple shrinkage fit, not a full Bayesian model | Enough for MVP; data scarce | v1.3 with PRG-15 |
 | TD-07 | No whole-workspace dependency graph tool (dependency-cruiser dropped: it does not support TypeScript 7.0) | Boundaries are still enforced by pnpm, TS project references, oxlint overrides and the arch test | When TypeScript 7.1 ships (dependency-cruiser 18.9 already accepts ≥ 7.1) |
 | TD-08 | Literal-string enforcement outside JSX relies on review and a non-blocking alpha JS-plugin rule | oxlint has no native equivalent of `lingui/no-unlocalized-strings` | When oxlint JS plugins are stable |
-| TD-09 | The Lingui macro runs through Babel (`@rolldown/plugin-babel`); Lingui 6.12 recommends its native `macroTransform` and the build suppresses its warning | Concept decision; Babel is needed for the React Compiler anyway, and the Babel path is verified | M1: evaluate the native transform (faster, one Babel plugin fewer); switch if macros, extraction and the catalog check behave the same |
-| TD-10 | The React Compiler rules run twice: natively in oxlint 1.95's `correctness` category (blocking) and through the alpha `eslint-plugin-react-hooks` JS plugin (warnings) | Found in M0; the native ports are verified present and blocking, but not yet compared rule by rule | M1: verify parity, enable the native rules explicitly, drop the duplicated alpha rules and narrow OQ-T10 to the rules without a native port |
-| TD-11 | No component tests yet (Vitest browser mode with `@vitest/browser-playwright`, Testing Library) and no Lingui pseudo-locale expansion test (§8.15, §8.20) | Not part of M0's work packages | M1 |
-| TD-12 | Lighthouse CI, the token contrast gate (`tools/tokens-check`, §8.9.3) and Trusted Types in dev/E2E builds are not in CI yet | Not part of M0's work packages | M1 (Trusted Types in production stays TD-03) |
+| TD-09 | The Lingui macro runs through Babel (`@rolldown/plugin-babel`); Lingui 6.12 recommends its native `macroTransform` and the build suppresses its warning | Concept decision; Babel is needed for the React Compiler anyway, and the Babel path is verified | M2 (not done in M1): evaluate the native transform (faster, one Babel plugin fewer); switch if macros, extraction and the catalog check behave the same |
+| TD-10 | The React Compiler rules run twice: natively in oxlint 1.95's `correctness` category (blocking) and through the alpha `eslint-plugin-react-hooks` JS plugin (warnings) | Found in M0; the native ports are verified present and blocking, but not yet compared rule by rule | M2 (not done in M1): verify parity, enable the native rules explicitly, drop the duplicated alpha rules and narrow OQ-T10 to the rules without a native port |
+| TD-11 | No component tests yet (Vitest browser mode with `@vitest/browser-playwright`, Testing Library) and no Lingui pseudo-locale expansion test (§8.15, §8.20) | Not part of M0's work packages | M2 (not done in M1) |
+| TD-12 | Lighthouse CI, the token contrast gate (`tools/tokens-check`, §8.9.3) and Trusted Types in dev/E2E builds are not in CI yet | Not part of M0's work packages | M2 (not done in M1; Trusted Types in production stays TD-03) |
 | TD-13 | QS-01 is only partly automated: reload and an abrupt close of a persistent browser profile, not 200 randomized process kills (`SIGKILL`) | Needs the full session flow to be meaningful | M3 (session screen) |
 | TD-14 | Update and recovery UI not built: the pre-session "Update first" offer (§6.3 rule 2), the safety-copy UI (download, delete) and the "POWR was updated in another window" handling (§6.8) | The start sheet and the data screens arrive later | M3 (start sheet), M5 (data screens) |
 | TD-15 | Backups are delivered as a download only; no save-picker delivery yet (§6.4, §8.3.7) | Waits for device test S-2 on Android Chrome 132+ | M5, after S-2 |
 | TD-16 | The backup codec runs synchronously on the main thread (fflate `zipSync`/`unzipSync`), because fflate's async API uses `blob:` workers that `worker-src 'self'` blocks | Fast enough for M0 data sizes | Before the reference-dataset performance test (NFR-PERF-08): run the codec in the engine worker |
-| TD-17 | Zod's core (about 25 KB gzipped) is still in the entry chunk: the M0 content stub is parsed with Zod at startup, and `@powr/rules` exports its schemas from the package root | Within the budget (202.5 of 230 KB) | M1: with build-time validation of content and rules (§8.6, §8.12), keep the runtime startup path schema-free (same subpath-entry split as the backup path) |
+| TD-17 | Zod's core (about 25 KB gzipped) is still in the entry chunk: the M0 content stub is parsed with Zod at startup, and `@powr/rules` exports its schemas from the package root | Within the budget (202.5 of 230 KB) | **Closed (v0.4).** Content and rules are validated at build time; the built-in content is a lazy chunk; the `@powr/rules` root is Zod-free (schemas and resolver behind `/schema` and `/resolve`); the session route validates its search params with a plain function; the app has no Zod. Entry JS 202.1 → 176.4 KB, budget 186 KB; oxlint rules and `scripts/startup-check.ts` keep Zod out (§5.2, §8.19) |
 | TD-18 | `pnpm-workspace.yaml` has a `minimumReleaseAgeExclude` list for versions that were younger than 7 days when M0 was set up | Exact versions were pinned by this concept | Remove the excludes after 2026-12-01 (ADR-0021) |
 | TD-19 | Dexie `powr` version 1 holds only the four M0 tables | Smaller M0 scope (WP0.5) | Before the first beta with user data: decide whether the remaining MVP tables extend version 1 or become version 2 with a migration (§8.2.2) |
 | TD-20 | `changelog.json` is not generated yet; the update notice has no release notes | No release exists before the first release | With the first release (`tools/release-notes`, §8.4) |
-| TD-21 | Every `shadcn add` needs the manual review of §8.9.2: shadcn registry items import `cn` from the `cn` npm package and use shadcn token names | Adopting `cn` (pre-1.0) would replace clsx + tailwind-merge; a token bridge would add a second set of colour names to ADR-0004's tokens | When several components are added (M2/M3): decide on adopting `cn` and on a token-name bridge in `app.css` (product owner) |
+| TD-21 | Every `shadcn add` needs the manual review of §8.9.2: shadcn registry items import `cn` from the `cn` npm package and use shadcn token names | Adopting `cn` (pre-1.0) would replace clsx + tailwind-merge; a token bridge would add a second set of colour names to ADR-0004's tokens | **Closed (v0.4, product owner 2026-11-24):** keep `#ui/cn` (the `ui:add` script rewrites the import and removes the package) and bridge shadcn's colour names in `app.css` (§8.9.2, §8.9.3, ADR-0003) |
+| TD-22 | Backup import is hardened against reserved keys (`__proto__`, `constructor`, `prototype`), deep nesting and hostile ZIP entry names since v0.4 (found by the fast-check seed 637004341: Zod's record parser dropped a `__proto__` key silently), but the rules exist only in code and tests | `docs/formats/backup-format.md` and the generated JSON Schemas (§8.3.4) are not written yet | With the format documentation (M5): state the reserved keys, the depth limit and the entry-name rules; add a hostile-file fixture to `packages/formats/fixtures/backups/`; apply the reserved-key check to every free-form JSON field that later records add (e.g. `settings.overrides[].value`, which `resolveParam` parses with `z.json()` for unknown IDs) |
+| TD-23 | 74 exercises instead of the 150+ the MVP needs (§8.12), with known preset gaps (bodyweight-and-bands calves, forearms, lower back and upper traps; upper traps for the dumbbell and hotel presets) and no carry or dorsiflexion exercise | M1 built the pipeline and a first set that passes every lint and coverage gate | M4: close the preset gaps first, then the variants the templates' accessory slots want (incline barbell, Smith and machine variants, rows and pulls, preacher and cable curls, lunges), partners for the seven single-member substitution groups, and carries and dorsiflexion once the contract has a pattern and duration defaults for them; `pnpm content:build` prints the current gaps |
+| TD-24 | 8 PLN-02 style × days cells have no default template (bodybuilding 2; powerlifting 2, 5, 6; powerbuilding 2, 3, 5, 6) | The coverage test lists them as known gaps | M2, with the generator: the missing templates and the PLN-01 constraint checks; the powerlifting meet-prep variant in v1.1 |
+| TD-25 | 24 of 109 registry parameters ship `verified: false` ("preliminary value") | Preprint values, values the EB flags as unverified and POWR design values with only a direction in the EB (§8.6.1) | Before release (M6): verification passes against Pelland *Sports Med* 2026 and the published Remmert paper (E-2), Russo 2025 for the RIR bias (EB §Gaps #26), the primary Wilks, DOTS and GL documents, an RTS original and the APRE source tables |
+| TD-26 | No personal load–rep curve fit, per-exercise correction factor (re-anchoring; only its trigger is in the registry) or rep-range artefact flag (§8.7.4, §8.7.5); until the fit exists, the competition squat and deadlift use the equation class (product owner, 2026-11-24) | The fit needs logged history and the derived `dExerciseState` | M3/M4 with `dExerciseState`; then revisit the class of the squat and deadlift |
+| TD-27 | PR detection (MOT-01) and the calibration state machine (PRG-08) have only their inputs (`prEligible`, `progression.calibration`); deload, return-from-break, readiness and spacing are registry data without engine code | Not part of M1's engine scope | M3 (session, deloads, calibration), M4 (PRs and celebrations) |
+| TD-28 | No English `why.*` messages for the `RuleId`s yet, so the PRG-09 coverage test (§8.7.3) is not active | The UI renders no explanations yet | With the "Why?" sheet (M3) |
+| TD-29 | Equipment presets are not mapped to the engine's `Implement` (`@powr/domain/loading`) yet, and the availability check (`allOf`/`anyOf`) lives in `tools/content-build` instead of a domain `equipment` module | Content and engine were built in parallel; the mapping is written down in `IMPLEMENTATION_NOTES.md` ("M1-A engine and rules", "M1-B content") | M2 (equipment editor, generator) and M3 (plate calculator) |
+| TD-30 | The curve-class name `benchLike` now also covers the competition squat and deadlift; it really selects "the user's e1RM equation" | Renaming is a contract change for content, rules and the engine | Proposed contract change: rename to `equation` (and name `legPressLike`/`pooled` after the Nuzzo table they select), migrating the content files in the same change; product-owner decision |
+| TD-31 | `VersionStamp.rules` stores the plain `RULES_VERSION` (`1.0.0`), not the resolved, hashed version | The app does not load `rules.json` yet | M2: load `rules.json` and `@powr/rules/resolve` lazily and stamp `resolveRules(...).version` (`1.0.0+<hash12>`) |
 
 ---
 
@@ -2417,6 +2509,8 @@ Durations below are indicative for one developer **[Assumption]** and only show 
 | **M4 Insight and motivation** (about 6 weeks) | Home dashboard; ECharts charts; volume analytics; exercise library and detail; body map and heat map; PRs, celebrations, streaks; bodyweight and measurements; scores | ANL-01…07/11, MAP-01…06, EXL-02…09, MOT-01…04/10, BOD-01…03 | M3, S-4, S-5 |
 | **M5 Data, calendar, settings, legal, PWA polish** (about 4 weeks) | Persistence UI, reminders, delete-all, migrations hardening; `.ics` export; all MVP settings; legal texts, "How POWR decides", attributions screen; install promotion, shortcuts, Web Share, back gesture, device-support screen | DAT-01…08/13/14, CAL-01…05, SET-01…06/08…11, LEG-01…09, PWA-01…05/09/12…14 | M4, S-2, S-6 |
 | **M6 Hardening and release** (about 4 weeks) | S22 performance pass; accessibility audit (axe + TalkBack); final device protocol (V-01, V-02, V-07); usability tests (M1–M4, M13); copy review (MOT-10, LEG-07); legal review (V-05, V-06); licence review (V-04); production deploy | §10.3 PRD exit criteria | M5 |
+
+**M1 status (v0.4):** implemented: the shared contract (§5.6), the engine modules of §8.7.9 with their reference suites and golden tests, the rules registry v1 (109 parameters, 24 `verified: false`, 93 sources) and the content pipeline with 74 exercises, 6 presets and 7 default templates. `IMPLEMENTATION_NOTES.md` (§5, "M1-B content", "M1-A engine and rules") records the evidence, the deviations and the open items. Carried over: personal curve fit, PR detection and calibration (TD-26, TD-27), the exercise and template gaps (TD-23, TD-24), the verification passes (TD-25), component tests, Lighthouse CI and the token gate (TD-11, TD-12), the plan-matrix snapshot (needs the generator, M2).
 
 ```mermaid
 flowchart LR

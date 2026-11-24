@@ -12,7 +12,7 @@
     "build": "node scripts/i18n-check.ts && vite build",
     "preview": "vite preview",
     "e2e": "playwright test",
-    "size": "size-limit && node scripts/precache-size.ts",
+    "size": "size-limit && node scripts/precache-size.ts && node scripts/startup-check.ts",
     "i18n:extract": "lingui extract --clean",
     "i18n:check": "node scripts/i18n-check.ts",
     "ui:add": "node scripts/ui-add.ts"
@@ -36,7 +36,6 @@
     "tailwind-merge": "3.7.0",
     "workbox-precaching": "7.4.1",
     "workbox-routing": "7.4.1",
-    "zod": "4.6.7",
     "zustand": "5.1.0"
   },
   "devDependencies": {

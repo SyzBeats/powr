@@ -105,14 +105,35 @@ describe('layer rules (oxlint overrides)', () => {
     expect(output.match(/The backup code path is lazy-loaded/g)).toHaveLength(1);
   });
 
-  it('routes every Zod import in the app through the JIT-less src/zod module (§7.3)', () => {
-    const file = probe(
-      'apps/web/src/hooks/__probe__.ts',
-      "import { z } from 'zod';\nexport const probe = z;\n",
-    );
-    const { status, output } = lint(file);
-    expect(status).not.toBe(0);
-    expect(output).toContain('Import z from src/zod');
+  it('keeps Zod out of app code, the startup path (TD-17, §8.19)', () => {
+    for (const path of ['apps/web/src/hooks/__probe__.ts', 'apps/web/src/routes/__probe__.ts']) {
+      const file = probe(path, "import { z } from 'zod';\nexport const probe = z;\n");
+      const { status, output } = lint(file);
+      expect(status).not.toBe(0);
+      expect(output).toContain('Zod stays off the startup path');
+    }
+  });
+
+  it('allows only the Zod-free root of @powr/rules on the startup path (TD-17)', () => {
+    const source = [
+      "import { RULES_VERSION } from '@powr/rules';",
+      "import { paramDefSchema } from '@powr/rules/schema';",
+      "import { resolveRules } from '@powr/rules/resolve';",
+      "import type { ResolvedRuleSet } from '@powr/rules/resolve';",
+      'export const probe: [string, unknown, unknown, ResolvedRuleSet | null] = [',
+      '  RULES_VERSION,',
+      '  paramDefSchema,',
+      '  resolveRules,',
+      '  null,',
+      '];',
+      '',
+    ].join('\n');
+    for (const path of ['apps/web/src/app/__probe__.ts', 'packages/application/src/__probe__.ts']) {
+      const { status, output } = lint(probe(path, source));
+      expect(status).not.toBe(0);
+      // The two value imports of Zod-bearing entries; the root and the type import pass.
+      expect(output.match(/Only the Zod-free root of @powr\/rules/g)).toHaveLength(2);
+    }
   });
 
   it('keeps the domain free of frameworks, time and randomness', () => {

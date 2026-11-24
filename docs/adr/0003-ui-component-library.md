@@ -1,6 +1,6 @@
 # ADR-0003: UI component library: shadcn/ui on Base UI
 
-- Status: Accepted (v0.3, 2026-11-24: `#ui/*` alias and shadcn CLI workflow, see below)
+- Status: Accepted (v0.3, 2026-11-24: `#ui/*` alias and shadcn CLI workflow; v0.4, 2026-11-24: TD-21 resolved, see below)
 - Date: 2026-11-23, amended 2026-11-24
 - Related: technical concept §8.9, §8.14; PRD NFR-A11Y-01…11, NFR-USE-05, WKT-02, SET-01, PWA-14
 
@@ -56,3 +56,14 @@ Use **shadcn/ui components on Base UI primitives**, styled with Tailwind CSS v4 
 - Open: shadcn's registry now depends on the `cn` package and on shadcn token names. Whether to adopt `cn` (replacing clsx + tailwind-merge) and whether to add a token-name bridge to `app.css` is decided when more components arrive (TD-21).
 
 Source: `IMPLEMENTATION_NOTES.md` §3 (repository root), which records each deviation with its reason.
+
+## Amendment (v0.4, 2026-11-24)
+
+**Decision (product owner, 2026-11-24): TD-21 is resolved. Keep `#ui/cn` and bridge shadcn's colour names** (implemented before this amendment).
+
+- **`cn`:** the shadcn registry imports `cn` from the pre-1.0 `cn` npm package, and `components.json` aliases cannot redirect a bare package import. `pnpm --filter @powr/web ui:add <component>` now runs `apps/web/scripts/ui-add.ts`: the pinned CLI (`shadcn@4.23.0`), then `from "cn"` → `#ui/cn`, the `cn` package removed again, `src/ui` formatted. `#ui/cn` (clsx + tailwind-merge) stays the one class-merging helper; no new dependency.
+- **Colour bridge:** `src/ui/app.css` aliases shadcn's colour names to POWR tokens (`--background` → `--bg`, `--muted-foreground` → `--fg-muted`, `--ring` → `--focus`, `--input` → `--fg-muted` because `--border` is decorative and below 3:1, …) and maps them into Tailwind. Every value is a POWR token, so ADR-0004's token set stays the single source of colours. Tailwind's `dark:` variant is scoped to the app theme (`data-theme="dark"`, or the OS setting while the theme is "system"), so registry `dark:` classes follow the app theme like `light-dark()` does.
+- **What the review still does** (technical concept §8.9.2): ≥ 48 px targets for workout controls, the global focus outline instead of translucent rings, no fonts or extra packages. Not bridged: shadcn's radius scale and chart colours.
+- **Proof:** `Input` was re-added through the script (import rewritten, package removed, `package.json` and lockfile unchanged); `scripts/theme-bridge.test.ts` checks AA contrast for the 18 bridged pairs; an E2E test checks the shadcn `Input` in four theme × OS combinations and fails with Tailwind's default `dark:`.
+
+Source: `IMPLEMENTATION_NOTES.md` (repository root): §3 rows marked "Docs amended in v0.4" and the sections "M1-B content" and "M1-A engine and rules".

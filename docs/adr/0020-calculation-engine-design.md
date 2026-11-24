@@ -1,7 +1,7 @@
 # ADR-0020: Calculation engine design: pure functional core with injected rules and explanation traces
 
-- Status: Accepted
-- Date: 2026-11-23
+- Status: Accepted (v0.4, 2026-11-24: engine as built in M1; curve class of the competition squat and deadlift, see below)
+- Date: 2026-11-23, amended 2026-11-24
 - Related: technical concept §8.7, §8.6; PRD PRG-01…18, PRG-09, PLN-01, NFR-MNT-01/02, NFR-REL-03, TC-05, TC-15, §7.8; EB Conclusion
 
 ## Context
@@ -31,3 +31,17 @@ The evidence base frames the engine as per-user personalization on top of resear
 - Positive: reference suites, property tests and determinism checks are straightforward; explanations come from the same code that computes values.
 - Positive: changing a parameter never requires code changes; changing an algorithm bumps the engine version and triggers derived rebuilds.
 - Negative: explanation plumbing adds code to every suggestion path; enforced by the closed `RuleId` union and a catalog coverage test.
+
+## Amendment (v0.4, 2026-11-24)
+
+The decision stands. M1 built the engine as described in technical concept §8.7.9:
+
+- **Modules and entries:** `@powr/domain` subpath exports `explain`, `loading`, `e1rm`, `trend`, `progression`, `warmup`, `volume`, `rest`, `scoring`, `bodyweight` and `rules` (parameter types); `units` and `time` are in the root. Every suggestion and derived value is an `Explained<T>` with rule ID, `why.<rule>` message ID, arguments, facts and the registry parameters used. Functions take the rule slice they read (`RuleSlice<…>`), not the whole set.
+- **E-1 as implemented:** unknown effort takes the user's median entered RIR over the last 8 weeks at a rep count within ±3, else the default 2; the set weight is halved and the trend noise widened by about 4.5% in quadrature; no e1RM PRs from such sets.
+- **Trend:** local-level Kalman filter on ln e1RM; the change interval uses Var(Δ) = P_now + P_ref (conservative).
+- **Scoring** implemented from the official formulas (IPF Points, IPF GL, published Wilks, Wilks2020 and DOTS coefficients); no OpenPowerlifting code; OPL and EB values are test vectors only.
+- **Versions:** `RULES_VERSION` is `1.0.0`; the app still stamps it unhashed and moves to the resolved `1.0.0+<hash12>` in M2 (TD-31).
+- **Decision (product owner, 2026-11-24): load–rep curve of the competition lifts.** Curve classes map to curves through the registry row `load.curve.classMap` (`benchLike` → the user's equation, Wathan by default or the RTS chart; `legPressLike` and `pooled` → inverted Nuzzo tables). The competition squat and deadlift and their close variants (back squat, paused back squat, deadlift, sumo deadlift, deficit deadlift) use `curveClass: benchLike`, not the Nuzzo pooled curve, until the personal curve fit exists. Reason: the pooled curve includes leg-press data and suggested about 5–6% more load than the RTS chart for 5 @ RPE 8, and no squat- or deadlift-specific reps-vs-%1RM data exist. This is a content data change. Because `benchLike` now covers more than bench-like lifts, renaming the class (e.g. to `equation`) is proposed as a future contract change (TD-30).
+- **Not built yet:** personal curve fit and per-exercise correction (TD-26), PR detection and the calibration state machine (TD-27), English `why.*` messages (TD-28), mapping equipment presets to `Implement` (TD-29).
+
+Source: `IMPLEMENTATION_NOTES.md` (repository root): §3 rows marked "Docs amended in v0.4" and the sections "M1-B content" and "M1-A engine and rules".

@@ -3,6 +3,7 @@ import { strToU8, zipSync, type Zippable } from 'fflate';
 import { toIsoWithOffset, type InstantTz } from '@powr/domain';
 
 import { compareStrings } from '../compare';
+import { findUnsafeJson } from '../json';
 import { RAW_TABLE_KEYS, RAW_TABLE_NAMES, type RawTables } from '../records/tables';
 import { DATA_VERSION } from '../version';
 import { contentDigest, sha256Hex } from './hash';
@@ -25,7 +26,9 @@ export interface EncodedBackup {
 
 /**
  * Builds the backup ZIP (§8.3.1): manifest first, one JSON array per raw table sorted by
- * primary key (deterministic output), README last.
+ * primary key (deterministic output), README last. Throws if the data holds a reserved key or
+ * nests too deeply (§8.3.5): import would reject such a file, and a backup that cannot be
+ * restored must fail loudly at export, not at restore.
  */
 export async function encodeBackup(
   tables: RawTables,
@@ -37,6 +40,8 @@ export async function encodeBackup(
 
   for (const table of RAW_TABLE_NAMES) {
     const records = sortByKey(tables[table], RAW_TABLE_KEYS[table]);
+    const unsafe = findUnsafeJson(records);
+    if (unsafe !== null) throw new Error(`Cannot back up ${table}: ${unsafe}`);
     const bytes = strToU8(canonicalJson(records));
     const path = `data/${table}.json`;
     dataFiles[path] = bytes;

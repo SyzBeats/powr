@@ -71,15 +71,52 @@ const loggedSet = (id: string, sessionId: string): fc.Arbitrary<LoggedSet> =>
     localDate,
   });
 
-const metaRecords: fc.Arbitrary<MetaRecord[]> = fc.uniqueArray(
-  fc.record({
-    key: fc.stringMatching(/^[a-zA-Z][a-zA-Z0-9.]{0,30}$/),
-    // Round-trip through JSON once: JSON has no -0 or undefined, so neither can be stored in meta.
-    value: fc
-      .jsonValue({ maxDepth: 2 })
-      .map((value): MetaRecord['value'] => JSON.parse(JSON.stringify(value))),
-  }),
-  { selector: (record) => record.key, maxLength: 5 },
+/** The keys a backup never contains (§8.3.5); fast-check also generates them on its own. */
+const RESERVED = ['__proto__', 'constructor', 'prototype'] as const;
+
+/** Independent oracle for the tests: does a JSON value hold a reserved key at any depth? */
+export function hasReservedKey(value: unknown): boolean {
+  if (value === null || typeof value !== 'object') return false;
+  if (Array.isArray(value)) return value.some(hasReservedKey);
+  return Object.entries(value).some(
+    ([key, nested]) => (RESERVED as readonly string[]).includes(key) || hasReservedKey(nested),
+  );
+}
+
+/**
+ * Any JSON value; half of all object keys are reserved ones, at any depth. Round-tripped
+ * through JSON once: JSON has no -0 or undefined, and `JSON.parse` makes `__proto__` an own key.
+ */
+const hostileJsonValue: fc.Arbitrary<MetaRecord['value']> = fc
+  .letrec((tie) => ({
+    value: fc.oneof(
+      { maxDepth: 3, depthIdentifier: 'json' },
+      fc.constant(null),
+      fc.boolean(),
+      fc.integer(),
+      fc.double({ noNaN: true, noDefaultInfinity: true }),
+      fc.string(),
+      fc.array(tie('value'), { maxLength: 3, depthIdentifier: 'json' }),
+      fc.dictionary(fc.oneof(fc.string(), fc.constantFrom(...RESERVED)), tie('value'), {
+        maxKeys: 3,
+        depthIdentifier: 'json',
+      }),
+    ),
+  }))
+  .value.map((value): MetaRecord['value'] => JSON.parse(JSON.stringify(value)));
+
+const metaRecordsOf = (values: fc.Arbitrary<MetaRecord['value']>): fc.Arbitrary<MetaRecord[]> =>
+  fc.uniqueArray(
+    fc.record({ key: fc.stringMatching(/^[a-zA-Z][a-zA-Z0-9.]{0,30}$/), value: values }),
+    { selector: (record) => record.key, maxLength: 5 },
+  );
+
+/** What the app can store and back up: any JSON value without a reserved key. */
+const metaRecords = metaRecordsOf(
+  fc
+    .jsonValue({ maxDepth: 2 })
+    .map((value): MetaRecord['value'] => JSON.parse(JSON.stringify(value)))
+    .filter((value) => !hasReservedKey(value)),
 );
 
 const settingsRecords: fc.Arbitrary<SettingsRecord[]> = fc
@@ -93,32 +130,41 @@ const settingsRecords: fc.Arbitrary<SettingsRecord[]> = fc
   .map((settings) => (settings ? [settings] : []));
 
 /** Valid raw tables: unique IDs, sets reference existing sessions, at most one active session. */
-export const rawTables: fc.Arbitrary<RawTables> = fc
-  .record({
-    sessionIds: fc.uniqueArray(fc.uuid(), { maxLength: 6 }),
-    activeIndex: fc.option(fc.nat(), { nil: null }),
-    setCount: fc.nat({ max: 25 }),
-  })
-  .chain(({ sessionIds, activeIndex, setCount }) => {
-    const statuses = sessionIds.map((_, index): Session['status'] =>
-      activeIndex !== null && index === activeIndex % sessionIds.length ? 'active' : 'finished',
-    );
-    const sessions = fc.tuple(
-      ...sessionIds.map((id, index) => session(id, statuses[index] ?? 'finished')),
-    );
-    const sets =
-      sessionIds.length === 0
-        ? fc.constant([] as LoggedSet[])
-        : fc
-            .tuple(
-              fc.uniqueArray(fc.uuid(), { minLength: setCount, maxLength: setCount }),
-              fc.array(fc.constantFrom(...sessionIds), {
-                minLength: setCount,
-                maxLength: setCount,
-              }),
-            )
-            .chain(([setIds, owners]) =>
-              fc.tuple(...setIds.map((setId, index) => loggedSet(setId, owners[index] ?? ''))),
-            );
-    return fc.record({ meta: metaRecords, settings: settingsRecords, sessions, sets });
-  });
+export const rawTables: fc.Arbitrary<RawTables> = tablesWith(metaRecords);
+
+/** Like {@link rawTables}, but meta values may hold reserved keys (a crafted file's content). */
+export const hostileRawTables: fc.Arbitrary<RawTables> = tablesWith(
+  metaRecordsOf(hostileJsonValue),
+);
+
+function tablesWith(meta: fc.Arbitrary<MetaRecord[]>): fc.Arbitrary<RawTables> {
+  return fc
+    .record({
+      sessionIds: fc.uniqueArray(fc.uuid(), { maxLength: 6 }),
+      activeIndex: fc.option(fc.nat(), { nil: null }),
+      setCount: fc.nat({ max: 25 }),
+    })
+    .chain(({ sessionIds, activeIndex, setCount }) => {
+      const statuses = sessionIds.map((_, index): Session['status'] =>
+        activeIndex !== null && index === activeIndex % sessionIds.length ? 'active' : 'finished',
+      );
+      const sessions = fc.tuple(
+        ...sessionIds.map((id, index) => session(id, statuses[index] ?? 'finished')),
+      );
+      const sets =
+        sessionIds.length === 0
+          ? fc.constant([] as LoggedSet[])
+          : fc
+              .tuple(
+                fc.uniqueArray(fc.uuid(), { minLength: setCount, maxLength: setCount }),
+                fc.array(fc.constantFrom(...sessionIds), {
+                  minLength: setCount,
+                  maxLength: setCount,
+                }),
+              )
+              .chain(([setIds, owners]) =>
+                fc.tuple(...setIds.map((setId, index) => loggedSet(setId, owners[index] ?? ''))),
+              );
+      return fc.record({ meta, settings: settingsRecords, sessions, sets });
+    });
+}

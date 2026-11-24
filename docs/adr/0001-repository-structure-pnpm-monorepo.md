@@ -1,6 +1,6 @@
 # ADR-0001: Repository structure: pnpm-workspace monorepo with layered packages
 
-- Status: Accepted (v0.2, 2026-11-24: boundary enforcement re-designed after replacing ESLint with oxlint; v0.3, 2026-11-24: amended after M0, see below)
+- Status: Accepted (v0.2, 2026-11-24: boundary enforcement re-designed after replacing ESLint with oxlint; v0.3, 2026-11-24: amended after M0; v0.4, 2026-11-24: package entries as built in M1, see below)
 - Date: 2026-11-23, revised 2026-11-24
 - Related: technical concept §5; PRD NFR-MNT-01/02/06, TC-05, TC-15
 
@@ -66,3 +66,15 @@ The decision stands. M0 implemented it with these differences:
 - **Boundary probes.** `tools/arch-test/test/boundary-probes.test.ts` writes forbidden files into the real source tree and asserts that oxlint or `tsc -b` fails on them.
 
 Source: `IMPLEMENTATION_NOTES.md` §3 (repository root), which records each deviation with its reason.
+
+## Amendment (v0.4, 2026-11-24)
+
+The decision stands. M1 built the packages with more entries than v0.3 described; the boundaries (packages, references, direction) are unchanged.
+
+- **`@powr/domain`:** the root holds the shared contract (IDs, enums, `ExerciseDef`, evidence tags) and the `units` and `time` helpers; every engine module is a subpath export (`./e1rm`, `./trend`, `./progression`, `./loading`, `./warmup`, `./volume`, `./rest`, `./scoring`, `./bodyweight`, `./explain`, `./rules`), so consumers pull in only what they import.
+- **`@powr/rules`** now declares its `@powr/domain` dependency (closing the v0.3 note). Entries: the root is Zod-free (`RULES_VERSION`, `rulesStamp`, `matchesCondition`, types) because the app's composition root imports it; `./schema` (row and value schemas), `./resolve` (resolver, lazy in the app from M2), `./sources` (registry validator) and the Node entries `./sources/node` and `./build/node`, which live in `packages/rules/scripts/`, a separate TypeScript project with Node types so `src/` stays Node-free. `"sideEffects": ["./src/zod.ts"]` keeps the JIT-less configuration while letting bundlers drop unused schemas.
+- **`@powr/content`:** root (types and `createContentCatalog`, no Zod, no data), `./built-in` (the compiled `content.json`, loaded with `import()` at boot) and `./schema` (Zod, build time only).
+- **`tools/content-build`** owns the content build, lint and coverage (not `packages/content/scripts`), because the source check needs `@powr/rules`, which the content runtime must not depend on. Its allowed dependencies are domain, rules and content.
+- **Keeping Zod off the startup path (TD-17, closed).** oxlint forbids `zod` anywhere in `apps/web` (the app has no `src/zod.ts` any more), static value imports of `@powr/content/built-in` (one loader with a disable comment, like the backup loader), `@powr/content/schema`, and static value imports of every `@powr/rules/*` subpath in app code and in `packages/application`; type imports stay allowed. Boundary probes cover the Zod ban and the rules subpaths. Because lint sees only a file's own imports, the build check `apps/web/scripts/startup-check.ts` (part of `pnpm size`) fails if any first-wave script contains Zod, which also catches a package root that starts re-exporting a schema.
+
+Source: `IMPLEMENTATION_NOTES.md` (repository root): §3 rows marked "Docs amended in v0.4" and the sections "M1-B content" and "M1-A engine and rules".

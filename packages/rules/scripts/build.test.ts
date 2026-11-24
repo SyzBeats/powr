@@ -4,8 +4,9 @@ import { join } from 'node:path';
 
 import { afterEach, describe, expect, it } from 'vitest';
 
-import { RULES_VERSION, parseCompiledRules, resolveRules, rulesStamp, type ParamDef } from '../src';
+import { RULES_VERSION, rulesStamp, type ParamDef } from '../src';
 import type { CompiledRules } from '../src/compile';
+import { parseCompiledRules, resolveRules } from '../src/resolve';
 import {
   buildRules,
   canonicalJson,

@@ -6,7 +6,8 @@ import { fileURLToPath } from 'node:url';
 import { parse } from 'yaml';
 
 import { compileRules, type CompiledRules, type RuleFile } from '../src/compile';
-import { RULES_VERSION, parseCompiledRules, rulesStamp, type ParamDef } from '../src/index';
+import { RULES_VERSION, rulesStamp, type ParamDef } from '../src/index';
+import { parseCompiledRules } from '../src/resolve';
 import { SOURCES_DIR, loadSourceRegistry } from './sources';
 
 /**

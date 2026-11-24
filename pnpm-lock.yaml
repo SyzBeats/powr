@@ -272,9 +272,6 @@ importers:
       workbox-routing:
         specifier: 7.4.1
         version: 7.4.1
-      zod:
-        specifier: 4.6.7
-        version: 4.6.7
       zustand:
         specifier: 5.1.0
         version: 5.1.0(@types/react@19.3.0)(react@19.3.1)(use-sync-external-store@1.7.0(react@19.3.1))

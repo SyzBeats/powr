@@ -15,7 +15,8 @@ import { score, type ScoreInput } from '@powr/domain/scoring';
 import { muscleVolume, setCredit } from '@powr/domain/volume';
 import { generateWarmup } from '@powr/domain/warmup';
 
-import { resolveRules, type ResolveContext } from '../src';
+import type { ResolveContext } from '../src';
+import { resolveRules } from '../src/resolve';
 import { buildRules } from './build';
 
 const { compiled } = buildRules();

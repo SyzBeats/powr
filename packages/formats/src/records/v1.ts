@@ -1,5 +1,6 @@
 import { SET_LIMITS, isLocalDate, toKg } from '@powr/domain';
 
+import { findUnsafeJson } from '../json';
 import { z } from '../zod';
 
 const MAX_EPOCH_MS = 8.64e15;
@@ -27,9 +28,22 @@ const versionStampSchema = z.strictObject({
   content: z.string().min(1).max(64),
 });
 
+/**
+ * Any JSON value, but never with a reserved key or deep nesting (§8.3.5). The check runs on the
+ * input before `z.json()` copies it: Zod drops a `__proto__` key without an issue (a silent change
+ * of the restored data), and its recursive JSON schema would overflow the stack on deep input.
+ */
+const metaValueSchema = z
+  .unknown()
+  .superRefine((value, ctx) => {
+    const unsafe = findUnsafeJson(value);
+    if (unsafe !== null) ctx.addIssue({ code: 'custom', message: unsafe, abort: true });
+  })
+  .pipe(z.json());
+
 export const metaRecordSchema = z.strictObject({
   key: z.string().min(1).max(64),
-  value: z.json(),
+  value: metaValueSchema,
 });
 
 export const settingsRecordSchema = z.strictObject({

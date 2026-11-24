@@ -36,10 +36,28 @@ const restrict = (...patterns: ImportPattern[]): RuleSetting<'no-restricted-impo
 /** The bare package only; gitignore-style groups would also match a local `./zod` module. */
 const ZOD_PACKAGE = '^zod(/.*)?$';
 
-/** App code imports `z` from src/zod.ts, which switches Zod's JIT off first (§7.3, ADR-0009). */
+/**
+ * No Zod in app code: everything in apps/web/src is on, or one `import()` away from, the startup
+ * path, and Zod's core alone is about 25 kB gzip of entry JS (TD-17, §8.19, ADR-0009). Validate
+ * with a small typed function (see src/features/session/search.ts), or keep schemas in a package
+ * entry that the app loads lazily.
+ */
 const APP_ZOD: ImportPattern = {
   regex: ZOD_PACKAGE,
-  message: 'Import z from src/zod (JIT-less for the CSP).',
+  message: 'Zod stays off the startup path (TD-17): validate with a plain function.',
+};
+
+/**
+ * The root of `@powr/rules` is Zod-free (`RULES_VERSION`, `rulesStamp`, `matchesCondition`,
+ * types). Its other entries build Zod schemas (`schema`, `resolve`) or are build-time only
+ * (`sources`, `sources/node`, `build/node`). Type imports are erased and allowed; the resolver
+ * will be loaded with `import()` like the content (one disable comment at the loader, M2).
+ */
+const RULES_SUBPATHS: ImportPattern = {
+  regex: '^@powr/rules/.+$',
+  allowTypeImports: true,
+  message:
+    "Only the Zod-free root of @powr/rules is on the startup path (TD-17): use import('@powr/rules/resolve') for the resolver.",
 };
 
 /**
@@ -188,6 +206,7 @@ const config: OxlintConfig = {
             group: ['fflate', 'zod', 'zod/*'],
             message: 'Codecs and schemas live in @powr/formats.',
           },
+          RULES_SUBPATHS,
         ),
         'no-restricted-globals': browserGlobalsBanned('Browser APIs are reached through ports.'),
       },
@@ -195,7 +214,13 @@ const config: OxlintConfig = {
     {
       files: ['apps/web/src/**/*.{ts,tsx}'],
       rules: {
-        'no-restricted-imports': restrict(APP_ZOD, LAZY_BACKUP, LAZY_CONTENT, CONTENT_SCHEMA),
+        'no-restricted-imports': restrict(
+          APP_ZOD,
+          LAZY_BACKUP,
+          LAZY_CONTENT,
+          CONTENT_SCHEMA,
+          RULES_SUBPATHS,
+        ),
         // Blocking: literal text in JSX and on text attributes must go through Lingui (§8.15).
         'react/jsx-no-literals': [
           'error',
@@ -280,6 +305,7 @@ const config: OxlintConfig = {
           LAZY_BACKUP,
           LAZY_CONTENT,
           CONTENT_SCHEMA,
+          RULES_SUBPATHS,
         ),
       },
     },
@@ -296,6 +322,7 @@ const config: OxlintConfig = {
           LAZY_BACKUP,
           LAZY_CONTENT,
           CONTENT_SCHEMA,
+          RULES_SUBPATHS,
         ),
       },
     },
@@ -312,6 +339,7 @@ const config: OxlintConfig = {
           LAZY_BACKUP,
           LAZY_CONTENT,
           CONTENT_SCHEMA,
+          RULES_SUBPATHS,
         ),
       },
     },
@@ -328,6 +356,7 @@ const config: OxlintConfig = {
           LAZY_BACKUP,
           LAZY_CONTENT,
           CONTENT_SCHEMA,
+          RULES_SUBPATHS,
         ),
       },
     },
@@ -373,7 +402,7 @@ const config: OxlintConfig = {
     },
     {
       // The one place per package that may import Zod directly (it switches JIT off first).
-      files: ['packages/*/src/zod.ts', 'apps/web/src/zod.ts'],
+      files: ['packages/*/src/zod.ts'],
       rules: { 'no-restricted-imports': 'off' },
     },
     {

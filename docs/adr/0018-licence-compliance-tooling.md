@@ -1,6 +1,6 @@
 # ADR-0018: Licence compliance tooling: own inventory from the bundle graph + SPDX policy gate
 
-- Status: Accepted (v0.3, 2026-11-24: own SPDX evaluator; licence exceptions approved, see below)
+- Status: Accepted (v0.3, 2026-11-24: own SPDX evaluator; licence exceptions approved; v0.4, 2026-11-24: content entries approved, see below)
 - Date: 2026-11-23, amended 2026-11-24
 - Related: technical concept §8.21, §8.12; PRD LEG-06, LEG-08, NFR-MNT-08, TC-18, V-04, R-09
 
@@ -51,3 +51,10 @@ Facts checked 2026-11-23: `rollup-plugin-license` 3.7.2 (MIT, peer `rollup ^1–
 - **Approval is enforced.** Each exception entry carries `reviewer`, `approval`, `date`, `scope` and `rationale`. The gate ignores an exception without a recorded `approval`, so an unapproved entry fails the build like a missing one (policy unit test).
 
 Source: `IMPLEMENTATION_NOTES.md` §3 (repository root), which records each deviation with its reason.
+
+## Amendment (v0.4, 2026-11-24)
+
+- **Content entries.** The content build (`tools/content-build`) owns four entries of `assets-inventory.yaml`: `powr-content-exercises`, `powr-content-muscle-taxonomy`, `powr-content-equipment` and `powr-content-templates` (`LicenseRef-Own-Work`, version = content SemVer). They replaced the M0 content-stub entry.
+- **Decision (product owner, 2026-11-24): the four content entries are approved as own work.** The entries' `approval` field records this; because the build writes these entries, the approval text belongs in the build's inventory template (`tools/content-build/src/inventory.ts`) so that `pnpm content:check` stays green.
+
+Source: `IMPLEMENTATION_NOTES.md` (repository root): §3 rows marked "Docs amended in v0.4" and the sections "M1-B content" and "M1-A engine and rules".

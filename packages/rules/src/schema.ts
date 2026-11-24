@@ -1,3 +1,5 @@
+// `@powr/rules/schema`: the row schema of the registry and one value schema per parameter ID.
+// Build-time and tools; the app never imports it (Zod stays off the startup path, TD-17).
 import {
   COMPETITION_LIFTS,
   CURVE_CLASSES,
@@ -78,3 +80,5 @@ export const paramDefSchema = z.strictObject({
   note: z.string().min(1).exactOptional(),
 });
 export type ParamDef = z.output<typeof paramDefSchema>;
+
+export { PARAM_IDS, PARAM_SCHEMAS, isParamId } from './params';

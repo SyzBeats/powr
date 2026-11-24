@@ -9,6 +9,8 @@
   ],
   "exports": {
     ".": "./src/index.ts",
+    "./schema": "./src/schema.ts",
+    "./resolve": "./src/resolve.ts",
     "./sources": "./src/sources/index.ts",
     "./sources/node": "./scripts/sources.ts",
     "./build/node": "./scripts/build.ts"
