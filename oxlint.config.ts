@@ -33,6 +33,15 @@ const restrict = (...patterns: ImportPattern[]): RuleSetting<'no-restricted-impo
   { patterns },
 ];
 
+/** The bare package only; gitignore-style groups would also match a local `./zod` module. */
+const ZOD_PACKAGE = '^zod(/.*)?$';
+
+/** App code imports `z` from src/zod.ts, which switches Zod's JIT off first (§7.3, ADR-0009). */
+const APP_ZOD: ImportPattern = {
+  regex: ZOD_PACKAGE,
+  message: 'Import z from src/zod (JIT-less for the CSP).',
+};
+
 /**
  * The backup code path (Zod record schemas, fflate) is a lazy chunk (§8.19). oxlint also checks
  * `import()`, so the single loader in src/hooks/use-data.ts carries the one disable comment; type
@@ -43,9 +52,6 @@ const LAZY_BACKUP: ImportPattern = {
   allowTypeImports: true,
   message: "The backup code path is lazy-loaded: use import('@powr/application/backup').",
 };
-
-/** The bare package only; gitignore-style groups would also match a local `./zod` module. */
-const ZOD_PACKAGE = '^zod(/.*)?$';
 
 /**
  * The design system's subpath-import alias (`#ui/*`, apps/web/package.json `imports`, ADR-0003).
@@ -174,7 +180,7 @@ const config: OxlintConfig = {
     {
       files: ['apps/web/src/**/*.{ts,tsx}'],
       rules: {
-        'no-restricted-imports': restrict(LAZY_BACKUP),
+        'no-restricted-imports': restrict(APP_ZOD, LAZY_BACKUP),
         // Blocking: literal text in JSX and on text attributes must go through Lingui (§8.15).
         'react/jsx-no-literals': [
           'error',
@@ -255,6 +261,7 @@ const config: OxlintConfig = {
             message: 'Features never touch infrastructure.',
           },
           { group: ['workbox-*'], message: 'Service-worker code stays in src/sw.' },
+          APP_ZOD,
           LAZY_BACKUP,
         ),
       },
@@ -264,7 +271,7 @@ const config: OxlintConfig = {
       rules: {
         'no-restricted-imports': restrict(
           { group: [...STORAGE_LIBS, 'workbox-*'], message: 'Routes stay thin.' },
-          { regex: ZOD_PACKAGE, message: 'Import z from src/zod (JIT-less for the CSP).' },
+          APP_ZOD,
           {
             group: ['**/infrastructure/**', '**/sw/**'],
             message: 'Routes never touch infrastructure.',
@@ -282,6 +289,7 @@ const config: OxlintConfig = {
             group: ['**/infrastructure/**', '**/features/**'],
             message: 'Hooks use the container.',
           },
+          APP_ZOD,
           LAZY_BACKUP,
         ),
       },
@@ -295,6 +303,7 @@ const config: OxlintConfig = {
             message: 'Adapters know nothing about the UI.',
           },
           { regex: UI_ALIAS, message: 'Adapters know nothing about the UI.' },
+          APP_ZOD,
           LAZY_BACKUP,
         ),
       },
@@ -309,6 +318,7 @@ const config: OxlintConfig = {
             message: 'The design system imports only ui.',
           },
           { group: [...STORAGE_LIBS], message: 'The design system is storage-free.' },
+          APP_ZOD,
         ),
       },
     },
@@ -322,6 +332,7 @@ const config: OxlintConfig = {
             message: 'The service worker stays tiny.',
           },
           { regex: UI_ALIAS, message: 'The service worker stays tiny.' },
+          { regex: ZOD_PACKAGE, message: 'The service worker stays tiny.' },
           {
             group: ['../**', '!../infrastructure/runtime-db', '!../infrastructure/runtime-db/**'],
             message: 'The service worker may only import src/infrastructure/runtime-db.',
@@ -339,7 +350,7 @@ const config: OxlintConfig = {
     },
     {
       // The one place per package that may import Zod directly (it switches JIT off first).
-      files: ['packages/*/src/zod.ts'],
+      files: ['packages/*/src/zod.ts', 'apps/web/src/zod.ts'],
       rules: { 'no-restricted-imports': 'off' },
     },
     {

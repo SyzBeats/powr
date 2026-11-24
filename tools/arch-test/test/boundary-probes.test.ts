@@ -105,6 +105,16 @@ describe('layer rules (oxlint overrides)', () => {
     expect(output.match(/The backup code path is lazy-loaded/g)).toHaveLength(1);
   });
 
+  it('routes every Zod import in the app through the JIT-less src/zod module (§7.3)', () => {
+    const file = probe(
+      'apps/web/src/hooks/__probe__.ts',
+      "import { z } from 'zod';\nexport const probe = z;\n",
+    );
+    const { status, output } = lint(file);
+    expect(status).not.toBe(0);
+    expect(output).toContain('Import z from src/zod');
+  });
+
   it('keeps the domain free of frameworks, time and randomness', () => {
     const file = probe(
       'packages/domain/src/__probe__/probe.ts',
