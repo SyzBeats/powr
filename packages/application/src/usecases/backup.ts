@@ -35,7 +35,10 @@ export async function exportBackup(
   });
   if (delivery === 'cancelled') return err({ kind: 'cancelled' });
 
-  const { counts, createdAt } = encoded.manifest;
+  const { createdAt } = encoded.manifest;
+  const counts = Object.fromEntries(
+    RAW_TABLE_NAMES.map((table) => [table, encoded.manifest.counts[table] ?? 0]),
+  ) as Record<RawTableName, number>;
   await deps.uow.write(['meta'], (repos) =>
     repos.meta.put({
       key: 'lastBackup',
@@ -86,7 +89,7 @@ async function encodeCurrentData(deps: Deps): Promise<EncodedBackup> {
   const createdAt = deps.clock.now();
   return encodeBackup(tables, {
     app: deps.app,
-    rulesVersion: deps.rulesVersion,
+    rulesVersion: deps.rules.version,
     contentVersion: deps.content.version,
     createdAt,
     backupId: deps.ids.next(),

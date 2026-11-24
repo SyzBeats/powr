@@ -14,8 +14,8 @@ split: upperLower
 levels: [intermediate, advanced]
 default: true
 periodization: dailyUndulating
-progression: { main: rpeLoad, accessory: doubleProgression, novice: linearLoad }
-mesocycle: { accumulationWeeks: 5, deloadWeeks: 1, deloadRule: deload.planned }
+progression: { main: rpe, accessory: doubleProgression, novice: linear }
+mesocycle: { accumulationWeeks: 5, deloadWeeks: 1, deloadRule: deload.content }
 days:
   - key: upper-strength
     name: { en: Upper strength }

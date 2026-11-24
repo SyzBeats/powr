@@ -22,7 +22,8 @@ export const manifestSchema = z.strictObject({
     count: z.literal(1),
   }),
   encrypted: z.literal(false),
-  counts: z.record(z.enum(RAW_TABLE_NAMES), z.number().int().min(0)),
+  // Partial: a backup from an older dataVersion has no entries for tables added later.
+  counts: z.partialRecord(z.enum(RAW_TABLE_NAMES), z.number().int().min(0)),
   dateRange: z.strictObject({ from: z.string().nullable(), to: z.string().nullable() }),
   entries: z
     .array(

@@ -1,6 +1,16 @@
 import { Dexie, type DexieOptions, type Table } from 'dexie';
 
-import type { LoggedSet, Session } from '@powr/domain';
+import type {
+  BodyweightEntry,
+  EquipmentProfile,
+  LoggedSet,
+  MeetInfo,
+  Plan,
+  PlannedSession,
+  Profile,
+  Session,
+  TrainingBreak,
+} from '@powr/domain';
 import {
   MIGRATIONS,
   migrateRecord,
@@ -18,7 +28,11 @@ export interface SchemaVersion {
 /**
  * Store definitions per dataVersion (§8.2.2). Never edit a released entry; add a new version
  * and, if record shapes change, a step in the @powr/formats migration chain.
- * M0 holds the four tables of the walking skeleton; the remaining MVP tables join before release.
+ * v1: the four tables of the walking skeleton (M0). v2 (M2, TD-19: a new version, not an
+ * extended v1, because IndexedDB creates stores only in a version change and M0/M1 builds may
+ * hold v1 data): onboarding and planning. Indexes follow the hot queries: the active plan
+ * (`status`), the calendar and week view (`localDate`, `[planId+localDate]`), breaks by start.
+ * Booleans are not valid IndexedDB keys, so `equipmentProfiles.isDefault` is not indexed.
  */
 export const SCHEMA_HISTORY: readonly SchemaVersion[] = [
   {
@@ -28,6 +42,22 @@ export const SCHEMA_HISTORY: readonly SchemaVersion[] = [
       settings: 'id',
       sessions: 'id, localDate, status, startedAt.epochMs',
       sets: 'id, sessionId, [exerciseId+performedAt.epochMs], localDate',
+    },
+  },
+  {
+    version: 2,
+    stores: {
+      meta: 'key',
+      settings: 'id',
+      sessions: 'id, localDate, status, startedAt.epochMs',
+      sets: 'id, sessionId, [exerciseId+performedAt.epochMs], localDate',
+      profile: 'id',
+      equipmentProfiles: 'id',
+      plans: 'id, status',
+      plannedSessions: 'id, localDate, [planId+localDate], status',
+      breaks: 'id, startDate',
+      meets: 'id, date',
+      bodyweights: 'id, localDate, measuredAt.epochMs',
     },
   },
 ];
@@ -46,6 +76,13 @@ export class PowrDb extends Dexie {
   declare settings: Table<SettingsRecord, string>;
   declare sessions: Table<Session, string>;
   declare sets: Table<LoggedSet, string>;
+  declare profile: Table<Profile, string>;
+  declare equipmentProfiles: Table<EquipmentProfile, string>;
+  declare plans: Table<Plan, string>;
+  declare plannedSessions: Table<PlannedSession, string>;
+  declare breaks: Table<TrainingBreak, string>;
+  declare meets: Table<MeetInfo, string>;
+  declare bodyweights: Table<BodyweightEntry, string>;
 
   constructor(options: PowrDbOptions = {}) {
     super(options.name ?? 'powr', {

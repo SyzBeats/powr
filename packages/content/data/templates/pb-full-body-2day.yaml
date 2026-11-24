@@ -1,0 +1,116 @@
+# Powerbuilding, 2 days: full body ×2 (PLN-02; TD-24, M2). Each session starts with heavy
+# competition lifts (top set and back-offs), then hypertrophy accessories. Bench twice, squat and
+# deadlift once each heavy; see pb-upper-lower-4day.yaml for the stated strength targets.
+
+id: tpl.pb-full-body-2day
+name: { en: 'Full body ×2 (strength and size)' }
+description:
+  en: 'Two full-body sessions a week, each opening with heavy competition lifts and finishing with hypertrophy work.'
+style: powerbuilding
+daysPerWeek: 2
+split: fullBody
+levels: [novice, intermediate, advanced]
+default: true
+periodization: dailyUndulating
+progression: { main: rpe, accessory: doubleProgression, novice: linear }
+mesocycle: { accumulationWeeks: 5, deloadWeeks: 1, deloadRule: deload.content }
+days:
+  - key: a
+    name: { en: 'Squat and bench' }
+    slots:
+      - key: a.squat
+        pattern: squat
+        targets: [mu.quads]
+        priority: primary
+        lift: squat
+        intensity: heavy
+        goal: strength
+        mode: topBackoff
+        repRange: [2, 4]
+        effort: { rpe: [8, 9] }
+        backoff: { repRange: [4, 6], effort: { rpe: [7, 8] } }
+      - key: a.bench
+        pattern: horizontalPush
+        targets: [mu.chest]
+        priority: primary
+        lift: bench
+        allowVariants: true
+        intensity: moderate
+        goal: strength
+        mode: rpe
+        repRange: [4, 6]
+        effort: { rpe: [7, 8] }
+      - key: a.row
+        pattern: horizontalPull
+        targets: [mu.lats, mu.mid-back]
+        priority: primary
+        goal: hypertrophy
+        mode: doubleProgression
+      - key: a.lateral-raise
+        pattern: shoulderAbduction
+        targets: [mu.side-delts]
+        priority: secondary
+        goal: hypertrophy
+        mode: doubleProgression
+      - key: a.curl
+        pattern: elbowFlexion
+        targets: [mu.elbow-flexors]
+        priority: optional
+        goal: hypertrophy
+        mode: doubleProgression
+      - key: a.calf
+        pattern: calf
+        targets: [mu.calves]
+        priority: optional
+        goal: hypertrophy
+        mode: doubleProgression
+
+  - key: b
+    name: { en: 'Deadlift and bench' }
+    slots:
+      - key: b.deadlift
+        pattern: hinge
+        targets: [mu.glutes, mu.lower-back]
+        priority: primary
+        lift: deadlift
+        intensity: heavy
+        goal: strength
+        mode: topBackoff
+        repRange: [2, 4]
+        effort: { rpe: [8, 9] }
+        backoff: { repRange: [4, 6], effort: { rpe: [7, 8] } }
+      - key: b.bench
+        pattern: horizontalPush
+        targets: [mu.chest]
+        priority: primary
+        lift: bench
+        intensity: heavy
+        goal: strength
+        mode: topBackoff
+        repRange: [2, 4]
+        effort: { rpe: [8, 9] }
+        backoff: { repRange: [4, 6], effort: { rpe: [7, 8] } }
+      - key: b.pulldown
+        pattern: verticalPull
+        targets: [mu.lats]
+        priority: secondary
+        goal: hypertrophy
+        mode: doubleProgression
+      - key: b.leg-extension
+        pattern: kneeExtension
+        targets: [mu.quads]
+        priority: secondary
+        goal: hypertrophy
+        mode: doubleProgression
+      - key: b.triceps
+        pattern: elbowExtension
+        targets: [mu.triceps.long-head]
+        priority: optional
+        goal: hypertrophy
+        mode: doubleProgression
+      - key: b.abs
+        pattern: core
+        targets: [mu.abs]
+        priority: optional
+        goal: hypertrophy
+        mode: doubleProgression

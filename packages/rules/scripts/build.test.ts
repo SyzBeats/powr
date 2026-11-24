@@ -5,12 +5,15 @@ import { join } from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
 
 import { RULES_VERSION, rulesStamp, type ParamDef } from '../src';
+import { BUILT_IN_RULES } from '../src/built-in';
 import type { CompiledRules } from '../src/compile';
 import { parseCompiledRules, resolveRules } from '../src/resolve';
 import {
+  GENERATED_FILE,
   buildRules,
   canonicalJson,
   diffRules,
+  generatedText,
   hashRules,
   loadRuleFiles,
   unverifiedReport,
@@ -35,6 +38,12 @@ describe('shipped rules registry (data/*.yaml)', () => {
     expect(issues).toEqual([]);
     expect(shipped().version).toBe(RULES_VERSION);
     expect(shipped().params.length).toBeGreaterThan(100);
+  });
+
+  it('ships a current generated/rules.json (run pnpm --filter @powr/rules build)', () => {
+    const current = readFileSync(GENERATED_FILE, 'utf8') === generatedText(shipped());
+    expect(current ? 'current' : 'generated/rules.json is stale').toBe('current');
+    expect(BUILT_IN_RULES).toEqual(shipped());
   });
 
   it('cites only existing, non-excluded sources, and never the Barbalho papers (EB §Gaps #23)', () => {

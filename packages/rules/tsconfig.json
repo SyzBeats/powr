@@ -4,7 +4,7 @@
     "outDir": "../../.tsbuild/rules",
     "rootDir": "."
   },
-  "include": ["src", "test"],
+  "include": ["src", "test", "generated/*.json"],
   "references": [
     {
       "path": "../domain"

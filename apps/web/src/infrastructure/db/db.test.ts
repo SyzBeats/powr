@@ -4,7 +4,7 @@ import { finishSession, logSet, type Deps } from '@powr/application';
 // oxlint-disable-next-line no-restricted-imports -- tests load the content eagerly
 import { builtInContent } from '@powr/content/built-in';
 import { makeInstantTz, type ExerciseId } from '@powr/domain';
-import { emptyRawTables, type MigrationChain } from '@powr/formats';
+import { MIGRATIONS, RAW_TABLE_NAMES, emptyRawTables, type MigrationChain } from '@powr/formats';
 
 import { createRepositories } from './repositories';
 import { PowrDb, SCHEMA_HISTORY, type SchemaVersion } from './schema';
@@ -28,11 +28,21 @@ function depsFor(db: PowrDb): Deps {
   let id = 0;
   return {
     uow: createUnitOfWork(db),
-    queries: { activeSession: unused, sessionSets: unused, settings: unused, meta: unused },
+    queries: {
+      activeSession: unused,
+      sessionSets: unused,
+      settings: unused,
+      meta: unused,
+      profile: unused,
+      equipmentProfiles: unused,
+      activePlan: unused,
+      plannedSessions: unused,
+      breaks: unused,
+    },
     clock: { now: () => makeInstantTz(Date.parse('2026-11-24T18:00:00Z'), 'Europe/Zurich') },
     ids: { next: () => `id-${++id}` },
     content: builtInContent(),
-    rulesVersion: 'test',
+    rules: { version: 'test', resolve: unused },
     app: { version: '0.0.0', build: 'test' },
     runtime: { setActiveSession: async () => {} },
     storage: {
@@ -112,7 +122,7 @@ describe('powr database (Dexie)', () => {
     const duplicate = { key: 'same', value: 1 };
     const broken = { ...emptyRawTables(), meta: [duplicate, duplicate] };
     await expect(
-      uow.write(['meta', 'settings', 'sessions', 'sets'], (repos) => repos.raw.replaceAll(broken)),
+      uow.write(RAW_TABLE_NAMES, (repos) => repos.raw.replaceAll(broken)),
     ).rejects.toThrow(/Key already exists|ConstraintError/);
     expect(await db.settings.toArray()).toEqual([{ id: 'me', theme: 'light' }]);
   });
@@ -126,28 +136,82 @@ describe('powr database (Dexie)', () => {
 });
 
 describe('schema upgrades use the shared record-migration chain (§8.2.3)', () => {
-  const v2: SchemaVersion = { version: 2, stores: SCHEMA_HISTORY[0]!.stores };
+  const v1History = SCHEMA_HISTORY.slice(0, 1);
+  const latest = SCHEMA_HISTORY.at(-1)!;
+  const next: SchemaVersion = { version: latest.version + 1, stores: latest.stores };
   const addUnits: MigrationChain = {
-    1: (table, record) => (table === 'settings' ? { ...(record as object), units: 'kg' } : record),
+    ...MIGRATIONS,
+    [latest.version]: (table, record) =>
+      table === 'settings' ? { ...(record as object), units: 'kg' } : record,
   };
+
+  it('upgrades a v1 database to v2: every record and the active session kept, new tables empty (TD-19)', async () => {
+    const name = `powr-upgrade-${++dbCounter}`;
+    const v1 = openDb({ name, history: v1History });
+    const at = makeInstantTz(Date.parse('2026-11-23T10:00:00Z'), 'Europe/Zurich');
+    const session = {
+      id: 'active-session',
+      localDate: '2026-11-23',
+      startedAt: at,
+      status: 'active',
+      versions: { engine: '0.0.0', rules: '1.0.0', content: '0.1.0' },
+    };
+    const set = {
+      id: 'set-1',
+      sessionId: 'active-session',
+      exerciseId: squat,
+      index: 0,
+      type: 'working',
+      load: { value: 100, unit: 'kg' },
+      reps: 5,
+      effort: { rir: 2, source: 'entered' },
+      state: 'done',
+      performedAt: at,
+      localDate: '2026-11-23',
+    };
+    await v1.table('settings').put({ id: 'me', theme: 'dark' });
+    await v1.table('meta').put({ key: 'lastBackup', value: { at: 'x' } });
+    await v1.table('sessions').put(session);
+    await v1.table('sets').put(set);
+    v1.close();
+
+    const upgraded = openDb({ name });
+    await upgraded.open();
+    expect(upgraded.verno).toBe(2);
+    expect(await upgraded.settings.toArray()).toEqual([{ id: 'me', theme: 'dark' }]);
+    expect(await upgraded.sessions.where('status').equals('active').toArray()).toEqual([session]);
+    expect(await upgraded.sets.toArray()).toEqual([set]);
+    expect(await upgraded.meta.toArray()).toEqual([{ key: 'lastBackup', value: { at: 'x' } }]);
+    for (const table of [
+      'profile',
+      'equipmentProfiles',
+      'plans',
+      'plannedSessions',
+      'breaks',
+      'meets',
+      'bodyweights',
+    ]) {
+      expect(await upgraded.table(table).count()).toBe(0);
+    }
+  });
 
   it('migrates existing records when the database opens at a newer version', async () => {
     const name = `powr-upgrade-${++dbCounter}`;
-    const v1 = openDb({ name });
-    await v1.settings.put({ id: 'me', theme: 'dark' });
-    v1.close();
+    const current = openDb({ name });
+    await current.settings.put({ id: 'me', theme: 'dark' });
+    current.close();
 
-    const upgraded = openDb({ name, history: [...SCHEMA_HISTORY, v2], migrations: addUnits });
+    const upgraded = openDb({ name, history: [...SCHEMA_HISTORY, next], migrations: addUnits });
     expect(await upgraded.table('settings').toArray()).toEqual([
       { id: 'me', theme: 'dark', units: 'kg' },
     ]);
-    expect(upgraded.verno).toBe(2);
+    expect(upgraded.verno).toBe(next.version);
   });
 
   it('leaves the old version and data intact when a migration throws (QS-12)', async () => {
     const name = `powr-upgrade-${++dbCounter}`;
-    const v1 = openDb({ name });
-    await v1.settings.put({ id: 'me', theme: 'dark' });
+    const v1 = openDb({ name, history: v1History });
+    await v1.table('settings').put({ id: 'me', theme: 'dark' });
     v1.close();
 
     const failing: MigrationChain = {
@@ -155,13 +219,54 @@ describe('schema upgrades use the shared record-migration chain (§8.2.3)', () =
         throw new Error('migration bug');
       },
     };
-    const broken = openDb({ name, history: [...SCHEMA_HISTORY, v2], migrations: failing });
+    const broken = openDb({ name, migrations: failing });
     await expect(broken.open()).rejects.toThrow(/migration bug/);
     broken.close();
 
-    const reopened = openDb({ name });
+    const reopened = openDb({ name, history: v1History });
     await reopened.open();
     expect(reopened.verno).toBe(1);
-    expect(await reopened.settings.toArray()).toEqual([{ id: 'me', theme: 'dark' }]);
+    expect(await reopened.table('settings').toArray()).toEqual([{ id: 'me', theme: 'dark' }]);
+  });
+});
+
+const plannedSession = (id: string, planId: string, localDate: string) =>
+  ({
+    id,
+    planId,
+    mesocycleIndex: 0,
+    week: 1,
+    dayKey: 'a',
+    name: { en: 'A' },
+    kind: 'regular',
+    localDate,
+    scheduledDate: localDate,
+    status: 'planned',
+    slots: [],
+    adjustments: [],
+    revision: 0,
+  }) as never;
+
+describe('planning repositories (dataVersion 2)', () => {
+  it('finds planned sessions by plan and by day range, and the active plan by status', async () => {
+    const db = openDb();
+    const uow = createUnitOfWork(db);
+    await uow.write(['plannedSessions', 'meta'], async (repos) => {
+      await repos.plannedSessions.putMany([
+        plannedSession('s2', 'p1', '2026-12-03'),
+        plannedSession('s1', 'p1', '2026-12-01'),
+        plannedSession('s3', 'p2', '2026-12-02'),
+      ]);
+      await repos.meta.put({ key: 'onboardingDraft', value: { step: 'units' } });
+      await repos.meta.delete('onboardingDraft');
+    });
+    const found = await uow.read(['plannedSessions', 'meta'], async (repos) => ({
+      byPlan: await repos.plannedSessions.byPlan('p1' as never),
+      range: await repos.plannedSessions.inRange('2026-12-02' as never, '2026-12-03' as never),
+      draft: await repos.meta.get('onboardingDraft'),
+    }));
+    expect(found.byPlan.map((entry) => entry.id)).toEqual(['s1', 's2']);
+    expect(found.range.map((entry) => entry.id).toSorted()).toEqual(['s2', 's3']);
+    expect(found.draft).toBeUndefined();
   });
 });

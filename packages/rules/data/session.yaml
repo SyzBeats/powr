@@ -266,3 +266,37 @@
   verified: true
   userOverridable: false
   note: 'Untested (EB).'
+
+# Session duration estimate (PLN-14; EB §Session › Duration & time-cap):
+# duration ≈ Σ sets (reps × rep duration + rest after the set) + warm-up time + transitions.
+
+- id: session.duration.repSeconds
+  value: 3.5
+  unit: seconds
+  range: { min: 3, max: 4 }
+  evidence: [INF]
+  sources: [src.powr-eb-session, src.iversen2021]
+  ebRef: 'EB §Session › Duration & time-cap (rep duration 3–4 s default)'
+  verified: true
+  userOverridable: true
+  note: 'The midpoint of the EB default; logged rest times replace the rest defaults once they exist (PLN-14).'
+
+- id: session.duration.warmupSetSeconds
+  value: 60
+  unit: seconds
+  evidence: [INF]
+  sources: [src.powr-eb-session]
+  ebRef: 'EB §Session › Duration & time-cap (~1 min per warm-up set)'
+  verified: true
+  userOverridable: true
+
+- id: session.duration.transitionSeconds
+  value: 90
+  unit: seconds
+  range: { min: 60, max: 120 }
+  evidence: [INF]
+  sources: [src.powr-eb-session]
+  ebRef: 'EB §Session › Duration & time-cap (transitions ~1–2 min per exercise)'
+  verified: true
+  userOverridable: true
+  note: 'The midpoint of the EB range.'

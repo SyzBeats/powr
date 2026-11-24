@@ -15,11 +15,19 @@ interface LicenceException {
   readonly rationale: string;
 }
 
+interface DeniedPackage {
+  /** A package name, or a `prefix*` pattern such as `@sentry/*`. */
+  readonly package: string;
+  readonly reason: string;
+}
+
 export interface LicencePolicy {
   readonly allowed: readonly string[];
   readonly denied: readonly string[];
   /** Allowed only for components that are never shipped to users (test and build tools). */
   readonly devOnlyAllowed: readonly string[];
+  /** Refused whatever their licence, shipped or build-only; no exception overrides them. */
+  readonly deniedPackages: readonly DeniedPackage[];
   readonly exceptions: readonly LicenceException[];
 }
 
@@ -29,6 +37,7 @@ export function loadPolicy(file: string): LicencePolicy {
     allowed: raw.allowed ?? [],
     denied: raw.denied ?? [],
     devOnlyAllowed: raw.devOnlyAllowed ?? [],
+    deniedPackages: raw.deniedPackages ?? [],
     exceptions: raw.exceptions ?? [],
   };
 }
@@ -50,6 +59,14 @@ export interface Component {
  * permitted alternative is chosen and recorded; for `AND` every part must be permitted.
  */
 export function evaluate(component: Component, policy: LicencePolicy): Verdict {
+  // A denied package fails before anything else: neither its licence nor an exception saves it.
+  const refused = policy.deniedPackages.find((entry) =>
+    matchesPattern(component.name, entry.package),
+  );
+  if (refused) {
+    return { status: 'denied', reason: `package ${component.name} is denied: ${refused.reason}` };
+  }
+
   // An exception counts only with a recorded product-owner approval (ADR-0018).
   const exception = policy.exceptions.find(
     (entry) =>

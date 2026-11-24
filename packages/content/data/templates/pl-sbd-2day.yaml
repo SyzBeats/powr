@@ -1,0 +1,114 @@
+# Powerlifting, 2 days: full-body SBD ×2 (PLN-02; TD-24, M2). Every lift twice a week, once heavy
+# and once lighter or as a close variant (EB §Progression › Periodization: within-week
+# undulation). See pl-sbd-3day.yaml for how the stated rep ranges and RPE targets relate to the EB
+# bands. Accessories use the exercise's strength rep range and the registry's effort target.
+
+id: tpl.pl-sbd-2day
+name: { en: 'Full body SBD ×2' }
+description:
+  en: 'Two sessions a week with squat, bench press and deadlift in each, one heavy and one lighter exposure per lift.'
+style: powerlifting
+daysPerWeek: 2
+split: sbd
+levels: [novice, intermediate, advanced]
+default: true
+periodization: block
+progression: { main: rpe, accessory: doubleProgression, novice: linear }
+mesocycle: { accumulationWeeks: 5, deloadWeeks: 1, deloadRule: deload.content }
+days:
+  - key: a
+    name: { en: 'Heavy squat, moderate bench' }
+    slots:
+      - key: a.squat
+        pattern: squat
+        targets: [mu.quads]
+        priority: primary
+        lift: squat
+        intensity: heavy
+        goal: strength
+        mode: topBackoff
+        repRange: [1, 3]
+        effort: { rpe: [8, 9] }
+        backoff: { repRange: [3, 5], effort: { rpe: [7, 8] } }
+      - key: a.bench
+        pattern: horizontalPush
+        targets: [mu.chest]
+        priority: primary
+        lift: bench
+        intensity: moderate
+        goal: strength
+        mode: rpe
+        repRange: [3, 5]
+        effort: { rpe: [7, 8] }
+      - key: a.deadlift
+        pattern: hinge
+        targets: [mu.glutes, mu.lower-back]
+        priority: secondary
+        lift: deadlift
+        allowVariants: true
+        intensity: light
+        goal: strength
+        mode: rpe
+        repRange: [3, 5]
+        effort: { rpe: [6, 7] }
+      - key: a.row
+        pattern: horizontalPull
+        targets: [mu.lats, mu.mid-back]
+        priority: secondary
+        goal: strength
+        mode: doubleProgression
+      - key: a.abs
+        pattern: core
+        targets: [mu.abs]
+        priority: optional
+        goal: strength
+        mode: doubleProgression
+
+  - key: b
+    name: { en: 'Heavy deadlift and bench' }
+    slots:
+      - key: b.deadlift
+        pattern: hinge
+        targets: [mu.glutes, mu.lower-back]
+        priority: primary
+        lift: deadlift
+        intensity: heavy
+        goal: strength
+        mode: topBackoff
+        repRange: [1, 3]
+        effort: { rpe: [8, 9] }
+        backoff: { repRange: [3, 5], effort: { rpe: [7, 8] } }
+      - key: b.bench
+        pattern: horizontalPush
+        targets: [mu.chest]
+        priority: primary
+        lift: bench
+        intensity: heavy
+        goal: strength
+        mode: topBackoff
+        repRange: [1, 3]
+        effort: { rpe: [8, 9] }
+        backoff: { repRange: [3, 5], effort: { rpe: [7, 8] } }
+      - key: b.squat
+        pattern: squat
+        targets: [mu.quads]
+        priority: secondary
+        lift: squat
+        allowVariants: true
+        intensity: light
+        goal: strength
+        mode: rpe
+        repRange: [3, 5]
+        effort: { rpe: [6, 7] }
+      - key: b.pulldown
+        pattern: verticalPull
+        targets: [mu.lats]
+        priority: secondary
+        goal: strength
+        mode: doubleProgression
+      - key: b.leg-curl
+        pattern: kneeFlexion
+        targets: [mu.hamstrings]
+        priority: optional
+        goal: strength
+        mode: doubleProgression

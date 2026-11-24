@@ -1,0 +1,40 @@
+# Sources of the planning and ranking parameters (data/planning.yaml, data/ranking.yaml; M2) and
+# the session-duration rows of data/session.yaml. POWR's PRD is cited where a parameter is a
+# product requirement (e.g. "≤ 5 working exercises for novices", "≤ 10% over the time budget").
+
+- id: src.powr-prd
+  citation: >-
+    POWR product requirements document (docs/PRD.md): onboarding (ONB), plan generation (PLN),
+    progression (PRG) and body-map ranking (MAP) requirements.
+  tag: INF
+  status: active
+  note: >-
+    Product requirements, not research findings. Parameters that cite it carry the PRD's own
+    numbers (verified: true when transcribed exactly) or POWR design values (verified: false).
+
+- id: src.kassiano2022
+  citation: >-
+    Kassiano et al. 2022. [Systematic review of exercise variation and muscle hypertrophy:
+    "some degree of systematic variation" helps regional growth; "excessive, random variation may
+    compromise muscular gains".]
+  url: https://pubmed.ncbi.nlm.nih.gov/35438660/
+  tag: SR
+  status: active
+
+- id: src.bazvalle2019
+  citation: >-
+    Baz-Valle et al. 2019. [RCT in trained men: app-randomised exercise selection gave equal gains
+    and higher motivation.]
+  url: https://pubmed.ncbi.nlm.nih.gov/31881066/
+  tag: RCT-T
+  status: active
+
+- id: src.iversen2021
+  citation: >-
+    Iversen et al. 2021. [Narrative review of time-efficient resistance training: prioritise
+    bilateral multi-joint lifts, specific warm-ups, supersets and drop sets; at least 4 weekly
+    sets per muscle at 6–15RM.]
+  url: https://pubmed.ncbi.nlm.nih.gov/34125411/
+  seeAlso: [https://pmc.ncbi.nlm.nih.gov/articles/PMC8449772]
+  tag: NARR
+  status: active

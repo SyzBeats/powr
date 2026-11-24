@@ -12,13 +12,22 @@ import { SOURCES_DIR, loadSourceRegistry } from './sources';
 
 /**
  * The rules build (technical concept §8.6.5): validates the parameter tables in data/*.yaml and
- * the source registry, then compiles a versioned, hashed rules.json and reports every
+ * the source registry, then compiles a versioned, hashed generated/rules.json and reports every
  * `verified: false` row. Run it with `pnpm --filter @powr/rules build`; the same checks run under
  * Vitest (scripts/build.test.ts) on every `pnpm test`.
  */
 
 export const DATA_DIR = fileURLToPath(new URL('../data/', import.meta.url));
-export const DIST_FILE = fileURLToPath(new URL('../dist/rules.json', import.meta.url));
+/**
+ * The compiled registry, committed like content.json (technical concept §8.12) so the app, the
+ * tests and the type check import it without a build step; `build.test.ts` fails when it is stale.
+ */
+export const GENERATED_FILE = fileURLToPath(new URL('../generated/rules.json', import.meta.url));
+
+/** The committed file's text: pretty JSON with a final newline. */
+export function generatedText(compiled: CompiledRules): string {
+  return `${JSON.stringify(compiled, null, 2)}\n`;
+}
 
 /** Reads and parses every data/*.yaml file in name order; YAML errors become issues. */
 export function loadRuleFiles(dir: string = DATA_DIR): { files: RuleFile[]; issues: string[] } {
@@ -130,10 +139,10 @@ function main(args: readonly string[]): number {
     );
     return 1;
   }
-  mkdirSync(dirname(DIST_FILE), { recursive: true });
-  writeFileSync(DIST_FILE, `${JSON.stringify(compiled, null, 2)}\n`);
+  mkdirSync(dirname(GENERATED_FILE), { recursive: true });
+  writeFileSync(GENERATED_FILE, generatedText(compiled));
   process.stdout.write(
-    `Wrote ${DIST_FILE} (${rulesStamp(compiled)}, ${compiled.params.length} parameters)\n`,
+    `Wrote ${GENERATED_FILE} (${rulesStamp(compiled)}, ${compiled.params.length} parameters)\n`,
   );
   process.stdout.write(`${unverifiedReport(compiled)}\n`);
   const diffIndex = args.indexOf('--diff');

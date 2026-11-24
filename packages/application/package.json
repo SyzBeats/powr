@@ -6,7 +6,8 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
-    "./backup": "./src/usecases/backup.ts"
+    "./backup": "./src/usecases/backup.ts",
+    "./planning": "./src/planning/index.ts"
   },
   "dependencies": {
     "@powr/content": "workspace:*",

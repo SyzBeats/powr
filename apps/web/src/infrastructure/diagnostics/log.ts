@@ -11,6 +11,7 @@ const DIAGNOSTIC_CODES = {
   'db.open': ['ms', 'dataVersion'],
   'db.error': ['name'],
   'content.error': ['name'],
+  'rules.error': ['name'],
   'set.logged': ['commitMs', 'startedSession'],
   'session.finished': [],
   'backup.exported': ['bytes', 'ms'],

@@ -1,11 +1,17 @@
+import { fileURLToPath } from 'node:url';
+
 import { describe, expect, it } from 'vitest';
 
-import { evaluate, licenceFromManifest, type LicencePolicy } from '../src/policy.ts';
+import { evaluate, licenceFromManifest, loadPolicy, type LicencePolicy } from '../src/policy.ts';
 
 const policy: LicencePolicy = {
   allowed: ['MIT', 'ISC', 'Apache-2.0', 'BSD-3-Clause', 'CC0-1.0'],
   denied: ['GPL-*', 'AGPL-*', 'LGPL-*', 'MPL-*'],
   devOnlyAllowed: ['MPL-2.0'],
+  deniedPackages: [
+    { package: 'sentry', reason: 'no Sentry' },
+    { package: '@sentry/*', reason: 'no Sentry' },
+  ],
   exceptions: [
     {
       package: 'spdx-exceptions',
@@ -93,6 +99,45 @@ describe('licence policy', () => {
     expect(evaluate({ ...tool, distributed: false }, unapproved)).toMatchObject({
       status: 'unapproved',
     });
+  });
+
+  it('refuses denied packages whatever their licence, scope or exception', () => {
+    expect(evaluate(shipped('MIT', '@sentry/node'), policy)).toMatchObject({
+      status: 'denied',
+      reason: 'package @sentry/node is denied: no Sentry',
+    });
+    expect(evaluate({ ...shipped('MIT', 'sentry'), distributed: false }, policy)).toMatchObject({
+      status: 'denied',
+    });
+    const excepted: LicencePolicy = {
+      ...policy,
+      exceptions: [{ ...policy.exceptions[0]!, package: 'sentry', version: '1.0.0' }],
+    };
+    expect(evaluate({ ...shipped('MIT', 'sentry'), distributed: false }, excepted)).toMatchObject({
+      status: 'denied',
+    });
+    expect(evaluate(shipped('MIT', 'sentinel-logger'), policy)).toMatchObject({
+      status: 'allowed',
+    });
+  });
+
+  it('the real policy refuses every Sentry package (product-owner decision 2026-11-24)', () => {
+    const real = loadPolicy(
+      fileURLToPath(new URL('../../../licence-policy.yaml', import.meta.url)),
+    );
+    for (const name of [
+      'sentry',
+      'sentry-cli-binaries',
+      '@sentry/node',
+      '@sentry-internal/tracing',
+    ]) {
+      for (const distributed of [true, false]) {
+        expect(evaluate({ ...shipped('MIT', name), distributed }, real)).toMatchObject({
+          status: 'denied',
+        });
+      }
+    }
+    expect(evaluate(shipped('MIT', 'sentinel-logger'), real)).toMatchObject({ status: 'allowed' });
   });
 
   it('normalizes legacy package.json licence fields', () => {

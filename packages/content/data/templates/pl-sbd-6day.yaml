@@ -1,0 +1,186 @@
+# Powerlifting, 6 days: SBD 6-day for advanced lifters (PLN-02; TD-24, M2). Squat and bench three
+# times a week, deadlift twice (PLN-04: 2–3), heavy, moderate and light exposures spread so the
+# same lift is never trained hard on consecutive days. See pl-sbd-3day.yaml for the stated targets.
+
+id: tpl.pl-sbd-6day
+name: { en: 'SBD 6-day (advanced)' }
+description:
+  en: 'Six shorter sessions with squat and bench press three times and deadlift twice a week, for advanced lifters.'
+style: powerlifting
+daysPerWeek: 6
+split: sbd
+levels: [advanced]
+default: true
+periodization: block
+progression: { main: rpe, accessory: doubleProgression, novice: linear }
+mesocycle: { accumulationWeeks: 5, deloadWeeks: 1, deloadRule: deload.content }
+days:
+  - key: squat-heavy
+    name: { en: 'Heavy squat, light bench' }
+    slots:
+      - key: squat-heavy.squat
+        pattern: squat
+        targets: [mu.quads]
+        priority: primary
+        lift: squat
+        intensity: heavy
+        goal: strength
+        mode: topBackoff
+        repRange: [1, 3]
+        effort: { rpe: [8, 9] }
+        backoff: { repRange: [3, 5], effort: { rpe: [7, 8] } }
+      - key: squat-heavy.bench
+        pattern: horizontalPush
+        targets: [mu.chest]
+        priority: primary
+        lift: bench
+        allowVariants: true
+        intensity: light
+        goal: strength
+        mode: rpe
+        repRange: [4, 6]
+        effort: { rpe: [6, 7] }
+      - key: squat-heavy.row
+        pattern: horizontalPull
+        targets: [mu.lats, mu.mid-back]
+        priority: secondary
+        goal: strength
+        mode: doubleProgression
+
+  - key: deadlift-heavy
+    name: { en: 'Heavy deadlift' }
+    slots:
+      - key: deadlift-heavy.deadlift
+        pattern: hinge
+        targets: [mu.glutes, mu.lower-back]
+        priority: primary
+        lift: deadlift
+        intensity: heavy
+        goal: strength
+        mode: topBackoff
+        repRange: [1, 3]
+        effort: { rpe: [8, 9] }
+        backoff: { repRange: [3, 5], effort: { rpe: [7, 8] } }
+      - key: deadlift-heavy.press
+        pattern: verticalPush
+        targets: [mu.front-delts]
+        priority: secondary
+        goal: strength
+        mode: doubleProgression
+      - key: deadlift-heavy.pulldown
+        pattern: verticalPull
+        targets: [mu.lats]
+        priority: secondary
+        goal: strength
+        mode: doubleProgression
+
+  - key: bench-heavy
+    name: { en: 'Heavy bench, light squat' }
+    slots:
+      - key: bench-heavy.bench
+        pattern: horizontalPush
+        targets: [mu.chest]
+        priority: primary
+        lift: bench
+        intensity: heavy
+        goal: strength
+        mode: topBackoff
+        repRange: [1, 3]
+        effort: { rpe: [8, 9] }
+        backoff: { repRange: [3, 5], effort: { rpe: [7, 8] } }
+      - key: bench-heavy.squat
+        pattern: squat
+        targets: [mu.quads]
+        priority: secondary
+        lift: squat
+        allowVariants: true
+        intensity: light
+        goal: strength
+        mode: rpe
+        repRange: [3, 5]
+        effort: { rpe: [6, 7] }
+      - key: bench-heavy.rear-delts
+        pattern: shoulderHorizontalAbduction
+        targets: [mu.rear-delts]
+        priority: optional
+        goal: strength
+        mode: doubleProgression
+
+  - key: squat-moderate
+    name: { en: 'Moderate squat' }
+    slots:
+      - key: squat-moderate.squat
+        pattern: squat
+        targets: [mu.quads]
+        priority: primary
+        lift: squat
+        intensity: moderate
+        goal: strength
+        mode: rpe
+        repRange: [3, 5]
+        effort: { rpe: [7, 8] }
+      - key: squat-moderate.leg-curl
+        pattern: kneeFlexion
+        targets: [mu.hamstrings]
+        priority: secondary
+        goal: strength
+        mode: doubleProgression
+      - key: squat-moderate.abs
+        pattern: core
+        targets: [mu.abs]
+        priority: optional
+        goal: strength
+        mode: doubleProgression
+
+  - key: bench-moderate
+    name: { en: 'Moderate bench' }
+    slots:
+      - key: bench-moderate.bench
+        pattern: horizontalPush
+        targets: [mu.chest]
+        priority: primary
+        lift: bench
+        intensity: moderate
+        goal: strength
+        mode: rpe
+        repRange: [3, 5]
+        effort: { rpe: [7, 8] }
+      - key: bench-moderate.triceps
+        pattern: elbowExtension
+        targets: [mu.triceps]
+        priority: secondary
+        goal: strength
+        mode: doubleProgression
+      - key: bench-moderate.row
+        pattern: horizontalPull
+        targets: [mu.mid-back, mu.rear-delts]
+        priority: secondary
+        goal: strength
+        mode: doubleProgression
+
+  - key: deadlift-light
+    name: { en: 'Deadlift variant and back' }
+    slots:
+      - key: deadlift-light.deadlift
+        pattern: hinge
+        targets: [mu.glutes, mu.lower-back]
+        priority: primary
+        lift: deadlift
+        allowVariants: true
+        intensity: light
+        goal: strength
+        mode: rpe
+        repRange: [3, 5]
+        effort: { rpe: [6, 7] }
+      - key: deadlift-light.pulldown
+        pattern: verticalPull
+        targets: [mu.lats]
+        priority: secondary
+        goal: strength
+        mode: doubleProgression
+      - key: deadlift-light.curl
+        pattern: elbowFlexion
+        targets: [mu.elbow-flexors]
+        priority: optional
+        goal: strength
+        mode: doubleProgression

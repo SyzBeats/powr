@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
 import { MIGRATIONS, migrateRecord, migrateTables, type MigrationChain } from '../src';
+import { settingsRecordSchema as v1Settings } from '../src/records/v1';
+import { settingsRecordSchema as v2Settings } from '../src/records/v2';
 
 // A hypothetical chain v1 -> v2 -> v3, to exercise the mechanism before the first real migration.
 const chain: MigrationChain = {
@@ -15,9 +17,22 @@ const chain: MigrationChain = {
 };
 
 describe('record migration chain', () => {
-  it('has no steps at dataVersion 1', () => {
-    expect(MIGRATIONS).toEqual({});
+  it('keeps every v1 settings record valid at v2, which the pass-through step relies on', () => {
+    for (const settings of [
+      { id: 'me', theme: 'dark' },
+      { id: 'me', theme: 'system' },
+    ]) {
+      expect(v1Settings.safeParse(settings).success).toBe(true);
+      expect(v2Settings.safeParse(migrateRecord('settings', settings, 1)).success).toBe(true);
+    }
+  });
+
+  it('takes v1 records to v2 unchanged: v2 only adds tables and optional settings fields (TD-19)', () => {
+    expect(Object.keys(MIGRATIONS)).toEqual(['1']);
+    const settings = { id: 'me', theme: 'dark' };
+    expect(migrateRecord('settings', settings, 1)).toBe(settings);
     expect(migrateRecord('sets', { id: 'a' }, 1)).toEqual({ id: 'a' });
+    expect(migrateRecord('sets', { id: 'a' }, 2)).toEqual({ id: 'a' });
   });
 
   it('applies every step in order and drops records that a step removes', () => {

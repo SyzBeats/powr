@@ -2,7 +2,7 @@ import * as fc from 'fast-check';
 import { strToU8 } from 'fflate';
 import { describe, expect, it } from 'vitest';
 
-import { emptyRawTables, type RawTables } from '../src';
+import { RAW_TABLE_NAMES, emptyRawTables, type RawTables } from '../src';
 import { decodeBackup, encodeBackup, validateRawTables } from '../src/backup';
 import { findUnsafeJson } from '../src/json';
 import { hasReservedKey, hostileRawTables } from './arbitraries';
@@ -88,6 +88,20 @@ describe('crafted backups that try prototype pollution are rejected', () => {
       'session record with a nested __proto__',
       { sessions: `[${SESSION.replace('"zone"', `"__proto__":${POLLUTE},"zone"`)}]` },
     ],
+    // dataVersion 2 tables (M2): the same check covers every new table and free-form field.
+    [
+      'settings override value with constructor.prototype (TD-22)',
+      {
+        settings: `[{"id":"me","theme":"dark","overrides":[{"paramId":"session.rest.strength","value":{"constructor":{"prototype":${POLLUTE}}}}]}]`,
+      },
+    ],
+    ['plan record with __proto__', { plans: `[{"id":"p","__proto__":${POLLUTE}}]` }],
+    [
+      'planned-session slot with a nested __proto__',
+      { plannedSessions: `[{"id":"s","slots":[{"key":"a","__proto__":${POLLUTE}}]}]` },
+    ],
+    ['equipment profile with prototype', { equipmentProfiles: `[{"id":"e","prototype":1}]` }],
+    ['profile with __proto__', { profile: `[{"id":"me","__proto__":${POLLUTE}}]` }],
   ])('%s → invalidData', async (_name, data) => {
     const result = await decodeBackup(await craftBackup({ data }));
     expect(result).toMatchObject({
@@ -202,12 +216,9 @@ describe('import never changes data silently (property)', () => {
 
         // The same records written by hand, past the exporter's check.
         const bytes = await craftBackup({
-          data: {
-            meta: JSON.stringify(tables.meta),
-            settings: JSON.stringify(tables.settings),
-            sessions: JSON.stringify(tables.sessions),
-            sets: JSON.stringify(tables.sets),
-          },
+          data: Object.fromEntries(
+            RAW_TABLE_NAMES.map((table) => [table, JSON.stringify(tables[table])]),
+          ),
         });
         const rejected = { ok: false, error: { kind: 'invalidData', detail: refused } };
         const restored = { ok: true, backup: expect.objectContaining({ tables }) };

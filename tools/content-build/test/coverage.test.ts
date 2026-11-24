@@ -6,9 +6,10 @@ import {
   TRAINING_STYLES,
   type EquipmentId,
 } from '@powr/domain';
+import { isAvailable } from '@powr/domain/equipment';
 
 import { buildContent } from '../src/build.ts';
-import { contentCoverage, isAvailable } from '../src/coverage.ts';
+import { contentCoverage } from '../src/coverage.ts';
 
 /*
  * Coverage rules (technical concept §8.12 step 3) with their thresholds. Known gaps are listed
@@ -34,17 +35,8 @@ const KNOWN_PRESET_GAPS = [
 ];
 /** Patterns of MOVEMENT_PATTERNS without an exercise yet. */
 const PATTERNS_WITHOUT_EXERCISES = ['carry'];
-/** PLN-02 style × days cells without a template yet (M2). */
-const CELLS_WITHOUT_TEMPLATE = [
-  'bodybuilding × 2',
-  'powerlifting × 2',
-  'powerlifting × 5',
-  'powerlifting × 6',
-  'powerbuilding × 2',
-  'powerbuilding × 3',
-  'powerbuilding × 5',
-  'powerbuilding × 6',
-];
+/** PLN-02 style × days cells without a template (none since M2, TD-24). */
+const CELLS_WITHOUT_TEMPLATE: string[] = [];
 
 const { bundle } = buildContent();
 if (!bundle) throw new Error('the content does not build; see build.test.ts');
@@ -134,15 +126,15 @@ describe('equipment availability (EQP-04)', () => {
   it('needs every allOf item and one item of each anyOf group', () => {
     expect(
       isAvailable(
-        bench.equipment,
+        bench,
         items('eq.plates', 'eq.barbell-womens', 'eq.flat-bench', 'eq.squat-stand'),
       ),
     ).toBe(true);
-    expect(
-      isAvailable(bench.equipment, items('eq.plates', 'eq.barbell-olympic', 'eq.flat-bench')),
-    ).toBe(false);
-    expect(
-      isAvailable(bench.equipment, items('eq.barbell-olympic', 'eq.flat-bench', 'eq.power-rack')),
-    ).toBe(false);
+    expect(isAvailable(bench, items('eq.plates', 'eq.barbell-olympic', 'eq.flat-bench'))).toBe(
+      false,
+    );
+    expect(isAvailable(bench, items('eq.barbell-olympic', 'eq.flat-bench', 'eq.power-rack'))).toBe(
+      false,
+    );
   });
 });

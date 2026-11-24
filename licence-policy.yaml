@@ -35,6 +35,19 @@ denied:
 # lightningcss (CSS minifier used by Vite and Tailwind at build time).
 devOnlyAllowed:
   - MPL-2.0
+# Packages refused whatever their licence, shipped or build-only. No exception overrides them.
+deniedPackages:
+  # No Sentry SDK, CLI or internals anywhere in the dependency tree (product owner Simeon
+  # Zimmermann, 2026-11-24). Lighthouse's optional error reporting is excluded through the pnpm
+  # overrides in pnpm-workspace.yaml.
+  - package: sentry
+    reason: no Sentry (product-owner decision 2026-11-24)
+  - package: sentry-*
+    reason: no Sentry (product-owner decision 2026-11-24)
+  - package: '@sentry/*'
+    reason: no Sentry (product-owner decision 2026-11-24)
+  - package: '@sentry-internal/*'
+    reason: no Sentry (product-owner decision 2026-11-24)
 # Reviewed exceptions: { package, version, licence, scope, reviewer, approval, date, rationale }.
 # An exception is added only with the product owner's approval, recorded in `approval`.
 exceptions:

@@ -9,6 +9,7 @@
   ],
   "exports": {
     ".": "./src/index.ts",
+    "./built-in": "./src/built-in.ts",
     "./schema": "./src/schema.ts",
     "./resolve": "./src/resolve.ts",
     "./sources": "./src/sources/index.ts",

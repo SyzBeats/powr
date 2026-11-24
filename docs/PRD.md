@@ -7,9 +7,9 @@
 | Field | Value |
 |---|---|
 | Title | POWR (working title): Product Requirements Document |
-| Version | 0.2 |
+| Version | 0.3 |
 | Date | 2026-11-23 |
-| Status | Draft v0.2. All open questions resolved on 2026-11-23 (§11.1). Only validation tasks remain (§11.2). Baseline for the technical concept. |
+| Status | Draft v0.3. All open questions resolved on 2026-11-23 (§11.1). Only validation tasks remain (§11.2). Baseline for the technical concept. |
 | Owner / publisher | Simeon Zimmermann, SZ WEB DEVELOPMENT, Switzerland (product owner and publisher). Drafted by the requirements agent. |
 | Audience | Product owner, the technical-concept author, designers, testers |
 | Sources | (1) User braindump `app.requirements.md`. (2) User answers to clarification questions (2026-11-23); these are authoritative and override the braindump where it is ambiguous. (3) Evidence base `reports/Strength and hypertrophy evidence base.md` (consolidated report, "EB"), backed by the six files in `research_notes/Strength and hypertrophy evidence base/`. (4) Platform documentation checked on 2026-11-23 (Appendix C). (5) User decisions on all open questions and publisher details, 2026-11-23 (§11.1). |
@@ -22,6 +22,7 @@
 |---|---|---|
 | 0.1 | 2026-11-23 | First complete draft from braindump, clarification answers and evidence base |
 | 0.2 | 2026-11-23 | All open questions OQ-01…OQ-10 resolved by the user (§11.1): pure-PWA timer-alert baseline; MVP cut confirmed; web-only distribution; **free, closed source** (new licence policy LEG-08, reworked attributions screen LEG-06, no AGPL code, scoring reimplemented from official sources); no telemetry; Chrome + Samsung Internet; percentile data and media sources re-evaluated for closed source; composite effectiveness ranking; minimum age 16; publisher Simeon Zimmermann, SZ WEB DEVELOPMENT, Switzerland (revFADP/nDSG primary, GDPR to be confirmed in legal review; new LEG-09, §8.6). Affected requirements, constraints (C-09…C-15), non-goals (NG-14…NG-17), assumptions, risks (R-01 lowered; R-09 revised; R-17, R-18 new), TC-18, release plan and traceability (A.3) updated. Validation tasks listed in §11.2. |
+| 0.3 | 2026-11-24 | §7.1 movement patterns extended by five joint actions already used by the content and engine (shoulder horizontal adduction/abduction, shrug, wrist flexion/extension); EXL-04 load-curve class "bench-like" renamed "equation (Wathan/RTS)" (TD-30, rename in code planned for M2b). Both approved by the product owner on 2026-11-24. |
 
 ---
 
@@ -328,7 +329,7 @@ Each exercise has a detail view with: execution cues (3–6 short bullets includ
 - The evidence tag is visible and explained on tap, for example "Squats don't count toward hamstrings (MRI evidence)".
 
 **EXL-04 · Custom exercises** · Must · MVP
-The user can create custom exercises from scratch or by copying a built-in one. Fields: name, equipment requirements, muscle credits (1.0 / 0.5 / 0.25 / 0), movement pattern, mechanics, load type (barbell, dumbbell per hand, machine/stack, bodyweight + added, bodyweight-assisted, band, time-based), unilateral flag, increment, default rep range and rest class, and load-curve class for e1RM (bench-like / leg-press-like / pooled).
+The user can create custom exercises from scratch or by copying a built-in one. Fields: name, equipment requirements, muscle credits (1.0 / 0.5 / 0.25 / 0), movement pattern, mechanics, load type (barbell, dumbbell per hand, machine/stack, bodyweight + added, bodyweight-assisted, band, time-based), unilateral flag, increment, default rep range and rest class, and load-curve class for e1RM (equation (Wathan/RTS) / leg-press-like / pooled).
 - Custom exercises behave like built-in ones in plans, logging, e1RM, volume counting, the body map and backups.
 - Custom exercises are marked "custom", so the evidence ranking (MAP-03) treats them as unrated unless the user rates them.
 - *Ref:* `EB §Gaps #5` (exercise-class priors).
@@ -1414,7 +1415,7 @@ All performance budgets are measured on a Samsung Galaxy S22 with current stable
 | Field | Requirement |
 |---|---|
 | Identity | Stable ID, name, synonyms, variant family, substitution group(s) |
-| Classification | Movement pattern (squat, hinge, horizontal/vertical push/pull, lunge, knee extension/flexion, elbow flexion/extension, shoulder abduction, hip extension/abduction/adduction, calf, core, carry); mechanics (compound/isolation); competition-lift flag and "variant of" link |
+| Classification | Movement pattern (squat, hinge, horizontal/vertical push/pull, lunge, knee extension/flexion, elbow flexion/extension, shoulder abduction, hip extension/abduction/adduction, calf, core, carry, shoulder horizontal adduction (fly, pec deck), shoulder horizontal abduction (rear-delt fly), shrug, wrist flexion, wrist extension); mechanics (compound/isolation); competition-lift flag and "variant of" link |
 | Equipment | Requirement expression ("all of" plus "any of" groups) referencing the EQP-01 catalog |
 | Muscles | List of {muscle or sub-region, credit 1.0/0.5/0.25/0, evidence tag H/EMG/C, source ID} per `EB §Session › Mapping` |
 | Load model | Load type (barbell, DB per hand, machine/stack, bodyweight + added, assisted, band, time); default increment; e1RM curve class (bench-like / leg-press-like / pooled); unilateral flag; bodyweight-loaded flag |

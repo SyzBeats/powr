@@ -72,6 +72,17 @@ const LAZY_BACKUP: ImportPattern = {
 };
 
 /**
+ * The onboarding and planning use cases (M2) are a lazy chunk too: the plan generator and the
+ * rules resolver stay off the startup path (§8.19). The screens' loader (M2b) carries the one
+ * disable comment; type imports are allowed.
+ */
+const LAZY_PLANNING: ImportPattern = {
+  regex: '^@powr/application/planning$',
+  allowTypeImports: true,
+  message: "The planning use cases are lazy-loaded: use import('@powr/application/planning').",
+};
+
+/**
  * The built-in content data is a lazy chunk too (TD-17): the single loader in src/app/boot.tsx
  * carries the disable comment. The content schemas (Zod) are build-time only.
  */
@@ -212,11 +223,29 @@ const config: OxlintConfig = {
       },
     },
     {
+      // Application tests resolve the shipped registry directly, as the app's lazy rules
+      // provider does (src/infrastructure/rules/provider.ts).
+      files: ['packages/application/test/**'],
+      rules: {
+        'no-restricted-imports': restrict(
+          {
+            group: [...UI_FRAMEWORKS, ...STORAGE_LIBS],
+            message: 'Use cases reach storage and UI only through ports.',
+          },
+          {
+            group: ['fflate', 'zod', 'zod/*'],
+            message: 'Codecs and schemas live in @powr/formats.',
+          },
+        ),
+      },
+    },
+    {
       files: ['apps/web/src/**/*.{ts,tsx}'],
       rules: {
         'no-restricted-imports': restrict(
           APP_ZOD,
           LAZY_BACKUP,
+          LAZY_PLANNING,
           LAZY_CONTENT,
           CONTENT_SCHEMA,
           RULES_SUBPATHS,
@@ -303,6 +332,7 @@ const config: OxlintConfig = {
           { group: ['workbox-*'], message: 'Service-worker code stays in src/sw.' },
           APP_ZOD,
           LAZY_BACKUP,
+          LAZY_PLANNING,
           LAZY_CONTENT,
           CONTENT_SCHEMA,
           RULES_SUBPATHS,
@@ -320,6 +350,7 @@ const config: OxlintConfig = {
             message: 'Routes never touch infrastructure.',
           },
           LAZY_BACKUP,
+          LAZY_PLANNING,
           LAZY_CONTENT,
           CONTENT_SCHEMA,
           RULES_SUBPATHS,
@@ -337,6 +368,7 @@ const config: OxlintConfig = {
           },
           APP_ZOD,
           LAZY_BACKUP,
+          LAZY_PLANNING,
           LAZY_CONTENT,
           CONTENT_SCHEMA,
           RULES_SUBPATHS,
@@ -354,6 +386,7 @@ const config: OxlintConfig = {
           { regex: UI_ALIAS, message: 'Adapters know nothing about the UI.' },
           APP_ZOD,
           LAZY_BACKUP,
+          LAZY_PLANNING,
           LAZY_CONTENT,
           CONTENT_SCHEMA,
           RULES_SUBPATHS,

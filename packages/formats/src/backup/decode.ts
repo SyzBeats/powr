@@ -223,6 +223,34 @@ function findBrokenReference(
   if (tables.sessions.filter((session) => session.status === 'active').length > 1) {
     return 'more than one active session';
   }
+  const planIds = new Set<string>(tables.plans.map((plan) => plan.id));
+  const profileIds = new Set<string>(tables.equipmentProfiles.map((profile) => profile.id));
+  for (const plan of tables.plans) {
+    if (!profileIds.has(plan.equipmentProfileId)) {
+      return `plan ${plan.id} references a missing equipment profile`;
+    }
+    for (const slot of plan.mesocycles.flatMap((mesocycle) =>
+      mesocycle.days.flatMap((day) => day.slots),
+    )) {
+      if (isKnownExercise && !isKnownExercise(slot.exerciseId)) {
+        return `plan ${plan.id} references unknown exercise ${slot.exerciseId}`;
+      }
+    }
+  }
+  if (tables.plans.filter((plan) => plan.status === 'active').length > 1)
+    return 'more than one active plan';
+  for (const session of tables.plannedSessions) {
+    if (!planIds.has(session.planId))
+      return `planned session ${session.id} references a missing plan`;
+    for (const slot of session.slots) {
+      if (isKnownExercise && !isKnownExercise(slot.exerciseId)) {
+        return `planned session ${session.id} references unknown exercise ${slot.exerciseId}`;
+      }
+    }
+  }
+  if (tables.equipmentProfiles.filter((profile) => profile.isDefault).length > 1) {
+    return 'more than one default equipment profile';
+  }
   return null;
 }
 

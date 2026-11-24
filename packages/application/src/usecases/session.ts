@@ -59,7 +59,7 @@ export async function logSet(
         status: 'active',
         versions: {
           engine: ENGINE_VERSION,
-          rules: deps.rulesVersion,
+          rules: deps.rules.version,
           content: deps.content.version,
         },
       };

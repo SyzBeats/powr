@@ -8,7 +8,7 @@ import type {
   WakeLockPort,
 } from '@powr/application';
 import type { ContentCatalog } from '@powr/content';
-import { RULES_VERSION } from '@powr/rules';
+import type { CompiledRules } from '@powr/rules';
 
 import { capabilityProbe } from '../infrastructure/capabilities/probe';
 import {
@@ -29,6 +29,7 @@ import { browserStorage } from '../infrastructure/platform/storage';
 import { applyTheme } from '../infrastructure/platform/theme';
 import { wakeLock } from '../infrastructure/platform/wake-lock';
 import type { ServiceWorkerController } from '../infrastructure/pwa/registration';
+import { createRulesProvider } from '../infrastructure/rules/provider';
 
 const APP = { version: __APP_VERSION__, build: __APP_BUILD__ } as const;
 
@@ -60,6 +61,7 @@ export interface Container {
 export function createContainer(
   db: PowrDb,
   content: ContentCatalog,
+  rules: CompiledRules,
   serviceWorker: ServiceWorkerController,
   diagnostics: Diagnostics,
 ): Container {
@@ -69,7 +71,7 @@ export function createContainer(
     clock: systemClock,
     ids: uuidv7Generator,
     content,
-    rulesVersion: RULES_VERSION,
+    rules: createRulesProvider(rules),
     app: APP,
     runtime: runtimeFlags,
     storage: browserStorage,

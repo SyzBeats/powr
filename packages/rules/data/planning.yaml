@@ -1,0 +1,97 @@
+# Plan generation and validation (M2; PRD PLN-01…14; EB §Defaults › Volume, › Session). The volume
+# bands, frequency, per-session caps, rep ranges and effort targets the generator uses live in
+# volume.yaml; this table holds what only planning needs. Rows citing src.powr-prd carry product
+# requirements; rows marked verified false are POWR design values where the EB and the PRD give
+# only a direction.
+
+- id: planning.mesocycle.accumulationWeeks
+  value: { min: 3, max: 8 }
+  unit: weeks
+  evidence: [DELPHI/SURVEY, INF]
+  sources: [src.powr-prd, src.rogerson2024, src.kassiano2022]
+  ebRef: 'PRD PLN-08 (N accumulation weeks + 1 deload; default 4–6, user 3–8); EB §Defaults › Deloads, › Session (fixed within a 4–8-week mesocycle)'
+  verified: true
+  userOverridable: false
+  note: 'The allowed range for a plan; the template states the default (5 weeks in every MVP template).'
+
+- id: planning.novice.maxWorkingExercises
+  value: 5
+  unit: none
+  evidence: [INF]
+  sources: [src.powr-prd]
+  ebRef: 'PRD PLN-02 (novices get ≤ 5 working exercises per session); technical concept §8.7.6 step 2'
+  verified: true
+  userOverridable: false
+
+- id: planning.sessionBudget.tolerancePct
+  value: 10
+  unit: pct
+  evidence: [INF]
+  sources: [src.powr-prd]
+  ebRef: 'PRD PLN-01 item 5 and PLN-14 (estimated duration within the budget with ≤ 10% tolerance)'
+  verified: true
+  userOverridable: false
+
+- id: planning.slot.sets
+  value: { min: 2, max: 5 }
+  unit: sets
+  evidence: [INF]
+  sources: [src.powr-prd, src.powr-eb-volume]
+  ebRef: 'PRD PLN-07 examples (3 × 10, 5 × 3, 4 × 5, 3 × 8–12); EB §Defaults › Volume (weekly and per-session volume)'
+  verified: false
+  userOverridable: true
+  note: >-
+    POWR design value: the working sets one exercise slot gets per session. The EB sets weekly and
+    per-session volume per muscle, not sets per exercise; more volume comes from more slots.
+
+- id: planning.strength.accessorySets
+  value: 3
+  unit: sets
+  evidence: [DELPHI/SURVEY, INF]
+  sources: [src.androulakiskorakakis2021, src.powr-prd]
+  ebRef: 'EB §Volume › Minimum and maintenance doses (powerlifting accessories 1–3 per lift at RPE 7–9, 6–10 reps); PRD PLN-07'
+  verified: false
+  userOverridable: true
+  note: 'POWR design value: working sets of a powerlifting accessory slot (no muscle bands apply to them, PLN-03).'
+
+- id: planning.volume.startPosition
+  value: { novice: 0.2, intermediate: 0.5, advanced: 0.5, priority: 0.8 }
+  unit: fraction
+  evidence: [INF]
+  sources: [src.powr-prd, src.powr-eb-volume]
+  ebRef: 'PRD PLN-03 (novices in the lower part of the band, intermediate and advanced mid-band, priority muscles in the upper part); EB §Volume › Individual response'
+  verified: false
+  userOverridable: true
+  note: >-
+    Fractions of the way from the low to the high end of the default band (10–20 fractional sets
+    per muscle, 4–10 heavy sets per lift): novice 12, intermediate and advanced 15, priority 18.
+    The PRD names the parts of the band, not the numbers.
+
+- id: planning.rotation.perMuscle
+  value: { min: 1, max: 2 }
+  unit: none
+  evidence: [SR, RCT-T, INF]
+  sources: [src.kassiano2022, src.bazvalle2019, src.powr-eb-session]
+  ebRef: 'EB §Defaults › Session (exercise rotation: fixed within a mesocycle; rotate 1–2 per muscle between mesocycles); PRD PLN-05, PLN-13'
+  verified: true
+  userOverridable: true
+
+- id: planning.variety.pool
+  value: 3
+  unit: none
+  evidence: [INF]
+  sources: [src.bazvalle2019, src.powr-technical-concept]
+  ebRef: 'EB §Session › Exercise selection (random variation only as opt-in); technical concept §8.7.1 (seeded variety mode)'
+  verified: false
+  userOverridable: true
+  note: 'POWR design value: variety mode picks among the best N candidates of a slot with the plan seed.'
+
+- id: planning.missed.mergePriorities
+  value: [primary]
+  unit: none
+  evidence: [INF]
+  sources: [src.powr-prd]
+  ebRef: 'PRD PLN-11 (merge key work of a missed session into the next session; never drop planned work silently)'
+  verified: false
+  userOverridable: true
+  note: 'POWR reading of "key work": the primary slots; the per-session caps still apply.'

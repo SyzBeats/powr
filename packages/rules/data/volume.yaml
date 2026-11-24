@@ -225,3 +225,22 @@
   verified: false
   userOverridable: false
   note: 'Preprint numbers (SportRxiv 295); verify against the final paper. For education texts only.'
+
+- id: volume.strength.minimumDosePerLift
+  value: { min: 3, max: 6 }
+  unit: sets
+  evidence: [DELPHI/SURVEY]
+  sources: [src.androulakiskorakakis2021]
+  ebRef: 'EB §Defaults › Volume (strength sets per competition lift: minimum 3–6 for powerlifters); §Volume › Minimum and maintenance doses'
+  verified: true
+  userOverridable: false
+  note: 'Weekly direct heavy sets below the default 4–10 band but at least the minimum dose are flagged, not violations.'
+
+- id: volume.effort.strengthAccessoryRpe
+  value: { min: 7, max: 9 }
+  unit: rpe
+  evidence: [DELPHI/SURVEY]
+  sources: [src.androulakiskorakakis2021]
+  ebRef: 'EB §Volume › Minimum and maintenance doses (powerlifting accessories at RPE 7–9 for 6–10 reps)'
+  verified: true
+  userOverridable: true

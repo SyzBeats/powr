@@ -6,6 +6,7 @@ import type {
   FileGateway,
   IdGenerator,
   LiveQueries,
+  RulesProvider,
   RuntimeFlags,
   SafetySnapshots,
   StoragePort,
@@ -19,7 +20,7 @@ export interface Deps {
   readonly clock: Clock;
   readonly ids: IdGenerator;
   readonly content: ContentCatalog;
-  readonly rulesVersion: string;
+  readonly rules: RulesProvider;
   readonly app: AppInfo;
   readonly runtime: RuntimeFlags;
   readonly storage: StoragePort;

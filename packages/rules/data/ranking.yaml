@@ -1,0 +1,15 @@
+# Exercise ranking (MAP-03; OQ-09 = A: a transparent composite with an explanation on tap). The plan
+# generator ranks slot candidates with it from M2; the body map's "best exercises" list (M4) uses
+# the same weights. The weights are an app convention and labelled [INF] (PRD §7.3).
+
+- id: ranking.effectiveness
+  value:
+    weights: { credit: 0.4, evidence: 0.15, stretch: 0.15, overload: 0.2, subRegion: 0.1 }
+    evidenceScore: { H: 1, EMG: 0.5, C: 0 }
+  unit: mixed
+  evidence: [INF]
+  sources: [src.powr-prd, src.powr-eb-session, src.powr-eb-mapping]
+  ebRef: 'PRD MAP-03 (credit, evidence strength H > EMG > C, stretch emphasis, overload suitability, sub-region coverage; weights are configurable data); EB §Session › Exercise selection, › ROM, › Mapping'
+  verified: false
+  userOverridable: false
+  note: 'POWR design values (PRD §7.3: "the weights are an app convention, labelled [INF]").'

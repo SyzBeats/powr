@@ -239,6 +239,17 @@ describe('content lint', () => {
   });
 
   describe('templates', () => {
+    it('needs a deload rule that names a rules-registry parameter', () => {
+      expect(
+        issuesAfter((d) => {
+          (template(d, 'tpl.bb-full-body-3day')['mesocycle'] as Entry)['deloadRule'] =
+            'deload.planned';
+        }),
+      ).toEqual([
+        'tpl.bb-full-body-3day: mesocycle.deloadRule deload.planned is not a rules parameter',
+      ]);
+    });
+
     it('catches an unknown target and a slot no exercise can fill', () => {
       expect(
         issuesAfter((d) => {

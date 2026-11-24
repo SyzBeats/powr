@@ -192,11 +192,19 @@
   "sg.triceps-pressdown",
   "sg.vertical-pull",
   "sg.wrist-curl",
+  "tpl.bb-full-body-2day",
   "tpl.bb-full-body-3day",
   "tpl.bb-ppl-6day",
   "tpl.bb-upper-lower-4day",
   "tpl.bb-upper-lower-ppl-5day",
+  "tpl.pb-full-body-2day",
+  "tpl.pb-full-body-3day",
+  "tpl.pb-ppl-6day",
   "tpl.pb-upper-lower-4day",
+  "tpl.pb-upper-lower-ppl-5day",
+  "tpl.pl-sbd-2day",
   "tpl.pl-sbd-3day",
-  "tpl.pl-sbd-4day"
+  "tpl.pl-sbd-4day",
+  "tpl.pl-sbd-5day",
+  "tpl.pl-sbd-6day"
 ]

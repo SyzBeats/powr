@@ -2,7 +2,7 @@ import * as fc from 'fast-check';
 import { strFromU8, strToU8, unzipSync, zipSync } from 'fflate';
 import { describe, expect, it } from 'vitest';
 
-import { emptyRawTables, type RawTables } from '../src';
+import { RAW_TABLE_NAMES, emptyRawTables, type RawTables } from '../src';
 import {
   DEFAULT_ARCHIVE_LIMITS,
   decodeBackup,
@@ -31,6 +31,13 @@ function sorted(tables: RawTables): RawTables {
     settings: tables.settings,
     sessions: byId(tables.sessions),
     sets: byId(tables.sets),
+    profile: tables.profile,
+    equipmentProfiles: byId(tables.equipmentProfiles),
+    plans: byId(tables.plans),
+    plannedSessions: byId(tables.plannedSessions),
+    breaks: byId(tables.breaks),
+    meets: byId(tables.meets),
+    bodyweights: byId(tables.bodyweights),
   };
 }
 
@@ -81,12 +88,9 @@ describe('backup round-trip', () => {
         expect(decoded.ok).toBe(true);
         if (!decoded.ok) return;
         expect(decoded.backup.tables).toEqual(sorted(tables));
-        expect(decoded.backup.preview.counts).toEqual({
-          meta: tables.meta.length,
-          settings: tables.settings.length,
-          sessions: tables.sessions.length,
-          sets: tables.sets.length,
-        });
+        expect(decoded.backup.preview.counts).toEqual(
+          Object.fromEntries(RAW_TABLE_NAMES.map((table) => [table, tables[table].length])),
+        );
       }),
       { numRuns: runs(60) },
     );
@@ -115,14 +119,21 @@ describe('backup round-trip', () => {
       'data/settings.json',
       'data/sessions.json',
       'data/sets.json',
+      'data/profile.json',
+      'data/equipmentProfiles.json',
+      'data/plans.json',
+      'data/plannedSessions.json',
+      'data/breaks.json',
+      'data/meets.json',
+      'data/bodyweights.json',
       'README.txt',
     ]);
     expect(encoded.manifest).toMatchObject({
       format: 'powr-backup',
       formatVersion: 1,
-      dataVersion: 1,
+      dataVersion: 2,
       createdAt: '2026-11-23T18:46:40.000+01:00',
-      counts: { meta: 0, settings: 1, sessions: 1, sets: 1 },
+      counts: { meta: 0, settings: 1, sessions: 1, sets: 1, plans: 0, plannedSessions: 0 },
       dateRange: { from: '2026-11-23', to: '2026-11-23' },
     });
   });

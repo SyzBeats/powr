@@ -1,7 +1,17 @@
-import type { LoggedSet, Session } from '@powr/domain';
+import type {
+  BodyweightEntry,
+  EquipmentProfile,
+  LoggedSet,
+  MeetInfo,
+  Plan,
+  PlannedSession,
+  Profile,
+  Session,
+  TrainingBreak,
+} from '@powr/domain';
 
 import type { z } from '../zod';
-import type { metaRecordSchema, settingsRecordSchema } from './v1';
+import type { metaRecordSchema, settingsRecordSchema } from './v2';
 
 // Schema-free on purpose: the app's startup path (Dexie repositories, boot) imports this module
 // through the package root, while the Zod record schemas load only with the backup code path
@@ -17,6 +27,14 @@ export interface RawRecordMap {
   settings: SettingsRecord;
   sessions: Session;
   sets: LoggedSet;
+  // dataVersion 2 (M2): onboarding and planning.
+  profile: Profile;
+  equipmentProfiles: EquipmentProfile;
+  plans: Plan;
+  plannedSessions: PlannedSession;
+  breaks: TrainingBreak;
+  meets: MeetInfo;
+  bodyweights: BodyweightEntry;
 }
 
 export type RawTableName = keyof RawRecordMap;
@@ -28,10 +46,29 @@ export const RAW_TABLE_KEYS = {
   settings: 'id',
   sessions: 'id',
   sets: 'id',
+  profile: 'id',
+  equipmentProfiles: 'id',
+  plans: 'id',
+  plannedSessions: 'id',
+  breaks: 'id',
+  meets: 'id',
+  bodyweights: 'id',
 } as const satisfies Record<RawTableName, string>;
 
 export const RAW_TABLE_NAMES = Object.keys(RAW_TABLE_KEYS) as RawTableName[];
 
 export function emptyRawTables(): RawTables {
-  return { meta: [], settings: [], sessions: [], sets: [] };
+  return {
+    meta: [],
+    settings: [],
+    sessions: [],
+    sets: [],
+    profile: [],
+    equipmentProfiles: [],
+    plans: [],
+    plannedSessions: [],
+    breaks: [],
+    meets: [],
+    bodyweights: [],
+  };
 }

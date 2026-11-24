@@ -10,7 +10,15 @@ export type RecordMigration = (table: string, record: unknown) => unknown;
  */
 export type MigrationChain = Readonly<Record<number, RecordMigration>>;
 
-export const MIGRATIONS: MigrationChain = {};
+/**
+ * 1 → 2 (M2, TD-19): seven new tables (profile, equipment profiles, plans, planned sessions,
+ * breaks, meets, bodyweights) and two optional settings fields (`weekStart`, `overrides`). Every
+ * v1 record is already valid at v2, so the step passes records through unchanged; it exists so
+ * that the Dexie upgrade and backup import walk the chain like for any later version.
+ */
+const v1ToV2: RecordMigration = (_table, record) => record;
+
+export const MIGRATIONS: MigrationChain = { 1: v1ToV2 };
 
 export function migrateRecord(
   table: string,

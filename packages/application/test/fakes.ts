@@ -1,16 +1,36 @@
 import { builtInContent } from '@powr/content/built-in';
 import { makeInstantTz, type SessionId } from '@powr/domain';
-import { emptyRawTables, type RawTables } from '@powr/formats';
-import { RULES_VERSION } from '@powr/rules';
+import { emptyRawTables, type RawTableName, type RawTables } from '@powr/formats';
+import { rulesStamp, type ParamOverride, type ResolveContext } from '@powr/rules';
+import { BUILT_IN_RULES } from '@powr/rules/built-in';
+import { resolveRules } from '@powr/rules/resolve';
 
-import type { Deps, Repositories, UnitOfWork } from '../src';
+import type { Deps, Repositories, RulesProvider, UnitOfWork } from '../src';
 
+function byDate<T extends { localDate: string }>(entries: T[]): T[] {
+  return entries.toSorted((a, b) =>
+    a.localDate < b.localDate ? -1 : a.localDate > b.localDate ? 1 : 0,
+  );
+}
+
+/** In-memory repositories over plain arrays: the fake of the Dexie adapters (§5.5). */
 function repositories(tables: RawTables): Repositories {
+  const upsert = <T extends RawTableName>(table: T, key: string, record: RawTables[T][number]) => {
+    const keyOf = (entry: RawTables[T][number]) =>
+      (entry as unknown as Record<string, string>)[key];
+    (tables[table] as RawTables[T][number][]) = [
+      ...(tables[table] as RawTables[T][number][]).filter(
+        (entry) => keyOf(entry) !== keyOf(record),
+      ),
+      record,
+    ];
+  };
   return {
     meta: {
       get: async (key) => tables.meta.find((record) => record.key === key),
-      put: async (record) => {
-        tables.meta = [...tables.meta.filter((r) => r.key !== record.key), record];
+      put: async (record) => upsert('meta', 'key', record),
+      delete: async (key) => {
+        tables.meta = tables.meta.filter((record) => record.key !== key);
       },
     },
     settings: {
@@ -22,9 +42,13 @@ function repositories(tables: RawTables): Repositories {
     sessions: {
       get: async (id) => tables.sessions.find((session) => session.id === id),
       getActive: async () => tables.sessions.find((session) => session.status === 'active'),
-      put: async (session) => {
-        tables.sessions = [...tables.sessions.filter((s) => s.id !== session.id), session];
-      },
+      put: async (session) => upsert('sessions', 'id', session),
+      latestBefore: async (date) =>
+        byDate(tables.sessions.filter((session) => session.localDate < date)).at(-1),
+      inRange: async (from, to) =>
+        byDate(
+          tables.sessions.filter((session) => session.localDate >= from && session.localDate <= to),
+        ),
     },
     sets: {
       add: async (set) => {
@@ -32,6 +56,58 @@ function repositories(tables: RawTables): Repositories {
         tables.sets = [...tables.sets, set];
       },
       bySession: async (id) => tables.sets.filter((set) => set.sessionId === id),
+      inRange: async (from, to) =>
+        tables.sets.filter((set) => set.localDate >= from && set.localDate <= to),
+    },
+    profile: {
+      get: async () => tables.profile[0],
+      put: async (profile) => {
+        tables.profile = [profile];
+      },
+    },
+    equipment: {
+      get: async (id) => tables.equipmentProfiles.find((profile) => profile.id === id),
+      list: async () => [...tables.equipmentProfiles],
+      put: async (profile) => upsert('equipmentProfiles', 'id', profile),
+      delete: async (id) => {
+        tables.equipmentProfiles = tables.equipmentProfiles.filter((profile) => profile.id !== id);
+      },
+    },
+    plans: {
+      get: async (id) => tables.plans.find((plan) => plan.id === id),
+      getActive: async () => tables.plans.find((plan) => plan.status === 'active'),
+      put: async (plan) => upsert('plans', 'id', plan),
+    },
+    plannedSessions: {
+      get: async (id) => tables.plannedSessions.find((session) => session.id === id),
+      byPlan: async (planId) =>
+        byDate(tables.plannedSessions.filter((session) => session.planId === planId)),
+      inRange: async (from, to) =>
+        byDate(
+          tables.plannedSessions.filter(
+            (session) => session.localDate >= from && session.localDate <= to,
+          ),
+        ),
+      putMany: async (sessions) => {
+        for (const session of sessions) upsert('plannedSessions', 'id', session);
+      },
+      deleteMany: async (ids) => {
+        tables.plannedSessions = tables.plannedSessions.filter(
+          (session) => !ids.includes(session.id),
+        );
+      },
+    },
+    breaks: {
+      get: async (id) => tables.breaks.find((entry) => entry.id === id),
+      list: async () => tables.breaks.toSorted((a, b) => (a.startDate < b.startDate ? -1 : 1)),
+      put: async (entry) => upsert('breaks', 'id', entry),
+    },
+    meets: {
+      list: async () => [...tables.meets],
+      put: async (meet) => upsert('meets', 'id', meet),
+    },
+    bodyweights: {
+      put: async (entry) => upsert('bodyweights', 'id', entry),
     },
     raw: {
       readAll: async () => structuredClone(tables),
@@ -61,9 +137,18 @@ function createMemoryUow(initial: RawTables = emptyRawTables()) {
   return { uow, snapshot: () => structuredClone(state) };
 }
 
-export function createTestDeps(initial?: RawTables) {
+/** The shipped registry, resolved like the app's lazy provider does. */
+export const testRules: RulesProvider = {
+  version: rulesStamp(BUILT_IN_RULES),
+  resolve: async (context: ResolveContext, overrides: readonly ParamOverride[] = []) => {
+    const { rules, issues } = resolveRules(BUILT_IN_RULES, context, overrides);
+    return { rules, issues };
+  },
+};
+
+export function createTestDeps(initial?: RawTables, options: { readonly start?: string } = {}) {
   const memory = createMemoryUow(initial);
-  let epochMs = Date.parse('2026-11-24T17:00:00Z');
+  let epochMs = Date.parse(options.start ?? '2026-11-24T17:00:00Z');
   let idCounter = 0;
   const runtime = { activeSession: null as { id: SessionId; build: string } | null };
   const savedFiles: { name: string; bytes: Uint8Array }[] = [];
@@ -78,6 +163,11 @@ export function createTestDeps(initial?: RawTables) {
       sessionSets: () => unsupported(),
       settings: () => unsupported(),
       meta: () => unsupported(),
+      profile: () => unsupported(),
+      equipmentProfiles: () => unsupported(),
+      activePlan: () => unsupported(),
+      plannedSessions: () => unsupported(),
+      breaks: () => unsupported(),
     },
     clock: {
       now: () => {
@@ -87,7 +177,7 @@ export function createTestDeps(initial?: RawTables) {
     },
     ids: { next: () => `id-${String(++idCounter).padStart(4, '0')}` },
     content: builtInContent(),
-    rulesVersion: RULES_VERSION,
+    rules: testRules,
     app: { version: '0.0.0', build: 'test' },
     runtime: {
       setActiveSession: async (value) => {
@@ -123,6 +213,10 @@ export function createTestDeps(initial?: RawTables) {
     safetySnapshots,
     cancelNextSave: () => {
       saveOutcome = 'cancelled';
+    },
+    /** Moves the fake clock forward. */
+    advanceDays: (days: number) => {
+      epochMs += days * 86_400_000;
     },
   };
 }

@@ -1,0 +1,3340 @@
+{
+  "format": 1,
+  "version": "1.1.0",
+  "hash": "fc07efc1c16a082c2f8e20cab2e26920f71a725fffc2b05252486aa6179dcbfd",
+  "params": [
+    {
+      "id": "bodyweight.rate.windowDays",
+      "value": {
+        "min": 14,
+        "max": 28
+      },
+      "unit": "days",
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.powr-eb-nutrition"
+      ],
+      "ebRef": "EB §Nutrition › Trend smoothing (rate = regression slope over the last 14–28 days); PRD BOD-02",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp",
+      "note": "The slope uses the readings of the last 28 days and needs them to span at least 14 days."
+    },
+    {
+      "id": "bodyweight.trend.alphaPerDay",
+      "value": 0.1,
+      "unit": "fraction",
+      "range": {
+        "min": 0.05,
+        "max": 0.15
+      },
+      "guard": {
+        "cutting": {
+          "min": 0.1,
+          "max": 0.15
+        },
+        "slowBulk": {
+          "min": 0.05,
+          "max": 0.1
+        }
+      },
+      "evidence": [
+        "PRACT",
+        "OBS"
+      ],
+      "sources": [
+        "src.fourmilab-hackdiet",
+        "src.khosla1964",
+        "src.powr-eb-nutrition"
+      ],
+      "ebRef": "EB §Defaults › Nutrition (weight trend: daily EMA α 0.1); §Nutrition › Trend smoothing",
+      "verified": true,
+      "userOverridable": true,
+      "since": "mvp",
+      "note": "Missed days use α_eff = 1 − (1 − α)^Δdays. No smoothing parameter is validated (§Gaps #20)."
+    },
+    {
+      "id": "bodyweight.trend.initialWeighIns",
+      "value": {
+        "min": 3,
+        "max": 7
+      },
+      "unit": "mixed",
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.powr-eb-nutrition"
+      ],
+      "ebRef": "EB §Nutrition › Trend smoothing (init = mean of the first 3–7 weigh-ins)",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp",
+      "note": "The trend appears after 3 weigh-ins as their running mean and becomes an EMA after 7."
+    },
+    {
+      "id": "bodyweight.trend.winsorizePct",
+      "value": 2.5,
+      "unit": "pct",
+      "range": {
+        "min": 2,
+        "max": 2.5
+      },
+      "evidence": [
+        "OBS",
+        "INF"
+      ],
+      "sources": [
+        "src.khosla1964",
+        "src.orsama2014",
+        "src.powr-eb-nutrition"
+      ],
+      "ebRef": "EB §Nutrition › Trend smoothing (winsorise readings > ~2–2.5% from trend)",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp"
+    },
+    {
+      "id": "deload.content",
+      "value": {
+        "setsReductionPct": {
+          "min": 40,
+          "max": 60
+        },
+        "rirIncrease": {
+          "min": 2,
+          "max": 3
+        },
+        "loadPct": {
+          "min": 85,
+          "max": 100
+        },
+        "higherRepLoadReductionPct": {
+          "min": 10,
+          "max": 20
+        },
+        "keepExercises": true,
+        "keepFrequency": true,
+        "dropAccessories": "optional"
+      },
+      "unit": "mixed",
+      "guard": {
+        "completeRestForStrengthUsers": false
+      },
+      "evidence": [
+        "INF",
+        "DELPHI/SURVEY",
+        "RCT-T"
+      ],
+      "sources": [
+        "src.bell2023",
+        "src.rogerson2024",
+        "src.coleman2024",
+        "src.powr-eb-progression"
+      ],
+      "ebRef": "EB §Defaults › Deloads (deload content); PRD PRG-11",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp"
+    },
+    {
+      "id": "deload.planned.durationDays",
+      "value": 7,
+      "unit": "days",
+      "evidence": [
+        "DELPHI/SURVEY"
+      ],
+      "sources": [
+        "src.rogerson2024"
+      ],
+      "ebRef": "EB §Defaults › Deloads (~1 week)",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp"
+    },
+    {
+      "id": "deload.planned.everyWeeks",
+      "value": 5,
+      "unit": "weeks",
+      "range": {
+        "min": 3,
+        "max": 8
+      },
+      "guard": {
+        "defaultBand": {
+          "min": 4,
+          "max": 6
+        }
+      },
+      "evidence": [
+        "DELPHI/SURVEY",
+        "INF"
+      ],
+      "sources": [
+        "src.rogerson2024",
+        "src.bell2023"
+      ],
+      "ebRef": "EB §Defaults › Deloads (every 4–6 weeks, user 3–8); PRD PRG-11",
+      "verified": true,
+      "userOverridable": true,
+      "since": "mvp",
+      "note": "Athletes deload every 5.6 ± 2.3 weeks (Rogerson 2024)."
+    },
+    {
+      "id": "deload.planned.postpone",
+      "value": {
+        "weeks": 1,
+        "maxPerMesocycle": 1
+      },
+      "unit": "mixed",
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.powr-prd"
+      ],
+      "ebRef": "PRD PRG-11 (the user can postpone a deload by 1 week, once per mesocycle, or skip it with a note)",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp"
+    },
+    {
+      "id": "deload.reactive",
+      "value": {
+        "signalsRequired": 2,
+        "declineSessions": 2,
+        "lowReadinessDays": 3
+      },
+      "unit": "mixed",
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.powr-eb-progression"
+      ],
+      "ebRef": "EB §Progression › Deloads (reactive trigger: any 2 signals); PRD PRG-12",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp",
+      "note": "Pulls the scheduled deload forward; never adds an extra one."
+    },
+    {
+      "id": "deload.returnFromBreak",
+      "value": [
+        {
+          "maxDays": 7,
+          "action": "resume",
+          "loadPct": null,
+          "setsPct": null,
+          "rirAdd": 0,
+          "rampWeeks": null
+        },
+        {
+          "maxDays": 14,
+          "action": "reduce",
+          "loadPct": {
+            "min": 90,
+            "max": 95
+          },
+          "setsPct": null,
+          "rirAdd": 1,
+          "rampWeeks": {
+            "min": 1,
+            "max": 2
+          }
+        },
+        {
+          "maxDays": 28,
+          "action": "reduce",
+          "loadPct": {
+            "min": 85,
+            "max": 90
+          },
+          "setsPct": {
+            "min": 60,
+            "max": 70
+          },
+          "rirAdd": 0,
+          "rampWeeks": {
+            "min": 2,
+            "max": 2
+          }
+        },
+        {
+          "maxDays": 56,
+          "action": "reentry",
+          "loadPct": {
+            "min": 75,
+            "max": 85
+          },
+          "setsPct": {
+            "min": 50,
+            "max": 50
+          },
+          "rirAdd": 0,
+          "rampWeeks": {
+            "min": 3,
+            "max": 4
+          }
+        },
+        {
+          "maxDays": null,
+          "action": "recalibrate",
+          "loadPct": null,
+          "setsPct": null,
+          "rirAdd": 0,
+          "rampWeeks": null
+        }
+      ],
+      "unit": "table",
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.mcmaster2013",
+        "src.hwang2017",
+        "src.powr-eb-progression"
+      ],
+      "ebRef": "EB §Progression › Breaks (return-from-break algorithm); §Defaults › Deloads; PRD PRG-13",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp",
+      "note": "Days since the lift was last trained. The EB's bands leave days 29–34 and 57–90 open; they fall into the next row (\"5–8 weeks\" from day 29, \"rebuild\" after 8 weeks), the more cautious side."
+    },
+    {
+      "id": "deload.returnFromBreak.sorenessNoteAfterDays",
+      "value": 10,
+      "unit": "days",
+      "evidence": [
+        "INF",
+        "RCT-T"
+      ],
+      "sources": [
+        "src.coleman2024",
+        "src.powr-eb-progression"
+      ],
+      "ebRef": "EB §Progression › Breaks (expect extra soreness for 1–2 sessions after > 10 days)",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp"
+    },
+    {
+      "id": "load.curve.classMap",
+      "value": {
+        "benchLike": "equation",
+        "legPressLike": "nuzzoLegPress",
+        "pooled": "nuzzoPooled"
+      },
+      "unit": "none",
+      "evidence": [
+        "MA",
+        "INF"
+      ],
+      "sources": [
+        "src.nuzzo2024",
+        "src.powr-eb-load"
+      ],
+      "ebRef": "EB §Load › Reps at %1RM (load-for-target hierarchy); §Gaps #5; technical concept §8.7.4 (E-3)",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp",
+      "note": "Replaced per exercise by the user's fitted curve once enough data exist (not in M1)."
+    },
+    {
+      "id": "load.curve.nuzzoBench",
+      "value": [
+        {
+          "pct": 95,
+          "reps": 2.59
+        },
+        {
+          "pct": 90,
+          "reps": 4.11
+        },
+        {
+          "pct": 85,
+          "reps": 6.23
+        },
+        {
+          "pct": 80,
+          "reps": 8.82
+        },
+        {
+          "pct": 75,
+          "reps": 11.51
+        },
+        {
+          "pct": 70,
+          "reps": 14.08
+        },
+        {
+          "pct": 65,
+          "reps": 16.59
+        },
+        {
+          "pct": 60,
+          "reps": 19.34
+        },
+        {
+          "pct": 55,
+          "reps": 22.79
+        },
+        {
+          "pct": 50,
+          "reps": 27.25
+        },
+        {
+          "pct": 40,
+          "reps": 40.45
+        },
+        {
+          "pct": 30,
+          "reps": 62.62
+        },
+        {
+          "pct": 20,
+          "reps": 100.02
+        }
+      ],
+      "unit": "table",
+      "evidence": [
+        "MA"
+      ],
+      "sources": [
+        "src.nuzzo2024"
+      ],
+      "ebRef": "EB §Load › Reps at %1RM (Nuzzo 2024 table, bench means)",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp"
+    },
+    {
+      "id": "load.curve.nuzzoLegPress",
+      "value": [
+        {
+          "pct": 95,
+          "reps": 7.04
+        },
+        {
+          "pct": 90,
+          "reps": 8.69
+        },
+        {
+          "pct": 85,
+          "reps": 10.69
+        },
+        {
+          "pct": 80,
+          "reps": 13.05
+        },
+        {
+          "pct": 75,
+          "reps": 15.79
+        },
+        {
+          "pct": 70,
+          "reps": 18.96
+        },
+        {
+          "pct": 65,
+          "reps": 22.59
+        },
+        {
+          "pct": 60,
+          "reps": 26.74
+        },
+        {
+          "pct": 55,
+          "reps": 31.47
+        },
+        {
+          "pct": 50,
+          "reps": 36.86
+        },
+        {
+          "pct": 40,
+          "reps": 49.87
+        },
+        {
+          "pct": 30,
+          "reps": 66.47
+        },
+        {
+          "pct": 20,
+          "reps": 87.62
+        }
+      ],
+      "unit": "table",
+      "evidence": [
+        "MA"
+      ],
+      "sources": [
+        "src.nuzzo2024"
+      ],
+      "ebRef": "EB §Load › Reps at %1RM (Nuzzo 2024 table, leg-press means); §Defaults › Load (load for target)",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp",
+      "note": "The leg-press confidence intervals are very wide (e.g. 7.04 reps [1.67–29.75] at 95%)."
+    },
+    {
+      "id": "load.curve.nuzzoPooled",
+      "value": [
+        {
+          "pct": 95,
+          "reps": 3.28
+        },
+        {
+          "pct": 90,
+          "reps": 4.94
+        },
+        {
+          "pct": 85,
+          "reps": 7.15
+        },
+        {
+          "pct": 80,
+          "reps": 9.75
+        },
+        {
+          "pct": 75,
+          "reps": 12.37
+        },
+        {
+          "pct": 70,
+          "reps": 14.8
+        },
+        {
+          "pct": 65,
+          "reps": 17.11
+        },
+        {
+          "pct": 60,
+          "reps": 19.53
+        },
+        {
+          "pct": 55,
+          "reps": 22.43
+        },
+        {
+          "pct": 50,
+          "reps": 25.99
+        },
+        {
+          "pct": 40,
+          "reps": 35.75
+        },
+        {
+          "pct": 30,
+          "reps": 50.5
+        },
+        {
+          "pct": 20,
+          "reps": 72.75
+        }
+      ],
+      "unit": "table",
+      "evidence": [
+        "MA"
+      ],
+      "sources": [
+        "src.nuzzo2024"
+      ],
+      "ebRef": "EB §Load › Reps at %1RM (Nuzzo 2024 table, pooled means)",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp",
+      "note": "Mean reps to failure at a %1RM; the engine inverts it, anchored at 1 rep = 100%."
+    },
+    {
+      "id": "load.curve.rts",
+      "value": [
+        {
+          "reff": 1,
+          "pct": 100
+        },
+        {
+          "reff": 1.5,
+          "pct": 97.8
+        },
+        {
+          "reff": 2,
+          "pct": 95.5
+        },
+        {
+          "reff": 2.5,
+          "pct": 93.9
+        },
+        {
+          "reff": 3,
+          "pct": 92.2
+        },
+        {
+          "reff": 3.5,
+          "pct": 90.7
+        },
+        {
+          "reff": 4,
+          "pct": 89.2
+        },
+        {
+          "reff": 4.5,
+          "pct": 87.8
+        },
+        {
+          "reff": 5,
+          "pct": 86.3
+        },
+        {
+          "reff": 5.5,
+          "pct": 85
+        },
+        {
+          "reff": 6,
+          "pct": 83.7
+        },
+        {
+          "reff": 6.5,
+          "pct": 82.4
+        },
+        {
+          "reff": 7,
+          "pct": 81.1
+        },
+        {
+          "reff": 7.5,
+          "pct": 79.9
+        },
+        {
+          "reff": 8,
+          "pct": 78.6
+        },
+        {
+          "reff": 8.5,
+          "pct": 77.4
+        },
+        {
+          "reff": 9,
+          "pct": 76.2
+        },
+        {
+          "reff": 9.5,
+          "pct": 75.1
+        },
+        {
+          "reff": 10,
+          "pct": 73.9
+        },
+        {
+          "reff": 10.5,
+          "pct": 72.3
+        },
+        {
+          "reff": 11,
+          "pct": 70.7
+        },
+        {
+          "reff": 11.5,
+          "pct": 69.4
+        },
+        {
+          "reff": 12,
+          "pct": 68
+        },
+        {
+          "reff": 12.5,
+          "pct": 66.7
+        },
+        {
+          "reff": 13,
+          "pct": 65.3
+        },
+        {
+          "reff": 13.5,
+          "pct": 64
+        }
+      ],
+      "unit": "table",
+      "evidence": [
+        "PRACT"
+      ],
+      "sources": [
+        "src.fitnessvolt-rts-chart",
+        "src.zourdos2016"
+      ],
+      "ebRef": "EB §Load › RTS chart (one-dimensional lookup)",
+      "verified": false,
+      "userOverridable": false,
+      "since": "mvp",
+      "note": "Transcribed from a secondary source. Beyond 13.5 effective reps the engine follows Wathan, scaled to meet the chart there. The chart's source warns it is a guide, assumes a fresh set and is less reliable above 10 reps and on isolation lifts."
+    },
+    {
+      "id": "load.e1rm.equation",
+      "value": "wathan",
+      "unit": "none",
+      "guard": {
+        "epleyBrzyckiReliableUpToReff": 6
+      },
+      "evidence": [
+        "PRACT",
+        "OBS",
+        "INF"
+      ],
+      "sources": [
+        "src.mayhew2008",
+        "src.reynolds2006",
+        "src.powr-eb-load"
+      ],
+      "ebRef": "EB §Defaults › Load (e1RM formula); §Load › Rep-max equations; §Gaps #4",
+      "verified": true,
+      "userOverridable": true,
+      "since": "mvp",
+      "note": "Applies to bench-like exercises (load.curve.classMap). \"rts\" selects the exact RTS lookup, which the EB shows tracks Wathan within about 0.6 points for 2–10 effective reps."
+    },
+    {
+      "id": "load.e1rm.setOrderDecay",
+      "value": 0.85,
+      "unit": "fraction",
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.marzagao2026",
+        "src.powr-technical-concept"
+      ],
+      "ebRef": "EB §Load › e1RM algorithm (\"down-weight sets after the first working set\"); technical concept §8.7.4",
+      "verified": false,
+      "userOverridable": false,
+      "since": "mvp",
+      "note": "The EB gives the direction only; 0.85 per later working set is a POWR design value."
+    },
+    {
+      "id": "load.e1rm.weightByReff",
+      "value": [
+        {
+          "maxReff": 8,
+          "weight": 1
+        },
+        {
+          "maxReff": 12,
+          "weight": 0.5
+        },
+        {
+          "maxReff": 15,
+          "weight": 0.1
+        }
+      ],
+      "unit": "table",
+      "guard": {
+        "excludedAboveReff": 15
+      },
+      "evidence": [
+        "MA",
+        "INF"
+      ],
+      "sources": [
+        "src.halperin2022",
+        "src.reynolds2006",
+        "src.powr-eb-load"
+      ],
+      "ebRef": "EB §Defaults › Load (set weighting; ≤ 0.1 or exclude above r_eff 12–15)",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp"
+    },
+    {
+      "id": "load.e1rm.weightByRpe",
+      "value": [
+        {
+          "minRpe": 8,
+          "weight": 1
+        },
+        {
+          "minRpe": 7,
+          "weight": 0.5
+        },
+        {
+          "minRpe": 0,
+          "weight": 0.1
+        }
+      ],
+      "unit": "table",
+      "evidence": [
+        "MA",
+        "INF"
+      ],
+      "sources": [
+        "src.halperin2022",
+        "src.powr-eb-load"
+      ],
+      "ebRef": "EB §Defaults › Load (set weighting); §Load › e1RM algorithm",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp",
+      "note": "The set weight is the lower of its RPE weight and its r_eff weight."
+    },
+    {
+      "id": "load.reanchor.trigger",
+      "value": {
+        "maxReps": 3,
+        "minRpe": 9
+      },
+      "unit": "mixed",
+      "evidence": [
+        "OBS",
+        "INF"
+      ],
+      "sources": [
+        "src.braith1993",
+        "src.powr-eb-load"
+      ],
+      "ebRef": "EB §Defaults › Load (re-anchoring on any RPE ≥ 9 single or triple); §Load › e1RM drift",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp",
+      "note": "Data only in M1; the per-exercise correction factor it triggers is not implemented yet."
+    },
+    {
+      "id": "load.rirBias",
+      "value": [
+        {
+          "minRir": 0,
+          "add": 0
+        },
+        {
+          "minRir": 3,
+          "add": 0.5
+        }
+      ],
+      "unit": "table",
+      "guard": {
+        "addForRir3AndAbove": {
+          "min": 0.5,
+          "max": 1
+        }
+      },
+      "evidence": [
+        "MA",
+        "RCT"
+      ],
+      "sources": [
+        "src.halperin2022",
+        "src.refalo2024a"
+      ],
+      "ebRef": "EB §Defaults › Load (RIR bias correction); §Load › RIR accuracy; §Gaps #26",
+      "verified": false,
+      "userOverridable": false,
+      "since": "mvp",
+      "note": "Lifters under-call RIR by about one rep, more so far from failure. Preliminary until the verification pass of EB §Gaps #26 (Russo 2025); learned per user from v1.3 (PRG-15)."
+    },
+    {
+      "id": "load.trend.changeThresholds",
+      "value": {
+        "likelyTe": 1,
+        "sustainSessions": 2,
+        "veryLikelyTe": 2.8
+      },
+      "unit": "mixed",
+      "guard": {
+        "sustainSessions": {
+          "min": 2,
+          "max": 3
+        }
+      },
+      "evidence": [
+        "SR",
+        "INF"
+      ],
+      "sources": [
+        "src.hopkins2000",
+        "src.grgic2020",
+        "src.powr-eb-load"
+      ],
+      "ebRef": "EB §Defaults › Load (\"likely real\" > 1 TE for ≥ 2–3 sessions; \"very likely\" > 2.8 TE)",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp"
+    },
+    {
+      "id": "load.trend.heavySet",
+      "value": {
+        "maxReff": 5,
+        "minRpe": 9
+      },
+      "unit": "mixed",
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.powr-eb-load",
+        "src.powr-technical-concept"
+      ],
+      "ebRef": "EB §Load › Real change (\"heavy, low-rep, high-RPE sets\"); technical concept §8.7.5",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp"
+    },
+    {
+      "id": "load.trend.noiseHeavySd",
+      "value": 0.04,
+      "unit": "fraction",
+      "range": {
+        "min": 0.03,
+        "max": 0.05
+      },
+      "evidence": [
+        "SR"
+      ],
+      "sources": [
+        "src.grgic2020"
+      ],
+      "ebRef": "EB §Defaults › Load (smoothing noise 3–5% for heavy, low-rep, RPE ≥ 9 sets); §Load › Real change",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp"
+    },
+    {
+      "id": "load.trend.noiseTypicalSd",
+      "value": 0.09,
+      "unit": "fraction",
+      "range": {
+        "min": 0.08,
+        "max": 0.1
+      },
+      "evidence": [
+        "PREPRINT"
+      ],
+      "sources": [
+        "src.marzagao2026"
+      ],
+      "ebRef": "EB §Defaults › Load (smoothing noise 8–10% for typical logged sets); §Load › e1RM algorithm",
+      "verified": false,
+      "userOverridable": false,
+      "since": "mvp",
+      "note": "The 8.5–10% within-person spread comes from preprint app data (verify before hard-coding)."
+    },
+    {
+      "id": "load.trend.noviceWidening",
+      "value": {
+        "weeks": 8,
+        "factor": 1.5
+      },
+      "unit": "mixed",
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.powr-eb-load"
+      ],
+      "ebRef": "EB §Load › e1RM drift (\"wider bands for beginners in their first 4–8 weeks\"); PRD PRG-02",
+      "verified": false,
+      "userOverridable": false,
+      "since": "mvp",
+      "note": "The EB gives the window; the factor 1.5 is a POWR design value."
+    },
+    {
+      "id": "load.trend.processSdPerWeek",
+      "value": {
+        "novice": 0.02,
+        "intermediate": 0.01,
+        "advanced": 0.005
+      },
+      "unit": "fraction",
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.powr-technical-concept",
+        "src.powr-eb-progression"
+      ],
+      "ebRef": "technical concept §8.7.5 (trend.processSdPctPerWeek by level); EB §Progression › Classification",
+      "verified": false,
+      "userOverridable": false,
+      "since": "mvp",
+      "note": "Weekly random-walk SD of ln(e1RM), scaled to the EB's slope bands (novice ≥ 1%/week, intermediate 0.25–1%, advanced < 0.25%). A POWR design value; calibrate against real logs."
+    },
+    {
+      "id": "load.trend.reference",
+      "value": {
+        "weeks": 4,
+        "sessions": 3
+      },
+      "unit": "mixed",
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.powr-technical-concept"
+      ],
+      "ebRef": "technical concept §8.7.5 (reference 4 weeks or 3 sessions earlier, whichever is older)",
+      "verified": false,
+      "userOverridable": false,
+      "since": "mvp",
+      "note": "A POWR design value; the EB says only that a change must hold for 2–3 sessions."
+    },
+    {
+      "id": "load.trend.strengthMaxReff",
+      "value": 8,
+      "unit": "reps",
+      "range": {
+        "min": 6,
+        "max": 8
+      },
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.mayhew2008",
+        "src.powr-eb-load"
+      ],
+      "ebRef": "EB §Load › e1RM drift (\"strength e1RM mainly from sets with r_eff ≤ 6–8\"); PRD PRG-02",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp"
+    },
+    {
+      "id": "load.trend.typicalErrorCv",
+      "value": {
+        "novice": 0.055,
+        "intermediate": 0.033,
+        "advanced": 0.033
+      },
+      "unit": "fraction",
+      "evidence": [
+        "SR"
+      ],
+      "sources": [
+        "src.grgic2020",
+        "src.hopkins2000"
+      ],
+      "ebRef": "EB §Load › Real change (trained median CV 3.3%, untrained 5.5%); technical concept §8.7.5",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp"
+    },
+    {
+      "id": "load.unknownEffort.eligibleForE1rmPr",
+      "value": false,
+      "unit": "none",
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.powr-technical-concept"
+      ],
+      "ebRef": "technical concept §8.7.7 (E-1); PRD MOT-01",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp",
+      "note": "Sets without effort never create e1RM PRs; load and rep PRs are unaffected."
+    },
+    {
+      "id": "load.unknownEffort.personalPrior",
+      "value": {
+        "windowWeeks": 8,
+        "repTolerance": 3
+      },
+      "unit": "mixed",
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.powr-technical-concept"
+      ],
+      "ebRef": "technical concept §8.7.7 (E-1)",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp",
+      "note": "Median entered RIR over the last 8 weeks at a rep count within ±3."
+    },
+    {
+      "id": "load.unknownEffort.priorRirDefault",
+      "value": 2,
+      "unit": "rir",
+      "range": {
+        "min": 2,
+        "max": 3
+      },
+      "evidence": [
+        "OBS",
+        "INF"
+      ],
+      "sources": [
+        "src.zourdos2016",
+        "src.powr-technical-concept"
+      ],
+      "ebRef": "EB §Defaults › Load (effective reps; unknown RIR → assume 2–3); technical concept §8.7.7 (E-1)",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp",
+      "note": "Used when the user has no entered RIR for the exercise at a similar rep count."
+    },
+    {
+      "id": "load.unknownEffort.priorRirSd",
+      "value": 1.5,
+      "unit": "reps",
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.powr-technical-concept"
+      ],
+      "ebRef": "technical concept §8.7.7 (E-1); EB §Defaults › Load",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp",
+      "note": "Widens the trend's measurement noise by about 4.5% in quadrature."
+    },
+    {
+      "id": "load.unknownEffort.weightMultiplier",
+      "value": 0.5,
+      "unit": "fraction",
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.powr-technical-concept"
+      ],
+      "ebRef": "technical concept §8.7.7 (E-1); EB §Defaults › Load",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp"
+    },
+    {
+      "id": "monitoring.readiness.adjustments",
+      "value": {
+        "topSetRirAdd": 1,
+        "dropBackoffSets": {
+          "min": 1,
+          "max": 2
+        }
+      },
+      "unit": "mixed",
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.powr-eb-monitoring"
+      ],
+      "ebRef": "EB §Monitoring › Readiness (cap the top-set RPE at −1; drop 1–2 back-off sets); PRD RDY-03",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp"
+    },
+    {
+      "id": "monitoring.readiness.baseline",
+      "value": {
+        "windowDays": 28,
+        "minEntries": 7
+      },
+      "unit": "mixed",
+      "guard": {
+        "minEntries": {
+          "min": 7,
+          "max": 14
+        }
+      },
+      "evidence": [
+        "PRACT",
+        "INF"
+      ],
+      "sources": [
+        "src.saw2016",
+        "src.powr-eb-monitoring"
+      ],
+      "ebRef": "EB §Defaults › Monitoring (z-score vs 28-day baseline; needs ≥ 7–14 entries); PRD RDY-02",
+      "verified": true,
+      "userOverridable": true,
+      "since": "mvp"
+    },
+    {
+      "id": "monitoring.readiness.thresholds",
+      "value": {
+        "lowZ": -1,
+        "modifyZ": -1.5,
+        "prsLow": 3,
+        "prsConsecutiveDays": 2
+      },
+      "unit": "mixed",
+      "guard": {
+        "never": "cancel a session on HRV alone"
+      },
+      "evidence": [
+        "PRACT",
+        "INF"
+      ],
+      "sources": [
+        "src.saw2016",
+        "src.powr-eb-monitoring"
+      ],
+      "ebRef": "EB §Defaults › Monitoring (z ≤ −1.0 low; z ≤ −1.5 or PRS ≤ 3 twice → modify); PRD RDY-02",
+      "verified": true,
+      "userOverridable": true,
+      "since": "mvp"
+    },
+    {
+      "id": "monitoring.spacing",
+      "value": {
+        "nonFailureHours": {
+          "min": 24,
+          "max": 48
+        },
+        "failureHours": {
+          "min": 48,
+          "max": 72
+        },
+        "unaccustomedDays": {
+          "min": 3,
+          "max": 5
+        },
+        "highStressExtraHours": 24
+      },
+      "unit": "mixed",
+      "evidence": [
+        "RCT-T",
+        "INF"
+      ],
+      "sources": [
+        "src.morannavarro2017",
+        "src.refalo2023b",
+        "src.powr-eb-monitoring"
+      ],
+      "ebRef": "EB §Defaults › Monitoring (spacing between hard sessions); §Monitoring › Recovery",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp"
+    },
+    {
+      "id": "planning.mesocycle.accumulationWeeks",
+      "value": {
+        "min": 3,
+        "max": 8
+      },
+      "unit": "weeks",
+      "evidence": [
+        "DELPHI/SURVEY",
+        "INF"
+      ],
+      "sources": [
+        "src.powr-prd",
+        "src.rogerson2024",
+        "src.kassiano2022"
+      ],
+      "ebRef": "PRD PLN-08 (N accumulation weeks + 1 deload; default 4–6, user 3–8); EB §Defaults › Deloads, › Session (fixed within a 4–8-week mesocycle)",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp",
+      "note": "The allowed range for a plan; the template states the default (5 weeks in every MVP template)."
+    },
+    {
+      "id": "planning.missed.mergePriorities",
+      "value": [
+        "primary"
+      ],
+      "unit": "none",
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.powr-prd"
+      ],
+      "ebRef": "PRD PLN-11 (merge key work of a missed session into the next session; never drop planned work silently)",
+      "verified": false,
+      "userOverridable": true,
+      "since": "mvp",
+      "note": "POWR reading of \"key work\": the primary slots; the per-session caps still apply."
+    },
+    {
+      "id": "planning.novice.maxWorkingExercises",
+      "value": 5,
+      "unit": "none",
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.powr-prd"
+      ],
+      "ebRef": "PRD PLN-02 (novices get ≤ 5 working exercises per session); technical concept §8.7.6 step 2",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp"
+    },
+    {
+      "id": "planning.rotation.perMuscle",
+      "value": {
+        "min": 1,
+        "max": 2
+      },
+      "unit": "none",
+      "evidence": [
+        "SR",
+        "RCT-T",
+        "INF"
+      ],
+      "sources": [
+        "src.kassiano2022",
+        "src.bazvalle2019",
+        "src.powr-eb-session"
+      ],
+      "ebRef": "EB §Defaults › Session (exercise rotation: fixed within a mesocycle; rotate 1–2 per muscle between mesocycles); PRD PLN-05, PLN-13",
+      "verified": true,
+      "userOverridable": true,
+      "since": "mvp"
+    },
+    {
+      "id": "planning.sessionBudget.tolerancePct",
+      "value": 10,
+      "unit": "pct",
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.powr-prd"
+      ],
+      "ebRef": "PRD PLN-01 item 5 and PLN-14 (estimated duration within the budget with ≤ 10% tolerance)",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp"
+    },
+    {
+      "id": "planning.slot.sets",
+      "value": {
+        "min": 2,
+        "max": 5
+      },
+      "unit": "sets",
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.powr-prd",
+        "src.powr-eb-volume"
+      ],
+      "ebRef": "PRD PLN-07 examples (3 × 10, 5 × 3, 4 × 5, 3 × 8–12); EB §Defaults › Volume (weekly and per-session volume)",
+      "verified": false,
+      "userOverridable": true,
+      "since": "mvp",
+      "note": "POWR design value: the working sets one exercise slot gets per session. The EB sets weekly and per-session volume per muscle, not sets per exercise; more volume comes from more slots."
+    },
+    {
+      "id": "planning.strength.accessorySets",
+      "value": 3,
+      "unit": "sets",
+      "evidence": [
+        "DELPHI/SURVEY",
+        "INF"
+      ],
+      "sources": [
+        "src.androulakiskorakakis2021",
+        "src.powr-prd"
+      ],
+      "ebRef": "EB §Volume › Minimum and maintenance doses (powerlifting accessories 1–3 per lift at RPE 7–9, 6–10 reps); PRD PLN-07",
+      "verified": false,
+      "userOverridable": true,
+      "since": "mvp",
+      "note": "POWR design value: working sets of a powerlifting accessory slot (no muscle bands apply to them, PLN-03)."
+    },
+    {
+      "id": "planning.variety.pool",
+      "value": 3,
+      "unit": "none",
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.bazvalle2019",
+        "src.powr-technical-concept"
+      ],
+      "ebRef": "EB §Session › Exercise selection (random variation only as opt-in); technical concept §8.7.1 (seeded variety mode)",
+      "verified": false,
+      "userOverridable": true,
+      "since": "mvp",
+      "note": "POWR design value: variety mode picks among the best N candidates of a slot with the plan seed."
+    },
+    {
+      "id": "planning.volume.startPosition",
+      "value": {
+        "novice": 0.2,
+        "intermediate": 0.5,
+        "advanced": 0.5,
+        "priority": 0.8
+      },
+      "unit": "fraction",
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.powr-prd",
+        "src.powr-eb-volume"
+      ],
+      "ebRef": "PRD PLN-03 (novices in the lower part of the band, intermediate and advanced mid-band, priority muscles in the upper part); EB §Volume › Individual response",
+      "verified": false,
+      "userOverridable": true,
+      "since": "mvp",
+      "note": "Fractions of the way from the low to the high end of the default band (10–20 fractional sets per muscle, 4–10 heavy sets per lift): novice 12, intermediate and advanced 15, priority 18. The PRD names the parts of the band, not the numbers."
+    },
+    {
+      "id": "progression.apre.sixRm",
+      "value": {
+        "ramp": [
+          {
+            "reps": 10,
+            "pct": 50
+          },
+          {
+            "reps": 6,
+            "pct": 75
+          }
+        ],
+        "adjustments": [
+          {
+            "minReps": 0,
+            "maxReps": 2,
+            "adjustKg": -3.75,
+            "rangeKg": {
+              "min": -5,
+              "max": -2.5
+            }
+          },
+          {
+            "minReps": 3,
+            "maxReps": 4,
+            "adjustKg": -1.25,
+            "rangeKg": {
+              "min": -2.5,
+              "max": 0
+            }
+          },
+          {
+            "minReps": 5,
+            "maxReps": 7,
+            "adjustKg": 0,
+            "rangeKg": {
+              "min": 0,
+              "max": 0
+            }
+          },
+          {
+            "minReps": 8,
+            "maxReps": 12,
+            "adjustKg": 3.75,
+            "rangeKg": {
+              "min": 2.5,
+              "max": 5
+            }
+          },
+          {
+            "minReps": 13,
+            "maxReps": null,
+            "adjustKg": 7.5,
+            "rangeKg": {
+              "min": 5,
+              "max": 10
+            }
+          }
+        ]
+      },
+      "unit": "mixed",
+      "evidence": [
+        "RCT-T",
+        "MA"
+      ],
+      "sources": [
+        "src.mann2010",
+        "src.huang2023",
+        "src.zhang2021"
+      ],
+      "ebRef": "EB §Progression › Progression rules (APRE-6 table); §Defaults › Progression (APRE preset)",
+      "verified": false,
+      "userOverridable": false,
+      "since": "mvp",
+      "note": "The suggested change is the midpoint of each range, then rounded to the equipment. Secondary sources differ slightly and the original tables were not retrieved."
+    },
+    {
+      "id": "progression.calibration",
+      "value": {
+        "exposures": {
+          "min": 1,
+          "max": 2
+        },
+        "targetRir": {
+          "min": 3,
+          "max": 4
+        }
+      },
+      "unit": "mixed",
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.powr-technical-concept",
+        "src.halperin2022"
+      ],
+      "ebRef": "PRD PRG-08; technical concept §8.7.5 (calibration status); EB §Load › RIR accuracy (wide priors)",
+      "verified": false,
+      "userOverridable": false,
+      "since": "mvp",
+      "note": "Data only in M1; a POWR design rule for new users and exercises."
+    },
+    {
+      "id": "progression.classification.slopePctPerWeek",
+      "value": {
+        "noviceFrom": 1,
+        "advancedBelow": 0.25,
+        "minWeeks": 8
+      },
+      "unit": "mixed",
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.acsm2009",
+        "src.powr-eb-progression"
+      ],
+      "ebRef": "EB §Defaults › Expectations (trainee classification by e1RM slope); PRD PRG-10",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp"
+    },
+    {
+      "id": "progression.classification.trainingAgeMonths",
+      "value": {
+        "intermediateFrom": 6,
+        "advancedFrom": 24
+      },
+      "unit": "mixed",
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.acsm2009",
+        "src.powr-eb-progression"
+      ],
+      "ebRef": "EB §Progression › Classification (training age < 6 months, 6–24 months, 2–5 years, > 5 years)",
+      "verified": false,
+      "userOverridable": false,
+      "since": "mvp",
+      "note": "The EB lists four training-age bands but no mapping to three levels; mapping 2+ years to advanced is a POWR choice until the observed slope takes over (≥ 8 weeks of data)."
+    },
+    {
+      "id": "progression.double.incrementGuardPct",
+      "value": {
+        "min": 2,
+        "max": 10
+      },
+      "unit": "pct",
+      "evidence": [
+        "POS"
+      ],
+      "sources": [
+        "src.acsm2009"
+      ],
+      "ebRef": "EB §Defaults › Progression (ACSM +2–10% when 1–2 reps over target)",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp",
+      "note": "The engine adds the smallest achievable increment; this is the ACSM reference range."
+    },
+    {
+      "id": "progression.increment.advancedLoadJumpWeeks",
+      "value": {
+        "min": 2,
+        "max": 4
+      },
+      "unit": "weeks",
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.mcmaster2013",
+        "src.powr-eb-progression"
+      ],
+      "ebRef": "EB §Defaults › Progression (advanced: load jump every 2–4 weeks, otherwise reps, sets, RPE)",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp"
+    },
+    {
+      "id": "progression.increment.intermediatePctPerWeek",
+      "value": 1,
+      "unit": "pctPerWeek",
+      "range": {
+        "min": 1,
+        "max": 2.5
+      },
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.mcmaster2013",
+        "src.powr-eb-progression"
+      ],
+      "ebRef": "EB §Defaults › Progression (intermediate +1–2.5% per week)",
+      "verified": true,
+      "userOverridable": true,
+      "since": "mvp"
+    },
+    {
+      "id": "progression.increment.microplateKgPerSide",
+      "value": {
+        "min": 0.25,
+        "max": 0.5
+      },
+      "unit": "kg",
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.powr-eb-progression"
+      ],
+      "ebRef": "EB §Defaults › Progression (microplates 0.25–0.5 kg per side)",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp",
+      "note": "Data only; the plate calculator uses whatever microplates the inventory lists."
+    },
+    {
+      "id": "progression.increment.noviceLowerKg",
+      "value": 2.5,
+      "unit": "kg",
+      "range": {
+        "min": 2.5,
+        "max": 5
+      },
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.mcmaster2013",
+        "src.powr-eb-progression"
+      ],
+      "ebRef": "EB §Defaults › Progression (novice +2.5–5 kg per session, lower body)",
+      "verified": true,
+      "userOverridable": true,
+      "since": "mvp",
+      "note": "The low end; rounded up to the smallest achievable step that reaches it."
+    },
+    {
+      "id": "progression.increment.noviceUpperKg",
+      "value": 1,
+      "unit": "kg",
+      "range": {
+        "min": 1,
+        "max": 2.5
+      },
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.mcmaster2013",
+        "src.powr-eb-progression"
+      ],
+      "ebRef": "EB §Defaults › Progression (novice +1–2.5 kg per session, upper body)",
+      "verified": true,
+      "userOverridable": true,
+      "since": "mvp",
+      "note": "Without microplates this rounds up to the plates' smallest step (e.g. 2.5 kg)."
+    },
+    {
+      "id": "progression.model.accessory",
+      "value": "doubleProgression",
+      "unit": "none",
+      "evidence": [
+        "RCT-T",
+        "POS"
+      ],
+      "sources": [
+        "src.plotkin2022",
+        "src.acsm2009"
+      ],
+      "ebRef": "EB §Defaults › Progression (accessory progression); PRD PRG-04",
+      "verified": true,
+      "userOverridable": true,
+      "since": "mvp"
+    },
+    {
+      "id": "progression.model.mainLift",
+      "value": {
+        "novice": "linear",
+        "intermediate": "rpe",
+        "advanced": "rpe"
+      },
+      "unit": "none",
+      "guard": {
+        "presets": [
+          "apre"
+        ]
+      },
+      "evidence": [
+        "RCT-T",
+        "MA"
+      ],
+      "sources": [
+        "src.helms2018",
+        "src.zhang2021"
+      ],
+      "ebRef": "EB §Defaults › Progression (main-lift progression; fixed % for beginners); PRD PRG-05, PRG-06",
+      "verified": true,
+      "userOverridable": true,
+      "since": "mvp"
+    },
+    {
+      "id": "progression.stall.failedSessions",
+      "value": 2,
+      "unit": "sessions",
+      "evidence": [
+        "PRACT"
+      ],
+      "sources": [
+        "src.powr-eb-progression"
+      ],
+      "ebRef": "EB §Defaults › Progression (stall rule; an untested practitioner convention)",
+      "verified": true,
+      "userOverridable": true,
+      "since": "mvp"
+    },
+    {
+      "id": "progression.stall.resetPct",
+      "value": 10,
+      "unit": "pct",
+      "range": {
+        "min": 5,
+        "max": 10
+      },
+      "evidence": [
+        "PRACT"
+      ],
+      "sources": [
+        "src.powr-eb-progression"
+      ],
+      "ebRef": "EB §Defaults › Progression (stall rule: −5–10% and rebuild)",
+      "verified": true,
+      "userOverridable": true,
+      "since": "mvp"
+    },
+    {
+      "id": "ranking.effectiveness",
+      "value": {
+        "weights": {
+          "credit": 0.4,
+          "evidence": 0.15,
+          "stretch": 0.15,
+          "overload": 0.2,
+          "subRegion": 0.1
+        },
+        "evidenceScore": {
+          "H": 1,
+          "EMG": 0.5,
+          "C": 0
+        }
+      },
+      "unit": "mixed",
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.powr-prd",
+        "src.powr-eb-session",
+        "src.powr-eb-mapping"
+      ],
+      "ebRef": "PRD MAP-03 (credit, evidence strength H > EMG > C, stretch emphasis, overload suitability, sub-region coverage; weights are configurable data); EB §Session › Exercise selection, › ROM, › Mapping",
+      "verified": false,
+      "userOverridable": false,
+      "since": "mvp",
+      "note": "POWR design values (PRD §7.3: \"the weights are an app convention, labelled [INF]\")."
+    },
+    {
+      "id": "scoring.allometric.exponent",
+      "value": 0.67,
+      "unit": "none",
+      "guard": {
+        "empiricalExponents": {
+          "male": 0.55,
+          "female": 0.5
+        }
+      },
+      "evidence": [
+        "NARR",
+        "OBS"
+      ],
+      "sources": [
+        "src.jaric2002",
+        "src.montenegro2026"
+      ],
+      "ebRef": "EB §Scoring › Allometric alternatives (kg / BW^0.67)",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp"
+    },
+    {
+      "id": "scoring.display",
+      "value": {
+        "primary": [
+          "ipfGl",
+          "dots"
+        ],
+        "legacy": [
+          "wilks",
+          "wilks2020"
+        ],
+        "decimals": 2
+      },
+      "unit": "none",
+      "guard": {
+        "informal": "Wilks or DOTS applied to a single squat or deadlift"
+      },
+      "evidence": [
+        "OFFICIAL",
+        "INF"
+      ],
+      "sources": [
+        "src.opl-goodlift",
+        "src.powr-eb-scoring"
+      ],
+      "ebRef": "EB §Defaults › Monitoring (scoring display: IPF GL plus DOTS; Wilks/Wilks2020 legacy)",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp"
+    },
+    {
+      "id": "scoring.dots.bodyweightClampKg",
+      "value": {
+        "male": {
+          "min": 40,
+          "max": 210
+        },
+        "female": {
+          "min": 40,
+          "max": 150
+        }
+      },
+      "unit": "kg",
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.opl-dots",
+        "src.powr-eb-scoring"
+      ],
+      "ebRef": "EB §Scoring › DOTS (clamp BW)",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp"
+    },
+    {
+      "id": "scoring.dots.coefficients",
+      "value": {
+        "male": [
+          -307.75076,
+          24.0900756,
+          -0.1918759221,
+          0.0007391293,
+          -0.000001093
+        ],
+        "female": [
+          -57.96288,
+          13.6175032,
+          -0.1126655495,
+          0.0005158568,
+          -0.0000010706
+        ]
+      },
+      "unit": "coefficients",
+      "evidence": [
+        "OFFICIAL"
+      ],
+      "sources": [
+        "src.opl-dots"
+      ],
+      "ebRef": "EB §Scoring › DOTS (coef = 500 / (A·x⁴ + B·x³ + C·x² + D·x + E))",
+      "verified": false,
+      "userOverridable": false,
+      "since": "mvp",
+      "note": "Stored in ascending powers (E, D, C, B, A). No official derivation of DOTS exists."
+    },
+    {
+      "id": "scoring.ipfGl.coefficients",
+      "value": {
+        "male": {
+          "classic": {
+            "total": {
+              "a": 1199.72839,
+              "b": 1025.18162,
+              "c": 0.00921
+            },
+            "bench": {
+              "a": 320.98041,
+              "b": 281.40258,
+              "c": 0.01008
+            }
+          },
+          "equipped": {
+            "total": {
+              "a": 1236.25115,
+              "b": 1449.21864,
+              "c": 0.01644
+            },
+            "bench": {
+              "a": 381.22073,
+              "b": 733.79378,
+              "c": 0.02398
+            }
+          }
+        },
+        "female": {
+          "classic": {
+            "total": {
+              "a": 610.32796,
+              "b": 1045.59282,
+              "c": 0.03048
+            },
+            "bench": {
+              "a": 142.40398,
+              "b": 442.52671,
+              "c": 0.04724
+            }
+          },
+          "equipped": {
+            "total": {
+              "a": 758.63878,
+              "b": 949.31382,
+              "c": 0.02435
+            },
+            "bench": {
+              "a": 221.82209,
+              "b": 357.00377,
+              "c": 0.02937
+            }
+          }
+        }
+      },
+      "unit": "coefficients",
+      "evidence": [
+        "OFFICIAL"
+      ],
+      "sources": [
+        "src.opl-goodlift",
+        "src.vcalc-ipf-gl"
+      ],
+      "ebRef": "EB §Scoring › IPF GL (GL = Total × 100 / (A − B·e^(−C·BW)))",
+      "verified": false,
+      "userOverridable": false,
+      "since": "mvp",
+      "note": "The official GL model document could not be opened; only men's classic is independently confirmed."
+    },
+    {
+      "id": "scoring.ipfGl.minBodyweightKg",
+      "value": 35,
+      "unit": "kg",
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.opl-goodlift",
+        "src.powr-eb-scoring"
+      ],
+      "ebRef": "EB §Scoring › IPF GL (0 for BW < 35 kg; floored at 0)",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp"
+    },
+    {
+      "id": "scoring.ipfPoints.coefficients",
+      "value": {
+        "male": {
+          "classic": {
+            "total": {
+              "c1": 310.67,
+              "c2": 857.785,
+              "c3": 53.216,
+              "c4": 147.0835
+            },
+            "bench": {
+              "c1": 86.4745,
+              "c2": 259.155,
+              "c3": 17.57845,
+              "c4": 53.122
+            }
+          },
+          "equipped": {
+            "total": {
+              "c1": 387.265,
+              "c2": 1121.28,
+              "c3": 80.6324,
+              "c4": 222.4896
+            },
+            "bench": {
+              "c1": 133.94,
+              "c2": 441.465,
+              "c3": 35.3938,
+              "c4": 113.0057
+            }
+          }
+        },
+        "female": {
+          "classic": {
+            "total": {
+              "c1": 125.1435,
+              "c2": 228.03,
+              "c3": 34.5246,
+              "c4": 86.8301
+            },
+            "bench": {
+              "c1": 25.0485,
+              "c2": 43.848,
+              "c3": 6.7172,
+              "c4": 13.952
+            }
+          },
+          "equipped": {
+            "total": {
+              "c1": 176.58,
+              "c2": 373.315,
+              "c3": 48.4534,
+              "c4": 110.0103
+            },
+            "bench": {
+              "c1": 49.106,
+              "c2": 124.209,
+              "c3": 23.199,
+              "c4": 67.4926
+            }
+          }
+        }
+      },
+      "unit": "coefficients",
+      "evidence": [
+        "OFFICIAL"
+      ],
+      "sources": [
+        "src.marksteiner2019",
+        "src.opl-ipf"
+      ],
+      "ebRef": "EB §Scoring › IPF Points (2019); §Gaps #17 (Women Equipped Bench C4 = 67.4926)",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp",
+      "note": "The EB research note cross-checked these against the IPF formula document."
+    },
+    {
+      "id": "scoring.ipfPoints.minBodyweightKg",
+      "value": 40,
+      "unit": "kg",
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.opl-ipf",
+        "src.powr-eb-scoring"
+      ],
+      "ebRef": "EB §Scoring › IPF Points (0 for BW < 40 kg; floored at 0)",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp"
+    },
+    {
+      "id": "scoring.wilks.bodyweightClampKg",
+      "value": {
+        "male": {
+          "min": 40,
+          "max": 201.9
+        },
+        "female": {
+          "min": 26.51,
+          "max": 154.53
+        }
+      },
+      "unit": "kg",
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.opl-wilks",
+        "src.powr-eb-scoring"
+      ],
+      "ebRef": "EB §Scoring › Wilks (clamp BW); §Scoring › Implementation (OPL clamps as an app choice)",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp"
+    },
+    {
+      "id": "scoring.wilks.coefficients",
+      "value": {
+        "male": [
+          -216.0475144,
+          16.2606339,
+          -0.002388645,
+          -0.00113732,
+          0.00000701863,
+          -1.291e-8
+        ],
+        "female": [
+          594.31747775582,
+          -27.23842536447,
+          0.82112226871,
+          -0.00930733913,
+          0.00004731582,
+          -9.054e-8
+        ]
+      },
+      "unit": "coefficients",
+      "evidence": [
+        "OFFICIAL"
+      ],
+      "sources": [
+        "src.opl-wilks"
+      ],
+      "ebRef": "EB §Scoring › Wilks (coef = 500 / (a + b·x + … + f·x⁵))",
+      "verified": false,
+      "userOverridable": false,
+      "since": "mvp",
+      "note": "Ascending powers a…f; not yet checked against a primary Wilks publication."
+    },
+    {
+      "id": "scoring.wilks2020.bodyweightClampKg",
+      "value": {
+        "male": {
+          "min": 40,
+          "max": 200.95
+        },
+        "female": {
+          "min": 40,
+          "max": 150.95
+        }
+      },
+      "unit": "kg",
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.opl-wilks2020",
+        "src.powr-eb-scoring"
+      ],
+      "ebRef": "EB §Scoring › Wilks2020 (clamp BW)",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp"
+    },
+    {
+      "id": "scoring.wilks2020.coefficients",
+      "value": {
+        "male": [
+          47.4617885411949,
+          8.47206137941125,
+          0.073694103462609,
+          -0.00139583381094385,
+          0.00000707665973070743,
+          -1.20804336482315e-8
+        ],
+        "female": [
+          -125.425539779509,
+          13.7121941940668,
+          -0.0330725063103405,
+          -0.0010504000506583,
+          0.00000938773881462799,
+          -2.3334613884954e-8
+        ]
+      },
+      "unit": "coefficients",
+      "evidence": [
+        "OFFICIAL"
+      ],
+      "sources": [
+        "src.opl-wilks2020"
+      ],
+      "ebRef": "EB §Scoring › Wilks2020 (coef = 600 / polynomial)",
+      "verified": false,
+      "userOverridable": false,
+      "since": "mvp",
+      "note": "The numerator is 600, not 500."
+    },
+    {
+      "id": "session.duration.repSeconds",
+      "value": 3.5,
+      "unit": "seconds",
+      "range": {
+        "min": 3,
+        "max": 4
+      },
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.powr-eb-session",
+        "src.iversen2021"
+      ],
+      "ebRef": "EB §Session › Duration & time-cap (rep duration 3–4 s default)",
+      "verified": true,
+      "userOverridable": true,
+      "since": "mvp",
+      "note": "The midpoint of the EB default; logged rest times replace the rest defaults once they exist (PLN-14)."
+    },
+    {
+      "id": "session.duration.transitionSeconds",
+      "value": 90,
+      "unit": "seconds",
+      "range": {
+        "min": 60,
+        "max": 120
+      },
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.powr-eb-session"
+      ],
+      "ebRef": "EB §Session › Duration & time-cap (transitions ~1–2 min per exercise)",
+      "verified": true,
+      "userOverridable": true,
+      "since": "mvp",
+      "note": "The midpoint of the EB range."
+    },
+    {
+      "id": "session.duration.warmupSetSeconds",
+      "value": 60,
+      "unit": "seconds",
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.powr-eb-session"
+      ],
+      "ebRef": "EB §Session › Duration & time-cap (~1 min per warm-up set)",
+      "verified": true,
+      "userOverridable": true,
+      "since": "mvp"
+    },
+    {
+      "id": "session.rest.countUpSoftMin",
+      "value": {
+        "compound": 90,
+        "isolation": 60
+      },
+      "unit": "seconds",
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.powr-eb-session"
+      ],
+      "ebRef": "EB §Session › Rest (\"ready when ready\" count-up timer with a soft minimum)",
+      "verified": true,
+      "userOverridable": true,
+      "since": "mvp"
+    },
+    {
+      "id": "session.rest.hypertrophyCompound",
+      "value": 150,
+      "unit": "seconds",
+      "variants": [
+        {
+          "when": {
+            "level": [
+              "novice"
+            ]
+          },
+          "value": 90
+        }
+      ],
+      "range": {
+        "min": 120,
+        "max": 180
+      },
+      "evidence": [
+        "MA",
+        "RCT-T"
+      ],
+      "sources": [
+        "src.singer2024",
+        "src.schoenfeld2016b",
+        "src.grgic2018b"
+      ],
+      "ebRef": "EB §Defaults › Session (rest, hypertrophy compound 2:30, 2:00–3:00; novice 1:30); PRD TMR-02",
+      "verified": true,
+      "userOverridable": true,
+      "since": "mvp"
+    },
+    {
+      "id": "session.rest.hypertrophyIsolation",
+      "value": 90,
+      "unit": "seconds",
+      "variants": [
+        {
+          "when": {
+            "level": [
+              "novice"
+            ]
+          },
+          "value": 60
+        }
+      ],
+      "range": {
+        "min": 60,
+        "max": 120
+      },
+      "evidence": [
+        "MA",
+        "RCT-T"
+      ],
+      "sources": [
+        "src.singer2024",
+        "src.grgic2018b"
+      ],
+      "ebRef": "EB §Defaults › Session (rest, hypertrophy isolation 1:30, 1:00–2:00; novice 1:00); PRD TMR-02",
+      "verified": true,
+      "userOverridable": true,
+      "since": "mvp"
+    },
+    {
+      "id": "session.rest.strength",
+      "value": 180,
+      "unit": "seconds",
+      "variants": [
+        {
+          "when": {
+            "competitionLift": [
+              "squat",
+              "deadlift"
+            ]
+          },
+          "value": 240
+        }
+      ],
+      "range": {
+        "min": 150,
+        "max": 300
+      },
+      "guard": {
+        "neverBelowSeconds": 120,
+        "scope": "competitionLift"
+      },
+      "evidence": [
+        "SR"
+      ],
+      "sources": [
+        "src.grgic2018b"
+      ],
+      "ebRef": "EB §Defaults › Session (rest, strength 3:00, squat/deadlift 4:00, 2:30–5:00); PRD TMR-02",
+      "verified": true,
+      "userOverridable": true,
+      "since": "mvp"
+    },
+    {
+      "id": "session.rest.supersetTransition",
+      "value": 20,
+      "unit": "seconds",
+      "range": {
+        "min": 0,
+        "max": 60
+      },
+      "guard": {
+        "defaultBand": {
+          "min": 15,
+          "max": 30
+        }
+      },
+      "evidence": [
+        "MA",
+        "INF"
+      ],
+      "sources": [
+        "src.zhang2025",
+        "src.powr-eb-session"
+      ],
+      "ebRef": "EB §Session › Rest (antagonist superset A→B 0:15–0:30, 0–1:00); PRD TMR-02, TMR-13",
+      "verified": true,
+      "userOverridable": true,
+      "since": "mvp"
+    },
+    {
+      "id": "session.rest.timeSaver",
+      "value": 60,
+      "unit": "seconds",
+      "range": {
+        "min": 45,
+        "max": 75
+      },
+      "guard": {
+        "appliesTo": "hypertrophy classes only",
+        "prompt": "add a set or accept a load drop"
+      },
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.powr-eb-session",
+        "src.singer2024"
+      ],
+      "ebRef": "EB §Session › Rest (short-rest / time-saving mode 1:00, 0:45–1:15); PRD TMR-02",
+      "verified": true,
+      "userOverridable": true,
+      "since": "mvp"
+    },
+    {
+      "id": "session.rest.warmupBeforeWork",
+      "value": 90,
+      "unit": "seconds",
+      "range": {
+        "min": 60,
+        "max": 120
+      },
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.powr-eb-session"
+      ],
+      "ebRef": "EB §Session › Warm-up (1–2 min before the first working set after ≥ 75% steps); PRD TMR-02",
+      "verified": true,
+      "userOverridable": true,
+      "since": "mvp"
+    },
+    {
+      "id": "session.rest.warmupLight",
+      "value": 45,
+      "unit": "seconds",
+      "range": {
+        "min": 30,
+        "max": 60
+      },
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.powr-eb-session"
+      ],
+      "ebRef": "EB §Session › Warm-up (rest 30–60 s after light steps); PRD TMR-02",
+      "verified": true,
+      "userOverridable": true,
+      "since": "mvp"
+    },
+    {
+      "id": "session.techniqueCredit.cluster",
+      "value": {
+        "base": 1,
+        "perUnit": 0,
+        "cap": 1
+      },
+      "unit": "sets",
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.davies2021",
+        "src.powr-eb-session"
+      ],
+      "ebRef": "EB §Session › Techniques (cluster set: 1.0 per block)",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp"
+    },
+    {
+      "id": "session.techniqueCredit.drop",
+      "value": {
+        "base": 1,
+        "perUnit": 0.5,
+        "cap": 2
+      },
+      "unit": "sets",
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.sodal2023",
+        "src.coleman2022",
+        "src.powr-eb-session"
+      ],
+      "ebRef": "EB §Session › Techniques (drop set: main set 1.0 + 0.5 per drop, cap 2.0); PRD WKT-04",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp",
+      "note": "A labelled heuristic (E-4); no study validates converting techniques into sets."
+    },
+    {
+      "id": "session.techniqueCredit.lengthenedPartials",
+      "value": {
+        "base": 1,
+        "perUnit": 0,
+        "cap": 1
+      },
+      "unit": "sets",
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.wolf2025b",
+        "src.powr-eb-session"
+      ],
+      "ebRef": "EB §Session › Techniques (lengthened partials, standalone: 1.0 per set)",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp"
+    },
+    {
+      "id": "session.techniqueCredit.myoReps",
+      "value": {
+        "base": 1,
+        "perUnit": 0.33,
+        "cap": 2.5
+      },
+      "unit": "sets",
+      "evidence": [
+        "INF",
+        "PRACT"
+      ],
+      "sources": [
+        "src.powr-eb-session"
+      ],
+      "ebRef": "EB §Session › Techniques (myo-reps: activation 1.0 + 0.33 per mini-set, cap 2.5)",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp",
+      "note": "Practitioner protocol; the evidence is a thesis (n = 8) and an unpublished trial."
+    },
+    {
+      "id": "session.techniqueCredit.partialExtension",
+      "value": {
+        "base": 1,
+        "perUnit": 0.25,
+        "cap": 1.25
+      },
+      "unit": "sets",
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.powr-eb-session"
+      ],
+      "ebRef": "EB §Session › Techniques (lengthened partials after failure: +0.25 to that set, cap 1.25)",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp",
+      "note": "Untested (EB)."
+    },
+    {
+      "id": "session.techniqueCredit.restPause",
+      "value": {
+        "base": 1,
+        "perUnit": 0.33,
+        "cap": 2
+      },
+      "unit": "sets",
+      "guard": {
+        "perUnit": {
+          "min": 0.33,
+          "max": 0.5
+        }
+      },
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.enes2021",
+        "src.prestes2019",
+        "src.powr-eb-session"
+      ],
+      "ebRef": "EB §Session › Techniques (rest-pause: activation 1.0 + 0.33–0.5 per mini-set, cap 2.0)",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp",
+      "note": "The low end of the EB's range, consistent with myo-reps."
+    },
+    {
+      "id": "session.tempo.default",
+      "value": "2-0-X-0",
+      "unit": "none",
+      "guard": {
+        "cue": "lower under control, lift with intent"
+      },
+      "evidence": [
+        "MA",
+        "RCT"
+      ],
+      "sources": [
+        "src.schoenfeld2015c",
+        "src.wilk2021"
+      ],
+      "ebRef": "EB §Defaults › Session (tempo 2-0-X-0); PRD TMR-10",
+      "verified": true,
+      "userOverridable": true,
+      "since": "mvp",
+      "note": "Eccentric–bottom pause–concentric–top pause; X = maximal intent."
+    },
+    {
+      "id": "session.tempo.eccentricSeconds",
+      "value": {
+        "min": 1,
+        "max": 4
+      },
+      "unit": "seconds",
+      "evidence": [
+        "MA",
+        "NARR"
+      ],
+      "sources": [
+        "src.schoenfeld2015c",
+        "src.wilk2021"
+      ],
+      "ebRef": "EB §Defaults › Session (eccentric 1–4 s)",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp"
+    },
+    {
+      "id": "session.tempo.warnRepSeconds",
+      "value": 8,
+      "unit": "seconds",
+      "range": {
+        "min": 8,
+        "max": 10
+      },
+      "evidence": [
+        "MA"
+      ],
+      "sources": [
+        "src.schoenfeld2015c"
+      ],
+      "ebRef": "EB §Defaults › Session (warn if a rep takes longer than 8–10 s); PRD TMR-10",
+      "verified": true,
+      "userOverridable": true,
+      "since": "mvp",
+      "note": "Hypertrophy is similar across 0.5–8 s rep durations; superslow reps above 10 s appear inferior."
+    },
+    {
+      "id": "session.warmup.compound",
+      "value": {
+        "barReps": 8,
+        "steps": [
+          {
+            "pct": 50,
+            "reps": 6
+          },
+          {
+            "pct": 70,
+            "reps": 4
+          }
+        ],
+        "optional": [
+          {
+            "pct": 85,
+            "reps": 2
+          }
+        ]
+      },
+      "unit": "mixed",
+      "guard": {
+        "firstStepPct": {
+          "min": 40,
+          "max": 50
+        },
+        "firstStepReps": {
+          "min": 6,
+          "max": 8
+        }
+      },
+      "evidence": [
+        "RCT-T",
+        "INF"
+      ],
+      "sources": [
+        "src.ribeiro2020",
+        "src.powr-eb-session"
+      ],
+      "ebRef": "EB §Session › Warm-up (Rule 2, compounds with 6–15 reps); PRD WKT-06",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp"
+    },
+    {
+      "id": "session.warmup.feeder",
+      "value": {
+        "barReps": null,
+        "steps": [
+          {
+            "pct": 70,
+            "reps": 4
+          }
+        ],
+        "optional": []
+      },
+      "unit": "mixed",
+      "guard": {
+        "reps": {
+          "min": 3,
+          "max": 5
+        }
+      },
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.powr-eb-session"
+      ],
+      "ebRef": "EB §Session › Warm-up (Rule 3, later exercises on the same pattern: 1 feeder set); PRD WKT-06",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp"
+    },
+    {
+      "id": "session.warmup.heavy",
+      "value": {
+        "barReps": 8,
+        "steps": [
+          {
+            "pct": 40,
+            "reps": 5
+          },
+          {
+            "pct": 60,
+            "reps": 3
+          },
+          {
+            "pct": 75,
+            "reps": 2
+          },
+          {
+            "pct": 85,
+            "reps": 1
+          }
+        ],
+        "optional": [],
+        "topUp": {
+          "pct": 92,
+          "reps": 1,
+          "minPctE1rm": 90
+        }
+      },
+      "unit": "mixed",
+      "guard": {
+        "barReps": {
+          "min": 8,
+          "max": 10
+        },
+        "topUpPct": {
+          "min": 92,
+          "max": 95
+        }
+      },
+      "evidence": [
+        "RCT-T",
+        "INF"
+      ],
+      "sources": [
+        "src.ribeiro2020",
+        "src.mccrary2015",
+        "src.powr-eb-session"
+      ],
+      "ebRef": "EB §Session › Warm-up (Rule 1); §Defaults › Session (warm-up ramp); PRD WKT-06",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp",
+      "note": "The empty-bar set applies to barbells only."
+    },
+    {
+      "id": "session.warmup.heavyTrigger",
+      "value": {
+        "maxReps": 5,
+        "minPctE1rm": 80
+      },
+      "unit": "mixed",
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.powr-eb-session"
+      ],
+      "ebRef": "EB §Session › Warm-up (Rule 1: R ≤ 5 or W ≥ ~80% e1RM); PRD WKT-06",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp"
+    },
+    {
+      "id": "session.warmup.isolation",
+      "value": {
+        "barReps": null,
+        "steps": [
+          {
+            "pct": 50,
+            "reps": 10
+          }
+        ],
+        "optional": []
+      },
+      "unit": "mixed",
+      "guard": {
+        "reps": {
+          "min": 8,
+          "max": 12
+        },
+        "orSkip": true
+      },
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.powr-eb-session"
+      ],
+      "ebRef": "EB §Session › Warm-up (Rule 3, isolation or already-warm muscle); PRD WKT-06",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp"
+    },
+    {
+      "id": "session.warmup.pruning",
+      "value": {
+        "minStepGapPct": 5,
+        "repCapFromPct": 70,
+        "longRestFromPct": 75
+      },
+      "unit": "pct",
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.powr-eb-session"
+      ],
+      "ebRef": "EB §Session › Warm-up (rounding and pruning; rest after ≥ 75% steps); PRD WKT-06",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp"
+    },
+    {
+      "id": "volume.counting.default",
+      "value": "fractional",
+      "unit": "none",
+      "evidence": [
+        "MA"
+      ],
+      "sources": [
+        "src.pelland2024",
+        "src.pelland2026"
+      ],
+      "ebRef": "EB §Defaults › Volume (set counting: primary 1.0, synergist 0.5; show direct and fractional)",
+      "verified": false,
+      "userOverridable": true,
+      "since": "mvp",
+      "note": "Both counts are always computed; this picks the default display. Whether the published Pelland version changed the fractional-counting conclusion is not verified (E-2)."
+    },
+    {
+      "id": "volume.effort.hypertrophyRir",
+      "value": {
+        "min": 1,
+        "max": 2
+      },
+      "unit": "rir",
+      "guard": {
+        "lastIsolationSetMinRir": 0,
+        "reducedStimulusAboveRir": 4
+      },
+      "evidence": [
+        "MA",
+        "RCT-T"
+      ],
+      "sources": [
+        "src.robinson2024",
+        "src.refalo2024b"
+      ],
+      "ebRef": "EB §Defaults › Volume (hypertrophy RIR 1–2; 0 allowed on the last isolation or machine set)",
+      "verified": true,
+      "userOverridable": true,
+      "since": "mvp"
+    },
+    {
+      "id": "volume.effort.hypertrophySlopePerRir",
+      "value": -0.48,
+      "unit": "pct",
+      "evidence": [
+        "MA",
+        "PREPRINT"
+      ],
+      "sources": [
+        "src.robinson2024"
+      ],
+      "ebRef": "EB §Volume › Proximity to failure (−0.48% muscle size per extra RIR)",
+      "verified": false,
+      "userOverridable": false,
+      "since": "mvp",
+      "note": "Preprint numbers (SportRxiv 295); verify against the final paper. For education texts only."
+    },
+    {
+      "id": "volume.effort.strengthAccessoryRpe",
+      "value": {
+        "min": 7,
+        "max": 9
+      },
+      "unit": "rpe",
+      "evidence": [
+        "DELPHI/SURVEY"
+      ],
+      "sources": [
+        "src.androulakiskorakakis2021"
+      ],
+      "ebRef": "EB §Volume › Minimum and maintenance doses (powerlifting accessories at RPE 7–9 for 6–10 reps)",
+      "verified": true,
+      "userOverridable": true,
+      "since": "mvp"
+    },
+    {
+      "id": "volume.effort.strengthRpe",
+      "value": {
+        "work": {
+          "min": 6,
+          "max": 9
+        },
+        "heavySingle": {
+          "min": 8,
+          "max": 9.5
+        }
+      },
+      "unit": "rpe",
+      "guard": {
+        "failureOnCompetitionLifts": false
+      },
+      "evidence": [
+        "MA"
+      ],
+      "sources": [
+        "src.robinson2024"
+      ],
+      "ebRef": "EB §Defaults › Volume (strength RPE 6–9; heavy singles 8–9.5; no failure)",
+      "verified": true,
+      "userOverridable": true,
+      "since": "mvp"
+    },
+    {
+      "id": "volume.frequency.hypertrophyPerMuscle",
+      "value": 2,
+      "unit": "sessions",
+      "evidence": [
+        "MA"
+      ],
+      "sources": [
+        "src.schoenfeld2019b"
+      ],
+      "ebRef": "EB §Defaults › Volume (frequency, hypertrophy ≥ 2 sessions per muscle per week)",
+      "verified": true,
+      "userOverridable": true,
+      "since": "mvp",
+      "note": "A way to distribute volume; at equal volume the frequency is personal preference."
+    },
+    {
+      "id": "volume.frequency.strengthPerLift",
+      "value": {
+        "min": 2,
+        "max": 3
+      },
+      "unit": "sessions",
+      "evidence": [
+        "MA"
+      ],
+      "sources": [
+        "src.pelland2024"
+      ],
+      "ebRef": "EB §Defaults › Volume (frequency, strength 2–3 sessions per lift per week)",
+      "verified": false,
+      "userOverridable": true,
+      "since": "mvp"
+    },
+    {
+      "id": "volume.hardSet.highReps",
+      "value": {
+        "above": 20,
+        "maxRir": 2
+      },
+      "unit": "mixed",
+      "evidence": [
+        "MA",
+        "INF"
+      ],
+      "sources": [
+        "src.lopez2021",
+        "src.lasevicius2018",
+        "src.powr-eb-volume"
+      ],
+      "ebRef": "EB §Defaults › Volume (> 20 reps counts as hard only at ≤ 2 RIR); §Volume › Any load",
+      "verified": true,
+      "userOverridable": true,
+      "since": "mvp"
+    },
+    {
+      "id": "volume.hardSet.maxRir",
+      "value": 4,
+      "unit": "rir",
+      "evidence": [
+        "MA",
+        "INF"
+      ],
+      "sources": [
+        "src.robinson2024",
+        "src.powr-eb-volume"
+      ],
+      "ebRef": "EB §Defaults › Volume (> 4 RIR = reduced stimulus); PRD EXL-05",
+      "verified": true,
+      "userOverridable": true,
+      "since": "mvp"
+    },
+    {
+      "id": "volume.hardSet.unknownRirCounts",
+      "value": true,
+      "unit": "none",
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.powr-technical-concept"
+      ],
+      "ebRef": "PRD EXL-05 (RIR unknown counts); technical concept §8.7.7 (E-1, volume)",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp"
+    },
+    {
+      "id": "volume.hypertrophy.perSessionSoftCap",
+      "value": {
+        "fractionalSets": 11,
+        "directSets": 8,
+        "nudge": {
+          "min": 10,
+          "max": 12
+        }
+      },
+      "unit": "sets",
+      "evidence": [
+        "PREPRINT"
+      ],
+      "sources": [
+        "src.remmert2025"
+      ],
+      "ebRef": "EB §Defaults › Volume (per-session cap, hypertrophy); §Volume › Per-session returns",
+      "verified": false,
+      "userOverridable": true,
+      "since": "mvp",
+      "note": "Above the cap the planner suggests another session; never present \"junk volume\" as fact."
+    },
+    {
+      "id": "volume.hypertrophy.tiers",
+      "value": [
+        {
+          "minSets": 4,
+          "maxSets": 4,
+          "tier": "minimumEffectiveDose",
+          "extraSetsPerDetectableGain": null
+        },
+        {
+          "minSets": 5,
+          "maxSets": 10,
+          "tier": "higherEfficiency",
+          "extraSetsPerDetectableGain": 6
+        },
+        {
+          "minSets": 11,
+          "maxSets": 18,
+          "tier": "intermediateEfficiency",
+          "extraSetsPerDetectableGain": 8.5
+        },
+        {
+          "minSets": 19,
+          "maxSets": 29,
+          "tier": "lowerEfficiency",
+          "extraSetsPerDetectableGain": 10.75
+        },
+        {
+          "minSets": 30,
+          "maxSets": 42,
+          "tier": "lowestEfficiency",
+          "extraSetsPerDetectableGain": 12.5
+        },
+        {
+          "minSets": 43,
+          "maxSets": null,
+          "tier": "unclear",
+          "extraSetsPerDetectableGain": null
+        }
+      ],
+      "unit": "table",
+      "evidence": [
+        "PREPRINT"
+      ],
+      "sources": [
+        "src.pelland2024"
+      ],
+      "ebRef": "EB §Volume › About 4 sets per week is detectable (hypertrophy efficiency tiers; SDES 2.05%)",
+      "verified": false,
+      "userOverridable": false,
+      "since": "mvp"
+    },
+    {
+      "id": "volume.hypertrophy.weeklyBands",
+      "value": {
+        "floor": 4,
+        "defaultLow": 10,
+        "defaultHigh": 20,
+        "highHigh": 30,
+        "hardWarnAbove": 40
+      },
+      "unit": "sets",
+      "guard": {
+        "softWarningAbove": 30,
+        "softText": "no detectable superiority",
+        "hardText": "no data"
+      },
+      "evidence": [
+        "MA",
+        "PREPRINT"
+      ],
+      "sources": [
+        "src.pelland2026",
+        "src.pelland2024",
+        "src.bazvalle2022",
+        "src.acsm2026",
+        "src.powr-eb-volume"
+      ],
+      "ebRef": "EB §Defaults › Volume (hypertrophy weekly sets per muscle, fractional); §Volume › About 4 sets",
+      "verified": false,
+      "userOverridable": false,
+      "since": "mvp",
+      "note": "Fractional sets per muscle per week: floor 4, default 10–20, high band 20–30 (an individual experiment), soft warning above 30, hard warning above 40."
+    },
+    {
+      "id": "volume.load.hypertrophyMinPct1rm",
+      "value": 30,
+      "unit": "pct",
+      "evidence": [
+        "RCT-U",
+        "INF"
+      ],
+      "sources": [
+        "src.lasevicius2018"
+      ],
+      "ebRef": "EB §Defaults › Volume (flag loads below 30% 1RM)",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp"
+    },
+    {
+      "id": "volume.maintenance",
+      "value": {
+        "volumeFraction": 0.33,
+        "minSessionsPerWeek": 1
+      },
+      "unit": "mixed",
+      "evidence": [
+        "RCT",
+        "NARR"
+      ],
+      "sources": [
+        "src.bickel2011",
+        "src.spiering2021"
+      ],
+      "ebRef": "EB §Defaults › Volume (maintenance about one-third of normal volume, keep load and effort)",
+      "verified": true,
+      "userOverridable": true,
+      "since": "mvp"
+    },
+    {
+      "id": "volume.puos",
+      "value": {
+        "hypertrophyFractionalSets": 31,
+        "strengthFractionalSets": 3,
+        "strengthSessionsPerWeek": 3
+      },
+      "unit": "mixed",
+      "evidence": [
+        "PREPRINT"
+      ],
+      "sources": [
+        "src.remmert2025",
+        "src.pelland2024"
+      ],
+      "ebRef": "EB §Volume › About 4 sets per week (point of undetectable outcome superiority); §Volume › Frequency",
+      "verified": false,
+      "userOverridable": false,
+      "since": "mvp",
+      "note": "The authors stress these are not upper limits; more sets still add gains, just not detectably."
+    },
+    {
+      "id": "volume.repRange.hypertrophy",
+      "value": {
+        "compound": {
+          "min": 6,
+          "max": 15
+        },
+        "isolation": {
+          "min": 8,
+          "max": 20
+        },
+        "allowed": {
+          "min": 5,
+          "max": 30
+        }
+      },
+      "unit": "reps",
+      "evidence": [
+        "MA",
+        "INF"
+      ],
+      "sources": [
+        "src.lopez2021",
+        "src.lasevicius2018",
+        "src.powr-eb-volume"
+      ],
+      "ebRef": "EB §Defaults › Volume (hypertrophy rep range)",
+      "verified": true,
+      "userOverridable": true,
+      "since": "mvp"
+    },
+    {
+      "id": "volume.repRange.strength",
+      "value": {
+        "main": {
+          "min": 1,
+          "max": 6
+        },
+        "accessory": {
+          "min": 6,
+          "max": 12
+        },
+        "mainMinPct1rm": 80
+      },
+      "unit": "mixed",
+      "evidence": [
+        "MA",
+        "POS"
+      ],
+      "sources": [
+        "src.acsm2026",
+        "src.lopez2021"
+      ],
+      "ebRef": "EB §Defaults › Volume (strength load ≥ 80% 1RM for main work; accessories 6–12)",
+      "verified": true,
+      "userOverridable": true,
+      "since": "mvp"
+    },
+    {
+      "id": "volume.startingVolume.maxFactor",
+      "value": 1.2,
+      "unit": "fraction",
+      "guard": {
+        "never": "increases of 30–60%"
+      },
+      "evidence": [
+        "RCT-T"
+      ],
+      "sources": [
+        "src.scarpelli2022",
+        "src.barsuhn2025"
+      ],
+      "ebRef": "EB §Defaults › Volume (starting volume up to 1.2× the recent logged average)",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp"
+    },
+    {
+      "id": "volume.strength.minimumDosePerLift",
+      "value": {
+        "min": 3,
+        "max": 6
+      },
+      "unit": "sets",
+      "evidence": [
+        "DELPHI/SURVEY"
+      ],
+      "sources": [
+        "src.androulakiskorakakis2021"
+      ],
+      "ebRef": "EB §Defaults › Volume (strength sets per competition lift: minimum 3–6 for powerlifters); §Volume › Minimum and maintenance doses",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp",
+      "note": "Weekly direct heavy sets below the default 4–10 band but at least the minimum dose are flagged, not violations."
+    },
+    {
+      "id": "volume.strength.perSessionHeavySets",
+      "value": {
+        "min": 2,
+        "max": 3
+      },
+      "unit": "sets",
+      "evidence": [
+        "PREPRINT"
+      ],
+      "sources": [
+        "src.remmert2025"
+      ],
+      "ebRef": "EB §Defaults › Volume (per-session cap, strength ~2–3 direct heavy sets per lift)",
+      "verified": false,
+      "userOverridable": true,
+      "since": "mvp"
+    },
+    {
+      "id": "volume.strength.tiers",
+      "value": [
+        {
+          "minSets": 1,
+          "maxSets": 1,
+          "tier": "minimumEffectiveDose",
+          "extraSetsPerDetectableGain": null
+        },
+        {
+          "minSets": 2,
+          "maxSets": 2,
+          "tier": "higherEfficiency",
+          "extraSetsPerDetectableGain": 0.75
+        },
+        {
+          "minSets": 3,
+          "maxSets": 4,
+          "tier": "intermediateEfficiency",
+          "extraSetsPerDetectableGain": 2.25
+        },
+        {
+          "minSets": 5,
+          "maxSets": null,
+          "tier": "notDetectable",
+          "extraSetsPerDetectableGain": null
+        }
+      ],
+      "unit": "table",
+      "evidence": [
+        "PREPRINT"
+      ],
+      "sources": [
+        "src.pelland2024"
+      ],
+      "ebRef": "EB §Volume › About 4 sets per week is detectable (strength tiers; SDES 3.96%)",
+      "verified": false,
+      "userOverridable": false,
+      "since": "mvp"
+    },
+    {
+      "id": "volume.strength.weeklyHeavySetsPerLift",
+      "value": {
+        "min": 4,
+        "max": 10
+      },
+      "unit": "sets",
+      "guard": {
+        "minimumDose": {
+          "min": 3,
+          "max": 6
+        },
+        "plateauAbove": 5
+      },
+      "evidence": [
+        "MA",
+        "DELPHI/SURVEY"
+      ],
+      "sources": [
+        "src.androulakiskorakakis2021",
+        "src.pelland2024"
+      ],
+      "ebRef": "EB §Defaults › Volume (strength sets per competition lift per week)",
+      "verified": false,
+      "userOverridable": true,
+      "since": "mvp",
+      "note": "The plateau above about 5 sets comes from the Pelland preprint."
+    }
+  ]
+}

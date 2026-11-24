@@ -1,3 +1,4 @@
+import { SLOT_PRIORITIES } from '@powr/domain';
 import {
   E1RM_EQUATIONS,
   CURVE_SOURCES,
@@ -194,6 +195,8 @@ export const PARAM_SCHEMAS = {
   'volume.effort.hypertrophyRir': range(rir),
   'volume.effort.strengthRpe': z.strictObject({ work: range(rir), heavySingle: range(rir) }),
   'volume.effort.hypertrophySlopePerRir': num,
+  'volume.effort.strengthAccessoryRpe': range(z.number().min(1).max(10)),
+  'volume.strength.minimumDosePerLift': range(nonNegative),
   // progression.yaml
   'progression.model.mainLift': byLevel(z.enum(PROGRESSION_MODELS)),
   'progression.model.accessory': z.enum(PROGRESSION_MODELS),
@@ -231,6 +234,10 @@ export const PARAM_SCHEMAS = {
   // deload.yaml
   'deload.planned.everyWeeks': positive,
   'deload.planned.durationDays': positive,
+  'deload.planned.postpone': z.strictObject({
+    weeks: z.number().int().min(1),
+    maxPerMesocycle: z.number().int().min(0),
+  }),
   'deload.content': z.strictObject({
     setsReductionPct: range(percent),
     rirIncrease: range(rir),
@@ -259,6 +266,9 @@ export const PARAM_SCHEMAS = {
   'session.tempo.default': z.string().regex(/^\d+-\d+-(?:\d+|X)-\d+$/, 'tempo looks like 2-0-X-0'),
   'session.tempo.eccentricSeconds': range(nonNegative),
   'session.tempo.warnRepSeconds': positive,
+  'session.duration.repSeconds': positive,
+  'session.duration.warmupSetSeconds': seconds,
+  'session.duration.transitionSeconds': seconds,
   'session.warmup.heavyTrigger': z.strictObject({
     maxReps: z.number().int().min(1),
     minPctE1rm: percent,
@@ -318,6 +328,37 @@ export const PARAM_SCHEMAS = {
   'scoring.ipfGl.coefficients': bySex(byDivisionEvent(ipfGl)),
   'scoring.ipfGl.minBodyweightKg': positive,
   'scoring.allometric.exponent': positive,
+  // planning.yaml
+  'planning.mesocycle.accumulationWeeks': range(z.number().int().min(1)),
+  'planning.novice.maxWorkingExercises': z.number().int().min(1),
+  'planning.sessionBudget.tolerancePct': percent,
+  'planning.slot.sets': range(z.number().int().min(1)),
+  'planning.strength.accessorySets': z.number().int().min(1),
+  'planning.volume.startPosition': z.strictObject({
+    novice: fraction,
+    intermediate: fraction,
+    advanced: fraction,
+    priority: fraction,
+  }),
+  'planning.rotation.perMuscle': range(z.number().int().min(0)),
+  'planning.variety.pool': z.number().int().min(1),
+  'planning.missed.mergePriorities': z.array(z.enum(SLOT_PRIORITIES)).min(1),
+  // ranking.yaml
+  'ranking.effectiveness': z.strictObject({
+    weights: z
+      .strictObject({
+        credit: fraction,
+        evidence: fraction,
+        stretch: fraction,
+        overload: fraction,
+        subRegion: fraction,
+      })
+      .refine(
+        (w) => Math.abs(w.credit + w.evidence + w.stretch + w.overload + w.subRegion - 1) < 1e-9,
+        'the weights add up to 1',
+      ),
+    evidenceScore: z.strictObject({ H: fraction, EMG: fraction, C: fraction }),
+  }),
   // bodyweight.yaml
   'bodyweight.trend.alphaPerDay': z.number().gt(0).max(1),
   'bodyweight.trend.initialWeighIns': range(z.number().int().min(1)),

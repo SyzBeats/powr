@@ -303,6 +303,7 @@ Member values are camelCase, like the existing unions (`TechniqueKind`, `curveCl
   the competition squat and deadlift; content licence entries), technical concept v0.4 and seven ADR
   amendments. Section 2: three rows; section 3: the M1 rows marked "Docs amended in v0.4" and five
   cleanup rows; section 4 updated; the M1-B and M1-A sections record the decisions.
+- 2026-11-24: M2a planning core (no UI): section "M2a planning core" at the end.
 
 ## M1-B content
 
@@ -604,3 +605,182 @@ landmark table (a coaching overlay for M4).
 - Verification passes before the `verified: false` rows can flip: Pelland Sports Med 2026 and the
   published Remmert paper (E-2), Russo 2025 for the RIR bias (§Gaps #26), primary Wilks/DOTS/GL
   documents, an RTS original, the APRE source tables (TD-25).
+
+## M2a planning core
+
+Written 2026-11-24 by the M2a work (roadmap A.4 "M2 Onboarding and planning", the part without UI:
+ONB-01…13 data and logic, EQP-01…05/07, PLN-01…15, PRG-10…13 planning side). The screens (M2b)
+build on the application API below. Status: `pnpm verify` green.
+
+### What landed
+
+`@powr/domain` (pure; new subpath exports, the root gains types only):
+
+| Entry                    | Public API                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | PRD                       |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------- |
+| root (`model/`)          | `Profile`, `EquipmentProfile`, `Plan`, `Mesocycle`, `PlanDay`, `PlanSlot`, `Prescription`, `PlannedSession`, `SessionAdjustment`, `TrainingBreak`, `MeetInfo`, `BodyweightEntry` and their enums; the equipment catalog, preset and template types moved here from `@powr/content` (re-exported there, §5.6)                                                                                                                                                                         | ONB-02…09, EQP, PLN       |
+| `@powr/domain/equipment` | `isAvailable(exercise, profile or item set)` (the one EQP-04 check; content-build uses it now), `missingEquipment`, `itemsOf`, `profileFromPreset` and `implementFor` (TD-29: preset → profile → `Implement`), `plateInventory`                                                                                                                                                                                                                                                      | EQP-02…04, EQP-07, TD-29  |
+| `@powr/domain/planning`  | `generatePlan`, `validatePlan`, `analyzeWeek`, `selectTemplate`, `rankCandidates`, `effectiveness` (MAP-03), `assignWeekdays`, `spacingConflicts`, `materializeMesocycle`, `firstWeekStart`, `missedSessions`, `doMissedToday`, `skipSession`, `mergeMissed`, `moveSession`, `swapSessions`, `sessionSpacing`, `pauseForBreak`, `resumeAfterBreak`, `postponeDeload`, `skipDeload`, `bringDeloadForward`, `proposeNextMesocycle`, `applyPlanEdits`, `editsForFix`, `slotForExercise` | PLN-01…15, PRG-10, MAP-03 |
+| `@powr/domain/deload`    | `deloadSlots` (PRG-11), `reactiveDeload`, `declineStreak` (PRG-12), `returnFromBreak`, `applyReturnStep` (PRG-13), `explainAdjustment`                                                                                                                                                                                                                                                                                                                                               | PRG-11…13                 |
+
+The generator (§8.7.6) as built: template by style × days (or the user's choice, refused with the
+reason when days, style or level do not fit) → candidates per slot (equipment, avoid list, pattern,
+a target credited ≥ 0.5, the lift rule), ranked favourites first, then MAP-03 effectiveness, then
+ID; a slot with no candidate of its pattern takes an exercise that trains a target directly
+(`plan.slot.substituted`), else it is dropped with a note; a strength template whose competition
+lift cannot be done fails (`plan.lift.unavailable`, naming the missing equipment) → novice limit
+(5 exercises) → order (lifts and priority muscles, compounds, isolation) → weekly targets (PLN-03)
+→ time fit (drop optional, then secondary accessories, then cut heavy sets to 2, then optional and
+secondary lift slots) → greedy set allocation (largest weekly deficit closed per set; slot ≤ 5
+sets, ≤ 11 fractional / 8 direct sets per muscle per session, day ≤ budget, no target above its
+band; sets below the floor weigh double) → local repair (leave out an optional accessory when that
+closes at least one more set of deficit) → weekdays (all ≤ 720 orders, fewest spacing conflicts) →
+validation. Every key choice is an `Explanation` (template, mesocycle, targets, each slot with the
+ranking factors, prescription and rest, trims, weekday order). Every validation issue carries its
+rule (`validate.*`) and the registry parameters it used, a stable `key` for "dismissed" (PLN-09),
+`fixes` where a plan change resolves it, and a `cause` (`timeBudget`, `sessionCap`, `slotLimit`,
+`equipment`, `template`, `days`) where the inputs make it unavoidable. `report.ok` means no
+avoidable violation.
+
+`@powr/application`: ports for the seven new tables (`profile`, `equipment`, `plans`,
+`plannedSessions`, `breaks`, `meets`, `bodyweights` repositories; `sessions.latestBefore/inRange`,
+`sets.inRange`, `meta.delete`), live queries (`profile`, `equipmentProfiles`, `activePlan`,
+`plannedSessions(from, to)`, `breaks`) and the rules port `RulesProvider { version, resolve }`,
+which replaces `Deps.rulesVersion` (TD-31: sessions, plans and backups are stamped with
+`1.1.0+<hash12>`). The use cases are the lazy entry `@powr/application/planning` (oxlint
+`LAZY_PLANNING`, like the backup entry). In-memory fakes cover every port (`test/fakes.ts`).
+
+`apps/web` (no UI): Dexie version 2 with the new stores and repositories; the rules provider
+(`src/infrastructure/rules/provider.ts`: `@powr/rules/built-in` loads at boot in parallel with the
+database and the content, `@powr/rules/resolve` on the first `resolve`); diagnostic code
+`rules.error`.
+
+### Application API (for M2b)
+
+All take the container's `deps`; expected failures are `Result`s.
+
+- **Onboarding:** `saveOnboardingDraft`, `loadOnboardingDraft`, `acknowledgeLegal`,
+  `isLegalAcknowledged`, `completeOnboarding({ answers, preview | null })` (one transaction: profile,
+  settings, default equipment profile, first bodyweight, meet, plan and sessions; draft cleared;
+  ONB-04 time off ramps the first weeks in, PRG-13).
+- **Equipment:** `listEquipmentPresets`, `equipmentProfileFromPreset`, `newCustomEquipmentItem`,
+  `saveEquipmentProfile`, `setDefaultEquipmentProfile`, `deleteEquipmentProfile`,
+  `previewEquipmentChange` and `applyEquipmentChange` (EQP-05).
+- **Plan:** `generatePlanPreview({ answers, options })` → `PlanPreview { proposal, why, level,
+  levelWhy, schedule, startDate, calendar, versions }`, `acceptPlan`, `previewPlanEdit` and
+  `savePlanEdit({ edits, scope: 'nextSession' | 'nextMesocycle' })`.
+- **Schedule:** `moveSession`, `swapSessions`, `listMissedSessions`, `resolveMissedSession({ choice:
+  'doToday' | 'skip' | 'merge' })` (each returns the changed sessions, the explanation and the
+  spacing conflicts of the touched weeks), `startBreak`, `endBreak`.
+- **Mesocycle:** `postponeDeload`, `skipDeload`, `checkReactiveDeload({ lowReadinessDays?,
+  painFlags? })`, `bringDeloadForward`, `proposeNextMesocycle`, `acceptNextMesocycle`.
+- `answersFromProfile` and `traineeLevel` help the re-planning screens.
+
+### Rules and content
+
+- **Registry 1.0.0 → 1.1.0** (`1.1.0+fc07efc1c16a`), 109 → **125 parameters**, 24 → 30
+  `verified: false`. New tables `planning.yaml` (`planning.mesocycle.accumulationWeeks` 3–8,
+  `planning.novice.maxWorkingExercises` 5, `planning.sessionBudget.tolerancePct` 10,
+  `planning.slot.sets` 2–5, `planning.strength.accessorySets` 3, `planning.volume.startPosition`
+  novice 0.2 / intermediate and advanced 0.5 / priority 0.8, `planning.rotation.perMuscle` 1–2,
+  `planning.variety.pool` 3, `planning.missed.mergePriorities` [primary]) and `ranking.yaml`
+  (`ranking.effectiveness`: weights credit 0.4, evidence 0.15, stretch 0.15, overload 0.2,
+  sub-region 0.1; evidence H 1, EMG 0.5, C 0). New rows `session.duration.repSeconds` 3.5 (EB
+  3–4 s), `session.duration.warmupSetSeconds` 60, `session.duration.transitionSeconds` 90 (EB
+  1–2 min), `volume.strength.minimumDosePerLift` 3–6, `volume.effort.strengthAccessoryRpe` 7–9,
+  `deload.planned.postpone` (1 week, once per mesocycle). New sources (`data/sources/planning.yaml`):
+  `src.powr-prd`, `src.kassiano2022`, `src.bazvalle2019`, `src.iversen2021`. POWR design values (slot
+  sets, accessory sets, start positions, variety pool, merge priorities, ranking weights) ship
+  `verified: false`; PRD numbers and EB-transcribed values `verified: true`, as in M1.
+- **`rules.json` is committed** (`packages/rules/generated/rules.json`, like `content.json`; the
+  build writes it and `build.test.ts` fails when it is stale) and is the new entry
+  `@powr/rules/built-in`.
+- **Rule references:** the templates' `deloadRule: deload.planned` named no parameter; it is now
+  `deload.content` (the deload week's content, PRG-11), and the content lint fails on a
+  `deloadRule` that is not a registry parameter (proof test added). The lint reads the EB rep, RIR
+  and RPE bands from the compiled registry instead of mirroring them (M1-B follow-up closed).
+- **Progression names aligned:** templates use the registry's `ProgressionModel` names (`rpe`,
+  `linear` instead of `rpeLoad`, `linearLoad`); content re-exports `PROGRESSION_MODELS` and
+  `TRAINEE_LEVELS` from `@powr/domain/rules`.
+- **TD-24 closed:** eight new default templates (BB full body ×2; PL SBD ×2, 5-day and 6-day
+  advanced; PB full body ×2 and ×3, UL + PPL 5-day, PPL ×2 with strength days). Every PLN-02 cell
+  has one; the coverage test's gap list is empty.
+
+### Persistence (TD-19 decided: version 2, not an extended version 1)
+
+IndexedDB creates object stores only in a version change, so devices with M0/M1 data (developer
+phones, the S22 test runs) need a version bump to get the new stores, and backups made by M0/M1
+builds must keep importing (DAT-07). No beta users exist, so extending v1 was possible, but it would
+have exercised neither path before real data exists (R-13). `DATA_VERSION` 2 adds seven tables
+(`profile 'id'`, `equipmentProfiles 'id'`, `plans 'id, status'`, `plannedSessions 'id, localDate,
+[planId+localDate], status'`, `breaks 'id, startDate'`, `meets 'id, date'`, `bodyweights 'id,
+localDate, measuredAt.epochMs'`); settings gains optional `weekStart` and `overrides` (expand only).
+Migration 1 → 2 passes records through (every v1 record is valid at v2; a test pins that) and runs
+in the Dexie upgrade and in backup import like any later step. Strict v2 record schemas live in
+`records/v2.ts` (the v1 schemas are unchanged); the manifest's `counts` became partial so v1 backups
+validate; referential checks cover plans → equipment profiles, planned sessions → plans, slot
+exercises, one active plan and one default profile. The reserved-key and depth check already runs
+on every data file, so it covers the new tables; the free-form `settings.overrides[].value` gets the
+same check in its schema (TD-22 item; hostile-key tests for the new tables added). The committed
+fixture `packages/formats/fixtures/backups/v1/active-session.zip` (made by the M1 encoder, with an
+active session) is imported by `test/fixtures.test.ts`; `db.test.ts` upgrades a v1 database with
+an active session to v2.
+
+### Decisions and deviations
+
+| Concept / brief says                                                | What I did                                                                                                                                                                                                                                                                          |
+| ------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Plan generation in the engine worker (§6.1, §8.7.8)                 | Runs in the lazy `@powr/application/planning` chunk on the main thread (no worker exists yet); a few ms per plan on the dev machine (the matrix test asserts < 1 s, NFR-PERF-09). Move it to the engine worker with the recompute work (M3/M4)                                      |
+| `exerciseUserData.flags` holds `avoid` (§8.2.2)                     | The avoid list (exercises and patterns), priorities and favourites live in `profile`: one source for ONB-07 and EXL-08, and patterns have no exercise row. M4 can move exercise flags to `exerciseUserData` with a migration                                                        |
+| `Prescription` sketch (§5.6) with single reps and RIR               | Reps and RIR are ranges (`SetBlock`), because templates state ranges; RPE is stored as RIR (RPE = 10 − RIR). Slots carry `progression` separately: a double-progression slot progresses by double progression, RPE and top-set slots by the template's main (novices: novice) model |
+| "Heavy sets" (≥ 80% 1RM, 1–6 reps, PLN-03)                          | The sets of strength lift slots at ≤ 6 reps on heavy or moderate days; light days are submaximal practice and count for frequency only. No %1RM is computed at plan time                                                                                                            |
+| "De-prioritized muscles at the floor or maintenance level" (PLN-03) | Muscles that only optional template slots train get a maintenance target (`volume.maintenance`: a third of the band target, at least the floor of 4) and need one session a week                                                                                                    |
+| Deload content ranges (sets −40–60%, RIR +2–3)                      | Sets × 0.5 (the midpoint), RIR + 2 (the low end), load 85–100% (80–90% for hypertrophy work); accessories kept and marked optional                                                                                                                                                  |
+| Return from break "back to plan within 1–2 weeks" etc. (PRG-13)     | The row's longer ramp, linear back to 100% per week (8–14 days: 2 weeks; 5–8 weeks: 4 weeks); 8–14 days applies to the whole first week, not only session 1 (the cautious side)                                                                                                     |
+| "Do it today (shifting the rest of the week)" (PLN-11)              | Later sessions of the week move only as far as needed to stay a day apart; one that would leave the week stays on its last day (the spacing warning then shows)                                                                                                                     |
+| Reactive deload "any 2 signals" (PRG-12)                            | Two different signal kinds. e1RM decline comes from logged sets (session e1RMs of the primary lifts); readiness and pain are inputs until RDY-02 (M3) and RDY-04 (v1.3). Proposes only while the deload is more than a week away                                                    |
+| PLN-13 "adjusts volume targets in small steps (PRG-16, v1.x)"       | Targets are re-derived for the re-evaluated level and capped at logged volume × 1.2 where the logs show less; performance-driven steps are PRG-16 (v1.x)                                                                                                                            |
+| Plan-matrix snapshot (§8.6.5 check 5)                               | `packages/application/test/__snapshots__/plan-matrix.test.ts.snap`: one line per template × preset × level at 60 minutes (exercises, sets, violations with their cause)                                                                                                             |
+| `RULES_VERSION` 1.0.0                                               | Bumped to 1.1.0 (16 new parameters, two new tables)                                                                                                                                                                                                                                 |
+
+### Template matrix
+
+15 templates × 6 presets × 3 levels × 6 budgets (30, 45, 60, 75, 90, 90+) = 1,620 combinations:
+744 plans, every one with `report.ok` (no avoidable violation, only available exercises, every day
+over budget + 10% flagged); 552 expected `plan.lift.unavailable` (powerlifting and powerbuilding
+templates with the dumbbell, bodyweight, hotel and empty presets: no barbell and rack); 324 expected
+`plan.template.levelMismatch` (templates not offered to the level: BB 5- and 6-day, PL 4- and 5-day,
+PB 4-, 5- and 6-day for novices; PL 6-day also for intermediates). Unavoidable violations remain and
+are flagged with their cause: at 60 minutes most bodybuilding and powerbuilding plans leave some
+muscles below target (time budget), and without a budget a few stay low because the template gives
+them one or two slots of at most 5 sets (side delts, adductors, obliques). The empty "Custom" preset
+generates bodyweight-only plans with `equipment` causes. Property tests (3,000 random runs each,
+once, besides the CI default): determinism under shuffled content and any seed; never an
+unavailable or avoided exercise in the plan or the swap lists; no avoidable violation, or an
+explained refusal. The determinism property found one order dependence (the missing-equipment list
+of `plan.lift.unavailable`), fixed by sorting.
+
+### Evidence
+
+`pnpm verify` green: lint, format, knip, i18n, typecheck, 567 unit tests (50 files), build,
+licence, size (entry JS **177.1 kB** gzip, budget 186 kB; startup path 8 scripts, 0 with Zod) and 22
+E2E. No screen imports the planning chunk yet; the rules data chunk (`built-in-*.js`, about 48 kB
+raw) loads at boot, the resolver chunk on first use.
+
+### Open items
+
+- **For M2b:** the screens and hooks (one lazy loader for `@powr/application/planning` with the lint
+  disable comment, as `use-data.ts` does for backups); the route guard (no profile → onboarding;
+  `isLegalAcknowledged`); English `why.*` messages for the new rule IDs (TD-28); storing dismissed
+  warning keys (PLN-09) in `meta`; the week-start default from `Intl.Locale` (SET-11) when settings
+  have none; equipment item icons by category.
+- **Product owner:** (1) at 45–60 minutes the PLN-03 bands are out of reach for many muscles in
+  full-body and powerbuilding templates; the duration model (EB: warm-up set ~1 min, transition
+  1–2 min, compound rest 2:30) or the templates' slot count may need a decision (fewer accessories
+  per day, more than 5 sets per slot, or time-saver rest by default); (2) the POWR design values
+  above (`verified: false`); (3) maintenance targets for optional-only muscles; (4) whether
+  "Custom (empty)" should plan bodyweight work or ask for equipment first; (5) deload RIR +2 vs +3
+  and the 50% set cut.
+- **Later:** generation in the engine worker; per-lift days since training for PRG-13 (now days
+  since the last logged session); readiness and pain signals (M3, v1.3); PRG-16 volume steps (v1.x);
+  peaking (PLN-16, v1.1); the `docs/` pass for M2.

@@ -15,6 +15,9 @@ import type {
   RepRange,
   TrainingStyle,
 } from '@powr/domain';
+import type { ParamId, ParamValues } from '@powr/domain/rules';
+import { BUILT_IN_RULES } from '@powr/rules/built-in';
+import { isParamId } from '@powr/rules/schema';
 
 import type { ContentDraft } from './compile.ts';
 
@@ -38,18 +41,29 @@ export function lintContent(draft: ContentDraft): string[] {
 /** The EB uses this registry entry for every credit it rates C (convention). */
 const CONVENTION_SOURCE = 'src.powr-eb-mapping';
 
+/** A default value of the compiled rules registry (the lint reads the shipped defaults). */
+function registry<K extends ParamId>(id: K): ParamValues[K] {
+  const def = BUILT_IN_RULES.params.find((row) => row.id === id);
+  if (!def) throw new Error(`The rules registry has no ${id}`);
+  return def.value as ParamValues[K];
+}
+
+const hypertrophyReps = registry('volume.repRange.hypertrophy');
+const strengthReps = registry('volume.repRange.strength');
+const strengthRpe = registry('volume.effort.strengthRpe');
+
 /**
- * Rep-range bands of EB §Defaults › Volume ("Hypertrophy rep range: allowed 5–30"; "Strength
- * load ≥ 80% 1RM (1–6 reps) for main work; accessories 6–12") and effort bands ("Hypertrophy
- * RIR 1–2, 0 allowed, > 4 reduced stimulus"; "Strength RPE 6–9, heavy singles 8–9.5"). The rules
- * registry owns these values; the lint mirrors them until rules.json exists (merge follow-up).
+ * Rep-range and effort bands of EB §Defaults › Volume, read from the rules registry (M2; M1
+ * mirrored them as constants): hypertrophy reps 5–30 (allowed), strength main work 1–6 and
+ * accessories up to 12, hypertrophy RIR 0 up to the hard-set limit (> 4 reduced stimulus),
+ * strength RPE from the work band's low end to the heavy-single cap (6–9.5).
  */
 const BANDS = {
-  hypertrophyReps: [5, 30],
-  strengthReps: [1, 12],
-  mainLiftStrengthReps: [1, 6],
-  hypertrophyRir: [0, 4],
-  strengthRpe: [6, 9.5],
+  hypertrophyReps: [hypertrophyReps.allowed.min, hypertrophyReps.allowed.max],
+  strengthReps: [strengthReps.main.min, strengthReps.accessory.max],
+  mainLiftStrengthReps: [strengthReps.main.min, strengthReps.main.max],
+  hypertrophyRir: [0, registry('volume.hardSet.maxRir')],
+  strengthRpe: [strengthRpe.work.min, strengthRpe.heavySingle.max],
 } as const;
 
 const STYLE_GOALS: Record<TrainingStyle, readonly Goal[]> = {
@@ -266,6 +280,9 @@ function lintTemplates(draft: ContentDraft, index: ContentIndex): string[] {
       const other = defaults.get(cell);
       if (other) report(`${other.id} is already the default for ${cell}`);
       defaults.set(cell, template);
+    }
+    if (!isParamId(template.mesocycle.deloadRule)) {
+      report(`mesocycle.deloadRule ${template.mesocycle.deloadRule} is not a rules parameter`);
     }
     const dayKeys = template.days.map((day) => day.key);
     if (new Set(dayKeys).size !== dayKeys.length) report('a day key is used twice');

@@ -15,7 +15,7 @@ levels: [novice, intermediate, advanced]
 default: true
 periodization: linear
 progression: { main: doubleProgression, accessory: doubleProgression, novice: doubleProgression }
-mesocycle: { accumulationWeeks: 5, deloadWeeks: 1, deloadRule: deload.planned }
+mesocycle: { accumulationWeeks: 5, deloadWeeks: 1, deloadRule: deload.content }
 days:
   - key: a
     name: { en: Full body A }

@@ -1,0 +1,274 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`template matrix (PLN-01, EQP-04) > matches the reviewed summary (§8.6.5 check 5: a changed default that changes plans shows here) 1`] = `
+"tpl.bb-full-body-2day | preset.bodyweight-bands | advanced: 15 ex, 35 sets; volume.belowFloor:mu.abs[timeBudget] volume.belowFloor:mu.calves[timeBudget] volume.low:mu.chest[timeBudget] volume.low:mu.elbow-flexors[timeBudget] volume.low:mu.front-delts[timeBudget] volume.low:mu.glutes[timeBudget] volume.low:mu.hamstrings[timeBudget] volume.low:mu.lats[timeBudget] volume.low:mu.mid-back[timeBudget] volume.low:mu.quads[timeBudget] volume.low:mu.side-delts[timeBudget] volume.low:mu.triceps[timeBudget]
+tpl.bb-full-body-2day | preset.bodyweight-bands | intermediate: 15 ex, 35 sets; volume.belowFloor:mu.abs[timeBudget] volume.belowFloor:mu.calves[timeBudget] volume.low:mu.chest[timeBudget] volume.low:mu.elbow-flexors[timeBudget] volume.low:mu.front-delts[timeBudget] volume.low:mu.glutes[timeBudget] volume.low:mu.hamstrings[timeBudget] volume.low:mu.lats[timeBudget] volume.low:mu.mid-back[timeBudget] volume.low:mu.quads[timeBudget] volume.low:mu.side-delts[timeBudget] volume.low:mu.triceps[timeBudget]
+tpl.bb-full-body-2day | preset.bodyweight-bands | novice: 10 ex, 46 sets; volume.belowFloor:mu.abs[template] volume.belowFloor:mu.calves[template] volume.low:mu.elbow-flexors[slotLimit] volume.low:mu.front-delts[slotLimit] volume.low:mu.glutes[slotLimit] volume.low:mu.mid-back[slotLimit] volume.low:mu.side-delts[timeBudget] volume.low:mu.triceps[slotLimit]
+tpl.bb-full-body-2day | preset.commercial-gym | advanced: 14 ex, 37 sets; volume.belowFloor:mu.abs[timeBudget] volume.belowFloor:mu.calves[timeBudget] volume.low:mu.chest[timeBudget] volume.low:mu.elbow-flexors[timeBudget] volume.low:mu.front-delts[timeBudget] volume.low:mu.glutes[timeBudget] volume.low:mu.hamstrings[timeBudget] volume.low:mu.lats[timeBudget] volume.low:mu.mid-back[timeBudget] volume.low:mu.quads[timeBudget] volume.low:mu.side-delts[timeBudget] volume.low:mu.triceps[timeBudget]
+tpl.bb-full-body-2day | preset.commercial-gym | intermediate: 14 ex, 37 sets; volume.belowFloor:mu.abs[timeBudget] volume.belowFloor:mu.calves[timeBudget] volume.low:mu.chest[timeBudget] volume.low:mu.elbow-flexors[timeBudget] volume.low:mu.front-delts[timeBudget] volume.low:mu.glutes[timeBudget] volume.low:mu.hamstrings[timeBudget] volume.low:mu.lats[timeBudget] volume.low:mu.mid-back[timeBudget] volume.low:mu.quads[timeBudget] volume.low:mu.side-delts[timeBudget] volume.low:mu.triceps[timeBudget]
+tpl.bb-full-body-2day | preset.commercial-gym | novice: 10 ex, 44 sets; volume.belowFloor:mu.abs[template] volume.belowFloor:mu.calves[timeBudget] volume.low:mu.elbow-flexors[slotLimit] volume.low:mu.front-delts[slotLimit] volume.low:mu.glutes[slotLimit] volume.low:mu.hamstrings[timeBudget] volume.low:mu.mid-back[slotLimit] volume.low:mu.side-delts[timeBudget] volume.low:mu.triceps[slotLimit]
+tpl.bb-full-body-2day | preset.custom | advanced: 8 ex, 38 sets; volume.belowFloor:mu.elbow-flexors[equipment] volume.belowFloor:mu.lats[equipment] volume.belowFloor:mu.mid-back[equipment] volume.belowFloor:mu.side-delts[equipment] volume.low:mu.abs[timeBudget] volume.low:mu.front-delts[slotLimit] volume.low:mu.glutes[slotLimit] volume.low:mu.quads[timeBudget] volume.low:mu.triceps[slotLimit]
+tpl.bb-full-body-2day | preset.custom | intermediate: 8 ex, 38 sets; volume.belowFloor:mu.elbow-flexors[equipment] volume.belowFloor:mu.lats[equipment] volume.belowFloor:mu.mid-back[equipment] volume.belowFloor:mu.side-delts[equipment] volume.low:mu.abs[timeBudget] volume.low:mu.front-delts[slotLimit] volume.low:mu.glutes[slotLimit] volume.low:mu.quads[timeBudget] volume.low:mu.triceps[slotLimit]
+tpl.bb-full-body-2day | preset.custom | novice: 9 ex, 38 sets; volume.belowFloor:mu.elbow-flexors[equipment] volume.belowFloor:mu.lats[equipment] volume.belowFloor:mu.mid-back[equipment] volume.belowFloor:mu.side-delts[equipment] volume.low:mu.front-delts[slotLimit] volume.low:mu.glutes[slotLimit] volume.low:mu.triceps[slotLimit]
+tpl.bb-full-body-2day | preset.dumbbells-bench | advanced: 15 ex, 38 sets; volume.belowFloor:mu.abs[timeBudget] volume.low:mu.calves[timeBudget] volume.low:mu.chest[timeBudget] volume.low:mu.elbow-flexors[timeBudget] volume.low:mu.front-delts[timeBudget] volume.low:mu.glutes[timeBudget] volume.low:mu.hamstrings[timeBudget] volume.low:mu.lats[timeBudget] volume.low:mu.mid-back[timeBudget] volume.low:mu.quads[timeBudget] volume.low:mu.side-delts[timeBudget] volume.low:mu.triceps[timeBudget]
+tpl.bb-full-body-2day | preset.dumbbells-bench | intermediate: 15 ex, 38 sets; volume.belowFloor:mu.abs[timeBudget] volume.low:mu.calves[timeBudget] volume.low:mu.chest[timeBudget] volume.low:mu.elbow-flexors[timeBudget] volume.low:mu.front-delts[timeBudget] volume.low:mu.glutes[timeBudget] volume.low:mu.hamstrings[timeBudget] volume.low:mu.lats[timeBudget] volume.low:mu.mid-back[timeBudget] volume.low:mu.quads[timeBudget] volume.low:mu.side-delts[timeBudget] volume.low:mu.triceps[timeBudget]
+tpl.bb-full-body-2day | preset.dumbbells-bench | novice: 10 ex, 50 sets; volume.belowFloor:mu.abs[template] volume.belowFloor:mu.calves[template] volume.low:mu.elbow-flexors[slotLimit] volume.low:mu.front-delts[slotLimit] volume.low:mu.glutes[slotLimit] volume.low:mu.triceps[slotLimit]
+tpl.bb-full-body-2day | preset.home-barbell-gym | advanced: 15 ex, 38 sets; volume.belowFloor:mu.abs[timeBudget] volume.low:mu.calves[timeBudget] volume.low:mu.chest[timeBudget] volume.low:mu.elbow-flexors[timeBudget] volume.low:mu.front-delts[timeBudget] volume.low:mu.glutes[timeBudget] volume.low:mu.hamstrings[timeBudget] volume.low:mu.lats[timeBudget] volume.low:mu.mid-back[timeBudget] volume.low:mu.quads[timeBudget] volume.low:mu.side-delts[timeBudget] volume.low:mu.triceps[timeBudget]
+tpl.bb-full-body-2day | preset.home-barbell-gym | intermediate: 15 ex, 38 sets; volume.belowFloor:mu.abs[timeBudget] volume.low:mu.calves[timeBudget] volume.low:mu.chest[timeBudget] volume.low:mu.elbow-flexors[timeBudget] volume.low:mu.front-delts[timeBudget] volume.low:mu.glutes[timeBudget] volume.low:mu.hamstrings[timeBudget] volume.low:mu.lats[timeBudget] volume.low:mu.mid-back[timeBudget] volume.low:mu.quads[timeBudget] volume.low:mu.side-delts[timeBudget] volume.low:mu.triceps[timeBudget]
+tpl.bb-full-body-2day | preset.home-barbell-gym | novice: 10 ex, 45 sets; volume.belowFloor:mu.abs[template] volume.belowFloor:mu.calves[template] volume.low:mu.elbow-flexors[slotLimit] volume.low:mu.front-delts[slotLimit] volume.low:mu.glutes[slotLimit] volume.low:mu.hamstrings[timeBudget] volume.low:mu.mid-back[slotLimit] volume.low:mu.side-delts[timeBudget] volume.low:mu.triceps[slotLimit]
+tpl.bb-full-body-2day | preset.hotel-gym | advanced: 15 ex, 38 sets; volume.belowFloor:mu.abs[timeBudget] volume.low:mu.calves[timeBudget] volume.low:mu.chest[timeBudget] volume.low:mu.elbow-flexors[timeBudget] volume.low:mu.front-delts[timeBudget] volume.low:mu.glutes[timeBudget] volume.low:mu.hamstrings[timeBudget] volume.low:mu.lats[timeBudget] volume.low:mu.mid-back[timeBudget] volume.low:mu.quads[timeBudget] volume.low:mu.side-delts[timeBudget] volume.low:mu.triceps[timeBudget]
+tpl.bb-full-body-2day | preset.hotel-gym | intermediate: 15 ex, 38 sets; volume.belowFloor:mu.abs[timeBudget] volume.low:mu.calves[timeBudget] volume.low:mu.chest[timeBudget] volume.low:mu.elbow-flexors[timeBudget] volume.low:mu.front-delts[timeBudget] volume.low:mu.glutes[timeBudget] volume.low:mu.hamstrings[timeBudget] volume.low:mu.lats[timeBudget] volume.low:mu.mid-back[timeBudget] volume.low:mu.quads[timeBudget] volume.low:mu.side-delts[timeBudget] volume.low:mu.triceps[timeBudget]
+tpl.bb-full-body-2day | preset.hotel-gym | novice: 10 ex, 50 sets; volume.belowFloor:mu.abs[template] volume.belowFloor:mu.calves[template] volume.low:mu.elbow-flexors[slotLimit] volume.low:mu.front-delts[slotLimit] volume.low:mu.glutes[slotLimit] volume.low:mu.mid-back[slotLimit] volume.low:mu.triceps[slotLimit]
+tpl.bb-full-body-3day | preset.bodyweight-bands | advanced: 18 ex, 52 sets; volume.belowFloor:mu.abs[timeBudget] volume.belowFloor:mu.calves[timeBudget] volume.low:mu.glutes[timeBudget] volume.low:mu.hamstrings[timeBudget] volume.low:mu.quads[timeBudget] volume.low:mu.side-delts[timeBudget]
+tpl.bb-full-body-3day | preset.bodyweight-bands | intermediate: 18 ex, 52 sets; volume.belowFloor:mu.abs[timeBudget] volume.belowFloor:mu.calves[timeBudget] volume.low:mu.glutes[timeBudget] volume.low:mu.hamstrings[timeBudget] volume.low:mu.quads[timeBudget] volume.low:mu.side-delts[timeBudget]
+tpl.bb-full-body-3day | preset.bodyweight-bands | novice: 15 ex, 64 sets; volume.belowFloor:mu.abs[template] volume.belowFloor:mu.calves[template] volume.low:mu.side-delts[slotLimit] frequency.muscle:mu.abs[template] frequency.muscle:mu.calves[template]
+tpl.bb-full-body-3day | preset.commercial-gym | advanced: 19 ex, 54 sets; volume.belowFloor:mu.abs[timeBudget] volume.belowFloor:mu.side-delts[timeBudget] volume.low:mu.calves[timeBudget] volume.low:mu.glutes[timeBudget] volume.low:mu.hamstrings[timeBudget] volume.low:mu.quads[timeBudget] volume.low:mu.triceps[timeBudget]
+tpl.bb-full-body-3day | preset.commercial-gym | intermediate: 19 ex, 54 sets; volume.belowFloor:mu.abs[timeBudget] volume.belowFloor:mu.side-delts[timeBudget] volume.low:mu.calves[timeBudget] volume.low:mu.glutes[timeBudget] volume.low:mu.hamstrings[timeBudget] volume.low:mu.quads[timeBudget] volume.low:mu.triceps[timeBudget]
+tpl.bb-full-body-3day | preset.commercial-gym | novice: 15 ex, 63 sets; volume.belowFloor:mu.abs[template] volume.belowFloor:mu.calves[timeBudget] volume.low:mu.hamstrings[timeBudget] volume.low:mu.side-delts[timeBudget] frequency.muscle:mu.abs[template] frequency.muscle:mu.calves[template]
+tpl.bb-full-body-3day | preset.custom | advanced: 12 ex, 51 sets; volume.belowFloor:mu.abs[timeBudget] volume.belowFloor:mu.elbow-flexors[equipment] volume.belowFloor:mu.lats[equipment] volume.belowFloor:mu.mid-back[equipment] volume.belowFloor:mu.rear-delts[equipment] volume.belowFloor:mu.side-delts[slotLimit] frequency.muscle:mu.elbow-flexors[equipment] frequency.muscle:mu.lats[equipment] frequency.muscle:mu.mid-back[equipment] frequency.muscle:mu.rear-delts[equipment] frequency.muscle:mu.side-delts[equipment]
+tpl.bb-full-body-3day | preset.custom | intermediate: 12 ex, 51 sets; volume.belowFloor:mu.abs[timeBudget] volume.belowFloor:mu.elbow-flexors[equipment] volume.belowFloor:mu.lats[equipment] volume.belowFloor:mu.mid-back[equipment] volume.belowFloor:mu.rear-delts[equipment] volume.belowFloor:mu.side-delts[slotLimit] frequency.muscle:mu.elbow-flexors[equipment] frequency.muscle:mu.lats[equipment] frequency.muscle:mu.mid-back[equipment] frequency.muscle:mu.rear-delts[equipment] frequency.muscle:mu.side-delts[equipment]
+tpl.bb-full-body-3day | preset.custom | novice: 12 ex, 50 sets; volume.belowFloor:mu.abs[template] volume.belowFloor:mu.elbow-flexors[equipment] volume.belowFloor:mu.lats[equipment] volume.belowFloor:mu.mid-back[equipment] volume.belowFloor:mu.rear-delts[equipment] volume.belowFloor:mu.side-delts[slotLimit] frequency.muscle:mu.abs[template] frequency.muscle:mu.elbow-flexors[equipment] frequency.muscle:mu.lats[equipment] frequency.muscle:mu.mid-back[equipment] frequency.muscle:mu.rear-delts[equipment] frequency.muscle:mu.side-delts[equipment]
+tpl.bb-full-body-3day | preset.dumbbells-bench | advanced: 18 ex, 54 sets; volume.belowFloor:mu.abs[timeBudget] volume.low:mu.calves[timeBudget] volume.low:mu.glutes[timeBudget] volume.low:mu.hamstrings[timeBudget] volume.low:mu.quads[timeBudget] volume.low:mu.side-delts[timeBudget] volume.low:mu.triceps[timeBudget]
+tpl.bb-full-body-3day | preset.dumbbells-bench | intermediate: 18 ex, 54 sets; volume.belowFloor:mu.abs[timeBudget] volume.low:mu.calves[timeBudget] volume.low:mu.glutes[timeBudget] volume.low:mu.hamstrings[timeBudget] volume.low:mu.quads[timeBudget] volume.low:mu.side-delts[timeBudget] volume.low:mu.triceps[timeBudget]
+tpl.bb-full-body-3day | preset.dumbbells-bench | novice: 15 ex, 65 sets; volume.belowFloor:mu.abs[template] volume.belowFloor:mu.calves[template] volume.low:mu.side-delts[slotLimit] frequency.muscle:mu.abs[template] frequency.muscle:mu.calves[template]
+tpl.bb-full-body-3day | preset.home-barbell-gym | advanced: 19 ex, 53 sets; volume.belowFloor:mu.abs[timeBudget] volume.belowFloor:mu.side-delts[timeBudget] volume.low:mu.calves[timeBudget] volume.low:mu.glutes[timeBudget] volume.low:mu.hamstrings[timeBudget] volume.low:mu.quads[timeBudget] volume.low:mu.triceps[timeBudget]
+tpl.bb-full-body-3day | preset.home-barbell-gym | intermediate: 19 ex, 53 sets; volume.belowFloor:mu.abs[timeBudget] volume.belowFloor:mu.side-delts[timeBudget] volume.low:mu.calves[timeBudget] volume.low:mu.glutes[timeBudget] volume.low:mu.hamstrings[timeBudget] volume.low:mu.quads[timeBudget] volume.low:mu.triceps[timeBudget]
+tpl.bb-full-body-3day | preset.home-barbell-gym | novice: 15 ex, 63 sets; volume.belowFloor:mu.abs[template] volume.belowFloor:mu.calves[template] volume.low:mu.hamstrings[timeBudget] volume.low:mu.side-delts[timeBudget] frequency.muscle:mu.abs[template] frequency.muscle:mu.calves[template]
+tpl.bb-full-body-3day | preset.hotel-gym | advanced: 19 ex, 55 sets; volume.belowFloor:mu.abs[timeBudget] volume.low:mu.calves[timeBudget] volume.low:mu.glutes[timeBudget] volume.low:mu.hamstrings[timeBudget] volume.low:mu.quads[timeBudget] volume.low:mu.side-delts[timeBudget] volume.low:mu.triceps[timeBudget]
+tpl.bb-full-body-3day | preset.hotel-gym | intermediate: 19 ex, 55 sets; volume.belowFloor:mu.abs[timeBudget] volume.low:mu.calves[timeBudget] volume.low:mu.glutes[timeBudget] volume.low:mu.hamstrings[timeBudget] volume.low:mu.quads[timeBudget] volume.low:mu.side-delts[timeBudget] volume.low:mu.triceps[timeBudget]
+tpl.bb-full-body-3day | preset.hotel-gym | novice: 15 ex, 69 sets; volume.belowFloor:mu.abs[template] volume.belowFloor:mu.calves[template] volume.low:mu.side-delts[slotLimit] frequency.muscle:mu.abs[template] frequency.muscle:mu.calves[template]
+tpl.bb-ppl-6day | preset.bodyweight-bands | advanced: 24 ex, 95 sets; volume.belowFloor:mu.forearms[slotLimit] volume.belowFloor:mu.obliques[timeBudget] volume.belowFloor:mu.upper-traps[slotLimit] volume.low:mu.adductors[slotLimit] volume.low:mu.calves[timeBudget] volume.low:mu.front-delts[sessionCap]
+tpl.bb-ppl-6day | preset.bodyweight-bands | intermediate: 24 ex, 95 sets; volume.belowFloor:mu.forearms[slotLimit] volume.belowFloor:mu.obliques[timeBudget] volume.belowFloor:mu.upper-traps[slotLimit] volume.low:mu.adductors[slotLimit] volume.low:mu.calves[timeBudget] volume.low:mu.front-delts[sessionCap]
+tpl.bb-ppl-6day | preset.bodyweight-bands | novice: ✗ plan.template.levelMismatch
+tpl.bb-ppl-6day | preset.commercial-gym | advanced: 29 ex, 106 sets; volume.low:mu.adductors[timeBudget] volume.low:mu.calves[timeBudget] volume.low:mu.obliques[timeBudget]
+tpl.bb-ppl-6day | preset.commercial-gym | intermediate: 29 ex, 106 sets; volume.low:mu.adductors[timeBudget] volume.low:mu.calves[timeBudget] volume.low:mu.obliques[timeBudget]
+tpl.bb-ppl-6day | preset.commercial-gym | novice: ✗ plan.template.levelMismatch
+tpl.bb-ppl-6day | preset.custom | advanced: 14 ex, 57 sets; volume.belowFloor:mu.elbow-flexors[equipment] volume.belowFloor:mu.forearms[equipment] volume.belowFloor:mu.lats[equipment] volume.belowFloor:mu.mid-back[equipment] volume.belowFloor:mu.obliques[timeBudget] volume.belowFloor:mu.rear-delts[equipment] volume.belowFloor:mu.upper-traps[slotLimit] volume.low:mu.adductors[slotLimit] volume.low:mu.calves[timeBudget] volume.low:mu.side-delts[slotLimit] frequency.muscle:mu.elbow-flexors[equipment] frequency.muscle:mu.forearms[equipment] frequency.muscle:mu.lats[equipment] frequency.muscle:mu.mid-back[equipment] frequency.muscle:mu.rear-delts[equipment]
+tpl.bb-ppl-6day | preset.custom | intermediate: 14 ex, 57 sets; volume.belowFloor:mu.elbow-flexors[equipment] volume.belowFloor:mu.forearms[equipment] volume.belowFloor:mu.lats[equipment] volume.belowFloor:mu.mid-back[equipment] volume.belowFloor:mu.obliques[timeBudget] volume.belowFloor:mu.rear-delts[equipment] volume.belowFloor:mu.upper-traps[slotLimit] volume.low:mu.adductors[slotLimit] volume.low:mu.calves[timeBudget] volume.low:mu.side-delts[slotLimit] frequency.muscle:mu.elbow-flexors[equipment] frequency.muscle:mu.forearms[equipment] frequency.muscle:mu.lats[equipment] frequency.muscle:mu.mid-back[equipment] frequency.muscle:mu.rear-delts[equipment]
+tpl.bb-ppl-6day | preset.custom | novice: ✗ plan.template.levelMismatch
+tpl.bb-ppl-6day | preset.dumbbells-bench | advanced: 29 ex, 103 sets; volume.low:mu.adductors[slotLimit] volume.low:mu.calves[timeBudget] volume.low:mu.obliques[timeBudget]
+tpl.bb-ppl-6day | preset.dumbbells-bench | intermediate: 29 ex, 103 sets; volume.low:mu.adductors[slotLimit] volume.low:mu.calves[timeBudget] volume.low:mu.obliques[timeBudget]
+tpl.bb-ppl-6day | preset.dumbbells-bench | novice: ✗ plan.template.levelMismatch
+tpl.bb-ppl-6day | preset.home-barbell-gym | advanced: 29 ex, 104 sets; volume.low:mu.abs[timeBudget] volume.low:mu.adductors[timeBudget] volume.low:mu.calves[timeBudget] volume.low:mu.obliques[timeBudget]
+tpl.bb-ppl-6day | preset.home-barbell-gym | intermediate: 29 ex, 104 sets; volume.low:mu.abs[timeBudget] volume.low:mu.adductors[timeBudget] volume.low:mu.calves[timeBudget] volume.low:mu.obliques[timeBudget]
+tpl.bb-ppl-6day | preset.home-barbell-gym | novice: ✗ plan.template.levelMismatch
+tpl.bb-ppl-6day | preset.hotel-gym | advanced: 29 ex, 110 sets; volume.low:mu.adductors[slotLimit] volume.low:mu.calves[timeBudget] volume.low:mu.obliques[timeBudget]
+tpl.bb-ppl-6day | preset.hotel-gym | intermediate: 29 ex, 110 sets; volume.low:mu.adductors[slotLimit] volume.low:mu.calves[timeBudget] volume.low:mu.obliques[timeBudget]
+tpl.bb-ppl-6day | preset.hotel-gym | novice: ✗ plan.template.levelMismatch
+tpl.bb-upper-lower-4day | preset.bodyweight-bands | advanced: 23 ex, 71 sets; volume.belowFloor:mu.obliques[timeBudget] volume.low:mu.adductors[slotLimit] volume.low:mu.calves[timeBudget] volume.low:mu.elbow-flexors[timeBudget] volume.low:mu.front-delts[timeBudget] volume.low:mu.side-delts[timeBudget]
+tpl.bb-upper-lower-4day | preset.bodyweight-bands | intermediate: 23 ex, 71 sets; volume.belowFloor:mu.obliques[timeBudget] volume.low:mu.adductors[slotLimit] volume.low:mu.calves[timeBudget] volume.low:mu.elbow-flexors[timeBudget] volume.low:mu.front-delts[timeBudget] volume.low:mu.side-delts[timeBudget]
+tpl.bb-upper-lower-4day | preset.bodyweight-bands | novice: 20 ex, 80 sets; volume.belowFloor:mu.abs[template] volume.belowFloor:mu.obliques[template] volume.low:mu.adductors[slotLimit] volume.low:mu.front-delts[sessionCap] volume.low:mu.side-delts[slotLimit] frequency.muscle:mu.abs[template] frequency.muscle:mu.obliques[template] frequency.muscle:mu.side-delts[template]
+tpl.bb-upper-lower-4day | preset.commercial-gym | advanced: 23 ex, 70 sets; volume.belowFloor:mu.obliques[timeBudget] volume.low:mu.abs[timeBudget] volume.low:mu.adductors[timeBudget] volume.low:mu.calves[timeBudget] volume.low:mu.chest[timeBudget] volume.low:mu.elbow-flexors[timeBudget] volume.low:mu.side-delts[timeBudget]
+tpl.bb-upper-lower-4day | preset.commercial-gym | intermediate: 23 ex, 70 sets; volume.belowFloor:mu.obliques[timeBudget] volume.low:mu.abs[timeBudget] volume.low:mu.adductors[timeBudget] volume.low:mu.calves[timeBudget] volume.low:mu.chest[timeBudget] volume.low:mu.elbow-flexors[timeBudget] volume.low:mu.side-delts[timeBudget]
+tpl.bb-upper-lower-4day | preset.commercial-gym | novice: 20 ex, 85 sets; volume.belowFloor:mu.abs[template] volume.belowFloor:mu.obliques[template] volume.low:mu.adductors[timeBudget] volume.low:mu.side-delts[slotLimit] frequency.muscle:mu.abs[template] frequency.muscle:mu.obliques[template]
+tpl.bb-upper-lower-4day | preset.custom | advanced: 15 ex, 52 sets; volume.belowFloor:mu.elbow-flexors[equipment] volume.belowFloor:mu.lats[equipment] volume.belowFloor:mu.mid-back[equipment] volume.belowFloor:mu.obliques[timeBudget] volume.belowFloor:mu.rear-delts[equipment] volume.belowFloor:mu.side-delts[slotLimit] volume.low:mu.adductors[slotLimit] volume.low:mu.calves[timeBudget] volume.low:mu.triceps[slotLimit] frequency.muscle:mu.elbow-flexors[equipment] frequency.muscle:mu.lats[equipment] frequency.muscle:mu.mid-back[equipment] frequency.muscle:mu.rear-delts[equipment] frequency.muscle:mu.side-delts[equipment]
+tpl.bb-upper-lower-4day | preset.custom | intermediate: 15 ex, 52 sets; volume.belowFloor:mu.elbow-flexors[equipment] volume.belowFloor:mu.lats[equipment] volume.belowFloor:mu.mid-back[equipment] volume.belowFloor:mu.obliques[timeBudget] volume.belowFloor:mu.rear-delts[equipment] volume.belowFloor:mu.side-delts[slotLimit] volume.low:mu.adductors[slotLimit] volume.low:mu.calves[timeBudget] volume.low:mu.triceps[slotLimit] frequency.muscle:mu.elbow-flexors[equipment] frequency.muscle:mu.lats[equipment] frequency.muscle:mu.mid-back[equipment] frequency.muscle:mu.rear-delts[equipment] frequency.muscle:mu.side-delts[equipment]
+tpl.bb-upper-lower-4day | preset.custom | novice: 13 ex, 54 sets; volume.belowFloor:mu.abs[template] volume.belowFloor:mu.elbow-flexors[equipment] volume.belowFloor:mu.lats[equipment] volume.belowFloor:mu.mid-back[equipment] volume.belowFloor:mu.obliques[template] volume.belowFloor:mu.rear-delts[equipment] volume.belowFloor:mu.side-delts[slotLimit] volume.low:mu.adductors[slotLimit] volume.low:mu.triceps[slotLimit] frequency.muscle:mu.abs[template] frequency.muscle:mu.elbow-flexors[equipment] frequency.muscle:mu.lats[equipment] frequency.muscle:mu.mid-back[equipment] frequency.muscle:mu.obliques[template] frequency.muscle:mu.rear-delts[equipment] frequency.muscle:mu.side-delts[equipment]
+tpl.bb-upper-lower-4day | preset.dumbbells-bench | advanced: 24 ex, 75 sets; volume.belowFloor:mu.obliques[timeBudget] volume.low:mu.adductors[timeBudget] volume.low:mu.calves[timeBudget] volume.low:mu.chest[timeBudget] volume.low:mu.side-delts[timeBudget] volume.low:mu.triceps[timeBudget]
+tpl.bb-upper-lower-4day | preset.dumbbells-bench | intermediate: 24 ex, 75 sets; volume.belowFloor:mu.obliques[timeBudget] volume.low:mu.adductors[timeBudget] volume.low:mu.calves[timeBudget] volume.low:mu.chest[timeBudget] volume.low:mu.side-delts[timeBudget] volume.low:mu.triceps[timeBudget]
+tpl.bb-upper-lower-4day | preset.dumbbells-bench | novice: 20 ex, 83 sets; volume.belowFloor:mu.abs[template] volume.belowFloor:mu.obliques[template] volume.low:mu.adductors[sessionCap] volume.low:mu.side-delts[slotLimit] frequency.muscle:mu.abs[template] frequency.muscle:mu.obliques[template]
+tpl.bb-upper-lower-4day | preset.home-barbell-gym | advanced: 24 ex, 70 sets; volume.belowFloor:mu.obliques[timeBudget] volume.low:mu.abs[timeBudget] volume.low:mu.adductors[timeBudget] volume.low:mu.calves[timeBudget] volume.low:mu.chest[timeBudget] volume.low:mu.elbow-flexors[timeBudget] volume.low:mu.hamstrings[timeBudget] volume.low:mu.side-delts[timeBudget]
+tpl.bb-upper-lower-4day | preset.home-barbell-gym | intermediate: 24 ex, 70 sets; volume.belowFloor:mu.obliques[timeBudget] volume.low:mu.abs[timeBudget] volume.low:mu.adductors[timeBudget] volume.low:mu.calves[timeBudget] volume.low:mu.chest[timeBudget] volume.low:mu.elbow-flexors[timeBudget] volume.low:mu.hamstrings[timeBudget] volume.low:mu.side-delts[timeBudget]
+tpl.bb-upper-lower-4day | preset.home-barbell-gym | novice: 20 ex, 84 sets; volume.belowFloor:mu.abs[template] volume.belowFloor:mu.obliques[template] volume.low:mu.adductors[sessionCap] volume.low:mu.side-delts[slotLimit] frequency.muscle:mu.abs[template] frequency.muscle:mu.obliques[template]
+tpl.bb-upper-lower-4day | preset.hotel-gym | advanced: 24 ex, 75 sets; volume.belowFloor:mu.obliques[timeBudget] volume.low:mu.adductors[timeBudget] volume.low:mu.calves[timeBudget] volume.low:mu.chest[timeBudget] volume.low:mu.elbow-flexors[timeBudget] volume.low:mu.side-delts[timeBudget]
+tpl.bb-upper-lower-4day | preset.hotel-gym | intermediate: 24 ex, 75 sets; volume.belowFloor:mu.obliques[timeBudget] volume.low:mu.adductors[timeBudget] volume.low:mu.calves[timeBudget] volume.low:mu.chest[timeBudget] volume.low:mu.elbow-flexors[timeBudget] volume.low:mu.side-delts[timeBudget]
+tpl.bb-upper-lower-4day | preset.hotel-gym | novice: 20 ex, 84 sets; volume.belowFloor:mu.abs[template] volume.belowFloor:mu.obliques[template] volume.low:mu.adductors[sessionCap] volume.low:mu.side-delts[slotLimit] frequency.muscle:mu.abs[template] frequency.muscle:mu.obliques[template]
+tpl.bb-upper-lower-ppl-5day | preset.bodyweight-bands | advanced: 22 ex, 85 sets; volume.belowFloor:mu.obliques[slotLimit] volume.belowFloor:mu.upper-traps[slotLimit] volume.low:mu.calves[timeBudget] volume.low:mu.front-delts[timeBudget] volume.low:mu.side-delts[slotLimit] frequency.muscle:mu.side-delts[template]
+tpl.bb-upper-lower-ppl-5day | preset.bodyweight-bands | intermediate: 22 ex, 85 sets; volume.belowFloor:mu.obliques[slotLimit] volume.belowFloor:mu.upper-traps[slotLimit] volume.low:mu.calves[timeBudget] volume.low:mu.front-delts[timeBudget] volume.low:mu.side-delts[slotLimit] frequency.muscle:mu.side-delts[template]
+tpl.bb-upper-lower-ppl-5day | preset.bodyweight-bands | novice: ✗ plan.template.levelMismatch
+tpl.bb-upper-lower-ppl-5day | preset.commercial-gym | advanced: 26 ex, 91 sets; volume.belowFloor:mu.obliques[slotLimit] volume.low:mu.calves[timeBudget] volume.low:mu.side-delts[slotLimit]
+tpl.bb-upper-lower-ppl-5day | preset.commercial-gym | intermediate: 26 ex, 91 sets; volume.belowFloor:mu.obliques[slotLimit] volume.low:mu.calves[timeBudget] volume.low:mu.side-delts[slotLimit]
+tpl.bb-upper-lower-ppl-5day | preset.commercial-gym | novice: ✗ plan.template.levelMismatch
+tpl.bb-upper-lower-ppl-5day | preset.custom | advanced: 14 ex, 59 sets; volume.belowFloor:mu.elbow-flexors[equipment] volume.belowFloor:mu.lats[equipment] volume.belowFloor:mu.mid-back[equipment] volume.belowFloor:mu.obliques[slotLimit] volume.belowFloor:mu.rear-delts[equipment] volume.belowFloor:mu.upper-traps[slotLimit] volume.low:mu.calves[timeBudget] volume.low:mu.side-delts[slotLimit] frequency.muscle:mu.elbow-flexors[equipment] frequency.muscle:mu.lats[equipment] frequency.muscle:mu.mid-back[equipment] frequency.muscle:mu.rear-delts[equipment]
+tpl.bb-upper-lower-ppl-5day | preset.custom | intermediate: 14 ex, 59 sets; volume.belowFloor:mu.elbow-flexors[equipment] volume.belowFloor:mu.lats[equipment] volume.belowFloor:mu.mid-back[equipment] volume.belowFloor:mu.obliques[slotLimit] volume.belowFloor:mu.rear-delts[equipment] volume.belowFloor:mu.upper-traps[slotLimit] volume.low:mu.calves[timeBudget] volume.low:mu.side-delts[slotLimit] frequency.muscle:mu.elbow-flexors[equipment] frequency.muscle:mu.lats[equipment] frequency.muscle:mu.mid-back[equipment] frequency.muscle:mu.rear-delts[equipment]
+tpl.bb-upper-lower-ppl-5day | preset.custom | novice: ✗ plan.template.levelMismatch
+tpl.bb-upper-lower-ppl-5day | preset.dumbbells-bench | advanced: 26 ex, 93 sets; volume.belowFloor:mu.obliques[slotLimit] volume.low:mu.calves[timeBudget] volume.low:mu.side-delts[timeBudget]
+tpl.bb-upper-lower-ppl-5day | preset.dumbbells-bench | intermediate: 26 ex, 93 sets; volume.belowFloor:mu.obliques[slotLimit] volume.low:mu.calves[timeBudget] volume.low:mu.side-delts[timeBudget]
+tpl.bb-upper-lower-ppl-5day | preset.dumbbells-bench | novice: ✗ plan.template.levelMismatch
+tpl.bb-upper-lower-ppl-5day | preset.home-barbell-gym | advanced: 25 ex, 90 sets; volume.belowFloor:mu.obliques[slotLimit] volume.low:mu.calves[timeBudget] volume.low:mu.side-delts[slotLimit]
+tpl.bb-upper-lower-ppl-5day | preset.home-barbell-gym | intermediate: 25 ex, 90 sets; volume.belowFloor:mu.obliques[slotLimit] volume.low:mu.calves[timeBudget] volume.low:mu.side-delts[slotLimit]
+tpl.bb-upper-lower-ppl-5day | preset.home-barbell-gym | novice: ✗ plan.template.levelMismatch
+tpl.bb-upper-lower-ppl-5day | preset.hotel-gym | advanced: 25 ex, 95 sets; volume.belowFloor:mu.obliques[slotLimit] volume.low:mu.calves[timeBudget] volume.low:mu.side-delts[timeBudget]
+tpl.bb-upper-lower-ppl-5day | preset.hotel-gym | intermediate: 25 ex, 95 sets; volume.belowFloor:mu.obliques[slotLimit] volume.low:mu.calves[timeBudget] volume.low:mu.side-delts[timeBudget]
+tpl.bb-upper-lower-ppl-5day | preset.hotel-gym | novice: ✗ plan.template.levelMismatch
+tpl.pb-full-body-2day | preset.bodyweight-bands | advanced: ✗ plan.lift.unavailable
+tpl.pb-full-body-2day | preset.bodyweight-bands | intermediate: ✗ plan.lift.unavailable
+tpl.pb-full-body-2day | preset.bodyweight-bands | novice: ✗ plan.lift.unavailable
+tpl.pb-full-body-2day | preset.commercial-gym | advanced: 11 ex, 32 sets; volume.belowFloor:mu.abs[timeBudget] volume.belowFloor:mu.calves[timeBudget] volume.belowFloor:mu.side-delts[timeBudget] volume.low:mu.elbow-flexors[timeBudget] volume.low:mu.lats[timeBudget] volume.low:mu.mid-back[timeBudget] volume.low:mu.quads[timeBudget]
+tpl.pb-full-body-2day | preset.commercial-gym | intermediate: 11 ex, 32 sets; volume.belowFloor:mu.abs[timeBudget] volume.belowFloor:mu.calves[timeBudget] volume.belowFloor:mu.side-delts[timeBudget] volume.low:mu.elbow-flexors[timeBudget] volume.low:mu.lats[timeBudget] volume.low:mu.mid-back[timeBudget] volume.low:mu.quads[timeBudget]
+tpl.pb-full-body-2day | preset.commercial-gym | novice: 10 ex, 36 sets; volume.belowFloor:mu.abs[template] volume.belowFloor:mu.calves[template] volume.low:mu.mid-back[slotLimit] volume.low:mu.quads[slotLimit] volume.low:mu.side-delts[slotLimit]
+tpl.pb-full-body-2day | preset.custom | advanced: ✗ plan.lift.unavailable
+tpl.pb-full-body-2day | preset.custom | intermediate: ✗ plan.lift.unavailable
+tpl.pb-full-body-2day | preset.custom | novice: ✗ plan.lift.unavailable
+tpl.pb-full-body-2day | preset.dumbbells-bench | advanced: ✗ plan.lift.unavailable
+tpl.pb-full-body-2day | preset.dumbbells-bench | intermediate: ✗ plan.lift.unavailable
+tpl.pb-full-body-2day | preset.dumbbells-bench | novice: ✗ plan.lift.unavailable
+tpl.pb-full-body-2day | preset.home-barbell-gym | advanced: 11 ex, 32 sets; volume.belowFloor:mu.abs[timeBudget] volume.belowFloor:mu.calves[timeBudget] volume.belowFloor:mu.side-delts[timeBudget] volume.low:mu.elbow-flexors[timeBudget] volume.low:mu.lats[timeBudget] volume.low:mu.mid-back[timeBudget] volume.low:mu.quads[timeBudget]
+tpl.pb-full-body-2day | preset.home-barbell-gym | intermediate: 11 ex, 32 sets; volume.belowFloor:mu.abs[timeBudget] volume.belowFloor:mu.calves[timeBudget] volume.belowFloor:mu.side-delts[timeBudget] volume.low:mu.elbow-flexors[timeBudget] volume.low:mu.lats[timeBudget] volume.low:mu.mid-back[timeBudget] volume.low:mu.quads[timeBudget]
+tpl.pb-full-body-2day | preset.home-barbell-gym | novice: 10 ex, 36 sets; volume.belowFloor:mu.abs[template] volume.belowFloor:mu.calves[template] volume.low:mu.mid-back[slotLimit] volume.low:mu.quads[slotLimit] volume.low:mu.side-delts[slotLimit]
+tpl.pb-full-body-2day | preset.hotel-gym | advanced: ✗ plan.lift.unavailable
+tpl.pb-full-body-2day | preset.hotel-gym | intermediate: ✗ plan.lift.unavailable
+tpl.pb-full-body-2day | preset.hotel-gym | novice: ✗ plan.lift.unavailable
+tpl.pb-full-body-3day | preset.bodyweight-bands | advanced: ✗ plan.lift.unavailable
+tpl.pb-full-body-3day | preset.bodyweight-bands | intermediate: ✗ plan.lift.unavailable
+tpl.pb-full-body-3day | preset.bodyweight-bands | novice: ✗ plan.lift.unavailable
+tpl.pb-full-body-3day | preset.commercial-gym | advanced: 13 ex, 49 sets; volume.low:mu.calves[timeBudget] volume.low:mu.chest[timeBudget] volume.low:mu.front-delts[timeBudget] volume.low:mu.hamstrings[slotLimit] volume.low:mu.side-delts[slotLimit] volume.low:mu.triceps[timeBudget] frequency.muscle:mu.side-delts[template]
+tpl.pb-full-body-3day | preset.commercial-gym | intermediate: 13 ex, 49 sets; volume.low:mu.calves[timeBudget] volume.low:mu.chest[timeBudget] volume.low:mu.front-delts[timeBudget] volume.low:mu.hamstrings[slotLimit] volume.low:mu.side-delts[slotLimit] volume.low:mu.triceps[timeBudget] frequency.muscle:mu.side-delts[template]
+tpl.pb-full-body-3day | preset.commercial-gym | novice: 15 ex, 55 sets; volume.low:mu.front-delts[slotLimit] volume.low:mu.hamstrings[slotLimit] volume.low:mu.side-delts[slotLimit] frequency.muscle:mu.side-delts[template]
+tpl.pb-full-body-3day | preset.custom | advanced: ✗ plan.lift.unavailable
+tpl.pb-full-body-3day | preset.custom | intermediate: ✗ plan.lift.unavailable
+tpl.pb-full-body-3day | preset.custom | novice: ✗ plan.lift.unavailable
+tpl.pb-full-body-3day | preset.dumbbells-bench | advanced: ✗ plan.lift.unavailable
+tpl.pb-full-body-3day | preset.dumbbells-bench | intermediate: ✗ plan.lift.unavailable
+tpl.pb-full-body-3day | preset.dumbbells-bench | novice: ✗ plan.lift.unavailable
+tpl.pb-full-body-3day | preset.home-barbell-gym | advanced: 14 ex, 50 sets; volume.belowFloor:mu.calves[timeBudget] volume.low:mu.chest[timeBudget] volume.low:mu.front-delts[timeBudget] volume.low:mu.hamstrings[timeBudget] volume.low:mu.side-delts[slotLimit] frequency.muscle:mu.side-delts[template]
+tpl.pb-full-body-3day | preset.home-barbell-gym | intermediate: 14 ex, 50 sets; volume.belowFloor:mu.calves[timeBudget] volume.low:mu.chest[timeBudget] volume.low:mu.front-delts[timeBudget] volume.low:mu.hamstrings[timeBudget] volume.low:mu.side-delts[slotLimit] frequency.muscle:mu.side-delts[template]
+tpl.pb-full-body-3day | preset.home-barbell-gym | novice: 15 ex, 56 sets; volume.low:mu.front-delts[slotLimit] volume.low:mu.hamstrings[slotLimit] volume.low:mu.side-delts[slotLimit] frequency.muscle:mu.side-delts[template]
+tpl.pb-full-body-3day | preset.hotel-gym | advanced: ✗ plan.lift.unavailable
+tpl.pb-full-body-3day | preset.hotel-gym | intermediate: ✗ plan.lift.unavailable
+tpl.pb-full-body-3day | preset.hotel-gym | novice: ✗ plan.lift.unavailable
+tpl.pb-ppl-6day | preset.bodyweight-bands | advanced: ✗ plan.lift.unavailable
+tpl.pb-ppl-6day | preset.bodyweight-bands | intermediate: ✗ plan.lift.unavailable
+tpl.pb-ppl-6day | preset.bodyweight-bands | novice: ✗ plan.template.levelMismatch
+tpl.pb-ppl-6day | preset.commercial-gym | advanced: 26 ex, 98 sets; volume.low:mu.abs[timeBudget]
+tpl.pb-ppl-6day | preset.commercial-gym | intermediate: 26 ex, 98 sets; volume.low:mu.abs[timeBudget]
+tpl.pb-ppl-6day | preset.commercial-gym | novice: ✗ plan.template.levelMismatch
+tpl.pb-ppl-6day | preset.custom | advanced: ✗ plan.lift.unavailable
+tpl.pb-ppl-6day | preset.custom | intermediate: ✗ plan.lift.unavailable
+tpl.pb-ppl-6day | preset.custom | novice: ✗ plan.template.levelMismatch
+tpl.pb-ppl-6day | preset.dumbbells-bench | advanced: ✗ plan.lift.unavailable
+tpl.pb-ppl-6day | preset.dumbbells-bench | intermediate: ✗ plan.lift.unavailable
+tpl.pb-ppl-6day | preset.dumbbells-bench | novice: ✗ plan.template.levelMismatch
+tpl.pb-ppl-6day | preset.home-barbell-gym | advanced: 27 ex, 100 sets; volume.low:mu.abs[timeBudget]
+tpl.pb-ppl-6day | preset.home-barbell-gym | intermediate: 27 ex, 100 sets; volume.low:mu.abs[timeBudget]
+tpl.pb-ppl-6day | preset.home-barbell-gym | novice: ✗ plan.template.levelMismatch
+tpl.pb-ppl-6day | preset.hotel-gym | advanced: ✗ plan.lift.unavailable
+tpl.pb-ppl-6day | preset.hotel-gym | intermediate: ✗ plan.lift.unavailable
+tpl.pb-ppl-6day | preset.hotel-gym | novice: ✗ plan.template.levelMismatch
+tpl.pb-upper-lower-4day | preset.bodyweight-bands | advanced: ✗ plan.lift.unavailable
+tpl.pb-upper-lower-4day | preset.bodyweight-bands | intermediate: ✗ plan.lift.unavailable
+tpl.pb-upper-lower-4day | preset.bodyweight-bands | novice: ✗ plan.template.levelMismatch
+tpl.pb-upper-lower-4day | preset.commercial-gym | advanced: 18 ex, 66 sets; volume.low:mu.abs[timeBudget] volume.low:mu.elbow-flexors[timeBudget] volume.low:mu.mid-back[slotLimit] volume.low:mu.rear-delts[slotLimit] volume.low:mu.side-delts[timeBudget]
+tpl.pb-upper-lower-4day | preset.commercial-gym | intermediate: 18 ex, 66 sets; volume.low:mu.abs[timeBudget] volume.low:mu.elbow-flexors[timeBudget] volume.low:mu.mid-back[slotLimit] volume.low:mu.rear-delts[slotLimit] volume.low:mu.side-delts[timeBudget]
+tpl.pb-upper-lower-4day | preset.commercial-gym | novice: ✗ plan.template.levelMismatch
+tpl.pb-upper-lower-4day | preset.custom | advanced: ✗ plan.lift.unavailable
+tpl.pb-upper-lower-4day | preset.custom | intermediate: ✗ plan.lift.unavailable
+tpl.pb-upper-lower-4day | preset.custom | novice: ✗ plan.template.levelMismatch
+tpl.pb-upper-lower-4day | preset.dumbbells-bench | advanced: ✗ plan.lift.unavailable
+tpl.pb-upper-lower-4day | preset.dumbbells-bench | intermediate: ✗ plan.lift.unavailable
+tpl.pb-upper-lower-4day | preset.dumbbells-bench | novice: ✗ plan.template.levelMismatch
+tpl.pb-upper-lower-4day | preset.home-barbell-gym | advanced: 18 ex, 68 sets; volume.low:mu.abs[timeBudget] volume.low:mu.elbow-flexors[timeBudget] volume.low:mu.mid-back[slotLimit] volume.low:mu.rear-delts[slotLimit] volume.low:mu.side-delts[timeBudget]
+tpl.pb-upper-lower-4day | preset.home-barbell-gym | intermediate: 18 ex, 68 sets; volume.low:mu.abs[timeBudget] volume.low:mu.elbow-flexors[timeBudget] volume.low:mu.mid-back[slotLimit] volume.low:mu.rear-delts[slotLimit] volume.low:mu.side-delts[timeBudget]
+tpl.pb-upper-lower-4day | preset.home-barbell-gym | novice: ✗ plan.template.levelMismatch
+tpl.pb-upper-lower-4day | preset.hotel-gym | advanced: ✗ plan.lift.unavailable
+tpl.pb-upper-lower-4day | preset.hotel-gym | intermediate: ✗ plan.lift.unavailable
+tpl.pb-upper-lower-4day | preset.hotel-gym | novice: ✗ plan.template.levelMismatch
+tpl.pb-upper-lower-ppl-5day | preset.bodyweight-bands | advanced: ✗ plan.lift.unavailable
+tpl.pb-upper-lower-ppl-5day | preset.bodyweight-bands | intermediate: ✗ plan.lift.unavailable
+tpl.pb-upper-lower-ppl-5day | preset.bodyweight-bands | novice: ✗ plan.template.levelMismatch
+tpl.pb-upper-lower-ppl-5day | preset.commercial-gym | advanced: 23 ex, 85 sets; volume.low:mu.abs[timeBudget] volume.low:mu.side-delts[slotLimit]
+tpl.pb-upper-lower-ppl-5day | preset.commercial-gym | intermediate: 23 ex, 85 sets; volume.low:mu.abs[timeBudget] volume.low:mu.side-delts[slotLimit]
+tpl.pb-upper-lower-ppl-5day | preset.commercial-gym | novice: ✗ plan.template.levelMismatch
+tpl.pb-upper-lower-ppl-5day | preset.custom | advanced: ✗ plan.lift.unavailable
+tpl.pb-upper-lower-ppl-5day | preset.custom | intermediate: ✗ plan.lift.unavailable
+tpl.pb-upper-lower-ppl-5day | preset.custom | novice: ✗ plan.template.levelMismatch
+tpl.pb-upper-lower-ppl-5day | preset.dumbbells-bench | advanced: ✗ plan.lift.unavailable
+tpl.pb-upper-lower-ppl-5day | preset.dumbbells-bench | intermediate: ✗ plan.lift.unavailable
+tpl.pb-upper-lower-ppl-5day | preset.dumbbells-bench | novice: ✗ plan.template.levelMismatch
+tpl.pb-upper-lower-ppl-5day | preset.home-barbell-gym | advanced: 24 ex, 88 sets; volume.low:mu.abs[timeBudget] volume.low:mu.side-delts[slotLimit]
+tpl.pb-upper-lower-ppl-5day | preset.home-barbell-gym | intermediate: 24 ex, 88 sets; volume.low:mu.abs[timeBudget] volume.low:mu.side-delts[slotLimit]
+tpl.pb-upper-lower-ppl-5day | preset.home-barbell-gym | novice: ✗ plan.template.levelMismatch
+tpl.pb-upper-lower-ppl-5day | preset.hotel-gym | advanced: ✗ plan.lift.unavailable
+tpl.pb-upper-lower-ppl-5day | preset.hotel-gym | intermediate: ✗ plan.lift.unavailable
+tpl.pb-upper-lower-ppl-5day | preset.hotel-gym | novice: ✗ plan.template.levelMismatch
+tpl.pl-sbd-2day | preset.bodyweight-bands | advanced: ✗ plan.lift.unavailable
+tpl.pl-sbd-2day | preset.bodyweight-bands | intermediate: ✗ plan.lift.unavailable
+tpl.pl-sbd-2day | preset.bodyweight-bands | novice: ✗ plan.lift.unavailable
+tpl.pl-sbd-2day | preset.commercial-gym | advanced: 10 ex, 30 sets
+tpl.pl-sbd-2day | preset.commercial-gym | intermediate: 10 ex, 30 sets
+tpl.pl-sbd-2day | preset.commercial-gym | novice: 10 ex, 30 sets
+tpl.pl-sbd-2day | preset.custom | advanced: ✗ plan.lift.unavailable
+tpl.pl-sbd-2day | preset.custom | intermediate: ✗ plan.lift.unavailable
+tpl.pl-sbd-2day | preset.custom | novice: ✗ plan.lift.unavailable
+tpl.pl-sbd-2day | preset.dumbbells-bench | advanced: ✗ plan.lift.unavailable
+tpl.pl-sbd-2day | preset.dumbbells-bench | intermediate: ✗ plan.lift.unavailable
+tpl.pl-sbd-2day | preset.dumbbells-bench | novice: ✗ plan.lift.unavailable
+tpl.pl-sbd-2day | preset.home-barbell-gym | advanced: 10 ex, 30 sets
+tpl.pl-sbd-2day | preset.home-barbell-gym | intermediate: 10 ex, 30 sets
+tpl.pl-sbd-2day | preset.home-barbell-gym | novice: 10 ex, 30 sets
+tpl.pl-sbd-2day | preset.hotel-gym | advanced: ✗ plan.lift.unavailable
+tpl.pl-sbd-2day | preset.hotel-gym | intermediate: ✗ plan.lift.unavailable
+tpl.pl-sbd-2day | preset.hotel-gym | novice: ✗ plan.lift.unavailable
+tpl.pl-sbd-3day | preset.bodyweight-bands | advanced: ✗ plan.lift.unavailable
+tpl.pl-sbd-3day | preset.bodyweight-bands | intermediate: ✗ plan.lift.unavailable
+tpl.pl-sbd-3day | preset.bodyweight-bands | novice: ✗ plan.lift.unavailable
+tpl.pl-sbd-3day | preset.commercial-gym | advanced: 13 ex, 39 sets
+tpl.pl-sbd-3day | preset.commercial-gym | intermediate: 13 ex, 39 sets
+tpl.pl-sbd-3day | preset.commercial-gym | novice: 13 ex, 39 sets
+tpl.pl-sbd-3day | preset.custom | advanced: ✗ plan.lift.unavailable
+tpl.pl-sbd-3day | preset.custom | intermediate: ✗ plan.lift.unavailable
+tpl.pl-sbd-3day | preset.custom | novice: ✗ plan.lift.unavailable
+tpl.pl-sbd-3day | preset.dumbbells-bench | advanced: ✗ plan.lift.unavailable
+tpl.pl-sbd-3day | preset.dumbbells-bench | intermediate: ✗ plan.lift.unavailable
+tpl.pl-sbd-3day | preset.dumbbells-bench | novice: ✗ plan.lift.unavailable
+tpl.pl-sbd-3day | preset.home-barbell-gym | advanced: 13 ex, 39 sets
+tpl.pl-sbd-3day | preset.home-barbell-gym | intermediate: 13 ex, 39 sets
+tpl.pl-sbd-3day | preset.home-barbell-gym | novice: 13 ex, 39 sets
+tpl.pl-sbd-3day | preset.hotel-gym | advanced: ✗ plan.lift.unavailable
+tpl.pl-sbd-3day | preset.hotel-gym | intermediate: ✗ plan.lift.unavailable
+tpl.pl-sbd-3day | preset.hotel-gym | novice: ✗ plan.lift.unavailable
+tpl.pl-sbd-4day | preset.bodyweight-bands | advanced: ✗ plan.lift.unavailable
+tpl.pl-sbd-4day | preset.bodyweight-bands | intermediate: ✗ plan.lift.unavailable
+tpl.pl-sbd-4day | preset.bodyweight-bands | novice: ✗ plan.template.levelMismatch
+tpl.pl-sbd-4day | preset.commercial-gym | advanced: 16 ex, 48 sets
+tpl.pl-sbd-4day | preset.commercial-gym | intermediate: 16 ex, 48 sets
+tpl.pl-sbd-4day | preset.commercial-gym | novice: ✗ plan.template.levelMismatch
+tpl.pl-sbd-4day | preset.custom | advanced: ✗ plan.lift.unavailable
+tpl.pl-sbd-4day | preset.custom | intermediate: ✗ plan.lift.unavailable
+tpl.pl-sbd-4day | preset.custom | novice: ✗ plan.template.levelMismatch
+tpl.pl-sbd-4day | preset.dumbbells-bench | advanced: ✗ plan.lift.unavailable
+tpl.pl-sbd-4day | preset.dumbbells-bench | intermediate: ✗ plan.lift.unavailable
+tpl.pl-sbd-4day | preset.dumbbells-bench | novice: ✗ plan.template.levelMismatch
+tpl.pl-sbd-4day | preset.home-barbell-gym | advanced: 16 ex, 48 sets
+tpl.pl-sbd-4day | preset.home-barbell-gym | intermediate: 16 ex, 48 sets
+tpl.pl-sbd-4day | preset.home-barbell-gym | novice: ✗ plan.template.levelMismatch
+tpl.pl-sbd-4day | preset.hotel-gym | advanced: ✗ plan.lift.unavailable
+tpl.pl-sbd-4day | preset.hotel-gym | intermediate: ✗ plan.lift.unavailable
+tpl.pl-sbd-4day | preset.hotel-gym | novice: ✗ plan.template.levelMismatch
+tpl.pl-sbd-5day | preset.bodyweight-bands | advanced: ✗ plan.lift.unavailable
+tpl.pl-sbd-5day | preset.bodyweight-bands | intermediate: ✗ plan.lift.unavailable
+tpl.pl-sbd-5day | preset.bodyweight-bands | novice: ✗ plan.template.levelMismatch
+tpl.pl-sbd-5day | preset.commercial-gym | advanced: 20 ex, 60 sets
+tpl.pl-sbd-5day | preset.commercial-gym | intermediate: 20 ex, 60 sets
+tpl.pl-sbd-5day | preset.commercial-gym | novice: ✗ plan.template.levelMismatch
+tpl.pl-sbd-5day | preset.custom | advanced: ✗ plan.lift.unavailable
+tpl.pl-sbd-5day | preset.custom | intermediate: ✗ plan.lift.unavailable
+tpl.pl-sbd-5day | preset.custom | novice: ✗ plan.template.levelMismatch
+tpl.pl-sbd-5day | preset.dumbbells-bench | advanced: ✗ plan.lift.unavailable
+tpl.pl-sbd-5day | preset.dumbbells-bench | intermediate: ✗ plan.lift.unavailable
+tpl.pl-sbd-5day | preset.dumbbells-bench | novice: ✗ plan.template.levelMismatch
+tpl.pl-sbd-5day | preset.home-barbell-gym | advanced: 20 ex, 60 sets
+tpl.pl-sbd-5day | preset.home-barbell-gym | intermediate: 20 ex, 60 sets
+tpl.pl-sbd-5day | preset.home-barbell-gym | novice: ✗ plan.template.levelMismatch
+tpl.pl-sbd-5day | preset.hotel-gym | advanced: ✗ plan.lift.unavailable
+tpl.pl-sbd-5day | preset.hotel-gym | intermediate: ✗ plan.lift.unavailable
+tpl.pl-sbd-5day | preset.hotel-gym | novice: ✗ plan.template.levelMismatch
+tpl.pl-sbd-6day | preset.bodyweight-bands | advanced: ✗ plan.lift.unavailable
+tpl.pl-sbd-6day | preset.bodyweight-bands | intermediate: ✗ plan.template.levelMismatch
+tpl.pl-sbd-6day | preset.bodyweight-bands | novice: ✗ plan.template.levelMismatch
+tpl.pl-sbd-6day | preset.commercial-gym | advanced: 18 ex, 54 sets
+tpl.pl-sbd-6day | preset.commercial-gym | intermediate: ✗ plan.template.levelMismatch
+tpl.pl-sbd-6day | preset.commercial-gym | novice: ✗ plan.template.levelMismatch
+tpl.pl-sbd-6day | preset.custom | advanced: ✗ plan.lift.unavailable
+tpl.pl-sbd-6day | preset.custom | intermediate: ✗ plan.template.levelMismatch
+tpl.pl-sbd-6day | preset.custom | novice: ✗ plan.template.levelMismatch
+tpl.pl-sbd-6day | preset.dumbbells-bench | advanced: ✗ plan.lift.unavailable
+tpl.pl-sbd-6day | preset.dumbbells-bench | intermediate: ✗ plan.template.levelMismatch
+tpl.pl-sbd-6day | preset.dumbbells-bench | novice: ✗ plan.template.levelMismatch
+tpl.pl-sbd-6day | preset.home-barbell-gym | advanced: 18 ex, 54 sets
+tpl.pl-sbd-6day | preset.home-barbell-gym | intermediate: ✗ plan.template.levelMismatch
+tpl.pl-sbd-6day | preset.home-barbell-gym | novice: ✗ plan.template.levelMismatch
+tpl.pl-sbd-6day | preset.hotel-gym | advanced: ✗ plan.lift.unavailable
+tpl.pl-sbd-6day | preset.hotel-gym | intermediate: ✗ plan.template.levelMismatch
+tpl.pl-sbd-6day | preset.hotel-gym | novice: ✗ plan.template.levelMismatch"
+`;

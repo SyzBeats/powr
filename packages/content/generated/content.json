@@ -1,7 +1,7 @@
 {
   "format": 1,
-  "version": "0.1.0+sha.958eb71f",
-  "hash": "958eb71ff2b6f421baa81967ad300ee379483b3d675a504733604c233ca4a9d6",
+  "version": "0.1.0+sha.c3aa0c1a",
+  "hash": "c3aa0c1a4bfd29c5abc723e8b589af527c553923c58b2502454c30177cd08dc8",
   "muscles": [
     {
       "id": "mu.chest",
@@ -7928,6 +7928,227 @@
   ],
   "templates": [
     {
+      "id": "tpl.bb-full-body-2day",
+      "name": {
+        "en": "Full body ×2"
+      },
+      "description": {
+        "en": "Two full-body sessions a week, each with a squat or hinge, a press, a pull and isolation work."
+      },
+      "style": "bodybuilding",
+      "daysPerWeek": 2,
+      "split": "fullBody",
+      "levels": [
+        "novice",
+        "intermediate",
+        "advanced"
+      ],
+      "default": true,
+      "periodization": "linear",
+      "progression": {
+        "main": "doubleProgression",
+        "accessory": "doubleProgression",
+        "novice": "doubleProgression"
+      },
+      "mesocycle": {
+        "accumulationWeeks": 5,
+        "deloadWeeks": 1,
+        "deloadRule": "deload.content"
+      },
+      "days": [
+        {
+          "key": "a",
+          "name": {
+            "en": "Full body A"
+          },
+          "slots": [
+            {
+              "key": "a.squat",
+              "pattern": "squat",
+              "targets": [
+                "mu.quads",
+                "mu.glutes"
+              ],
+              "priority": "primary",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "a.chest",
+              "pattern": "horizontalPush",
+              "targets": [
+                "mu.chest"
+              ],
+              "priority": "primary",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "a.row",
+              "pattern": "horizontalPull",
+              "targets": [
+                "mu.lats",
+                "mu.mid-back"
+              ],
+              "priority": "primary",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "a.leg-curl",
+              "pattern": "kneeFlexion",
+              "targets": [
+                "mu.hamstrings"
+              ],
+              "priority": "secondary",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "a.lateral-raise",
+              "pattern": "shoulderAbduction",
+              "targets": [
+                "mu.side-delts"
+              ],
+              "priority": "secondary",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "a.curl",
+              "pattern": "elbowFlexion",
+              "targets": [
+                "mu.elbow-flexors"
+              ],
+              "priority": "secondary",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "a.triceps",
+              "pattern": "elbowExtension",
+              "targets": [
+                "mu.triceps.long-head"
+              ],
+              "priority": "optional",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "a.calf",
+              "pattern": "calf",
+              "targets": [
+                "mu.calves"
+              ],
+              "priority": "optional",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            }
+          ]
+        },
+        {
+          "key": "b",
+          "name": {
+            "en": "Full body B"
+          },
+          "slots": [
+            {
+              "key": "b.hinge",
+              "pattern": "hinge",
+              "targets": [
+                "mu.hamstrings",
+                "mu.glutes"
+              ],
+              "priority": "primary",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "b.incline",
+              "pattern": "horizontalPush",
+              "targets": [
+                "mu.chest.clavicular",
+                "mu.front-delts"
+              ],
+              "priority": "primary",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "b.pulldown",
+              "pattern": "verticalPull",
+              "targets": [
+                "mu.lats"
+              ],
+              "priority": "primary",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "b.leg-extension",
+              "pattern": "kneeExtension",
+              "targets": [
+                "mu.quads"
+              ],
+              "priority": "secondary",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "b.lateral-raise",
+              "pattern": "shoulderAbduction",
+              "targets": [
+                "mu.side-delts"
+              ],
+              "priority": "secondary",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "b.triceps",
+              "pattern": "elbowExtension",
+              "targets": [
+                "mu.triceps"
+              ],
+              "priority": "secondary",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "b.curl",
+              "pattern": "elbowFlexion",
+              "targets": [
+                "mu.elbow-flexors"
+              ],
+              "priority": "optional",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "b.calf",
+              "pattern": "calf",
+              "targets": [
+                "mu.calves"
+              ],
+              "priority": "optional",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "b.abs",
+              "pattern": "core",
+              "targets": [
+                "mu.abs"
+              ],
+              "priority": "optional",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "tpl.bb-full-body-3day",
       "name": {
         "en": "Full body ×3"
@@ -7953,7 +8174,7 @@
       "mesocycle": {
         "accumulationWeeks": 5,
         "deloadWeeks": 1,
-        "deloadRule": "deload.planned"
+        "deloadRule": "deload.content"
       },
       "days": [
         {
@@ -8235,7 +8456,7 @@
       "mesocycle": {
         "accumulationWeeks": 5,
         "deloadWeeks": 1,
-        "deloadRule": "deload.planned"
+        "deloadRule": "deload.content"
       },
       "days": [
         {
@@ -8564,7 +8785,7 @@
       "mesocycle": {
         "accumulationWeeks": 5,
         "deloadWeeks": 1,
-        "deloadRule": "deload.planned"
+        "deloadRule": "deload.content"
       },
       "days": [
         {
@@ -8901,7 +9122,7 @@
       "mesocycle": {
         "accumulationWeeks": 5,
         "deloadWeeks": 1,
-        "deloadRule": "deload.planned"
+        "deloadRule": "deload.content"
       },
       "days": [
         {
@@ -9252,6 +9473,266 @@
       ]
     },
     {
+      "id": "tpl.pl-sbd-2day",
+      "name": {
+        "en": "Full body SBD ×2"
+      },
+      "description": {
+        "en": "Two sessions a week with squat, bench press and deadlift in each, one heavy and one lighter exposure per lift."
+      },
+      "style": "powerlifting",
+      "daysPerWeek": 2,
+      "split": "sbd",
+      "levels": [
+        "novice",
+        "intermediate",
+        "advanced"
+      ],
+      "default": true,
+      "periodization": "block",
+      "progression": {
+        "main": "rpe",
+        "accessory": "doubleProgression",
+        "novice": "linear"
+      },
+      "mesocycle": {
+        "accumulationWeeks": 5,
+        "deloadWeeks": 1,
+        "deloadRule": "deload.content"
+      },
+      "days": [
+        {
+          "key": "a",
+          "name": {
+            "en": "Heavy squat, moderate bench"
+          },
+          "slots": [
+            {
+              "key": "a.squat",
+              "pattern": "squat",
+              "targets": [
+                "mu.quads"
+              ],
+              "priority": "primary",
+              "lift": "squat",
+              "intensity": "heavy",
+              "goal": "strength",
+              "mode": "topBackoff",
+              "repRange": [
+                1,
+                3
+              ],
+              "effort": {
+                "rpe": [
+                  8,
+                  9
+                ]
+              },
+              "backoff": {
+                "repRange": [
+                  3,
+                  5
+                ],
+                "effort": {
+                  "rpe": [
+                    7,
+                    8
+                  ]
+                }
+              }
+            },
+            {
+              "key": "a.bench",
+              "pattern": "horizontalPush",
+              "targets": [
+                "mu.chest"
+              ],
+              "priority": "primary",
+              "lift": "bench",
+              "intensity": "moderate",
+              "goal": "strength",
+              "mode": "rpe",
+              "repRange": [
+                3,
+                5
+              ],
+              "effort": {
+                "rpe": [
+                  7,
+                  8
+                ]
+              }
+            },
+            {
+              "key": "a.deadlift",
+              "pattern": "hinge",
+              "targets": [
+                "mu.glutes",
+                "mu.lower-back"
+              ],
+              "priority": "secondary",
+              "lift": "deadlift",
+              "allowVariants": true,
+              "intensity": "light",
+              "goal": "strength",
+              "mode": "rpe",
+              "repRange": [
+                3,
+                5
+              ],
+              "effort": {
+                "rpe": [
+                  6,
+                  7
+                ]
+              }
+            },
+            {
+              "key": "a.row",
+              "pattern": "horizontalPull",
+              "targets": [
+                "mu.lats",
+                "mu.mid-back"
+              ],
+              "priority": "secondary",
+              "goal": "strength",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "a.abs",
+              "pattern": "core",
+              "targets": [
+                "mu.abs"
+              ],
+              "priority": "optional",
+              "goal": "strength",
+              "mode": "doubleProgression"
+            }
+          ]
+        },
+        {
+          "key": "b",
+          "name": {
+            "en": "Heavy deadlift and bench"
+          },
+          "slots": [
+            {
+              "key": "b.deadlift",
+              "pattern": "hinge",
+              "targets": [
+                "mu.glutes",
+                "mu.lower-back"
+              ],
+              "priority": "primary",
+              "lift": "deadlift",
+              "intensity": "heavy",
+              "goal": "strength",
+              "mode": "topBackoff",
+              "repRange": [
+                1,
+                3
+              ],
+              "effort": {
+                "rpe": [
+                  8,
+                  9
+                ]
+              },
+              "backoff": {
+                "repRange": [
+                  3,
+                  5
+                ],
+                "effort": {
+                  "rpe": [
+                    7,
+                    8
+                  ]
+                }
+              }
+            },
+            {
+              "key": "b.bench",
+              "pattern": "horizontalPush",
+              "targets": [
+                "mu.chest"
+              ],
+              "priority": "primary",
+              "lift": "bench",
+              "intensity": "heavy",
+              "goal": "strength",
+              "mode": "topBackoff",
+              "repRange": [
+                1,
+                3
+              ],
+              "effort": {
+                "rpe": [
+                  8,
+                  9
+                ]
+              },
+              "backoff": {
+                "repRange": [
+                  3,
+                  5
+                ],
+                "effort": {
+                  "rpe": [
+                    7,
+                    8
+                  ]
+                }
+              }
+            },
+            {
+              "key": "b.squat",
+              "pattern": "squat",
+              "targets": [
+                "mu.quads"
+              ],
+              "priority": "secondary",
+              "lift": "squat",
+              "allowVariants": true,
+              "intensity": "light",
+              "goal": "strength",
+              "mode": "rpe",
+              "repRange": [
+                3,
+                5
+              ],
+              "effort": {
+                "rpe": [
+                  6,
+                  7
+                ]
+              }
+            },
+            {
+              "key": "b.pulldown",
+              "pattern": "verticalPull",
+              "targets": [
+                "mu.lats"
+              ],
+              "priority": "secondary",
+              "goal": "strength",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "b.leg-curl",
+              "pattern": "kneeFlexion",
+              "targets": [
+                "mu.hamstrings"
+              ],
+              "priority": "optional",
+              "goal": "strength",
+              "mode": "doubleProgression"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "tpl.pl-sbd-3day",
       "name": {
         "en": "SBD ×3 (heavy/light/moderate)"
@@ -9270,14 +9751,14 @@
       "default": true,
       "periodization": "block",
       "progression": {
-        "main": "rpeLoad",
+        "main": "rpe",
         "accessory": "doubleProgression",
-        "novice": "linearLoad"
+        "novice": "linear"
       },
       "mesocycle": {
         "accumulationWeeks": 5,
         "deloadWeeks": 1,
-        "deloadRule": "deload.planned"
+        "deloadRule": "deload.content"
       },
       "days": [
         {
@@ -9593,14 +10074,14 @@
       "default": true,
       "periodization": "block",
       "progression": {
-        "main": "rpeLoad",
+        "main": "rpe",
         "accessory": "doubleProgression",
-        "novice": "linearLoad"
+        "novice": "linear"
       },
       "mesocycle": {
         "accumulationWeeks": 5,
         "deloadWeeks": 1,
-        "deloadRule": "deload.planned"
+        "deloadRule": "deload.content"
       },
       "days": [
         {
@@ -9938,6 +10419,1387 @@
       ]
     },
     {
+      "id": "tpl.pl-sbd-5day",
+      "name": {
+        "en": "SBD 5-day"
+      },
+      "description": {
+        "en": "Five sessions with squat and bench press three times and deadlift twice a week, plus accessory work for the upper back and arms."
+      },
+      "style": "powerlifting",
+      "daysPerWeek": 5,
+      "split": "sbd",
+      "levels": [
+        "intermediate",
+        "advanced"
+      ],
+      "default": true,
+      "periodization": "block",
+      "progression": {
+        "main": "rpe",
+        "accessory": "doubleProgression",
+        "novice": "linear"
+      },
+      "mesocycle": {
+        "accumulationWeeks": 5,
+        "deloadWeeks": 1,
+        "deloadRule": "deload.content"
+      },
+      "days": [
+        {
+          "key": "squat-heavy",
+          "name": {
+            "en": "Heavy squat, light bench"
+          },
+          "slots": [
+            {
+              "key": "squat-heavy.squat",
+              "pattern": "squat",
+              "targets": [
+                "mu.quads"
+              ],
+              "priority": "primary",
+              "lift": "squat",
+              "intensity": "heavy",
+              "goal": "strength",
+              "mode": "topBackoff",
+              "repRange": [
+                1,
+                3
+              ],
+              "effort": {
+                "rpe": [
+                  8,
+                  9
+                ]
+              },
+              "backoff": {
+                "repRange": [
+                  3,
+                  5
+                ],
+                "effort": {
+                  "rpe": [
+                    7,
+                    8
+                  ]
+                }
+              }
+            },
+            {
+              "key": "squat-heavy.bench",
+              "pattern": "horizontalPush",
+              "targets": [
+                "mu.chest"
+              ],
+              "priority": "primary",
+              "lift": "bench",
+              "allowVariants": true,
+              "intensity": "light",
+              "goal": "strength",
+              "mode": "rpe",
+              "repRange": [
+                4,
+                6
+              ],
+              "effort": {
+                "rpe": [
+                  6,
+                  7
+                ]
+              }
+            },
+            {
+              "key": "squat-heavy.row",
+              "pattern": "horizontalPull",
+              "targets": [
+                "mu.lats",
+                "mu.mid-back"
+              ],
+              "priority": "secondary",
+              "goal": "strength",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "squat-heavy.abs",
+              "pattern": "core",
+              "targets": [
+                "mu.abs"
+              ],
+              "priority": "optional",
+              "goal": "strength",
+              "mode": "doubleProgression"
+            }
+          ]
+        },
+        {
+          "key": "deadlift-heavy",
+          "name": {
+            "en": "Heavy deadlift"
+          },
+          "slots": [
+            {
+              "key": "deadlift-heavy.deadlift",
+              "pattern": "hinge",
+              "targets": [
+                "mu.glutes",
+                "mu.lower-back"
+              ],
+              "priority": "primary",
+              "lift": "deadlift",
+              "intensity": "heavy",
+              "goal": "strength",
+              "mode": "topBackoff",
+              "repRange": [
+                1,
+                3
+              ],
+              "effort": {
+                "rpe": [
+                  8,
+                  9
+                ]
+              },
+              "backoff": {
+                "repRange": [
+                  3,
+                  5
+                ],
+                "effort": {
+                  "rpe": [
+                    7,
+                    8
+                  ]
+                }
+              }
+            },
+            {
+              "key": "deadlift-heavy.press",
+              "pattern": "verticalPush",
+              "targets": [
+                "mu.front-delts"
+              ],
+              "priority": "secondary",
+              "goal": "strength",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "deadlift-heavy.pulldown",
+              "pattern": "verticalPull",
+              "targets": [
+                "mu.lats"
+              ],
+              "priority": "secondary",
+              "goal": "strength",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "deadlift-heavy.leg-curl",
+              "pattern": "kneeFlexion",
+              "targets": [
+                "mu.hamstrings"
+              ],
+              "priority": "optional",
+              "goal": "strength",
+              "mode": "doubleProgression"
+            }
+          ]
+        },
+        {
+          "key": "bench-heavy",
+          "name": {
+            "en": "Heavy bench, light squat"
+          },
+          "slots": [
+            {
+              "key": "bench-heavy.bench",
+              "pattern": "horizontalPush",
+              "targets": [
+                "mu.chest"
+              ],
+              "priority": "primary",
+              "lift": "bench",
+              "intensity": "heavy",
+              "goal": "strength",
+              "mode": "topBackoff",
+              "repRange": [
+                1,
+                3
+              ],
+              "effort": {
+                "rpe": [
+                  8,
+                  9
+                ]
+              },
+              "backoff": {
+                "repRange": [
+                  3,
+                  5
+                ],
+                "effort": {
+                  "rpe": [
+                    7,
+                    8
+                  ]
+                }
+              }
+            },
+            {
+              "key": "bench-heavy.squat",
+              "pattern": "squat",
+              "targets": [
+                "mu.quads"
+              ],
+              "priority": "secondary",
+              "lift": "squat",
+              "allowVariants": true,
+              "intensity": "light",
+              "goal": "strength",
+              "mode": "rpe",
+              "repRange": [
+                3,
+                5
+              ],
+              "effort": {
+                "rpe": [
+                  6,
+                  7
+                ]
+              }
+            },
+            {
+              "key": "bench-heavy.rear-delts",
+              "pattern": "shoulderHorizontalAbduction",
+              "targets": [
+                "mu.rear-delts"
+              ],
+              "priority": "optional",
+              "goal": "strength",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "bench-heavy.triceps",
+              "pattern": "elbowExtension",
+              "targets": [
+                "mu.triceps"
+              ],
+              "priority": "optional",
+              "goal": "strength",
+              "mode": "doubleProgression"
+            }
+          ]
+        },
+        {
+          "key": "squat-moderate",
+          "name": {
+            "en": "Moderate squat, deadlift variant"
+          },
+          "slots": [
+            {
+              "key": "squat-moderate.squat",
+              "pattern": "squat",
+              "targets": [
+                "mu.quads"
+              ],
+              "priority": "primary",
+              "lift": "squat",
+              "intensity": "moderate",
+              "goal": "strength",
+              "mode": "rpe",
+              "repRange": [
+                3,
+                5
+              ],
+              "effort": {
+                "rpe": [
+                  7,
+                  8
+                ]
+              }
+            },
+            {
+              "key": "squat-moderate.deadlift",
+              "pattern": "hinge",
+              "targets": [
+                "mu.glutes",
+                "mu.lower-back"
+              ],
+              "priority": "secondary",
+              "lift": "deadlift",
+              "allowVariants": true,
+              "intensity": "light",
+              "goal": "strength",
+              "mode": "rpe",
+              "repRange": [
+                3,
+                5
+              ],
+              "effort": {
+                "rpe": [
+                  6,
+                  7
+                ]
+              }
+            },
+            {
+              "key": "squat-moderate.row",
+              "pattern": "horizontalPull",
+              "targets": [
+                "mu.mid-back",
+                "mu.rear-delts"
+              ],
+              "priority": "secondary",
+              "goal": "strength",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "squat-moderate.abs",
+              "pattern": "core",
+              "targets": [
+                "mu.abs",
+                "mu.obliques"
+              ],
+              "priority": "optional",
+              "goal": "strength",
+              "mode": "doubleProgression"
+            }
+          ]
+        },
+        {
+          "key": "bench-moderate",
+          "name": {
+            "en": "Moderate bench and accessories"
+          },
+          "slots": [
+            {
+              "key": "bench-moderate.bench",
+              "pattern": "horizontalPush",
+              "targets": [
+                "mu.chest"
+              ],
+              "priority": "primary",
+              "lift": "bench",
+              "intensity": "moderate",
+              "goal": "strength",
+              "mode": "rpe",
+              "repRange": [
+                3,
+                5
+              ],
+              "effort": {
+                "rpe": [
+                  7,
+                  8
+                ]
+              }
+            },
+            {
+              "key": "bench-moderate.triceps",
+              "pattern": "elbowExtension",
+              "targets": [
+                "mu.triceps"
+              ],
+              "priority": "secondary",
+              "goal": "strength",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "bench-moderate.pulldown",
+              "pattern": "verticalPull",
+              "targets": [
+                "mu.lats"
+              ],
+              "priority": "secondary",
+              "goal": "strength",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "bench-moderate.curl",
+              "pattern": "elbowFlexion",
+              "targets": [
+                "mu.elbow-flexors"
+              ],
+              "priority": "optional",
+              "goal": "strength",
+              "mode": "doubleProgression"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tpl.pl-sbd-6day",
+      "name": {
+        "en": "SBD 6-day (advanced)"
+      },
+      "description": {
+        "en": "Six shorter sessions with squat and bench press three times and deadlift twice a week, for advanced lifters."
+      },
+      "style": "powerlifting",
+      "daysPerWeek": 6,
+      "split": "sbd",
+      "levels": [
+        "advanced"
+      ],
+      "default": true,
+      "periodization": "block",
+      "progression": {
+        "main": "rpe",
+        "accessory": "doubleProgression",
+        "novice": "linear"
+      },
+      "mesocycle": {
+        "accumulationWeeks": 5,
+        "deloadWeeks": 1,
+        "deloadRule": "deload.content"
+      },
+      "days": [
+        {
+          "key": "squat-heavy",
+          "name": {
+            "en": "Heavy squat, light bench"
+          },
+          "slots": [
+            {
+              "key": "squat-heavy.squat",
+              "pattern": "squat",
+              "targets": [
+                "mu.quads"
+              ],
+              "priority": "primary",
+              "lift": "squat",
+              "intensity": "heavy",
+              "goal": "strength",
+              "mode": "topBackoff",
+              "repRange": [
+                1,
+                3
+              ],
+              "effort": {
+                "rpe": [
+                  8,
+                  9
+                ]
+              },
+              "backoff": {
+                "repRange": [
+                  3,
+                  5
+                ],
+                "effort": {
+                  "rpe": [
+                    7,
+                    8
+                  ]
+                }
+              }
+            },
+            {
+              "key": "squat-heavy.bench",
+              "pattern": "horizontalPush",
+              "targets": [
+                "mu.chest"
+              ],
+              "priority": "primary",
+              "lift": "bench",
+              "allowVariants": true,
+              "intensity": "light",
+              "goal": "strength",
+              "mode": "rpe",
+              "repRange": [
+                4,
+                6
+              ],
+              "effort": {
+                "rpe": [
+                  6,
+                  7
+                ]
+              }
+            },
+            {
+              "key": "squat-heavy.row",
+              "pattern": "horizontalPull",
+              "targets": [
+                "mu.lats",
+                "mu.mid-back"
+              ],
+              "priority": "secondary",
+              "goal": "strength",
+              "mode": "doubleProgression"
+            }
+          ]
+        },
+        {
+          "key": "deadlift-heavy",
+          "name": {
+            "en": "Heavy deadlift"
+          },
+          "slots": [
+            {
+              "key": "deadlift-heavy.deadlift",
+              "pattern": "hinge",
+              "targets": [
+                "mu.glutes",
+                "mu.lower-back"
+              ],
+              "priority": "primary",
+              "lift": "deadlift",
+              "intensity": "heavy",
+              "goal": "strength",
+              "mode": "topBackoff",
+              "repRange": [
+                1,
+                3
+              ],
+              "effort": {
+                "rpe": [
+                  8,
+                  9
+                ]
+              },
+              "backoff": {
+                "repRange": [
+                  3,
+                  5
+                ],
+                "effort": {
+                  "rpe": [
+                    7,
+                    8
+                  ]
+                }
+              }
+            },
+            {
+              "key": "deadlift-heavy.press",
+              "pattern": "verticalPush",
+              "targets": [
+                "mu.front-delts"
+              ],
+              "priority": "secondary",
+              "goal": "strength",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "deadlift-heavy.pulldown",
+              "pattern": "verticalPull",
+              "targets": [
+                "mu.lats"
+              ],
+              "priority": "secondary",
+              "goal": "strength",
+              "mode": "doubleProgression"
+            }
+          ]
+        },
+        {
+          "key": "bench-heavy",
+          "name": {
+            "en": "Heavy bench, light squat"
+          },
+          "slots": [
+            {
+              "key": "bench-heavy.bench",
+              "pattern": "horizontalPush",
+              "targets": [
+                "mu.chest"
+              ],
+              "priority": "primary",
+              "lift": "bench",
+              "intensity": "heavy",
+              "goal": "strength",
+              "mode": "topBackoff",
+              "repRange": [
+                1,
+                3
+              ],
+              "effort": {
+                "rpe": [
+                  8,
+                  9
+                ]
+              },
+              "backoff": {
+                "repRange": [
+                  3,
+                  5
+                ],
+                "effort": {
+                  "rpe": [
+                    7,
+                    8
+                  ]
+                }
+              }
+            },
+            {
+              "key": "bench-heavy.squat",
+              "pattern": "squat",
+              "targets": [
+                "mu.quads"
+              ],
+              "priority": "secondary",
+              "lift": "squat",
+              "allowVariants": true,
+              "intensity": "light",
+              "goal": "strength",
+              "mode": "rpe",
+              "repRange": [
+                3,
+                5
+              ],
+              "effort": {
+                "rpe": [
+                  6,
+                  7
+                ]
+              }
+            },
+            {
+              "key": "bench-heavy.rear-delts",
+              "pattern": "shoulderHorizontalAbduction",
+              "targets": [
+                "mu.rear-delts"
+              ],
+              "priority": "optional",
+              "goal": "strength",
+              "mode": "doubleProgression"
+            }
+          ]
+        },
+        {
+          "key": "squat-moderate",
+          "name": {
+            "en": "Moderate squat"
+          },
+          "slots": [
+            {
+              "key": "squat-moderate.squat",
+              "pattern": "squat",
+              "targets": [
+                "mu.quads"
+              ],
+              "priority": "primary",
+              "lift": "squat",
+              "intensity": "moderate",
+              "goal": "strength",
+              "mode": "rpe",
+              "repRange": [
+                3,
+                5
+              ],
+              "effort": {
+                "rpe": [
+                  7,
+                  8
+                ]
+              }
+            },
+            {
+              "key": "squat-moderate.leg-curl",
+              "pattern": "kneeFlexion",
+              "targets": [
+                "mu.hamstrings"
+              ],
+              "priority": "secondary",
+              "goal": "strength",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "squat-moderate.abs",
+              "pattern": "core",
+              "targets": [
+                "mu.abs"
+              ],
+              "priority": "optional",
+              "goal": "strength",
+              "mode": "doubleProgression"
+            }
+          ]
+        },
+        {
+          "key": "bench-moderate",
+          "name": {
+            "en": "Moderate bench"
+          },
+          "slots": [
+            {
+              "key": "bench-moderate.bench",
+              "pattern": "horizontalPush",
+              "targets": [
+                "mu.chest"
+              ],
+              "priority": "primary",
+              "lift": "bench",
+              "intensity": "moderate",
+              "goal": "strength",
+              "mode": "rpe",
+              "repRange": [
+                3,
+                5
+              ],
+              "effort": {
+                "rpe": [
+                  7,
+                  8
+                ]
+              }
+            },
+            {
+              "key": "bench-moderate.triceps",
+              "pattern": "elbowExtension",
+              "targets": [
+                "mu.triceps"
+              ],
+              "priority": "secondary",
+              "goal": "strength",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "bench-moderate.row",
+              "pattern": "horizontalPull",
+              "targets": [
+                "mu.mid-back",
+                "mu.rear-delts"
+              ],
+              "priority": "secondary",
+              "goal": "strength",
+              "mode": "doubleProgression"
+            }
+          ]
+        },
+        {
+          "key": "deadlift-light",
+          "name": {
+            "en": "Deadlift variant and back"
+          },
+          "slots": [
+            {
+              "key": "deadlift-light.deadlift",
+              "pattern": "hinge",
+              "targets": [
+                "mu.glutes",
+                "mu.lower-back"
+              ],
+              "priority": "primary",
+              "lift": "deadlift",
+              "allowVariants": true,
+              "intensity": "light",
+              "goal": "strength",
+              "mode": "rpe",
+              "repRange": [
+                3,
+                5
+              ],
+              "effort": {
+                "rpe": [
+                  6,
+                  7
+                ]
+              }
+            },
+            {
+              "key": "deadlift-light.pulldown",
+              "pattern": "verticalPull",
+              "targets": [
+                "mu.lats"
+              ],
+              "priority": "secondary",
+              "goal": "strength",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "deadlift-light.curl",
+              "pattern": "elbowFlexion",
+              "targets": [
+                "mu.elbow-flexors"
+              ],
+              "priority": "optional",
+              "goal": "strength",
+              "mode": "doubleProgression"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tpl.pb-full-body-2day",
+      "name": {
+        "en": "Full body ×2 (strength and size)"
+      },
+      "description": {
+        "en": "Two full-body sessions a week, each opening with heavy competition lifts and finishing with hypertrophy work."
+      },
+      "style": "powerbuilding",
+      "daysPerWeek": 2,
+      "split": "fullBody",
+      "levels": [
+        "novice",
+        "intermediate",
+        "advanced"
+      ],
+      "default": true,
+      "periodization": "dailyUndulating",
+      "progression": {
+        "main": "rpe",
+        "accessory": "doubleProgression",
+        "novice": "linear"
+      },
+      "mesocycle": {
+        "accumulationWeeks": 5,
+        "deloadWeeks": 1,
+        "deloadRule": "deload.content"
+      },
+      "days": [
+        {
+          "key": "a",
+          "name": {
+            "en": "Squat and bench"
+          },
+          "slots": [
+            {
+              "key": "a.squat",
+              "pattern": "squat",
+              "targets": [
+                "mu.quads"
+              ],
+              "priority": "primary",
+              "lift": "squat",
+              "intensity": "heavy",
+              "goal": "strength",
+              "mode": "topBackoff",
+              "repRange": [
+                2,
+                4
+              ],
+              "effort": {
+                "rpe": [
+                  8,
+                  9
+                ]
+              },
+              "backoff": {
+                "repRange": [
+                  4,
+                  6
+                ],
+                "effort": {
+                  "rpe": [
+                    7,
+                    8
+                  ]
+                }
+              }
+            },
+            {
+              "key": "a.bench",
+              "pattern": "horizontalPush",
+              "targets": [
+                "mu.chest"
+              ],
+              "priority": "primary",
+              "lift": "bench",
+              "allowVariants": true,
+              "intensity": "moderate",
+              "goal": "strength",
+              "mode": "rpe",
+              "repRange": [
+                4,
+                6
+              ],
+              "effort": {
+                "rpe": [
+                  7,
+                  8
+                ]
+              }
+            },
+            {
+              "key": "a.row",
+              "pattern": "horizontalPull",
+              "targets": [
+                "mu.lats",
+                "mu.mid-back"
+              ],
+              "priority": "primary",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "a.lateral-raise",
+              "pattern": "shoulderAbduction",
+              "targets": [
+                "mu.side-delts"
+              ],
+              "priority": "secondary",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "a.curl",
+              "pattern": "elbowFlexion",
+              "targets": [
+                "mu.elbow-flexors"
+              ],
+              "priority": "optional",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "a.calf",
+              "pattern": "calf",
+              "targets": [
+                "mu.calves"
+              ],
+              "priority": "optional",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            }
+          ]
+        },
+        {
+          "key": "b",
+          "name": {
+            "en": "Deadlift and bench"
+          },
+          "slots": [
+            {
+              "key": "b.deadlift",
+              "pattern": "hinge",
+              "targets": [
+                "mu.glutes",
+                "mu.lower-back"
+              ],
+              "priority": "primary",
+              "lift": "deadlift",
+              "intensity": "heavy",
+              "goal": "strength",
+              "mode": "topBackoff",
+              "repRange": [
+                2,
+                4
+              ],
+              "effort": {
+                "rpe": [
+                  8,
+                  9
+                ]
+              },
+              "backoff": {
+                "repRange": [
+                  4,
+                  6
+                ],
+                "effort": {
+                  "rpe": [
+                    7,
+                    8
+                  ]
+                }
+              }
+            },
+            {
+              "key": "b.bench",
+              "pattern": "horizontalPush",
+              "targets": [
+                "mu.chest"
+              ],
+              "priority": "primary",
+              "lift": "bench",
+              "intensity": "heavy",
+              "goal": "strength",
+              "mode": "topBackoff",
+              "repRange": [
+                2,
+                4
+              ],
+              "effort": {
+                "rpe": [
+                  8,
+                  9
+                ]
+              },
+              "backoff": {
+                "repRange": [
+                  4,
+                  6
+                ],
+                "effort": {
+                  "rpe": [
+                    7,
+                    8
+                  ]
+                }
+              }
+            },
+            {
+              "key": "b.pulldown",
+              "pattern": "verticalPull",
+              "targets": [
+                "mu.lats"
+              ],
+              "priority": "secondary",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "b.leg-extension",
+              "pattern": "kneeExtension",
+              "targets": [
+                "mu.quads"
+              ],
+              "priority": "secondary",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "b.triceps",
+              "pattern": "elbowExtension",
+              "targets": [
+                "mu.triceps.long-head"
+              ],
+              "priority": "optional",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "b.abs",
+              "pattern": "core",
+              "targets": [
+                "mu.abs"
+              ],
+              "priority": "optional",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tpl.pb-full-body-3day",
+      "name": {
+        "en": "Full body ×3 (strength and size)"
+      },
+      "description": {
+        "en": "Three full-body sessions a week: each competition lift twice, heavy and light, with hypertrophy work in every session."
+      },
+      "style": "powerbuilding",
+      "daysPerWeek": 3,
+      "split": "fullBody",
+      "levels": [
+        "novice",
+        "intermediate",
+        "advanced"
+      ],
+      "default": true,
+      "periodization": "dailyUndulating",
+      "progression": {
+        "main": "rpe",
+        "accessory": "doubleProgression",
+        "novice": "linear"
+      },
+      "mesocycle": {
+        "accumulationWeeks": 5,
+        "deloadWeeks": 1,
+        "deloadRule": "deload.content"
+      },
+      "days": [
+        {
+          "key": "a",
+          "name": {
+            "en": "Heavy squat"
+          },
+          "slots": [
+            {
+              "key": "a.squat",
+              "pattern": "squat",
+              "targets": [
+                "mu.quads"
+              ],
+              "priority": "primary",
+              "lift": "squat",
+              "intensity": "heavy",
+              "goal": "strength",
+              "mode": "topBackoff",
+              "repRange": [
+                2,
+                4
+              ],
+              "effort": {
+                "rpe": [
+                  8,
+                  9
+                ]
+              },
+              "backoff": {
+                "repRange": [
+                  4,
+                  6
+                ],
+                "effort": {
+                  "rpe": [
+                    7,
+                    8
+                  ]
+                }
+              }
+            },
+            {
+              "key": "a.bench",
+              "pattern": "horizontalPush",
+              "targets": [
+                "mu.chest"
+              ],
+              "priority": "primary",
+              "lift": "bench",
+              "allowVariants": true,
+              "intensity": "moderate",
+              "goal": "strength",
+              "mode": "rpe",
+              "repRange": [
+                4,
+                6
+              ],
+              "effort": {
+                "rpe": [
+                  7,
+                  8
+                ]
+              }
+            },
+            {
+              "key": "a.row",
+              "pattern": "horizontalPull",
+              "targets": [
+                "mu.lats",
+                "mu.mid-back"
+              ],
+              "priority": "primary",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "a.lateral-raise",
+              "pattern": "shoulderAbduction",
+              "targets": [
+                "mu.side-delts"
+              ],
+              "priority": "secondary",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "a.curl",
+              "pattern": "elbowFlexion",
+              "targets": [
+                "mu.elbow-flexors"
+              ],
+              "priority": "optional",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            }
+          ]
+        },
+        {
+          "key": "b",
+          "name": {
+            "en": "Heavy deadlift and bench"
+          },
+          "slots": [
+            {
+              "key": "b.deadlift",
+              "pattern": "hinge",
+              "targets": [
+                "mu.glutes",
+                "mu.lower-back"
+              ],
+              "priority": "primary",
+              "lift": "deadlift",
+              "intensity": "heavy",
+              "goal": "strength",
+              "mode": "topBackoff",
+              "repRange": [
+                2,
+                4
+              ],
+              "effort": {
+                "rpe": [
+                  8,
+                  9
+                ]
+              },
+              "backoff": {
+                "repRange": [
+                  4,
+                  6
+                ],
+                "effort": {
+                  "rpe": [
+                    7,
+                    8
+                  ]
+                }
+              }
+            },
+            {
+              "key": "b.bench",
+              "pattern": "horizontalPush",
+              "targets": [
+                "mu.chest"
+              ],
+              "priority": "primary",
+              "lift": "bench",
+              "intensity": "heavy",
+              "goal": "strength",
+              "mode": "topBackoff",
+              "repRange": [
+                2,
+                4
+              ],
+              "effort": {
+                "rpe": [
+                  8,
+                  9
+                ]
+              },
+              "backoff": {
+                "repRange": [
+                  4,
+                  6
+                ],
+                "effort": {
+                  "rpe": [
+                    7,
+                    8
+                  ]
+                }
+              }
+            },
+            {
+              "key": "b.pulldown",
+              "pattern": "verticalPull",
+              "targets": [
+                "mu.lats"
+              ],
+              "priority": "secondary",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "b.leg-curl",
+              "pattern": "kneeFlexion",
+              "targets": [
+                "mu.hamstrings"
+              ],
+              "priority": "secondary",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "b.triceps",
+              "pattern": "elbowExtension",
+              "targets": [
+                "mu.triceps.long-head"
+              ],
+              "priority": "optional",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            }
+          ]
+        },
+        {
+          "key": "c",
+          "name": {
+            "en": "Light squat and deadlift, hypertrophy"
+          },
+          "slots": [
+            {
+              "key": "c.squat",
+              "pattern": "squat",
+              "targets": [
+                "mu.quads"
+              ],
+              "priority": "secondary",
+              "lift": "squat",
+              "allowVariants": true,
+              "intensity": "light",
+              "goal": "strength",
+              "mode": "rpe",
+              "repRange": [
+                3,
+                5
+              ],
+              "effort": {
+                "rpe": [
+                  6,
+                  7
+                ]
+              }
+            },
+            {
+              "key": "c.deadlift",
+              "pattern": "hinge",
+              "targets": [
+                "mu.glutes",
+                "mu.lower-back"
+              ],
+              "priority": "secondary",
+              "lift": "deadlift",
+              "allowVariants": true,
+              "intensity": "light",
+              "goal": "strength",
+              "mode": "rpe",
+              "repRange": [
+                3,
+                5
+              ],
+              "effort": {
+                "rpe": [
+                  6,
+                  7
+                ]
+              }
+            },
+            {
+              "key": "c.incline",
+              "pattern": "horizontalPush",
+              "targets": [
+                "mu.chest.clavicular",
+                "mu.front-delts"
+              ],
+              "priority": "primary",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "c.row",
+              "pattern": "horizontalPull",
+              "targets": [
+                "mu.mid-back",
+                "mu.rear-delts"
+              ],
+              "priority": "secondary",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "c.calf",
+              "pattern": "calf",
+              "targets": [
+                "mu.calves"
+              ],
+              "priority": "optional",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "tpl.pb-upper-lower-4day",
       "name": {
         "en": "Upper/lower with strength and hypertrophy days"
@@ -9955,14 +11817,14 @@
       "default": true,
       "periodization": "dailyUndulating",
       "progression": {
-        "main": "rpeLoad",
+        "main": "rpe",
         "accessory": "doubleProgression",
-        "novice": "linearLoad"
+        "novice": "linear"
       },
       "mesocycle": {
         "accumulationWeeks": 5,
         "deloadWeeks": 1,
-        "deloadRule": "deload.planned"
+        "deloadRule": "deload.content"
       },
       "days": [
         {
@@ -10314,6 +12176,916 @@
             },
             {
               "key": "lower-hypertrophy.abs",
+              "pattern": "core",
+              "targets": [
+                "mu.abs"
+              ],
+              "priority": "optional",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tpl.pb-upper-lower-ppl-5day",
+      "name": {
+        "en": "Upper/lower strength + push/pull/legs"
+      },
+      "description": {
+        "en": "An upper and a lower strength day around the competition lifts, then push, pull and legs days for hypertrophy."
+      },
+      "style": "powerbuilding",
+      "daysPerWeek": 5,
+      "split": "upperLowerPpl",
+      "levels": [
+        "intermediate",
+        "advanced"
+      ],
+      "default": true,
+      "periodization": "dailyUndulating",
+      "progression": {
+        "main": "rpe",
+        "accessory": "doubleProgression",
+        "novice": "linear"
+      },
+      "mesocycle": {
+        "accumulationWeeks": 5,
+        "deloadWeeks": 1,
+        "deloadRule": "deload.content"
+      },
+      "days": [
+        {
+          "key": "upper-strength",
+          "name": {
+            "en": "Upper strength"
+          },
+          "slots": [
+            {
+              "key": "upper-strength.bench",
+              "pattern": "horizontalPush",
+              "targets": [
+                "mu.chest"
+              ],
+              "priority": "primary",
+              "lift": "bench",
+              "intensity": "heavy",
+              "goal": "strength",
+              "mode": "topBackoff",
+              "repRange": [
+                2,
+                4
+              ],
+              "effort": {
+                "rpe": [
+                  8,
+                  9
+                ]
+              },
+              "backoff": {
+                "repRange": [
+                  4,
+                  6
+                ],
+                "effort": {
+                  "rpe": [
+                    7,
+                    8
+                  ]
+                }
+              }
+            },
+            {
+              "key": "upper-strength.row",
+              "pattern": "horizontalPull",
+              "targets": [
+                "mu.lats",
+                "mu.mid-back"
+              ],
+              "priority": "primary",
+              "goal": "strength",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "upper-strength.press",
+              "pattern": "verticalPush",
+              "targets": [
+                "mu.front-delts"
+              ],
+              "priority": "secondary",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "upper-strength.pulldown",
+              "pattern": "verticalPull",
+              "targets": [
+                "mu.lats"
+              ],
+              "priority": "secondary",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "upper-strength.triceps",
+              "pattern": "elbowExtension",
+              "targets": [
+                "mu.triceps.long-head"
+              ],
+              "priority": "optional",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            }
+          ]
+        },
+        {
+          "key": "lower-strength",
+          "name": {
+            "en": "Lower strength"
+          },
+          "slots": [
+            {
+              "key": "lower-strength.squat",
+              "pattern": "squat",
+              "targets": [
+                "mu.quads"
+              ],
+              "priority": "primary",
+              "lift": "squat",
+              "intensity": "heavy",
+              "goal": "strength",
+              "mode": "topBackoff",
+              "repRange": [
+                2,
+                4
+              ],
+              "effort": {
+                "rpe": [
+                  8,
+                  9
+                ]
+              },
+              "backoff": {
+                "repRange": [
+                  4,
+                  6
+                ],
+                "effort": {
+                  "rpe": [
+                    7,
+                    8
+                  ]
+                }
+              }
+            },
+            {
+              "key": "lower-strength.deadlift",
+              "pattern": "hinge",
+              "targets": [
+                "mu.glutes",
+                "mu.lower-back"
+              ],
+              "priority": "secondary",
+              "lift": "deadlift",
+              "allowVariants": true,
+              "intensity": "light",
+              "goal": "strength",
+              "mode": "rpe",
+              "repRange": [
+                3,
+                5
+              ],
+              "effort": {
+                "rpe": [
+                  6,
+                  7
+                ]
+              }
+            },
+            {
+              "key": "lower-strength.leg-curl",
+              "pattern": "kneeFlexion",
+              "targets": [
+                "mu.hamstrings"
+              ],
+              "priority": "secondary",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "lower-strength.calf",
+              "pattern": "calf",
+              "targets": [
+                "mu.calves"
+              ],
+              "priority": "optional",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            }
+          ]
+        },
+        {
+          "key": "push",
+          "name": {
+            "en": "Push"
+          },
+          "slots": [
+            {
+              "key": "push.bench",
+              "pattern": "horizontalPush",
+              "targets": [
+                "mu.chest"
+              ],
+              "priority": "primary",
+              "lift": "bench",
+              "allowVariants": true,
+              "intensity": "moderate",
+              "goal": "strength",
+              "mode": "rpe",
+              "repRange": [
+                4,
+                6
+              ],
+              "effort": {
+                "rpe": [
+                  7,
+                  8
+                ]
+              }
+            },
+            {
+              "key": "push.incline",
+              "pattern": "horizontalPush",
+              "targets": [
+                "mu.chest.clavicular",
+                "mu.front-delts"
+              ],
+              "priority": "secondary",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "push.lateral-raise",
+              "pattern": "shoulderAbduction",
+              "targets": [
+                "mu.side-delts"
+              ],
+              "priority": "secondary",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "push.triceps",
+              "pattern": "elbowExtension",
+              "targets": [
+                "mu.triceps.lateral-medial"
+              ],
+              "priority": "secondary",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "push.fly",
+              "pattern": "shoulderHorizontalAdduction",
+              "targets": [
+                "mu.chest"
+              ],
+              "priority": "optional",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            }
+          ]
+        },
+        {
+          "key": "pull",
+          "name": {
+            "en": "Pull"
+          },
+          "slots": [
+            {
+              "key": "pull.deadlift",
+              "pattern": "hinge",
+              "targets": [
+                "mu.glutes",
+                "mu.lower-back"
+              ],
+              "priority": "primary",
+              "lift": "deadlift",
+              "intensity": "heavy",
+              "goal": "strength",
+              "mode": "topBackoff",
+              "repRange": [
+                2,
+                4
+              ],
+              "effort": {
+                "rpe": [
+                  8,
+                  9
+                ]
+              },
+              "backoff": {
+                "repRange": [
+                  4,
+                  6
+                ],
+                "effort": {
+                  "rpe": [
+                    7,
+                    8
+                  ]
+                }
+              }
+            },
+            {
+              "key": "pull.pulldown",
+              "pattern": "verticalPull",
+              "targets": [
+                "mu.lats"
+              ],
+              "priority": "primary",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "pull.row",
+              "pattern": "horizontalPull",
+              "targets": [
+                "mu.mid-back",
+                "mu.rear-delts"
+              ],
+              "priority": "secondary",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "pull.curl",
+              "pattern": "elbowFlexion",
+              "targets": [
+                "mu.elbow-flexors"
+              ],
+              "priority": "secondary",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "pull.rear-delts",
+              "pattern": "shoulderHorizontalAbduction",
+              "targets": [
+                "mu.rear-delts"
+              ],
+              "priority": "optional",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            }
+          ]
+        },
+        {
+          "key": "legs",
+          "name": {
+            "en": "Legs"
+          },
+          "slots": [
+            {
+              "key": "legs.squat",
+              "pattern": "squat",
+              "targets": [
+                "mu.quads"
+              ],
+              "priority": "primary",
+              "lift": "squat",
+              "allowVariants": true,
+              "intensity": "light",
+              "goal": "strength",
+              "mode": "rpe",
+              "repRange": [
+                3,
+                5
+              ],
+              "effort": {
+                "rpe": [
+                  6,
+                  7
+                ]
+              }
+            },
+            {
+              "key": "legs.leg-extension",
+              "pattern": "kneeExtension",
+              "targets": [
+                "mu.quads"
+              ],
+              "priority": "secondary",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "legs.leg-curl",
+              "pattern": "kneeFlexion",
+              "targets": [
+                "mu.hamstrings"
+              ],
+              "priority": "secondary",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "legs.hip-thrust",
+              "pattern": "hipExtension",
+              "targets": [
+                "mu.glutes"
+              ],
+              "priority": "secondary",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "legs.calf",
+              "pattern": "calf",
+              "targets": [
+                "mu.calves"
+              ],
+              "priority": "optional",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "legs.abs",
+              "pattern": "core",
+              "targets": [
+                "mu.abs"
+              ],
+              "priority": "optional",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tpl.pb-ppl-6day",
+      "name": {
+        "en": "Push/pull/legs ×2 with strength days"
+      },
+      "description": {
+        "en": "Push, pull and legs twice a week: the first round built around heavy competition lifts, the second for hypertrophy."
+      },
+      "style": "powerbuilding",
+      "daysPerWeek": 6,
+      "split": "pushPullLegs",
+      "levels": [
+        "intermediate",
+        "advanced"
+      ],
+      "default": true,
+      "periodization": "dailyUndulating",
+      "progression": {
+        "main": "rpe",
+        "accessory": "doubleProgression",
+        "novice": "linear"
+      },
+      "mesocycle": {
+        "accumulationWeeks": 5,
+        "deloadWeeks": 1,
+        "deloadRule": "deload.content"
+      },
+      "days": [
+        {
+          "key": "push-strength",
+          "name": {
+            "en": "Push strength"
+          },
+          "slots": [
+            {
+              "key": "push-strength.bench",
+              "pattern": "horizontalPush",
+              "targets": [
+                "mu.chest"
+              ],
+              "priority": "primary",
+              "lift": "bench",
+              "intensity": "heavy",
+              "goal": "strength",
+              "mode": "topBackoff",
+              "repRange": [
+                2,
+                4
+              ],
+              "effort": {
+                "rpe": [
+                  8,
+                  9
+                ]
+              },
+              "backoff": {
+                "repRange": [
+                  4,
+                  6
+                ],
+                "effort": {
+                  "rpe": [
+                    7,
+                    8
+                  ]
+                }
+              }
+            },
+            {
+              "key": "push-strength.press",
+              "pattern": "verticalPush",
+              "targets": [
+                "mu.front-delts"
+              ],
+              "priority": "secondary",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "push-strength.lateral-raise",
+              "pattern": "shoulderAbduction",
+              "targets": [
+                "mu.side-delts"
+              ],
+              "priority": "secondary",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "push-strength.triceps",
+              "pattern": "elbowExtension",
+              "targets": [
+                "mu.triceps.long-head"
+              ],
+              "priority": "optional",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            }
+          ]
+        },
+        {
+          "key": "pull-strength",
+          "name": {
+            "en": "Pull strength"
+          },
+          "slots": [
+            {
+              "key": "pull-strength.deadlift",
+              "pattern": "hinge",
+              "targets": [
+                "mu.glutes",
+                "mu.lower-back"
+              ],
+              "priority": "primary",
+              "lift": "deadlift",
+              "intensity": "heavy",
+              "goal": "strength",
+              "mode": "topBackoff",
+              "repRange": [
+                2,
+                4
+              ],
+              "effort": {
+                "rpe": [
+                  8,
+                  9
+                ]
+              },
+              "backoff": {
+                "repRange": [
+                  4,
+                  6
+                ],
+                "effort": {
+                  "rpe": [
+                    7,
+                    8
+                  ]
+                }
+              }
+            },
+            {
+              "key": "pull-strength.row",
+              "pattern": "horizontalPull",
+              "targets": [
+                "mu.lats",
+                "mu.mid-back"
+              ],
+              "priority": "primary",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "pull-strength.pulldown",
+              "pattern": "verticalPull",
+              "targets": [
+                "mu.lats"
+              ],
+              "priority": "secondary",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "pull-strength.curl",
+              "pattern": "elbowFlexion",
+              "targets": [
+                "mu.elbow-flexors"
+              ],
+              "priority": "optional",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            }
+          ]
+        },
+        {
+          "key": "legs-strength",
+          "name": {
+            "en": "Legs strength"
+          },
+          "slots": [
+            {
+              "key": "legs-strength.squat",
+              "pattern": "squat",
+              "targets": [
+                "mu.quads"
+              ],
+              "priority": "primary",
+              "lift": "squat",
+              "intensity": "heavy",
+              "goal": "strength",
+              "mode": "topBackoff",
+              "repRange": [
+                2,
+                4
+              ],
+              "effort": {
+                "rpe": [
+                  8,
+                  9
+                ]
+              },
+              "backoff": {
+                "repRange": [
+                  4,
+                  6
+                ],
+                "effort": {
+                  "rpe": [
+                    7,
+                    8
+                  ]
+                }
+              }
+            },
+            {
+              "key": "legs-strength.leg-curl",
+              "pattern": "kneeFlexion",
+              "targets": [
+                "mu.hamstrings"
+              ],
+              "priority": "secondary",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "legs-strength.leg-extension",
+              "pattern": "kneeExtension",
+              "targets": [
+                "mu.quads"
+              ],
+              "priority": "secondary",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "legs-strength.calf",
+              "pattern": "calf",
+              "targets": [
+                "mu.calves"
+              ],
+              "priority": "optional",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            }
+          ]
+        },
+        {
+          "key": "push-hypertrophy",
+          "name": {
+            "en": "Push hypertrophy"
+          },
+          "slots": [
+            {
+              "key": "push-hypertrophy.bench",
+              "pattern": "horizontalPush",
+              "targets": [
+                "mu.chest"
+              ],
+              "priority": "primary",
+              "lift": "bench",
+              "allowVariants": true,
+              "intensity": "moderate",
+              "goal": "strength",
+              "mode": "rpe",
+              "repRange": [
+                4,
+                6
+              ],
+              "effort": {
+                "rpe": [
+                  7,
+                  8
+                ]
+              }
+            },
+            {
+              "key": "push-hypertrophy.incline",
+              "pattern": "horizontalPush",
+              "targets": [
+                "mu.chest.clavicular",
+                "mu.front-delts"
+              ],
+              "priority": "primary",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "push-hypertrophy.lateral-raise",
+              "pattern": "shoulderAbduction",
+              "targets": [
+                "mu.side-delts"
+              ],
+              "priority": "secondary",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "push-hypertrophy.triceps",
+              "pattern": "elbowExtension",
+              "targets": [
+                "mu.triceps.lateral-medial"
+              ],
+              "priority": "secondary",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "push-hypertrophy.fly",
+              "pattern": "shoulderHorizontalAdduction",
+              "targets": [
+                "mu.chest"
+              ],
+              "priority": "optional",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            }
+          ]
+        },
+        {
+          "key": "pull-hypertrophy",
+          "name": {
+            "en": "Pull hypertrophy"
+          },
+          "slots": [
+            {
+              "key": "pull-hypertrophy.deadlift",
+              "pattern": "hinge",
+              "targets": [
+                "mu.glutes",
+                "mu.lower-back"
+              ],
+              "priority": "secondary",
+              "lift": "deadlift",
+              "allowVariants": true,
+              "intensity": "light",
+              "goal": "strength",
+              "mode": "rpe",
+              "repRange": [
+                3,
+                5
+              ],
+              "effort": {
+                "rpe": [
+                  6,
+                  7
+                ]
+              }
+            },
+            {
+              "key": "pull-hypertrophy.pulldown",
+              "pattern": "verticalPull",
+              "targets": [
+                "mu.lats"
+              ],
+              "priority": "primary",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "pull-hypertrophy.row",
+              "pattern": "horizontalPull",
+              "targets": [
+                "mu.mid-back",
+                "mu.rear-delts"
+              ],
+              "priority": "primary",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "pull-hypertrophy.rear-delts",
+              "pattern": "shoulderHorizontalAbduction",
+              "targets": [
+                "mu.rear-delts"
+              ],
+              "priority": "secondary",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "pull-hypertrophy.curl",
+              "pattern": "elbowFlexion",
+              "targets": [
+                "mu.elbow-flexors"
+              ],
+              "priority": "secondary",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            }
+          ]
+        },
+        {
+          "key": "legs-hypertrophy",
+          "name": {
+            "en": "Legs hypertrophy"
+          },
+          "slots": [
+            {
+              "key": "legs-hypertrophy.squat",
+              "pattern": "squat",
+              "targets": [
+                "mu.quads"
+              ],
+              "priority": "primary",
+              "lift": "squat",
+              "allowVariants": true,
+              "intensity": "light",
+              "goal": "strength",
+              "mode": "rpe",
+              "repRange": [
+                3,
+                5
+              ],
+              "effort": {
+                "rpe": [
+                  6,
+                  7
+                ]
+              }
+            },
+            {
+              "key": "legs-hypertrophy.leg-curl",
+              "pattern": "kneeFlexion",
+              "targets": [
+                "mu.hamstrings"
+              ],
+              "priority": "secondary",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "legs-hypertrophy.hip-thrust",
+              "pattern": "hipExtension",
+              "targets": [
+                "mu.glutes"
+              ],
+              "priority": "secondary",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "legs-hypertrophy.leg-extension",
+              "pattern": "kneeExtension",
+              "targets": [
+                "mu.quads"
+              ],
+              "priority": "secondary",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "legs-hypertrophy.calf",
+              "pattern": "calf",
+              "targets": [
+                "mu.calves"
+              ],
+              "priority": "optional",
+              "goal": "hypertrophy",
+              "mode": "doubleProgression"
+            },
+            {
+              "key": "legs-hypertrophy.abs",
               "pattern": "core",
               "targets": [
                 "mu.abs"

@@ -307,6 +307,31 @@ export interface ByDivisionEvent<T> {
   readonly equipped: { readonly total: T; readonly bench: T };
 }
 
+// --- Planning and ranking (M2: EB §Defaults › Volume, › Session; PRD PLN-01…14, MAP-03) -------
+
+/**
+ * Where a weekly target starts inside its default band (PLN-03): a fraction of the way from the
+ * band's low to its high end, by trainee level; priority muscles use `priority`.
+ */
+export interface StartPosition {
+  readonly novice: number;
+  readonly intermediate: number;
+  readonly advanced: number;
+  readonly priority: number;
+}
+
+/** MAP-03 effectiveness: factor weights (sum 1) and the score of each mapping evidence code. */
+export interface RankingEffectiveness {
+  readonly weights: {
+    readonly credit: number;
+    readonly evidence: number;
+    readonly stretch: number;
+    readonly overload: number;
+    readonly subRegion: number;
+  };
+  readonly evidenceScore: { readonly H: number; readonly EMG: number; readonly C: number };
+}
+
 // --- The registry ------------------------------------------------------------------------
 
 /** Every MVP parameter by ID, with its value type. IDs are stable (technical concept §8.1). */
@@ -366,6 +391,8 @@ export interface ParamValues {
   'volume.effort.hypertrophyRir': Range;
   'volume.effort.strengthRpe': { readonly work: Range; readonly heavySingle: Range };
   'volume.effort.hypertrophySlopePerRir': number;
+  'volume.effort.strengthAccessoryRpe': Range;
+  'volume.strength.minimumDosePerLift': Range;
   // progression.yaml
   'progression.model.mainLift': ByLevel<ProgressionModel>;
   'progression.model.accessory': ProgressionModel;
@@ -391,6 +418,7 @@ export interface ParamValues {
   // deload.yaml
   'deload.planned.everyWeeks': number;
   'deload.planned.durationDays': number;
+  'deload.planned.postpone': { readonly weeks: number; readonly maxPerMesocycle: number };
   'deload.content': DeloadContent;
   'deload.reactive': ReactiveDeload;
   'deload.returnFromBreak': readonly ReturnFromBreakRow[];
@@ -407,6 +435,9 @@ export interface ParamValues {
   'session.tempo.default': string;
   'session.tempo.eccentricSeconds': Range;
   'session.tempo.warnRepSeconds': number;
+  'session.duration.repSeconds': number;
+  'session.duration.warmupSetSeconds': number;
+  'session.duration.transitionSeconds': number;
   'session.warmup.heavyTrigger': WarmupTrigger;
   'session.warmup.heavy': HeavyWarmupRamp;
   'session.warmup.compound': WarmupRamp;
@@ -437,6 +468,18 @@ export interface ParamValues {
   'scoring.ipfGl.coefficients': BySex<ByDivisionEvent<IpfGlCoefficients>>;
   'scoring.ipfGl.minBodyweightKg': number;
   'scoring.allometric.exponent': number;
+  // planning.yaml
+  'planning.mesocycle.accumulationWeeks': Range;
+  'planning.novice.maxWorkingExercises': number;
+  'planning.sessionBudget.tolerancePct': number;
+  'planning.slot.sets': Range;
+  'planning.strength.accessorySets': number;
+  'planning.volume.startPosition': StartPosition;
+  'planning.rotation.perMuscle': Range;
+  'planning.variety.pool': number;
+  'planning.missed.mergePriorities': readonly ('primary' | 'secondary' | 'optional')[];
+  // ranking.yaml
+  'ranking.effectiveness': RankingEffectiveness;
   // bodyweight.yaml
   'bodyweight.trend.alphaPerDay': number;
   'bodyweight.trend.initialWeighIns': Range;

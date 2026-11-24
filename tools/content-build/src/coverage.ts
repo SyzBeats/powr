@@ -1,21 +1,8 @@
 import type { ContentBundle, PresetId } from '@powr/content';
-import type { EquipmentId, EquipmentRequirement, ExerciseId, MuscleId } from '@powr/domain';
+import type { ExerciseId, MuscleId } from '@powr/domain';
+import { isAvailable } from '@powr/domain/equipment';
 
 import { ContentIndex } from './lint.ts';
-
-/**
- * EQP-04: every `allOf` item and one item of each `anyOf` group. The engine's own check lives in
- * @powr/domain (`equipment` module); this copy serves the content coverage tests.
- */
-export function isAvailable(
-  requirement: EquipmentRequirement,
-  items: ReadonlySet<EquipmentId>,
-): boolean {
-  return (
-    requirement.allOf.every((id) => items.has(id)) &&
-    requirement.anyOf.every((group) => group.some((id) => items.has(id)))
-  );
-}
 
 export interface PresetCoverage {
   /** Active exercises the preset's equipment allows. */
@@ -64,7 +51,7 @@ export function contentCoverage(bundle: ContentBundle): CoverageReport {
       .filter((preset) => preset.items.length > 0)
       .map((preset) => {
         const items = new Set(preset.items);
-        const available = active.filter((exercise) => isAvailable(exercise.equipment, items));
+        const available = active.filter((exercise) => isAvailable(exercise, items));
         return [
           preset.id,
           { available: available.map((exercise) => exercise.id), groups: byGroup(available) },

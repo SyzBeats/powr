@@ -1,6 +1,18 @@
 import type { z } from '../zod';
 import { RAW_TABLE_NAMES, type RawTableName, type RawTables } from './tables';
-import { metaRecordSchema, sessionRecordSchema, setRecordSchema, settingsRecordSchema } from './v1';
+import {
+  bodyweightRecordSchema,
+  breakRecordSchema,
+  equipmentProfileRecordSchema,
+  meetRecordSchema,
+  metaRecordSchema,
+  plannedSessionRecordSchema,
+  planRecordSchema,
+  profileRecordSchema,
+  sessionRecordSchema,
+  setRecordSchema,
+  settingsRecordSchema,
+} from './v2';
 
 /** The strict Zod schema of every raw table at the current DATA_VERSION. */
 const RAW_TABLE_SCHEMAS = {
@@ -8,6 +20,13 @@ const RAW_TABLE_SCHEMAS = {
   settings: settingsRecordSchema,
   sessions: sessionRecordSchema,
   sets: setRecordSchema,
+  profile: profileRecordSchema,
+  equipmentProfiles: equipmentProfileRecordSchema,
+  plans: planRecordSchema,
+  plannedSessions: plannedSessionRecordSchema,
+  breaks: breakRecordSchema,
+  meets: meetRecordSchema,
+  bodyweights: bodyweightRecordSchema,
 } as const satisfies Record<RawTableName, z.ZodType>;
 
 export type RecordIssue = { table: RawTableName; index: number; message: string };

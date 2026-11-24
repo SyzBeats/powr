@@ -24,6 +24,15 @@
   verified: true
   userOverridable: false
 
+- id: deload.planned.postpone
+  value: { weeks: 1, maxPerMesocycle: 1 }
+  unit: mixed
+  evidence: [INF]
+  sources: [src.powr-prd]
+  ebRef: 'PRD PRG-11 (the user can postpone a deload by 1 week, once per mesocycle, or skip it with a note)'
+  verified: true
+  userOverridable: false
+
 - id: deload.content
   value:
     setsReductionPct: { min: 40, max: 60 }

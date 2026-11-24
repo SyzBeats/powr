@@ -13,6 +13,7 @@ const policy: LicencePolicy = {
   allowed: ['MIT'],
   denied: ['GPL-*'],
   devOnlyAllowed: [],
+  deniedPackages: [],
   exceptions: [],
 };
 
