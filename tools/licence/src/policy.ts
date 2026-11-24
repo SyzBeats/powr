@@ -9,6 +9,8 @@ interface LicenceException {
   readonly licence: string;
   readonly scope: 'distributed' | 'build-only';
   readonly reviewer: string;
+  /** Who approved the exception, and when (the product owner, ADR-0018). */
+  readonly approval: string;
   readonly date: string;
   readonly rationale: string;
 }
@@ -48,10 +50,12 @@ export interface Component {
  * permitted alternative is chosen and recorded; for `AND` every part must be permitted.
  */
 export function evaluate(component: Component, policy: LicencePolicy): Verdict {
+  // An exception counts only with a recorded product-owner approval (ADR-0018).
   const exception = policy.exceptions.find(
     (entry) =>
       entry.package === component.name &&
       entry.version === component.version &&
+      Boolean(entry.approval?.trim()) &&
       (entry.scope === 'build-only' ? !component.distributed : true),
   );
   if (exception) return { status: 'allowed', chosen: exception.licence, via: 'exception' };

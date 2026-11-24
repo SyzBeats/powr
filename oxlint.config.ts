@@ -7,7 +7,7 @@ import { defineConfig, type DummyRuleMap, type OxlintConfig } from 'oxlint';
  */
 
 const UI_FRAMEWORKS = ['react', 'react-dom', 'react/*', 'react-dom/*', '@base-ui/*', '@tanstack/*'];
-const STORAGE_LIBS = ['dexie', 'dexie/*', 'dexie-react-hooks'];
+const STORAGE_LIBS = ['dexie', 'dexie/*'];
 
 const BROWSER_GLOBALS = [
   'window',

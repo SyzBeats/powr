@@ -15,7 +15,9 @@ allowed:
   - CC-BY-4.0
   - BlueOak-1.0.0
   - Python-2.0
-  # Original work of the publisher (artwork, content, texts).
+  # Original work of the publisher (artwork such as the generated app icons, content, texts).
+  # Approved by product owner Simeon Zimmermann, 2026-11-24 (ADR-0018). Each asset that uses it
+  # is listed in assets-inventory.yaml.
   - LicenseRef-Own-Work
 denied:
   - GPL-*
@@ -33,13 +35,15 @@ denied:
 # lightningcss (CSS minifier used by Vite and Tailwind at build time).
 devOnlyAllowed:
   - MPL-2.0
-# Reviewed exceptions: { package, version, licence, scope, reviewer, date, rationale }.
+# Reviewed exceptions: { package, version, licence, scope, reviewer, approval, date, rationale }.
+# An exception is added only with the product owner's approval, recorded in `approval`.
 exceptions:
   - package: spdx-exceptions
     version: 2.5.0
     licence: CC-BY-3.0
     scope: build-only
-    reviewer: implementation agent (to be confirmed by the product owner)
+    reviewer: implementation agent
+    approval: approved by product owner Simeon Zimmermann, 2026-11-24
     date: 2026-11-24
     rationale: >-
       SPDX exception-ID list used by the licence tool itself at build time (dependency of

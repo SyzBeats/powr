@@ -13,6 +13,7 @@ const policy: LicencePolicy = {
       licence: 'CC-BY-3.0',
       scope: 'build-only',
       reviewer: 'test',
+      approval: 'approved by test, 2026-11-24',
       date: '2026-11-24',
       rationale: 'data file used at build time',
     },
@@ -81,6 +82,15 @@ describe('licence policy', () => {
     expect(evaluate(tool, policy)).toMatchObject({ status: 'allowed', via: 'exception' });
     expect(evaluate({ ...tool, version: '2.6.0' }, policy)).toMatchObject({ status: 'unapproved' });
     expect(evaluate({ ...tool, distributed: true }, policy)).toMatchObject({
+      status: 'unapproved',
+    });
+  });
+
+  it('ignores an exception without a recorded product-owner approval', () => {
+    const [exception] = policy.exceptions;
+    const unapproved = { ...policy, exceptions: [{ ...exception!, approval: ' ' }] };
+    const tool = { name: 'spdx-exceptions', version: '2.5.0', licence: 'CC-BY-3.0' };
+    expect(evaluate({ ...tool, distributed: false }, unapproved)).toMatchObject({
       status: 'unapproved',
     });
   });
