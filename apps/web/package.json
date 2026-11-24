@@ -14,7 +14,8 @@
     "e2e": "playwright test",
     "size": "size-limit && node scripts/precache-size.ts",
     "i18n:extract": "lingui extract --clean",
-    "i18n:check": "node scripts/i18n-check.ts"
+    "i18n:check": "node scripts/i18n-check.ts",
+    "ui:add": "pnpm dlx shadcn@4.23.0 add"
   },
   "dependencies": {
     "@base-ui/react": "1.9.0",
