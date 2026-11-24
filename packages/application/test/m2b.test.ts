@@ -91,17 +91,18 @@ describe('week start (SET-11)', () => {
   });
 });
 
-describe('plan editor lists (PLN-09, EQP-04)', () => {
-  async function withPlan() {
-    const test = createTestDeps();
-    const input = answers(test);
-    const preview = await generatePlanPreview(test.deps, { answers: input });
-    if (!preview.ok) throw new Error(preview.error.kind);
-    const done = await completeOnboarding(test.deps, { answers: input, preview: preview.value });
-    if (!done.ok || !done.value.plan) throw new Error('no plan');
-    return { test, plan: done.value.plan, items: itemsOf(input.equipment) };
-  }
+/** A generated and accepted plan, with its test dependencies and equipment items. */
+async function withPlan() {
+  const test = createTestDeps();
+  const input = answers(test);
+  const preview = await generatePlanPreview(test.deps, { answers: input });
+  if (!preview.ok) throw new Error(preview.error.kind);
+  const done = await completeOnboarding(test.deps, { answers: input, preview: preview.value });
+  if (!done.ok || !done.value.plan) throw new Error('no plan');
+  return { test, plan: done.value.plan, items: itemsOf(input.equipment) };
+}
 
+describe('plan editor lists (PLN-09, EQP-04)', () => {
   it('swap and add candidates are equipment-valid and ranked', async () => {
     const { test, plan, items } = await withPlan();
     const day = plan.mesocycles[0]!.days[0]!;

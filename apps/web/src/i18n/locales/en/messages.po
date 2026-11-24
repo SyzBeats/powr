@@ -225,6 +225,11 @@ msgstr "{fromDay} and {toDay} both work {subject} hard with little rest in betwe
 
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
+msgid "why.e1rm.baseline"
+msgstr "{kind, select, oneRepMax {Your known 1-rep max, {e1rm}, is your starting estimated max (e1RM).} other {This set gives a starting estimated 1-rep max (e1RM) of {e1rm}, worked out like any set you log.}} The loads of your first sessions come from it. {old, select, yes {It was lifted {ageDays, plural, one {# day} other {# days}} ago, so POWR refines it from the sets you log.} other {POWR refines it from the sets you log.}}"
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
 msgid "why.progression.rpe.load"
 msgstr "{load, select, none {No load can be suggested for {reps, plural, one {# rep} other {# reps}} with {rir, plural, one {# rep} other {# reps}} in reserve (RIR) yet. Choose a load yourself; your logged sets will refine the estimate.} other {{load} for {reps, plural, one {# rep} other {# reps}} should leave about {rir, plural, one {# rep} other {# reps}} in reserve (RIR), based on your estimated 1-rep max (e1RM).}}"
 
@@ -330,6 +335,18 @@ msgstr "{name}, planned {date}"
 #: src/features/plan/PlanEditorScreen.tsx
 msgid "{name}: {sets} sets"
 msgstr "{name}: {sets} sets"
+
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "{name}: enter the reps as a whole number from 1 to {MAX_BASELINE_REPS}."
+msgstr "{name}: enter the reps as a whole number from 1 to {MAX_BASELINE_REPS}."
+
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "{name}: enter the weight in {unit}, or choose \"Not now\"."
+msgstr "{name}: enter the weight in {unit}, or choose \"Not now\"."
+
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "{name}: the date can't be in the future. Leave it empty if you're not sure."
+msgstr "{name}: the date can't be in the future. Leave it empty if you're not sure."
 
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
@@ -567,6 +584,10 @@ msgstr "{template} is meant for lifters at a different stage. Choose another pla
 msgid "why.plan.template.default"
 msgstr "{template} is the standard {style} plan for {days, plural, one {# training day} other {# training days}} a week at your level ({level}).{split, select, fullBody { Each session trains the whole body.} upperLower { Sessions alternate between upper and lower body.} upperLowerPpl { It combines upper and lower body days with push, pull and legs days.} pushPullLegs { Sessions are split into push, pull and legs.} sbd { Every session is built around the squat, bench press and deadlift.} other {}}"
 
+#: src/ui/screen.tsx
+msgid "{title} · POWR"
+msgstr "{title} · POWR"
+
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.validate.prescription.effort.simple"
@@ -605,12 +626,12 @@ msgstr "{unsupportedLift, select, squat {IPF Points exist only for the total and
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.plan.mesocycle"
-msgstr "{valid, select, yes {Each block has {accumulationWeeks, plural, one {# training week} other {# training weeks}}, then {deloadWeeks, plural, one {# lighter (deload) week} other {# lighter (deload) weeks}} to recover before the next block.} no {{accumulationWeeks, plural, one {# training week} other {# training weeks}} per block is outside the allowed range, so no plan was made. Choose a different block length.} other {Your next block is ready: {rotations, plural, =0 {the same exercises carry over} one {# exercise rotates for variety} other {# exercises rotate for variety}}, and the targets are set for your current level ({level}).}}"
+msgstr "{valid, select, yes {Each block has {accumulationWeeks, plural, one {# training week} other {# training weeks}}, then {deloadWeeks, plural, one {# lighter (deload) week} other {# lighter (deload) weeks}} to recover before the next block.{chosen, select, yes { You chose this length; the plan's default is {defaultWeeks, plural, one {# week} other {# weeks}}.} no { This is the plan's default, in line with how often strength athletes and coaches report taking a lighter week.} other {}}} no {{accumulationWeeks, plural, one {# training week} other {# training weeks}} per block is outside the allowed range, so no plan was made. Choose a different block length.} other {Your next block is ready: {rotations, plural, =0 {the same exercises carry over} one {# exercise rotates for variety} other {# exercises rotate for variety}}, and the targets are set for your current level ({level}).}}"
 
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.plan.mesocycle.simple"
-msgstr "{valid, select, yes {You train for {accumulationWeeks, plural, one {# week} other {# weeks}}, then have {deloadWeeks, plural, one {# lighter week} other {# lighter weeks}} to recover. Then the next block starts.} no {{accumulationWeeks, plural, one {# week} other {# weeks}} per block doesn't work. Please choose a different number of weeks.} other {Your next block is ready{rotations, plural, =0 {, with the same exercises.} one {, with # new exercise for variety.} other {, with # new exercises for variety.}}}}"
+msgstr "{valid, select, yes {You train for {accumulationWeeks, plural, one {# week} other {# weeks}}, then have {deloadWeeks, plural, one {# lighter week} other {# lighter weeks}} to recover. Then the next block starts.{chosen, select, yes { You picked this; the plan's usual length is {defaultWeeks, plural, one {# week} other {# weeks}}.} no { That's the usual length.} other {}}} no {{accumulationWeeks, plural, one {# week} other {# weeks}} per block doesn't work. Please choose a different number of weeks.} other {Your next block is ready{rotations, plural, =0 {, with the same exercises.} one {, with # new exercise for variety.} other {, with # new exercises for variety.}}}}"
 
 #: src/features/onboarding/steps.tsx
 msgid "{value} min"
@@ -649,6 +670,10 @@ msgstr "1 × {topReps} top set · {topRir}, then {sets} × {reps}"
 #: src/features/plan/format.ts
 msgid "1 set, as many reps as possible"
 msgstr "1 set, as many reps as possible"
+
+#: src/features/onboarding/BaselinesStep.tsx
+msgid "1-rep max"
+msgstr "1-rep max"
 
 #: src/features/labels.ts
 msgid "1–2 months ago"
@@ -698,6 +723,10 @@ msgstr "A new version is ready. Finish your workout to update."
 #: src/features/shell/UpdateBanner.tsx
 msgid "A new version of POWR is ready."
 msgstr "A new version of POWR is ready."
+
+#: src/features/onboarding/BaselinesStep.tsx
+msgid "A recent set"
+msgstr "A recent set"
 
 #: src/features/settings/SettingsScreen.tsx
 msgid "About"
@@ -1051,6 +1080,10 @@ msgid "Check the highlighted fields: every item needs a name."
 msgstr "Check the highlighted fields: every item needs a name."
 
 #: src/features/onboarding/OnboardingFlow.tsx
+msgid "Check the weights and reps of your lifts."
+msgstr "Check the weights and reps of your lifts."
+
+#: src/features/onboarding/OnboardingFlow.tsx
 msgid "Check your birth year and body weight."
 msgstr "Check your birth year and body weight."
 
@@ -1073,6 +1106,14 @@ msgstr "Checks"
 #: src/features/labels.ts
 msgid "chest fly"
 msgstr "chest fly"
+
+#: src/features/plan/TemplateChooser.tsx
+msgid "Choose a different plan"
+msgstr "Choose a different plan"
+
+#: src/features/plan/TemplateChooser.tsx
+msgid "Choose a plan"
+msgstr "Choose a plan"
 
 #: src/features/data/DataScreen.tsx
 msgid "Choose a POWR backup file (.zip)"
@@ -1102,9 +1143,14 @@ msgstr "Choose where you train, or start from an empty list."
 msgid "Choose your equipment"
 msgstr "Choose your equipment"
 
+#: src/features/onboarding/BaselinesStep.tsx
+msgid "Choose your equipment first, so POWR knows which lifts your plan uses."
+msgstr "Choose your equipment first, so POWR knows which lifts your plan uses."
+
 #: src/features/equipment/EquipmentScreens.tsx
 #: src/features/plan/PlanEditorScreen.tsx
 #: src/features/plan/PlanScreen.tsx
+#: src/features/plan/TemplateChooser.tsx
 #: src/features/why/WhySheet.tsx
 msgid "Close"
 msgstr "Close"
@@ -1319,6 +1365,11 @@ msgstr "Equipment saved."
 msgid "why.e1rm.set"
 msgstr "Estimated 1-rep max (e1RM) from this set: {e1rm}. With {rir, plural, one {# rep} other {# reps}} in reserve (RIR), the set counts like {reff, number} reps to failure, about {pct, number, percent} of your max."
 
+#. placeholder {0}: formatMass(displayMass({ value: estimate.value.e1rmKg, unit: 'kg' }, unit), unit)
+#: src/features/onboarding/BaselinesStep.tsx
+msgid "Estimated 1-rep max: {0}"
+msgstr "Estimated 1-rep max: {0}"
+
 #: src/features/plan/NextMesocycleScreen.tsx
 #: src/features/plan/PlanPreviewView.tsx
 msgid "Every check passed."
@@ -1379,6 +1430,10 @@ msgstr "Fewer than {required} signs of building fatigue showed up, so the lighte
 msgid "Find an exercise to avoid"
 msgstr "Find an exercise to avoid"
 
+#: src/features/onboarding/BaselinesStep.tsx
+msgid "Finding the main lifts of your plan…"
+msgstr "Finding the main lifts of your plan…"
+
 #: src/features/session/LogSetScreen.tsx
 msgid "Finish workout"
 msgstr "Finish workout"
@@ -1392,6 +1447,10 @@ msgstr "First day of the week"
 msgid "why.progression.double.noHistory.simple"
 msgstr "First time with this exercise. Pick a weight that leaves a few reps in the tank; next time we'll build on it."
 
+#: src/features/plan/TemplateChooser.tsx
+msgid "Fits your training days and your level."
+msgstr "Fits your training days and your level."
+
 #: src/features/onboarding/steps.tsx
 msgid "For an injury or a dislike. POWR never plans or suggests them."
 msgstr "For an injury or a dislike. POWR never plans or suggests them."
@@ -1403,6 +1462,11 @@ msgstr "Free weights"
 #: src/features/plan/PlanScreen.tsx
 msgid "From"
 msgstr "From"
+
+#. placeholder {0}: formatLocalDate(entry.start)
+#: src/features/plan/PlanPreviewView.tsx
+msgid "from {0}"
+msgstr "from {0}"
 
 #: src/features/plan/PlanEditorScreen.tsx
 msgid "From the next block"
@@ -1534,6 +1598,10 @@ msgstr "How long can a session be?"
 #: src/features/onboarding/steps.tsx
 msgid "How long have you trained regularly?"
 msgstr "How long have you trained regularly?"
+
+#: src/features/onboarding/BaselinesStep.tsx
+msgid "How many more reps could you have done? Not sure is fine."
+msgstr "How many more reps could you have done? Not sure is fine."
 
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
@@ -1697,6 +1765,7 @@ msgstr "Light"
 msgid "why.deload.week"
 msgstr "Lighter (deload) week: the same exercises and days with fewer sets, loads held or slightly lower, and {rirAdd, plural, one {# more rep} other {# more reps}} in reserve (RIR) per set. It lets fatigue fade so the next block starts fresh; deloads are part of training."
 
+#: src/features/plan/PlanPreviewView.tsx
 #: src/features/plan/PlanScreen.tsx
 msgid "Lighter week"
 msgstr "Lighter week"
@@ -1732,6 +1801,10 @@ msgstr "linear (a little more weight each session)"
 #: src/features/session/LogSetScreen.tsx
 msgid "Load"
 msgstr "Load"
+
+#: src/features/plan/TemplateChooser.tsx
+msgid "Loading the plans…"
+msgstr "Loading the plans…"
 
 #: src/features/equipment/EquipmentScreens.tsx
 #: src/features/onboarding/OnboardingFlow.tsx
@@ -1773,6 +1846,10 @@ msgstr "Machine and cable steps"
 #: src/features/labels.ts
 msgid "Machines"
 msgstr "Machines"
+
+#: src/features/plan/TemplateChooser.tsx
+msgid "Made for other levels ({levels})."
+msgstr "Made for other levels ({levels})."
 
 #: src/features/shell/BottomNav.tsx
 msgid "Main"
@@ -1863,6 +1940,10 @@ msgstr "muscle size"
 msgid "Muscles to prioritise (up to 3)"
 msgstr "Muscles to prioritise (up to 3)"
 
+#: src/features/onboarding/BaselinesStep.tsx
+msgid "My 1-rep max"
+msgstr "My 1-rep max"
+
 #: src/features/equipment/EquipmentScreens.tsx
 #: src/features/onboarding/OnboardingFlow.tsx
 #: src/features/onboarding/steps.tsx
@@ -1876,6 +1957,11 @@ msgstr "n/a"
 #: src/features/equipment/EquipmentEditor.tsx
 msgid "Name"
 msgstr "Name"
+
+#. placeholder {0}: choice.template.daysPerWeek
+#: src/features/plan/TemplateChooser.tsx
+msgid "Needs {0} training days a week."
+msgstr "Needs {0} training days a week."
 
 #: src/features/plan/parts.tsx
 msgid "Needs attention"
@@ -2010,6 +2096,7 @@ msgstr "Not enough weigh-ins yet for a weekly rate: {readings, plural, one {# re
 msgid "why.progression.double.repsUp"
 msgstr "Not every set reached {top, plural, one {# rep} other {# reps}} with {targetRir, plural, one {# rep} other {# reps}} in reserve (RIR) yet. Stay at {load} and aim for {reps, plural, one {# rep} other {# reps}}; once every set reaches {top}, the load goes up."
 
+#: src/features/onboarding/BaselinesStep.tsx
 #: src/features/plan/NextMesocycleScreen.tsx
 msgid "Not now"
 msgstr "Not now"
@@ -2021,6 +2108,10 @@ msgstr "Not quite right?"
 #: src/features/session/LogSetScreen.tsx
 msgid "Not saved. Check the values and try again."
 msgstr "Not saved. Check the values and try again."
+
+#: src/features/onboarding/BaselinesStep.tsx
+msgid "Not sure"
+msgstr "Not sure"
 
 #: src/features/labels.ts
 msgid "Not tracking"
@@ -2078,6 +2169,10 @@ msgstr "Only {daysOff, plural, one {# day} other {# days}} off, so carry on as p
 #: src/features/home/HomeScreen.tsx
 msgid "Open the plan"
 msgstr "Open the plan"
+
+#: src/features/onboarding/BaselinesStep.tsx
+msgid "Optional. If you know a recent set or your 1-rep max for these lifts, POWR works out the loads of your first sessions from it. Skip it, and your first sessions start light while POWR learns what you lift."
+msgstr "Optional. If you know a recent set or your 1-rep max for these lifts, POWR works out the loads of your first sessions from it. Skip it, and your first sessions start light while POWR learns what you lift."
 
 #: src/features/onboarding/steps.tsx
 msgid "Optional. Used for strength scores and body-weight trends; it stays on this phone."
@@ -2163,9 +2258,18 @@ msgstr "Planned from {0}: fewer sets and easier efforts, so you recover."
 msgid "Planned variety between blocks"
 msgstr "Planned variety between blocks"
 
+#: src/features/plan/TemplateChooser.tsx
+msgid "Plans"
+msgstr "Plans"
+
 #: src/features/equipment/EquipmentScreens.tsx
 msgid "Plans and exercise suggestions only use what your default equipment has."
 msgstr "Plans and exercise suggestions only use what your default equipment has."
+
+#. placeholder {0}: labels.style(answers.style)
+#: src/features/plan/TemplateChooser.tsx
+msgid "Plans for {0}. A plan that doesn't fit your days, level, equipment or session time says why in the preview."
+msgstr "Plans for {0}. A plan that doesn't fit your days, level, equipment or session time says why in the preview."
 
 #: src/features/equipment/EquipmentEditor.tsx
 msgid "Plate inventory"
@@ -2200,6 +2304,10 @@ msgstr "Powerlifting"
 #: src/features/shell/AppShell.tsx
 msgid "POWR"
 msgstr "POWR"
+
+#: src/features/why/WhySheet.tsx
+msgid "POWR {topic}"
+msgstr "POWR {topic}"
 
 #: src/app/StartupError.tsx
 msgid "POWR could not open its data"
@@ -2268,6 +2376,10 @@ msgstr "Progress"
 msgid "Protect my data"
 msgstr "Protect my data"
 
+#: src/features/why/WhySheet.tsx
+msgid "PubMed {pmid}"
+msgstr "PubMed {pmid}"
+
 #: src/features/labels.ts
 msgid "pull-down or pull-up"
 msgstr "pull-down or pull-up"
@@ -2303,6 +2415,14 @@ msgstr "rear-delt fly"
 #: src/features/plan/PlanScreen.tsx
 msgid "Reason"
 msgstr "Reason"
+
+#: src/features/plan/TemplateChooser.tsx
+msgid "Recommended for your {days} training days and your level."
+msgstr "Recommended for your {days} training days and your level."
+
+#: src/features/plan/PlanPreviewView.tsx
+msgid "Recommended: {defaultWeeks} weeks. Pick from {min} to {max}."
+msgstr "Recommended: {defaultWeeks} weeks. Pick from {min} to {max}."
 
 #: src/app/StartupError.tsx
 #: src/features/shell/RouteError.tsx
@@ -2351,6 +2471,7 @@ msgstr "Replace all data"
 msgid "replaced by"
 msgstr "replaced by"
 
+#: src/features/onboarding/BaselinesStep.tsx
 #: src/features/session/LogSetScreen.tsx
 msgid "Reps"
 msgstr "Reps"
@@ -2358,6 +2479,10 @@ msgstr "Reps"
 #: src/features/session/LogSetScreen.tsx
 msgid "Reps in reserve"
 msgstr "Reps in reserve"
+
+#: src/features/onboarding/BaselinesStep.tsx
+msgid "Reps left in the tank (RIR)"
+msgstr "Reps left in the tank (RIR)"
 
 #: src/features/plan/format.ts
 msgid "rest {minutes}:{seconds}"
@@ -2579,6 +2704,10 @@ msgstr "Start the break"
 msgid "Start times for your calendar (optional)"
 msgstr "Start times for your calendar (optional)"
 
+#: src/features/onboarding/BaselinesStep.tsx
+msgid "starting without these numbers"
+msgstr "starting without these numbers"
+
 #: src/features/plan/PlanPreviewView.tsx
 msgid "Starts"
 msgstr "Starts"
@@ -2714,6 +2843,10 @@ msgstr "The {lift} is trained on {sessions, plural, one {# day} other {# days}} 
 msgid "The app files are served from a server in Germany that we rent from Hetzner Online GmbH and operate ourselves. We do not keep access logs. Your training data never reaches this server."
 msgstr "The app files are served from a server in Germany that we rent from Hetzner Online GmbH and operate ourselves. We do not keep access logs. Your training data never reaches this server."
 
+#: src/features/plan/PlanPreviewView.tsx
+msgid "the block length"
+msgstr "the block length"
+
 #: src/features/plan/PlanScreen.tsx
 msgid "The break could not be ended. Check its dates."
 msgstr "The break could not be ended. Check its dates."
@@ -2730,6 +2863,10 @@ msgstr "the deload check"
 #: src/features/plan/PlanScreen.tsx
 msgid "The end date must be on or after the start date."
 msgstr "The end date must be on or after the start date."
+
+#: src/features/onboarding/BaselinesStep.tsx
+msgid "the estimate for {name}"
+msgstr "the estimate for {name}"
 
 #: src/features/plan/parts.tsx
 msgid "The exercises for it already have the most sets that make sense."
@@ -2788,7 +2925,7 @@ msgstr "The sessions already hold as much for this muscle as is useful."
 msgid "The Swiss Federal Act on Data Protection (revFADP) applies. Whether the EU GDPR also applies is being confirmed in a legal review; this notice is written to meet both."
 msgstr "The Swiss Federal Act on Data Protection (revFADP) applies. Whether the EU GDPR also applies is being confirmed in a legal review; this notice is written to meet both."
 
-#: src/features/plan/PlanPreviewView.tsx
+#: src/features/plan/parts.tsx
 msgid "the time budget"
 msgstr "the time budget"
 
@@ -2954,6 +3091,10 @@ msgstr "Training day for {0}"
 msgid "Training days"
 msgstr "Training days"
 
+#: src/features/plan/PlanPreviewView.tsx
+msgid "Training weeks before the lighter week"
+msgstr "Training weeks before the lighter week"
+
 #: src/features/labels.ts
 msgid "triceps extension"
 msgstr "triceps extension"
@@ -3017,6 +3158,10 @@ msgstr "Use a time-saving technique set for {name}"
 #: src/features/plan/format.ts
 msgid "Use shorter rests on isolation exercises"
 msgstr "Use shorter rests on isolation exercises"
+
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "Use the recommended plan"
+msgstr "Use the recommended plan"
 
 #: src/features/equipment/EquipmentScreens.tsx
 #: src/features/onboarding/steps.tsx
@@ -3083,6 +3228,11 @@ msgstr "We spread your sets over the week so each muscle gets close to its weekl
 msgid "We updated our notices"
 msgstr "We updated our notices"
 
+#. placeholder {0}: entry.week
+#: src/features/plan/PlanPreviewView.tsx
+msgid "Week {0}"
+msgstr "Week {0}"
+
 #: src/features/plan/PlanScreen.tsx
 msgid "week {blockWeek} of {weeks}"
 msgstr "week {blockWeek} of {weeks}"
@@ -3106,6 +3256,10 @@ msgstr "Weekly sets per muscle"
 #: src/features/labels.ts
 msgid "weekly undulating"
 msgstr "weekly undulating"
+
+#: src/features/onboarding/BaselinesStep.tsx
+msgid "Weight"
+msgstr "Weight"
 
 #: src/features/onboarding/steps.tsx
 msgid "Weights in"
@@ -3134,6 +3288,10 @@ msgstr "Welcome to POWR"
 msgid "What do RIR and RPE mean?"
 msgstr "What do RIR and RPE mean?"
 
+#: src/features/onboarding/BaselinesStep.tsx
+msgid "What do you know about your {name}?"
+msgstr "What do you know about your {name}?"
+
 #: src/features/onboarding/steps.tsx
 msgid "What do you want from training?"
 msgstr "What do you want from training?"
@@ -3145,6 +3303,10 @@ msgstr "What POWR stores, where and why"
 #: src/features/onboarding/steps.tsx
 msgid "When did you last train regularly?"
 msgstr "When did you last train regularly?"
+
+#: src/features/onboarding/BaselinesStep.tsx
+msgid "When did you lift it? (optional)"
+msgstr "When did you lift it? (optional)"
 
 #: src/features/plan/PlanEditorScreen.tsx
 msgid "When should the changes start?"
@@ -3191,6 +3353,11 @@ msgstr "Wilks score: {value, number}. Your lift times a bodyweight factor ({coef
 #: src/features/why/messages.ts
 msgid "why.scoring.wilks2020"
 msgstr "Wilks2020 score: {value, number}. Your lift times a bodyweight factor ({coefficient, number}), so lifters of different sizes can be compared.{clamped, select, yes { Your bodyweight is outside the formula's range, so the nearest end of the range was used.} other {}}{informal, select, yes { Made for totals; for a single lift it's only a rough guide.} other {}}"
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.e1rm.baseline.none"
+msgstr "Without a starting point, POWR calibrates: in the first {exposuresMin}–{exposuresMax} sessions with each exercise, you stop with {rirMin}–{rirMax} reps in reserve (RIR) and pick a load you can control. Your estimated max (e1RM) comes from those sets, and the loads follow it from then on."
 
 #: src/features/data/DataScreen.tsx
 msgid "Without protection the browser may delete POWR data when the phone runs low on space. Back up regularly either way: clearing site data or uninstalling deletes everything."
@@ -3254,6 +3421,10 @@ msgstr "You don't have the equipment for {exercise}. Swap it for something you c
 msgid "why.progression.linear.increase.simple"
 msgstr "You got all your reps last time, so add {increment}: {to} today."
 
+#: src/features/onboarding/BaselinesStep.tsx
+msgid "You lifted this max a while ago. POWR starts from it and refines it automatically from the sets you log."
+msgstr "You lifted this max a while ago. POWR starts from it and refines it automatically from the sets you log."
+
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.plan.slot.preferred.simple"
@@ -3291,6 +3462,10 @@ msgstr "You've already warmed up this movement today, so {steps, plural, one {on
 msgid "Your active plan uses this equipment. Make another profile the plan's equipment first."
 msgstr "Your active plan uses this equipment. Make another profile the plan's equipment first."
 
+#: src/features/onboarding/OnboardingFlow.tsx
+msgid "Your current lifts"
+msgstr "Your current lifts"
+
 #: src/app/StartupError.tsx
 msgid "Your data has not been changed. Close other POWR windows, then reload."
 msgstr "Your data has not been changed. Close other POWR windows, then reload."
@@ -3315,6 +3490,10 @@ msgstr "Your equipment has no exercise for this."
 #: src/features/onboarding/OnboardingFlow.tsx
 msgid "Your experience"
 msgstr "Your experience"
+
+#: src/features/plan/PlanPreviewView.tsx
+msgid "Your first block"
+msgstr "Your first block"
 
 #: src/features/plan/PlanPreviewView.tsx
 msgid "Your first week"
@@ -3373,6 +3552,10 @@ msgstr "Your plan"
 msgid "why.validate.lift.missing.simple"
 msgstr "Your plan has no {lift}. Add it to at least one day to keep practising it."
 
+#: src/features/onboarding/BaselinesStep.tsx
+msgid "Your plan has no lifts with weights to enter here. Your first sessions start light instead."
+msgstr "Your plan has no lifts with weights to enter here. Your first sessions start light instead."
+
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.plan.level.simple"
@@ -3411,7 +3594,7 @@ msgstr "Your session time does not allow more."
 msgid "why.plan.volume.budget"
 msgstr "Your session time doesn't fit every muscle's full weekly target, so {lowered, plural, one {# muscle was} other {# muscles were}} set lower, toward the minimum effective dose. {emphasis, select, priorities {Your priority muscles keep their full target.} other {The plan's main muscles keep their full target.}} {minutes, select, none {To fit every full target, choose 90+ min sessions or add a training day.} other {Sessions of {minutes} min would fit every full target.}}"
 
-#: src/features/plan/PlanPreviewView.tsx
+#: src/features/plan/parts.tsx
 msgid "Your session time is tight"
 msgstr "Your session time is tight"
 

@@ -1,4 +1,3 @@
-/* oxlint-disable lingui/no-unlocalized-strings -- engine argument names, not UI copy */
 import type { RuleId } from '@powr/domain/explain';
 
 /*
@@ -41,6 +40,8 @@ export const WHY_VALUES: { readonly [K in RuleId]: readonly string[] } = {
   'e1rm.set': SET_E1RM,
   'e1rm.set.unknownEffort': SET_E1RM,
   'e1rm.set.excluded': ['reason'],
+  'e1rm.baseline': ['kind', 'e1rm', 'old', 'ageDays'],
+  'e1rm.baseline.none': ['exposuresMin', 'exposuresMax', 'rirMin', 'rirMax'],
   'e1rm.session': ['e1rm', 'weight', 'candidates'],
   'e1rm.loadForTarget': [
     'reff',
@@ -125,8 +126,17 @@ export const WHY_VALUES: { readonly [K in RuleId]: readonly string[] } = {
   'plan.duration': ['dayKey', 'minutes'],
   'plan.time.trimmed': ['dayKey', 'slot', 'budget', 'action', 'sets', 'deficit'],
   'plan.schedule.weekdays': ['weekdays', 'order', 'conflicts'],
-  // New plan (generatePlan): the first three; next mesocycle (proposeNextMesocycle): the last three.
-  'plan.mesocycle': ['accumulationWeeks', 'deloadWeeks', 'valid', 'index', 'rotations', 'level'],
+  // New plan (generatePlan): the first five; next mesocycle (proposeNextMesocycle): the last three.
+  'plan.mesocycle': [
+    'accumulationWeeks',
+    'deloadWeeks',
+    'valid',
+    'defaultWeeks',
+    'chosen',
+    'index',
+    'rotations',
+    'level',
+  ],
   'plan.next.volume': ['muscle', 'planned', 'logged', 'next'],
   'validate.equipment.unavailable': ['exercise'],
   'validate.avoided': ['exercise'],

@@ -1,5 +1,5 @@
 import { CircleAlert } from 'lucide-react';
-import { useId, type ComponentProps, type ReactNode } from 'react';
+import { useId, useState, type ComponentProps, type ReactNode } from 'react';
 
 import { cn } from '#ui/cn';
 import { Input } from '#ui/input';
@@ -52,5 +52,41 @@ export function Field({
         </p>
       ) : null}
     </div>
+  );
+}
+
+/** A decimal as typed, with a comma or a point; empty or not a number gives null. */
+function parseDecimal(text: string): number | null {
+  const value = Number(text.replace(',', '.'));
+  return text.trim() === '' || !Number.isFinite(value) ? null : value;
+}
+
+/**
+ * A text field for a decimal number (body weight, height). A controlled input that showed the
+ * parsed number would drop a trailing point while the user types ("80." is 80, so "80.5" became
+ * "805"). This field shows the text as typed while it still means the current value, and the
+ * value itself when it changes from outside (a draft that loads, a reset).
+ */
+export function DecimalField({
+  value,
+  onValueChange,
+  ...field
+}: Omit<ComponentProps<typeof Field>, 'value' | 'onChange' | 'inputMode'> & {
+  value: number | null;
+  onValueChange: (value: number | null) => void;
+}) {
+  const [typed, setTyped] = useState<string | null>(null);
+  const shown =
+    typed !== null && parseDecimal(typed) === value ? typed : value === null ? '' : String(value);
+  return (
+    <Field
+      {...field}
+      inputMode="decimal"
+      value={shown}
+      onChange={(event) => {
+        setTyped(event.target.value);
+        onValueChange(parseDecimal(event.target.value));
+      }}
+    />
   );
 }

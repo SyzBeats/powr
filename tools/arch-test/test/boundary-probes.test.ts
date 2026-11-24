@@ -1,5 +1,5 @@
 import { spawnSync } from 'node:child_process';
-import { existsSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -27,8 +27,8 @@ function probe(relativePath: string, source: string): string {
   return relativePath;
 }
 
-function lint(file: string) {
-  const result = spawnSync(join(root, 'node_modules/.bin/oxlint'), [file], {
+function lint(file: string, flags: readonly string[] = []) {
+  const result = spawnSync(join(root, 'node_modules/.bin/oxlint'), [...flags, file], {
     cwd: root,
     encoding: 'utf8',
   });
@@ -164,8 +164,8 @@ describe('package boundaries (pnpm isolation + TypeScript project references)', 
   }, 30_000);
 });
 
-describe('alpha JS-plugin rules report warnings without blocking (OQ-T10)', () => {
-  it('warns about strings outside JSX that skip Lingui, without failing the lint', () => {
+describe('alpha JS-plugin rules report warnings, and the lint gate denies them (OQ-T10)', () => {
+  it('warns about strings outside JSX that skip Lingui; `pnpm lint` fails on the warning', () => {
     const file = probe(
       'apps/web/src/features/__probe__/probe.tsx',
       [
@@ -179,6 +179,11 @@ describe('alpha JS-plugin rules report warnings without blocking (OQ-T10)', () =
     const { status, output } = lint(file);
     expect(output).toMatch(/warning lingui\(no-unlocalized-strings\)/);
     expect(status).toBe(0);
+    // M2c: the root `lint` script denies warnings, so none can creep back in.
+    const script: string = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8')).scripts
+      .lint;
+    expect(script.split(' ')).toContain('--deny-warnings');
+    expect(lint(file, ['--deny-warnings']).status).not.toBe(0);
   });
 });
 

@@ -5,6 +5,7 @@ import type { PlanSlot, Prescription } from '@powr/domain';
 import type { MuscleWeek, PlanFix } from '@powr/domain/planning';
 
 import { formatMass, formatMinutes } from '../../i18n/format';
+import { assertNever } from '../exhaustive';
 import { useLabels } from '../labels';
 
 const range = ([min, max]: readonly [number, number]) => (min === max ? `${min}` : `${min}–${max}`);
@@ -56,6 +57,8 @@ export function usePrescriptionText(novice: boolean) {
         const reps = range(prescription.base.repRange);
         return t`${sets} × ${reps} reps (technique set)`;
       }
+      default:
+        return assertNever(prescription);
     }
   };
 }

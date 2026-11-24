@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { useEffect, useRef, type ReactNode } from 'react';
 
 import { cn } from '#ui/cn';
@@ -10,6 +11,8 @@ import { cn } from '#ui/cn';
  * changes", the onboarding steps), and React then keeps this Screen instead of mounting a new one.
  * Its title changes, so a title change counts as a new screen: the page scrolls to the top and the
  * new h1 gets focus. On the first render the router's scroll restoration decides the position.
+ * The page title is a message too: screen readers announce it, and the order of title and app
+ * name is a translator's choice.
  */
 export function Screen({
   title,
@@ -20,13 +23,17 @@ export function Screen({
   children: ReactNode;
   className?: string;
 }) {
+  const { t } = useLingui();
   const heading = useRef<HTMLHeadingElement>(null);
   const shownTitle = useRef(title);
+  const pageTitle = t`${title} · POWR`;
   useEffect(() => {
     heading.current?.focus({ preventScroll: true });
   }, []);
   useEffect(() => {
-    document.title = `${title} · POWR`;
+    document.title = pageTitle;
+  }, [pageTitle]);
+  useEffect(() => {
     if (shownTitle.current === title) return;
     shownTitle.current = title;
     window.scrollTo({ top: 0 });

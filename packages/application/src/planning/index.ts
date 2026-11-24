@@ -5,6 +5,12 @@
  * (§8.19). Every use case takes the composition root's `Deps`; expected failures are `Result`s.
  */
 export {
+  baselineLifts,
+  estimateBaseline,
+  type BaselineLift,
+  type BaselineLifts,
+} from './baselines';
+export {
   answersFromProfile,
   traineeLevel,
   type PlanOptions,
@@ -56,6 +62,7 @@ export {
   previewPlanEdit,
   restorePlanIssues,
   savePlanEdit,
+  templateChoices,
   type AcceptPlanError,
   type DismissIssueError,
   type EditScope,
@@ -63,6 +70,7 @@ export {
   type PlanEditPreview,
   type PlanPreview,
   type PlanPreviewError,
+  type TemplateChoice,
 } from './plan';
 export {
   endBreak,

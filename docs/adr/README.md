@@ -26,6 +26,8 @@ Lightweight MADR format: context, options considered (with a weighted matrix whe
 - v0.5 also folds in the M2 tooling (TD-09 native Lingui macro, TD-10 native React Compiler lint rules, TD-12 Lighthouse CI and Trusted Types in dev/E2E) and the Sentry package block list: ADR-0010 (the E2E server enforces Trusted Types; Lighthouse CI with per-environment baselines), 0016 (native macro transform), 0017 (alpha `eslint-plugin-react-hooks` removed, React Compiler rules native only, ESLint only as the peer of `eslint-plugin-lingui`), 0018 (package block list `deniedPackages` with no Sentry, a product-owner decision of 2026-11-24; two never-loaded build-only packages removed by pnpm `overrides`) and 0021 (pnpm `overrides` in `pnpm-workspace.yaml`).
 - No ADR was superseded; titles are unchanged.
 
+**v0.6 (2026-11-24).** After M2c (planning gaps), ADR-0016 and ADR-0017 get an "Amendment (v0.6, 2026-11-24)" section: `pnpm lint` denies warnings, so the alpha Lingui rule blocks in practice. No ADR was superseded; titles are unchanged.
+
 | ADR | Title | Decision | Runner-up | Status |
 |---|---|---|---|---|
 | [0001](0001-repository-structure-pnpm-monorepo.md) | Repository structure and boundary enforcement | pnpm-workspace monorepo; boundaries via pnpm isolation + TypeScript project references + oxlint `no-restricted-imports` overrides + architecture test | Single app with lint-enforced folders | Accepted (revised v0.2, amended v0.3, v0.4) |
@@ -43,8 +45,8 @@ Lightweight MADR format: context, options considered (with a weighted matrix whe
 | [0013](0013-backup-file-format.md) | Backup file format | ZIP + manifest + SHA-256 + shared migration chain | Single JSON file | Accepted (resolved 2026-11-24: A; amended v0.3, v0.4) |
 | [0014](0014-router.md) | Router | TanStack Router | React Router 8 | Accepted |
 | [0015](0015-date-and-time-handling.md) | Date and time handling | Temporal via `temporal-polyfill` | date-fns 4 + `@date-fns/tz` | Accepted |
-| [0016](0016-internationalisation.md) | Internationalisation | Lingui 6 + `Intl`; oxlint `react/jsx-no-literals` + catalog check | i18next | Accepted (revised v0.2, amended v0.3, v0.5) |
-| [0017](0017-lint-and-format.md) | Lint and format: oxlint + oxfmt | **oxlint 1.95** (type-aware via oxlint-tsgolint) + **oxfmt 0.80** (beta); Prettier removed | ESLint 10 + typescript-eslint + Prettier 3 | Accepted (product-owner decision 2026-11-24; rewritten v0.2, amended v0.3, v0.5) |
+| [0016](0016-internationalisation.md) | Internationalisation | Lingui 6 + `Intl`; oxlint `react/jsx-no-literals` + catalog check | i18next | Accepted (revised v0.2, amended v0.3, v0.5, v0.6) |
+| [0017](0017-lint-and-format.md) | Lint and format: oxlint + oxfmt | **oxlint 1.95** (type-aware via oxlint-tsgolint) + **oxfmt 0.80** (beta); Prettier removed | ESLint 10 + typescript-eslint + Prettier 3 | Accepted (product-owner decision 2026-11-24; rewritten v0.2, amended v0.3, v0.5, v0.6) |
 | [0018](0018-licence-compliance-tooling.md) | Licence compliance tooling | Own inventory from the bundle graph + SPDX gate | `rollup-plugin-license` | Accepted (amended v0.3: licence exceptions approved by the product owner; v0.4: content entries approved; v0.5: no Sentry, package block list) |
 | [0019](0019-timer-and-alert-architecture.md) | Timer and alert architecture | Timestamp timers; multi-path best-effort hidden alerts; honest status; audio keep-alive tested in S-1, opt-in Labs only if it clearly works | Visible-only alerts | Accepted (calibrated by S-1) |
 | [0020](0020-calculation-engine-design.md) | Calculation engine design | Pure functional core with injected rules and explanation traces | Generic rules-engine library | Accepted (amended v0.4, v0.5) |

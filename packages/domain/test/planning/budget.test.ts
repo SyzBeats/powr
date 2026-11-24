@@ -1,18 +1,31 @@
 import { describe, expect, it } from 'vitest';
 
-import type { IsoWeekday, MuscleId, MuscleTarget, PlanDay } from '../../src';
+import type {
+  IsoWeekday,
+  LocalDate,
+  Mesocycle,
+  MuscleId,
+  MuscleTarget,
+  PlanDay,
+  TemplateDef,
+} from '../../src';
 import {
   editsForFix,
   generatePlan,
+  proposeNextMesocycle,
   validatePlan,
+  type NextMesocycleProposal,
   type PlanProposal,
+  type PlanRequest,
   type ValidationContext,
 } from '../../src/planning';
 import {
   ALL_EQUIPMENT,
+  BB_TEMPLATE,
   day,
   LIBRARY,
   lookup,
+  PL_TEMPLATE,
   planSlot,
   request,
   TEMPLATES,
@@ -239,5 +252,141 @@ describe('time-budget issues in the plan editor (PLN-09, PLN-14)', () => {
   it('input fixes have no plan edits: the plan is generated again with the new answers', () => {
     expect(editsForFix({ kind: 'sessionMinutes', minutes: 60 }, week)).toEqual([]);
     expect(editsForFix({ kind: 'addDay' }, week)).toEqual([]);
+  });
+});
+
+/** The first plan accepted as mesocycle 0, then the next block for the same answers (PLN-13). */
+function nextBlock(
+  input: PlanRequest,
+  template: TemplateDef,
+): { readonly first: PlanProposal; readonly next: NextMesocycleProposal } {
+  const first = generatePlan(input, catalog, RULES).value!;
+  const current: Mesocycle = {
+    index: 0,
+    startDate: '2026-11-30' as LocalDate,
+    accumulationWeeks: first.accumulationWeeks,
+    deloadWeeks: first.deloadWeeks,
+    status: 'active',
+    level: first.level,
+    days: first.days,
+    targets: first.targets,
+    liftTargets: first.liftTargets,
+    deload: { postponed: false, skipped: false, broughtForward: false },
+  };
+  const next = proposeNextMesocycle(
+    {
+      current,
+      template,
+      request: { ...input, seed: input.seed + 1 },
+      logged: null,
+      startDate: '2027-01-04' as LocalDate,
+    },
+    catalog,
+    RULES,
+  ).value;
+  return { first, next };
+}
+
+const loweredTo = (targets: readonly MuscleTarget[]) =>
+  Object.fromEntries(
+    targets
+      .filter((entry) => entry.source === 'timeBudget')
+      .map((entry) => [entry.muscle, `${entry.full} → ${entry.sets}`]),
+  );
+
+describe('the next block applies the same time-budget step (PLN-13, PLN-14; TD-36)', () => {
+  // Product-owner decision 2026-11-24: the next-block proposal follows the first plan's rule.
+  // Before TD-36 the next block re-derived every target at full value (15) and left the
+  // shortfalls as low-volume violations; now the same tiers lower them again.
+
+  it('keeps the priority muscle full and lowers the others towards the minimum dose', () => {
+    const { first, next } = nextBlock(
+      request({ sessionMinutes: 45, priorities: [muscle('mu.hamstrings')] }),
+      BB_TEMPLATE,
+    );
+    expect(loweredTo(first.targets)).toEqual({
+      'mu.chest': '15 → 6',
+      'mu.elbow-flexors': '15 → 9',
+      'mu.glutes': '15 → 6',
+      'mu.lats': '15 → 6',
+      'mu.mid-back': '15 → 6',
+      'mu.quads': '15 → 6',
+    });
+    // The rotated exercises (dumbbell press, deadlift, goblet squat) fit a little differently.
+    expect(loweredTo(next.mesocycle.targets)).toEqual({
+      'mu.chest': '15 → 6',
+      'mu.elbow-flexors': '15 → 10',
+      'mu.glutes': '15 → 11',
+      'mu.lats': '15 → 6',
+      'mu.mid-back': '15 → 6',
+      'mu.quads': '15 → 9.5',
+    });
+    expect(next.mesocycle.targets.find((entry) => entry.muscle === 'mu.hamstrings')).toEqual({
+      muscle: 'mu.hamstrings',
+      sets: 18,
+      source: 'priority',
+    });
+    expect(next.notes.find((note) => note.rule === 'plan.volume.budget')?.args).toEqual({
+      lowered: 6,
+      minutes: 90,
+      emphasis: 'priorities',
+    });
+    const chest = next.report.issues.find(
+      (entry) => entry.why.rule === 'validate.volume.timeBudget' && entry.key.includes('mu.chest'),
+    );
+    expect(chest).toMatchObject({
+      severity: 'warning',
+      cause: 'timeBudget',
+      fixes: [{ kind: 'sessionMinutes', minutes: 90 }, { kind: 'addDay' }],
+    });
+    expect(next.report.ok).toBe(true);
+  });
+
+  it('without priorities keeps the template emphasis full, as the first plan does', () => {
+    const { first, next } = nextBlock(request({ sessionMinutes: 45 }), BB_TEMPLATE);
+    expect(Object.keys(loweredTo(next.mesocycle.targets))).toEqual(
+      Object.keys(loweredTo(first.targets)),
+    );
+    expect(loweredTo(next.mesocycle.targets)).toEqual({
+      'mu.elbow-flexors': '15 → 11',
+      'mu.hamstrings': '15 → 4',
+    });
+    for (const id of ['mu.chest', 'mu.glutes', 'mu.lats', 'mu.mid-back', 'mu.quads']) {
+      expect(next.mesocycle.targets.find((entry) => entry.muscle === id)).toEqual({
+        muscle: id,
+        sets: 15,
+        source: 'band',
+      });
+    }
+    expect(next.notes.find((note) => note.rule === 'plan.volume.budget')?.args['emphasis']).toBe(
+      'template',
+    );
+  });
+
+  it('changes nothing without a budget', () => {
+    const { next } = nextBlock(request({ priorities: [muscle('mu.hamstrings')] }), BB_TEMPLATE);
+    expect(loweredTo(next.mesocycle.targets)).toEqual({});
+    expect(next.notes.map((note) => note.rule)).not.toContain('plan.volume.budget');
+    expect(next.notes.map((note) => note.rule)).not.toContain('plan.time.trimmed');
+  });
+
+  it('gives a strength minimum-dose issue the time budget causes the input fixes', () => {
+    const input = request({ style: 'powerlifting', sessionMinutes: 30 });
+    const { first, next } = nextBlock(input, PL_TEMPLATE);
+    for (const report of [first.report, next.report]) {
+      expect(
+        report.issues.find((entry) => entry.why.rule === 'validate.strength.belowMinimum'),
+      ).toMatchObject({
+        key: 'strength.belowMinimum:deadlift:2',
+        severity: 'violation',
+        cause: 'timeBudget',
+        fixes: [{ kind: 'sessionMinutes', minutes: 45 }, { kind: 'addDay' }],
+      });
+    }
+    // The suggested 45 minutes give the deadlift its minimum dose.
+    const longer = generatePlan({ ...input, sessionMinutes: 45 }, catalog, RULES).value!;
+    expect(
+      longer.report.issues.filter((entry) => entry.why.rule === 'validate.strength.belowMinimum'),
+    ).toEqual([]);
   });
 });

@@ -107,6 +107,7 @@ export const EB_DEFAULTS: ParamValues = {
   'load.unknownEffort.weightMultiplier': 0.5,
   'load.unknownEffort.personalPrior': { windowWeeks: 8, repTolerance: 3 },
   'load.unknownEffort.eligibleForE1rmPr': false,
+  'load.baseline.refineAfterDays': 90,
   'load.trend.noiseHeavySd': 0.04,
   'load.trend.noiseTypicalSd': 0.09,
   'load.trend.heavySet': { maxReff: 5, minRpe: 9 },

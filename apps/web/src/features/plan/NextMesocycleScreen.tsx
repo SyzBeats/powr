@@ -13,11 +13,13 @@ import { useActivePlan, usePlanning, useProfile } from '../../hooks/use-planning
 import { formatLocalDate } from '../../i18n/format';
 import { useLabels } from '../labels';
 import { WhyButton, WhyNamesContext, WhySimpleContext, WhyText } from '../why/WhySheet';
-import { DayCard, IssueList, VolumeList } from './parts';
+import { BudgetNote, DayCard, IssueList, VolumeList } from './parts';
 
 /**
  * PLN-13: the proposed next block (level re-evaluated, 1–2 exercises per muscle rotated, targets
  * from the logged volume, its PLN-01 report), every rotation with its reason; the user accepts.
+ * When the session time cannot fit every target, the same time-budget note as the first plan
+ * (PLN-14, TD-36); changing the session time or the days is a re-plan (Settings).
  */
 export function NextMesocycleScreen() {
   const { t } = useLingui();
@@ -57,6 +59,7 @@ export function NextMesocycleScreen() {
     );
   }
   const mesocycle = preview?.proposal.mesocycle;
+  const budgetNote = preview?.proposal.notes.find((note) => note.rule === 'plan.volume.budget');
   return (
     <WhySimpleContext value={novice}>
       <WhyNamesContext value={{ days: mesocycle?.days ?? [] }}>
@@ -83,6 +86,9 @@ export function NextMesocycleScreen() {
                 </p>
                 <WhyButton why={preview.why} subject={t`the next block`} />
               </Card>
+              {budgetNote ? (
+                <BudgetNote note={budgetNote} issues={preview.proposal.report.issues} />
+              ) : null}
               <Card>
                 <h2 className="text-xl font-bold">
                   <Trans>Exercise changes</Trans>

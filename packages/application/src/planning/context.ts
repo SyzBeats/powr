@@ -111,6 +111,17 @@ export async function planningRules(
   return { rules, restRules: (exercise) => byContext.get(exerciseContextKey(exercise)) ?? rules };
 }
 
+/** The rules for one exercise (its curve class, rest class and lift), with the user's overrides. */
+export async function exerciseRules(
+  deps: Deps,
+  context: Omit<ResolveContext, 'exercise'>,
+  exercise: ExerciseDef,
+): Promise<RuleSet> {
+  const overrides = await userOverrides(deps);
+  return (await deps.rules.resolve({ ...context, exercise: exerciseContext(exercise) }, overrides))
+    .rules;
+}
+
 function exerciseContext(exercise: ExerciseDef): NonNullable<ResolveContext['exercise']> {
   return {
     ...(exercise.competitionLift ? { competitionLift: exercise.competitionLift } : {}),

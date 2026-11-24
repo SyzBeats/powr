@@ -1,7 +1,7 @@
 {
   "format": 1,
-  "version": "1.2.0",
-  "hash": "4a41caaa281252826146f893496d4933d317e102a68f15f21ae443462faa7ac7",
+  "version": "1.3.0",
+  "hash": "b74ec9402fc3b0e9ad2d7a80691100a46728f19f75659fb5009a26c33c7d7b93",
   "params": [
     {
       "id": "bodyweight.rate.windowDays",
@@ -319,6 +319,22 @@
       "verified": true,
       "userOverridable": false,
       "since": "mvp"
+    },
+    {
+      "id": "load.baseline.refineAfterDays",
+      "value": 90,
+      "unit": "days",
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.powr-prd"
+      ],
+      "ebRef": "PRD ONB-08 (a 1RM older than 3 months shows a hint that it will be refined automatically); EB §Load › e1RM drift (refresh on heavy sets)",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp",
+      "note": "About 3 months (PRD ONB-08). The baseline still sets the starting e1RM; the hint says that the logged sets refine it. Time off is handled by the return ramp (ONB-04, PRG-13), not here."
     },
     {
       "id": "load.curve.classMap",

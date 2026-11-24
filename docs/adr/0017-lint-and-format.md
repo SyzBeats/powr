@@ -104,3 +104,14 @@ The decision stands. v0.5 folds in the M2 tooling (TD-09 native Lingui macro, TD
 - **Consequences.** The negative consequence "the React Compiler rules are only available as alpha JS-plugin warnings" no longer applies; risk T-16 now concerns only Lingui's `no-unlocalized-strings` (TD-08).
 
 Source: `IMPLEMENTATION_NOTES.md` (repository root), section "M2 tooling (TD-09, TD-10, TD-12)".
+
+## Amendment (v0.6, 2026-11-24)
+
+The decision stands; the CI rule "fails on errors; warnings reported" changes (M2c, the lint clean-up the product owner scheduled before M3):
+
+- **Warnings fail the lint.** The root script is `oxlint --type-aware --deny-warnings`, so `pnpm lint`, `pnpm verify` and the CI quality job fail on any warning: the alpha `lingui/no-unlocalized-strings`, the `suspicious` category, the four React Compiler warnings and unused disable directives. Before the switch the code base was brought to zero warnings without turning a rule off: Lingui macros for the remaining UI text, an `assertNever` helper for exhaustive switches (`typescript/consistent-return`) and module-scope helpers (`unicorn/consistent-function-scoping`).
+- **Narrow ignores for the Lingui rule.** Its `ignore` list (in `oxlint.config.ts`) also skips route patterns with `$params` and single camelCase tokens (union members such as `'setWeekday'`), because the plugin's type-aware `useTsTypes` cannot work: oxlint gives JS plugins no type information.
+- **Probe.** The OQ-T10 probe test asserts that the `lint` script keeps `--deny-warnings` and that a Lingui warning fails under it.
+- **Consequences.** A new warning now blocks a merge, as an error does; the alpha status of `eslint-plugin-lingui` remains (TD-08, T-16): an oxlint update that breaks the plugin would show as a lint failure, not as silence.
+
+Source: `IMPLEMENTATION_NOTES.md` (repository root), section "M2c planning gaps".

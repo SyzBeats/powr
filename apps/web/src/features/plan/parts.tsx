@@ -6,12 +6,13 @@ import type { MuscleId, MuscleTarget, PlanDay } from '@powr/domain';
 import type { Explanation } from '@powr/domain/explain';
 import type { IssueCause, PlanFix, ValidationIssue, WeekAnalysis } from '@powr/domain/planning';
 
-import { Badge, type Tone } from '#ui/badge';
+import { Badge, Callout, type Tone } from '#ui/badge';
 import { Button } from '#ui/button';
 import { cn } from '#ui/cn';
 import { Card } from '#ui/screen';
 
 import { formatMinutes } from '../../i18n/format';
+import { assertNever } from '../exhaustive';
 import { useLabels } from '../labels';
 import { WhyButton, WhyText } from '../why/WhySheet';
 import {
@@ -196,6 +197,8 @@ function useCauseText() {
         return t`This plan layout has no exercise for it.`;
       case 'days':
         return t`Your number of training days does not allow it.`;
+      default:
+        return assertNever(cause);
     }
   };
 }
@@ -204,6 +207,47 @@ function useCauseText() {
  * The validation issues (PLN-01, PLN-09): severity as an icon plus words, the message, why it is
  * unavoidable (its cause) or one-tap fixes, a "Why?" and, where allowed, dismiss.
  */
+/**
+ * PLN-14 time-budget note: the `plan.volume.budget` explanation (how many targets were lowered,
+ * which muscles keep theirs, the session length that would fit), the input fixes as buttons
+ * where the screen can apply them, and "Why?". The first plan and the next block (TD-36) share it.
+ */
+export function BudgetNote({
+  note,
+  issues,
+  onInputFix,
+}: {
+  note: Explanation;
+  issues: readonly ValidationIssue[];
+  onInputFix?: ((fix: PlanFix) => void) | undefined;
+}) {
+  const { t } = useLingui();
+  const fixText = useFixText();
+  const fixes = issues
+    .flatMap((issue) => (issue.cause === 'timeBudget' ? issue.fixes : []))
+    .filter(isInputFix)
+    .filter((fix, index, all) => all.findIndex((other) => other.kind === fix.kind) === index);
+  return (
+    <Callout tone="warning" title={t`Your session time is tight`}>
+      <p>
+        <WhyText why={note} />
+      </p>
+      {onInputFix && fixes.length > 0 ? (
+        <div className="flex flex-wrap gap-2 pt-1">
+          {fixes.map((fix) => (
+            <Button key={fix.kind} onClick={() => onInputFix(fix)}>
+              {fixText(fix, (_, slot) => slot)}
+            </Button>
+          ))}
+        </div>
+      ) : null}
+      <div>
+        <WhyButton why={note} subject={t`the time budget`} />
+      </div>
+    </Callout>
+  );
+}
+
 export function IssueList({
   issues,
   days,

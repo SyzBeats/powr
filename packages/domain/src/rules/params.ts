@@ -369,6 +369,8 @@ export interface ParamValues {
     readonly repTolerance: number;
   };
   'load.unknownEffort.eligibleForE1rmPr': boolean;
+  /** ONB-08: a known 1RM older than this many days shows the "refined automatically" hint. */
+  'load.baseline.refineAfterDays': number;
   'load.trend.noiseHeavySd': number;
   'load.trend.noiseTypicalSd': number;
   'load.trend.heavySet': HeavySetRule;

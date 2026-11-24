@@ -23,6 +23,7 @@ import type { ProgressionModel, TraineeLevel } from '@powr/domain/rules';
 
 import { useCatalog } from '../hooks/use-planning';
 import { formatWeekday } from '../i18n/format';
+import { assertNever } from './exhaustive';
 
 /**
  * Plain-language names for content IDs and engine enums (NFR-USE-03): content names come from
@@ -80,6 +81,8 @@ export function useLabels() {
         return t`wrist curl`;
       case 'wristExtension':
         return t`reverse wrist curl`;
+      default:
+        return assertNever(value);
     }
   };
 
@@ -110,6 +113,8 @@ export function useLabels() {
         return t`Push/pull/legs`;
       case 'sbd':
         return t`Squat, bench, deadlift`;
+      default:
+        return assertNever(value);
     }
   };
 
@@ -124,7 +129,7 @@ export function useLabels() {
       case 'block':
         return t`block`;
       default:
-        return value;
+        return assertNever(value);
     }
   };
 
@@ -138,6 +143,8 @@ export function useLabels() {
         return t`linear (a little more weight each session)`;
       case 'apre':
         return t`APRE`;
+      default:
+        return assertNever(value);
     }
   };
 
@@ -161,6 +168,8 @@ export function useLabels() {
         return t`Accessories`;
       case 'cardio':
         return t`Cardio`;
+      default:
+        return assertNever(value);
     }
   };
 
@@ -176,6 +185,8 @@ export function useLabels() {
         return t`Life event`;
       case 'other':
         return t`Other`;
+      default:
+        return assertNever(value);
     }
   };
 
@@ -191,6 +202,8 @@ export function useLabels() {
         return t`Merged into another session`;
       case 'onBreak':
         return t`On break`;
+      default:
+        return assertNever(value);
     }
   };
 
@@ -208,8 +221,10 @@ export function useLabels() {
         return t`your logged volume`;
       case 'user':
         return t`your own target`;
-      default:
+      case 'timeBudget':
         return t`time budget`;
+      default:
+        return assertNever(value);
     }
   };
 
@@ -223,6 +238,8 @@ export function useLabels() {
         return t`2 to 5 years`;
       case 'over5Years':
         return t`More than 5 years`;
+      default:
+        return assertNever(value);
     }
   };
 
@@ -238,6 +255,8 @@ export function useLabels() {
         return t`1–2 months ago`;
       case 'over2Months':
         return t`More than 2 months ago`;
+      default:
+        return assertNever(value);
     }
   };
 
@@ -254,6 +273,8 @@ export function useLabels() {
         return t`Maintaining`;
       case 'notTracking':
         return t`Not tracking`;
+      default:
+        return assertNever(value);
     }
   };
 

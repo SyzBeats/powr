@@ -19,7 +19,16 @@ import {
   skipSession,
   swapSessions,
 } from '../../src/planning';
-import { day, LIBRARY, lookup, planSlot, request, TEMPLATES } from '../fixtures/planning';
+import {
+  BB_TEMPLATE,
+  day,
+  LIBRARY,
+  lookup,
+  PL_TEMPLATE,
+  planSlot,
+  request,
+  TEMPLATES,
+} from '../fixtures/planning';
 import { rules } from '../fixtures/rules';
 
 const RULES = rules();
@@ -236,6 +245,7 @@ describe('next mesocycle (PLN-13)', () => {
     const next = proposeNextMesocycle(
       {
         current,
+        template: PL_TEMPLATE,
         request: request({ style: 'powerlifting' }),
         logged: null,
         startDate: date('2027-01-11'),
@@ -272,6 +282,7 @@ describe('next mesocycle (PLN-13)', () => {
     const next = proposeNextMesocycle(
       {
         current: base,
+        template: BB_TEMPLATE,
         request: request(),
         logged: new Map([['mu.chest' as MuscleId, 5]]),
         startDate: date('2027-01-11'),
@@ -293,6 +304,7 @@ describe('next mesocycle (PLN-13)', () => {
     const next = proposeNextMesocycle(
       {
         current: mesocycle(),
+        template: BB_TEMPLATE,
         request: request({ equipment: noDumbbells }),
         logged: null,
         startDate: date('2027-01-11'),

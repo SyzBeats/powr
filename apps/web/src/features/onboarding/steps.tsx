@@ -21,7 +21,7 @@ import {
 import { Callout } from '#ui/badge';
 import { Button } from '#ui/button';
 import { CheckRow, ChipGroup, ChoiceCards } from '#ui/choice';
-import { Field } from '#ui/field';
+import { DecimalField, Field } from '#ui/field';
 import { Card } from '#ui/screen';
 import { Segmented } from '#ui/segmented';
 
@@ -296,27 +296,23 @@ export function BodyStep({ draft, update, errors }: StepProps) {
           error={errors['birthYear']}
           onChange={(event) => update({ birthYear: parseNumber(event.target.value) })}
         />
-        <Field
+        <DecimalField
           label={t`Height`}
-          inputMode="decimal"
           suffix={units.length}
-          value={draft.height?.value ?? ''}
+          value={draft.height?.value ?? null}
           error={errors['height']}
-          onChange={(event) => {
-            const value = parseNumber(event.target.value);
-            update({ height: value === null ? null : { value, unit: units.length } });
-          }}
+          onValueChange={(value) =>
+            update({ height: value === null ? null : { value, unit: units.length } })
+          }
         />
-        <Field
+        <DecimalField
           label={t`Body weight`}
-          inputMode="decimal"
           suffix={units.bodyweight}
-          value={draft.bodyweight?.value ?? ''}
+          value={draft.bodyweight?.value ?? null}
           error={errors['bodyweight']}
-          onChange={(event) => {
-            const value = parseNumber(event.target.value);
-            update({ bodyweight: value === null ? null : { value, unit: units.bodyweight } });
-          }}
+          onValueChange={(value) =>
+            update({ bodyweight: value === null ? null : { value, unit: units.bodyweight } })
+          }
         />
       </Card>
     </>

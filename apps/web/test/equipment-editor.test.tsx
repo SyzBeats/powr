@@ -56,6 +56,16 @@ describe('equipment editor (EQP-01…03, EQP-07)', () => {
     expect(await seriousViolations()).toEqual([]);
   });
 
+  it('decimal load details keep their point while typing (2.5, not 25)', async () => {
+    const container = await createTestContainer();
+    let latest = sampleAnswers(container).equipment;
+    renderWith(container, <Editor initial={latest} onChange={(next) => (latest = next)} />);
+    const collar = await screen.findByLabelText('Collar weight (each)');
+    await userEvent.clear(collar);
+    await userEvent.type(collar, '2.5');
+    expect(latest.collarWeight).toBe(2.5);
+  });
+
   it('adds a custom item by name and explains an empty name (EQP-07)', async () => {
     const container = await createTestContainer();
     let latest = sampleAnswers(container).equipment;

@@ -58,3 +58,9 @@ The decision stands. v0.5 folds in the M2 tooling (TD-09 native Lingui macro, TD
 - **Consequences.** The Babel dependency noted under Consequences now concerns only the React Compiler; the fallback for risk T-08 (`i18n._()` with explicit IDs) is unchanged. `eslint-plugin-lingui` stays the only alpha JS plugin in the lint setup (OQ-T10, ADR-0017).
 
 Source: `IMPLEMENTATION_NOTES.md` (repository root), section "M2 tooling (TD-09, TD-10, TD-12)".
+
+## Amendment (v0.6, 2026-11-24)
+
+The decision stands. `lingui/no-unlocalized-strings` still reports a warning, but since M2c the lint gate denies warnings (`oxlint --type-aware --deny-warnings`, ADR-0017), so the rule blocks in practice; the code base has no unlocalized UI string left. The page title (`{title} · POWR`) and the evidence-source names in the "Why?" sheet became messages. The rule's `ignore` list also skips route patterns with `$params` and single camelCase tokens, because the plugin's type-aware option cannot run in oxlint.
+
+Source: `IMPLEMENTATION_NOTES.md` (repository root), section "M2c planning gaps".

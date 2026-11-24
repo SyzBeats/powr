@@ -121,20 +121,6 @@ export function setFacts(why: Explanation): Extract<Fact, { kind: 'set' }>[] {
   return why.facts.filter((fact): fact is Extract<Fact, { kind: 'set' }> => fact.kind === 'set');
 }
 
-/** 'src.iversen2021' → 'Iversen 2021'; 'src.pmid34644424' → 'PubMed 34644424'. */
-export function sourceName(id: string): string {
-  const body = id.replace(/^src\./, '');
-  const pubmed = /^pmid(\d+)$/.exec(body);
-  if (pubmed) return `PubMed ${pubmed[1]}`;
-  if (body.startsWith('powr-')) return `POWR ${body.slice(5).replaceAll('-', ' ')}`;
-  const author = /^([a-z-]+?)(\d{4})([a-z]?)$/.exec(body);
-  if (author) {
-    const [, name = '', year = '', suffix = ''] = author;
-    return `${name.charAt(0).toUpperCase()}${name.slice(1)} ${year}${suffix}`;
-  }
-  return body;
-}
-
 /** 'volume.hypertrophy.weeklyBands' → 'Weekly bands (volume, hypertrophy)'. */
 export function paramName(id: string): string {
   const parts = id

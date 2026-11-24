@@ -1,6 +1,8 @@
 import { screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
+import { saveOnboardingDraft } from '@powr/application/planning';
+
 import { PlanPreviewView } from '../src/features/plan/PlanPreviewView';
 import { i18n } from '../src/i18n';
 import { messages } from '../src/i18n/locales/en/messages.po';
@@ -85,6 +87,25 @@ describe('pseudo-locale expansion (+30%, NFR-L10N-02)', () => {
     }
   });
 
+  it('the baselines step fits 360 px with a recent set open (ONB-08)', async () => {
+    const container = await createTestContainer();
+    await acknowledge(container);
+    await saveOnboardingDraft(container.deps, {
+      step: 'baselines',
+      answers: {
+        ...sampleAnswers(container),
+        baselineInputs: {
+          'ex.barbell-back-squat': { kind: 'recentSet', load: '100', reps: '5', rir: 2, date: '' },
+          'ex.dumbbell-bench-press': { kind: 'oneRepMax', load: '40', reps: '', rir: 2, date: '' },
+        },
+      } as Parameters<typeof saveOnboardingDraft>[1]['answers'],
+    });
+    renderRoute(container, '/onboarding/baselines');
+    await screen.findAllByRole('region');
+    await screen.findAllByRole('textbox');
+    expect({ baselines: overflows() }).toEqual({ baselines: [] });
+  });
+
   it('the plan preview and the plan editor fit 360 px', async () => {
     const container = await createTestContainer();
     const preview = await samplePreview(container);
@@ -94,8 +115,11 @@ describe('pseudo-locale expansion (+30%, NFR-L10N-02)', () => {
         preview={preview}
         equipment={sampleAnswers(container).equipment}
         novice={false}
+        templateControl={<button type="button">Choose a different plan</button>}
+        onBlockLength={() => undefined}
       />,
     );
+    await screen.findAllByRole('group');
     expect({ preview: overflows() }).toEqual({ preview: [] });
     view.unmount();
 

@@ -52,6 +52,20 @@ export const WHY_MESSAGES: { readonly [K in RuleId]: WhyMessage } = {
         "{reason, select, skipped {Skipped sets are not used to estimate your 1-rep max (e1RM).} warmup {Warm-up sets are not used to estimate your 1-rep max (e1RM).} timedSet {Timed sets have no load and reps, so they are not used to estimate your 1-rep max (e1RM).} loadType {This exercise's load type can't be used to estimate a 1-rep max (e1RM).} pureBodyweight {Bodyweight-only sets are not used to estimate a 1-rep max (e1RM).} missingValues {This set is missing its load or reps, so it can't be used to estimate a 1-rep max (e1RM).} noBodyweight {This exercise counts your bodyweight, and none is logged yet. Log your bodyweight to include this set.} nonPositiveLoad {The total load of this set is zero or less, so it can't be used to estimate a 1-rep max (e1RM).} undefinedCurve {The reps and reps in reserve of this set are outside the range the estimate covers, so it is not used.} tooManyReps {This set had too many reps (or reps in reserve) for a reliable estimate, so it is not used.} other {This set is not used to estimate your 1-rep max (e1RM).}}",
     }),
   },
+  'e1rm.baseline': {
+    full: msg({
+      id: 'why.e1rm.baseline',
+      message:
+        '{kind, select, oneRepMax {Your known 1-rep max, {e1rm}, is your starting estimated max (e1RM).} other {This set gives a starting estimated 1-rep max (e1RM) of {e1rm}, worked out like any set you log.}} The loads of your first sessions come from it. {old, select, yes {It was lifted {ageDays, plural, one {# day} other {# days}} ago, so POWR refines it from the sets you log.} other {POWR refines it from the sets you log.}}',
+    }),
+  },
+  'e1rm.baseline.none': {
+    full: msg({
+      id: 'why.e1rm.baseline.none',
+      message:
+        'Without a starting point, POWR calibrates: in the first {exposuresMin}–{exposuresMax} sessions with each exercise, you stop with {rirMin}–{rirMax} reps in reserve (RIR) and pick a load you can control. Your estimated max (e1RM) comes from those sets, and the loads follow it from then on.',
+    }),
+  },
   'e1rm.session': {
     full: msg({
       id: 'why.e1rm.session',
@@ -829,12 +843,12 @@ export const WHY_MESSAGES: { readonly [K in RuleId]: WhyMessage } = {
     full: msg({
       id: 'why.plan.mesocycle',
       message:
-        '{valid, select, yes {Each block has {accumulationWeeks, plural, one {# training week} other {# training weeks}}, then {deloadWeeks, plural, one {# lighter (deload) week} other {# lighter (deload) weeks}} to recover before the next block.} no {{accumulationWeeks, plural, one {# training week} other {# training weeks}} per block is outside the allowed range, so no plan was made. Choose a different block length.} other {Your next block is ready: {rotations, plural, =0 {the same exercises carry over} one {# exercise rotates for variety} other {# exercises rotate for variety}}, and the targets are set for your current level ({level}).}}',
+        "{valid, select, yes {Each block has {accumulationWeeks, plural, one {# training week} other {# training weeks}}, then {deloadWeeks, plural, one {# lighter (deload) week} other {# lighter (deload) weeks}} to recover before the next block.{chosen, select, yes { You chose this length; the plan's default is {defaultWeeks, plural, one {# week} other {# weeks}}.} no { This is the plan's default, in line with how often strength athletes and coaches report taking a lighter week.} other {}}} no {{accumulationWeeks, plural, one {# training week} other {# training weeks}} per block is outside the allowed range, so no plan was made. Choose a different block length.} other {Your next block is ready: {rotations, plural, =0 {the same exercises carry over} one {# exercise rotates for variety} other {# exercises rotate for variety}}, and the targets are set for your current level ({level}).}}",
     }),
     simple: msg({
       id: 'why.plan.mesocycle.simple',
       message:
-        "{valid, select, yes {You train for {accumulationWeeks, plural, one {# week} other {# weeks}}, then have {deloadWeeks, plural, one {# lighter week} other {# lighter weeks}} to recover. Then the next block starts.} no {{accumulationWeeks, plural, one {# week} other {# weeks}} per block doesn't work. Please choose a different number of weeks.} other {Your next block is ready{rotations, plural, =0 {, with the same exercises.} one {, with # new exercise for variety.} other {, with # new exercises for variety.}}}}",
+        "{valid, select, yes {You train for {accumulationWeeks, plural, one {# week} other {# weeks}}, then have {deloadWeeks, plural, one {# lighter week} other {# lighter weeks}} to recover. Then the next block starts.{chosen, select, yes { You picked this; the plan's usual length is {defaultWeeks, plural, one {# week} other {# weeks}}.} no { That's the usual length.} other {}}} no {{accumulationWeeks, plural, one {# week} other {# weeks}} per block doesn't work. Please choose a different number of weeks.} other {Your next block is ready{rotations, plural, =0 {, with the same exercises.} one {, with # new exercise for variety.} other {, with # new exercises for variety.}}}}",
     }),
   },
   'plan.next.volume': {

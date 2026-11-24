@@ -430,6 +430,8 @@ function checkStrengthDose(
   const band = rules['volume.strength.weeklyHeavySetsPerLift'];
   const minimum = rules['volume.strength.minimumDosePerLift'];
   const cap = rules['volume.strength.perSessionHeavySets'];
+  let inputs: readonly PlanFix[] | undefined;
+  const budgetFixes = () => (inputs ??= inputFixes(days, ctx, rules));
   for (const lift of analysis.lifts) {
     const subject: IssueSubject = { kind: 'lift', lift: lift.lift };
     const args = {
@@ -443,12 +445,15 @@ function checkStrengthDose(
       const atCap = analysis.days.every((day) =>
         day.heavySets.every((entry) => entry.lift !== lift.lift || entry.sets >= cap.value.max),
       );
+      const cause = fixes.length > 0 ? null : atCap ? 'sessionCap' : 'timeBudget';
       add('volume', 'violation', subject, 'validate.strength.belowMinimum', {
         key: String(lift.heavySets),
         args,
         params: [minimum, band, cap, rules['planning.sessionBudget.tolerancePct']],
-        cause: fixes.length > 0 ? null : atCap ? 'sessionCap' : 'timeBudget',
-        fixes,
+        cause,
+        // The time budget leaves no room for another heavy set: the same input fixes as the
+        // volume issues it causes (PLN-14, TD-36): a longer session or another day.
+        fixes: cause === 'timeBudget' ? budgetFixes() : fixes,
       });
     } else if (lift.heavySets < band.value.min) {
       add('volume', 'warning', subject, 'validate.strength.weeklyLow', {

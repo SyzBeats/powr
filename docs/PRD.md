@@ -7,9 +7,9 @@
 | Field | Value |
 |---|---|
 | Title | POWR (working title): Product Requirements Document |
-| Version | 0.4 |
+| Version | 0.5 |
 | Date | 2026-11-23 |
-| Status | Draft v0.4. All open questions resolved on 2026-11-23 (§11.1). Only validation tasks remain (§11.2). Baseline for the technical concept. |
+| Status | Draft v0.5. All open questions resolved on 2026-11-23 (§11.1). Only validation tasks remain (§11.2). Baseline for the technical concept. |
 | Owner / publisher | Simeon Zimmermann, SZ WEB DEVELOPMENT, Switzerland (product owner and publisher). Drafted by the requirements agent. |
 | Audience | Product owner, the technical-concept author, designers, testers |
 | Sources | (1) User braindump `app.requirements.md`. (2) User answers to clarification questions (2026-11-23); these are authoritative and override the braindump where it is ambiguous. (3) Evidence base `reports/Strength and hypertrophy evidence base.md` (consolidated report, "EB"), backed by the six files in `research_notes/Strength and hypertrophy evidence base/`. (4) Platform documentation checked on 2026-11-23 (Appendix C). (5) User decisions on all open questions and publisher details, 2026-11-23 (§11.1). |
@@ -24,6 +24,7 @@
 | 0.2 | 2026-11-23 | All open questions OQ-01…OQ-10 resolved by the user (§11.1): pure-PWA timer-alert baseline; MVP cut confirmed; web-only distribution; **free, closed source** (new licence policy LEG-08, reworked attributions screen LEG-06, no AGPL code, scoring reimplemented from official sources); no telemetry; Chrome + Samsung Internet; percentile data and media sources re-evaluated for closed source; composite effectiveness ranking; minimum age 16; publisher Simeon Zimmermann, SZ WEB DEVELOPMENT, Switzerland (revFADP/nDSG primary, GDPR to be confirmed in legal review; new LEG-09, §8.6). Affected requirements, constraints (C-09…C-15), non-goals (NG-14…NG-17), assumptions, risks (R-01 lowered; R-09 revised; R-17, R-18 new), TC-18, release plan and traceability (A.3) updated. Validation tasks listed in §11.2. |
 | 0.3 | 2026-11-24 | §7.1 movement patterns extended by five joint actions already used by the content and engine (shoulder horizontal adduction/abduction, shrug, wrist flexion/extension); EXL-04 load-curve class "bench-like" renamed "equation (Wathan/RTS)" (TD-30, rename in code planned for M2b). Both approved by the product owner on 2026-11-24. |
 | 0.4 | 2026-11-24 | PLN-14: time-budget rule (priority muscles keep their full target, the others fall back towards about 4 weekly sets; also for next-block proposals) with reason and fixes. EQP-02 and ONB-06: Custom (empty) opens the equipment checklist first; an empty list gives a bodyweight-only plan with the reason. Both approved by the product owner on 2026-11-24 (M2b). |
+| 0.5 | 2026-11-24 | ONB-08: the main lifts are the competition lifts (powerlifting, powerbuilding) or the plan's primary compound lifts (bodybuilding), at most four, each showing its estimated 1RM. PLN-02: the override lists every template of the style and says whether it fits days and level. Both approved by the product owner on 2026-11-24 (M2c). |
 
 ---
 
@@ -240,7 +241,7 @@ The user can mark up to 3 priority muscles and add exercises or movement pattern
 - Avoided exercises and patterns never appear in generated plans, substitutions or "best exercises" lists unless the user explicitly shows them (EXL-08).
 
 **ONB-08 · Baseline strength and calibration fallback** · Must · MVP
-Optionally, for the main lifts of the chosen style, the user enters a known 1RM or a recent set (weight × reps, plus RPE/RIR if known). If they skip this, the app plans a calibration period instead.
+Optionally, for the main lifts of the plan, the user enters a known 1RM or a recent set (weight × reps, plus RPE/RIR if known). The main lifts are the competition lifts for powerlifting and powerbuilding and the plan's primary compound lifts for bodybuilding, at most four. Each entry shows the estimated 1RM it gives. If they skip this, the app plans a calibration period instead.
 - Given baselines are entered, the first-session loads derive from them (PRG-05).
 - Given baselines are skipped, the first exposure to each exercise prescribes conservative effort (target RIR 3–4). The user picks a starting load with plate-calculator help. e1RM is established from the logged sets (PRG-08).
 - Entering a 1RM older than 3 months shows a hint that it will be refined automatically.
@@ -435,6 +436,7 @@ The generator picks a split appropriate to style and days per week, and the user
 
 - Powerlifting templates use a block/phase structure with within-week undulation (heavy/moderate/light days) by default. Bodybuilding templates may use any model; the default is double progression (`EB §Progression › Periodization`).
 - Novices get fewer exercises per session (≤ 5 working exercises) and the simplest progression (PRG-06 or PRG-04).
+- The override lists every template of the user's style and says whether it fits the training days and level; a template for other days asks the user to change the days.
 
 **PLN-03 · Weekly volume targets per muscle** · Must · MVP
 Each muscle has a weekly target band in fractional hard sets.

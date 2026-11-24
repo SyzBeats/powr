@@ -16,7 +16,8 @@ import type { MetaRecord } from '@powr/formats';
 
 import type { Deps } from '../deps';
 import { err, ok, type Result } from '../result';
-import type { PlanningAnswers } from './context';
+import { invalidBaselines } from './baselines';
+import type { PlanOptions, PlanningAnswers } from './context';
 import { LEGAL_ACK_KEY, ONBOARDING_DRAFT_KEY } from './keys';
 import { endActivePlan, planRecords, type PlanPreview } from './plan';
 
@@ -33,7 +34,14 @@ export interface OnboardingAnswers extends PlanningAnswers {
   readonly bodyweight: Mass | null;
   readonly phase: BodyPhase;
   readonly startTimes: PlanSchedule['startTimes'];
+  /** ONB-08: known 1RMs or recent sets of the main lifts (optional; stored as given). */
   readonly baselines: readonly Baseline[];
+  /**
+   * The plan choices made in the preview (PLN-02 template, PLN-08 block length), kept in the
+   * draft so a resumed onboarding shows the same plan. The accepted preview carries them; the
+   * profile does not store them.
+   */
+  readonly planOptions?: Pick<PlanOptions, 'templateId' | 'accumulationWeeks'>;
   /** ONB-09 (powerlifting and powerbuilding): captured in MVP, used from v1.x. */
   readonly meet: Omit<MeetInfo, 'id' | 'createdAt'> | null;
 }
@@ -215,5 +223,6 @@ function invalidFields(answers: OnboardingAnswers): string[] {
     fields.push('birthYear');
   if (answers.bodyweight !== null && !(answers.bodyweight.value > 0)) fields.push('bodyweight');
   if (answers.equipment.name.trim() === '') fields.push('equipment.name');
+  if (invalidBaselines(answers.baselines)) fields.push('baselines');
   return fields;
 }

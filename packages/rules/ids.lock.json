@@ -1,5 +1,5 @@
 {
-  "comment": "Every published rules parameter ID. IDs are never renamed or removed (technical concept §8.1, §8.6.5 check 1); add new IDs here.",
+  "comment": "Every published rules parameter ID. IDs are never renamed or removed (technical concept \u00a78.1, \u00a78.6.5 check 1); add new IDs here.",
   "ids": [
     "bodyweight.rate.windowDays",
     "bodyweight.trend.alphaPerDay",
@@ -12,6 +12,7 @@
     "deload.reactive",
     "deload.returnFromBreak",
     "deload.returnFromBreak.sorenessNoteAfterDays",
+    "load.baseline.refineAfterDays",
     "load.curve.classMap",
     "load.curve.nuzzoBench",
     "load.curve.nuzzoLegPress",

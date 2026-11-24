@@ -126,6 +126,7 @@ export const PARAM_SCHEMAS = {
     repTolerance: nonNegative,
   }),
   'load.unknownEffort.eligibleForE1rmPr': z.boolean(),
+  'load.baseline.refineAfterDays': z.number().int().positive(),
   'load.trend.noiseHeavySd': z.number().positive().max(0.5),
   'load.trend.noiseTypicalSd': z.number().positive().max(0.5),
   'load.trend.heavySet': z.strictObject({ maxReff: positive, minRpe: z.number().min(0).max(10) }),

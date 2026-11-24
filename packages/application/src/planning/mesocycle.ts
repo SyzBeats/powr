@@ -202,8 +202,9 @@ export interface NextMesocyclePreview {
 /**
  * PLN-13: proposes the next mesocycle of the active plan: the level re-evaluated (PRG-10), 1–2
  * exercises per muscle rotated (competition lifts and locked slots kept), targets adjusted to
- * the volume logged in the accumulation weeks (at most ×1.2), sets re-allocated, PLN-01 report.
- * It starts the week after the current deload. Writes nothing; the user reviews and accepts.
+ * the volume logged in the accumulation weeks (at most ×1.2), sets re-allocated with the plan
+ * template's time-budget step (PLN-14, TD-36), PLN-01 report. It starts the week after the
+ * current deload. Writes nothing; the user reviews and accepts.
  */
 export async function proposeNextMesocycle(
   deps: Deps,
@@ -217,7 +218,8 @@ export async function proposeNextMesocycle(
     equipment: await repos.equipment.list(),
   }));
   const equipment = planEquipment(plan, context.equipment);
-  if (!context.profile || !equipment) return err({ kind: 'notFound' });
+  const template = deps.content.templates().find((entry) => entry.id === plan.templateId);
+  if (!context.profile || !equipment || !template) return err({ kind: 'notFound' });
   const answers = answersFromProfile(context.profile, equipment, plan.schedule);
   const base = await deps.rules.resolve({ style: plan.style });
   const level = traineeLevel(answers, base.rules);
@@ -241,7 +243,7 @@ export async function proposeNextMesocycle(
     plan.schedule.weekStartsOn,
   );
   const proposed = proposeNext(
-    { current: mesocycle, request, logged, startDate },
+    { current: mesocycle, template, request, logged, startDate },
     planningCatalog(deps, restRules),
     rules,
   );

@@ -24,7 +24,7 @@ export {
   type EditableWeek,
   type PlanEdit,
 } from './edit';
-export { generatePlan } from './generate';
+export { defaultAccumulationWeeks, generatePlan } from './generate';
 export {
   proposeNextMesocycle,
   type NextMesocycleInput,

@@ -234,7 +234,7 @@ export function EquipmentEditScreen({
   const draft = edited ?? (profileId === 'new' ? created : (stored ?? null));
   // A new profile starts from a preset (EQP-02), built by the use case once the data is there.
   useEffect(() => {
-    if (!ready || profileId !== 'new' || created !== null) return;
+    if (!ready || profileId !== 'new' || created !== null) return undefined;
     let cancelled = false;
     void run((planning, deps) =>
       planning.equipmentProfileFromPreset(deps, {

@@ -274,7 +274,7 @@ function slot(
   };
 }
 
-const BB_TEMPLATE: TemplateDef = {
+export const BB_TEMPLATE: TemplateDef = {
   id: 'tpl.test-bb-3day' as TemplateId,
   name: { en: 'Test full body' },
   description: { en: 'Test.' },

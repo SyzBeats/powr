@@ -11,15 +11,18 @@ import {
   type PlannedSession,
   type PlannedSessionId,
   type PlanSchedule,
+  type TemplateDef,
   type VersionStamp,
 } from '@powr/domain';
 import { applyReturnStep, returnFromBreak } from '@powr/domain/deload';
 import type { Explanation } from '@powr/domain/explain';
 import {
   applyPlanEdits,
+  defaultAccumulationWeeks,
   firstWeekStart,
   generatePlan,
   materializeMesocycle,
+  selectTemplate,
   sessionDate,
   validatePlan,
   type EditableWeek,
@@ -63,6 +66,16 @@ export interface PlanPreview {
     readonly weekday: IsoWeekday;
     readonly date: LocalDate;
   }[];
+  /**
+   * PLN-08: the block lengths the user can choose (accumulation weeks before the deload, the
+   * registry's range) and the default without a choice (the template's, or the user's own
+   * deload interval). The `plan.mesocycle` note among `proposal.notes` explains it.
+   */
+  readonly blockLength: {
+    readonly min: number;
+    readonly max: number;
+    readonly defaultWeeks: number;
+  };
   readonly versions: VersionStamp;
 }
 
@@ -127,8 +140,60 @@ export async function generatePlanPreview(
       weekday: day.weekday,
       date: sessionDate({ startDate }, 1, day.weekday, weekStartsOn),
     })),
+    blockLength: {
+      ...rules['planning.mesocycle.accumulationWeeks'].value,
+      defaultWeeks: defaultAccumulationWeeks(proposal.template, rules),
+    },
     versions: versionStamp(deps),
   });
+}
+
+/** PLN-02: one template the user can choose instead of the default, and whether it fits. */
+export interface TemplateChoice {
+  readonly template: TemplateDef;
+  /** The generator's default for these answers (style, days per week, level). */
+  readonly recommended: boolean;
+  /** The generator's own check of this choice (`selectTemplate`): days, style and level. */
+  readonly fits: boolean;
+  /** Why it fits (`plan.template.chosen`) or not (`plan.template.none`, `…levelMismatch`). */
+  readonly why: Explanation;
+}
+
+/**
+ * PLN-02 override: the templates of the user's style, the recommended one first, then those
+ * that fit the training days and level, then the rest by days per week. Each carries the
+ * generator's verdict, so the list can say "needs 4 days" or "for other levels" before the
+ * choice; equipment and the time budget show in the generated preview's checks.
+ */
+export async function templateChoices(
+  deps: Deps,
+  answers: PlanningAnswers,
+): Promise<{ readonly level: TraineeLevel; readonly choices: readonly TemplateChoice[] }> {
+  const sex = answers.referenceSet ? { sex: answers.referenceSet } : {};
+  const { rules } = await deps.rules.resolve({ style: answers.style, ...sex });
+  const level = traineeLevel(answers, rules).value;
+  const templates = deps.content.templates();
+  const request = { style: answers.style, level, weekdays: answers.schedule.weekdays };
+  const recommended = selectTemplate(templates, request).value?.id;
+  const choices = templates
+    .filter((template) => template.style === answers.style)
+    .map((template) => {
+      const checked = selectTemplate(templates, { ...request, templateId: template.id });
+      return {
+        template,
+        recommended: template.id === recommended,
+        fits: checked.value !== null,
+        why: checked.why,
+      };
+    })
+    .toSorted(
+      (a, b) =>
+        Number(b.recommended) - Number(a.recommended) ||
+        Number(b.fits) - Number(a.fits) ||
+        a.template.daysPerWeek - b.template.daysPerWeek ||
+        (a.template.id < b.template.id ? -1 : a.template.id > b.template.id ? 1 : 0),
+    );
+  return { level, choices };
 }
 
 /** The plan record and its first mesocycle's planned sessions, ready to write. */

@@ -16,6 +16,7 @@ import {
   generatedText,
   hashRules,
   loadRuleFiles,
+  parsePreviousRules,
   unverifiedReport,
 } from './build';
 import { loadSourceRegistry } from './sources';
@@ -166,6 +167,41 @@ describe('versioned, hashed rules.json', () => {
     expect(diff).toContain('- Changed session.rest.strength: `180` [SR] → `170` [SR]');
     expect(diff).toContain('- Removed volume.puos');
     expect(diffRules(before, before)).toContain('No parameter changed.');
+  });
+
+  it('diffs against an older rules.json that lacks a newer parameter (M2b open item)', () => {
+    const now = shipped();
+    // An older file: one parameter missing, one value in an older shape, one row since removed.
+    const older = JSON.parse(
+      JSON.stringify({
+        ...now,
+        version: '1.0.0',
+        params: [
+          ...now.params
+            .filter((def) => def.id !== 'volume.hypertrophy.minimumDose')
+            .map((def) =>
+              def.id === 'load.curve.classMap' ? { ...def, value: { benchLike: 'old' } } : def,
+            ),
+          { ...now.params[0]!, id: 'volume.retired' },
+        ],
+      }),
+    );
+    // The app's strict check rejects it; the diff report reads it.
+    expect(() => parseCompiledRules(older)).toThrow(/volume\.hypertrophy\.minimumDose/);
+    const diff = diffRules(parsePreviousRules(older), now);
+    expect(diff).toContain('- Added volume.hypertrophy.minimumDose: `{"setsPerWeek":4}`');
+    expect(diff).toContain('- Changed load.curve.classMap: `{"benchLike":"old"}`');
+    expect(diff).toContain('- Removed volume.retired');
+  });
+
+  it('refuses a file that is not a compiled rules.json', () => {
+    expect(() => parsePreviousRules(null)).toThrow(/format 1/);
+    expect(() => parsePreviousRules({ format: 2, version: '1', hash: 'x', params: [] })).toThrow(
+      /format 1/,
+    );
+    expect(() =>
+      parsePreviousRules({ format: 1, version: '1', hash: 'x', params: [{ id: 'a.b' }] }),
+    ).toThrow(/params\[0\]/);
   });
 });
 

@@ -1,14 +1,36 @@
 import { explain, explained, type Explained, type Explanation } from '../explain';
 import type { ExerciseId, LocalDate, MuscleId } from '../ids';
-import type { Mesocycle, MuscleTarget, PlanDay, PlanSlot, Prescription } from '../model';
+import type {
+  Mesocycle,
+  MuscleTarget,
+  PlanDay,
+  PlanSlot,
+  Prescription,
+  TemplateDef,
+} from '../model';
 import { restSeconds } from '../rest';
 import { parentMuscle } from '../volume';
-import { SetLedger, allocateSets, liftTargets, muscleTargets, type WorkDay } from './allocate';
+import { liftTargets, muscleTargets, type WorkDay } from './allocate';
 import { setsOf, withSets } from './analysis';
+import {
+  allocateWithRepair,
+  annotate,
+  budgetNote,
+  fitTime,
+  prioritiseForBudget,
+  type Drop,
+} from './budget';
 import { compareIds, type ExerciseLookup } from './credits';
 import { isEligible, rankCandidates } from './select';
-import type { PlanRequest, PlanningCatalog, PlanningRules, ValidationReport } from './types';
-import { validatePlan } from './validate';
+import type {
+  PlanFix,
+  PlanRequest,
+  PlanningCatalog,
+  PlanningRules,
+  ValidationContext,
+  ValidationReport,
+} from './types';
+import { inputFixes, validatePlan } from './validate';
 
 /** One exercise change between mesocycles. */
 export interface Rotation {
@@ -29,6 +51,11 @@ export interface NextMesocycleProposal {
 
 export interface NextMesocycleInput {
   readonly current: Mesocycle;
+  /**
+   * The plan's template (PLN-02): without priorities, the muscles its primary slots train keep
+   * their full target when the time budget binds (PLN-14; TD-36: the same step as the first plan).
+   */
+  readonly template: TemplateDef;
   /** The user's situation now: level (re-evaluated, PRG-10), equipment, avoid list, budget. */
   readonly request: PlanRequest;
   /** Mean weekly fractional sets per display group logged in the accumulation weeks, if any. */
@@ -42,7 +69,11 @@ export interface NextMesocycleInput {
  * (PLN-05: systematic variation between mesocycles, none within); exercises that are no longer
  * available or now avoided are replaced. Weekly targets are re-derived for the (re-evaluated)
  * level and, where the logs show less volume than planned, start from the logged volume, at most
- * ×1.2 (PLN-03; increases from performance trends are PRG-16, v1.x). Sets are re-allocated.
+ * ×1.2 (PLN-03; increases from performance trends are PRG-16, v1.x). Sets are re-allocated with
+ * the first plan's time-budget step (PLN-14, TD-36): a day over the budget sheds accessories
+ * (locked slots stay), and when the budget cannot fit every target, the keep-full group keeps
+ * its full target and the other muscles fall back towards the minimum dose, with the reason and
+ * the input fixes (a longer session, another day).
  */
 export function proposeNextMesocycle(
   input: NextMesocycleInput,
@@ -141,7 +172,7 @@ export function proposeNextMesocycle(
     }
   }
 
-  const targets = nextTargets(current.next?.targets ?? current.targets, input, rules, notes);
+  const fullTargets = nextTargets(current.next?.targets ?? current.targets, input, rules, notes);
   const lifts = [
     ...new Set(days.flatMap((day) => day.slots.flatMap((slot) => (slot.lift ? [slot.lift] : [])))),
   ];
@@ -149,7 +180,30 @@ export function proposeNextMesocycle(
     request.style === 'bodybuilding'
       ? []
       : liftTargets(lifts, request.level, rules).map((goal) => goal.value);
-  const refilled = refill(days, targets, request, lookup, rules);
+
+  // The same time-budget step as the first plan (§8.7.6 steps 7–8, PLN-14).
+  const drops: Drop[] = [];
+  const work = startWork(days, lookup, rules);
+  fitTime(work, request.sessionMinutes, drops, notes, rules);
+  const targetMap = new Map(fullTargets.map((target) => [target.muscle, target.sets]));
+  const allocated = allocateWithRepair(work, targetMap, request, drops, notes, rules);
+  const budgeted = prioritiseForBudget(
+    allocated,
+    fullTargets,
+    { template: input.template, request, drops },
+    rules,
+  );
+  const targets = budgeted?.targets ?? fullTargets;
+  const refilled = days.map((day, index) => ({
+    ...day,
+    slots: (budgeted ?? allocated).work[index]!.slots.map((slot) => slot.plan),
+  }));
+  const kept = rotations.filter((rotation) =>
+    refilled.some(
+      (day) =>
+        day.key === rotation.dayKey && day.slots.some((slot) => slot.key === rotation.slotKey),
+    ),
+  );
 
   const mesocycle: Mesocycle = {
     index: current.index + 1,
@@ -165,26 +219,26 @@ export function proposeNextMesocycle(
     liftTargets: liftGoals,
     deload: { postponed: false, skipped: false, broughtForward: false },
   };
-  const report = validatePlan(
-    refilled,
-    {
-      style: request.style,
-      level: request.level,
-      sessionMinutes: request.sessionMinutes,
-      equipment: request.equipment,
-      avoid: request.avoid,
-      targets,
-      liftTargets: liftGoals,
-      accumulationWeeks: mesocycle.accumulationWeeks,
-      deloadWeeks: mesocycle.deloadWeeks,
-      exercise: lookup,
-      exercises: catalog.exercises,
-      restRules,
-    },
-    rules,
-  );
-  return explained({ mesocycle, rotations, report, notes }, 'plan.mesocycle', {
-    args: { index: mesocycle.index, rotations: rotations.length, level: request.level },
+  const ctx: ValidationContext = {
+    style: request.style,
+    level: request.level,
+    sessionMinutes: request.sessionMinutes,
+    equipment: request.equipment,
+    avoid: request.avoid,
+    targets,
+    liftTargets: liftGoals,
+    accumulationWeeks: mesocycle.accumulationWeeks,
+    deloadWeeks: mesocycle.deloadWeeks,
+    exercise: lookup,
+    exercises: catalog.exercises,
+    restRules,
+  };
+  let fixes: readonly PlanFix[] | undefined;
+  const budgetFixes = () => (fixes ??= inputFixes(refilled, ctx, rules));
+  const report = annotate(validatePlan(refilled, ctx, rules), drops, budgetFixes);
+  if (budgeted && budgeted.lowered > 0) notes.push(budgetNote(budgeted, budgetFixes(), rules));
+  return explained({ mesocycle, rotations: kept, report, notes }, 'plan.mesocycle', {
+    args: { index: mesocycle.index, rotations: kept.length, level: request.level },
     params: [perMuscle, rules['volume.startingVolume.maxFactor']],
     children: notes,
   });
@@ -232,16 +286,14 @@ function nextTargets(
   });
 }
 
-/** Hypertrophy slots back to the minimum, then the same allocation as a new plan. */
-function refill(
+/** The week to allocate: hypertrophy slots back to the minimum sets, as in a new plan. */
+function startWork(
   days: readonly PlanDay[],
-  targets: readonly MuscleTarget[],
-  request: PlanRequest,
   lookup: ExerciseLookup,
   rules: PlanningRules,
-): PlanDay[] {
+): WorkDay[] {
   const min = rules['planning.slot.sets'].value.min;
-  const work: WorkDay[] = days.map((day) => ({
+  return days.map((day) => ({
     key: day.key,
     slots: day.slots.flatMap((slot) => {
       const exercise = lookup(slot.exerciseId);
@@ -253,13 +305,6 @@ function refill(
       return [{ exercise, plan }];
     }),
   }));
-  const targetMap = new Map(targets.map((target) => [target.muscle, target.sets]));
-  allocateSets(
-    new SetLedger(work, targetMap, request.sessionMinutes, rules),
-    targetMap,
-    request.priorities,
-  );
-  return days.map((day, index) => ({ ...day, slots: work[index]!.slots.map((slot) => slot.plan) }));
 }
 
 function withRepRange(

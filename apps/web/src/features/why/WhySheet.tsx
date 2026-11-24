@@ -11,8 +11,9 @@ import { cn } from '#ui/cn';
 import { Sheet } from '#ui/sheet';
 
 import { formatMass } from '../../i18n/format';
+import { assertNever } from '../exhaustive';
 import { useLabels } from '../labels';
-import { paramName, setFacts, sourceName, whyValues, type WhyNames } from './format';
+import { paramName, setFacts, whyValues, type WhyNames } from './format';
 import { WHY_MESSAGES } from './messages';
 
 /** Plan days for day and slot names in explanations (set by the plan screens). */
@@ -190,6 +191,7 @@ function SetList({ why }: { why: Explanation }) {
 function ParamItem({ param }: { param: ParamRef }) {
   const { t } = useLingui();
   const evidenceLabels = useEvidenceLabels();
+  const sourceName = useSourceName();
   const origin =
     param.origin === 'user'
       ? t`Your setting`
@@ -221,33 +223,53 @@ function ParamItem({ param }: { param: ParamRef }) {
   );
 }
 
+/** 'src.iversen2021' → 'Iversen 2021'; 'src.pmid34644424' → 'PubMed 34644424' (TD-33). */
+function useSourceName() {
+  const { t } = useLingui();
+  return (id: string): string => {
+    const body = id.replace(/^src\./, '');
+    const [, pmid] = /^pmid(\d+)$/.exec(body) ?? [];
+    if (pmid !== undefined) return t`PubMed ${pmid}`;
+    if (body.startsWith('powr-')) {
+      const topic = body.slice(5).replaceAll('-', ' ');
+      return t`POWR ${topic}`;
+    }
+    const author = /^([a-z-]+?)(\d{4})([a-z]?)$/.exec(body);
+    if (author) {
+      const [, name = '', year = '', suffix = ''] = author;
+      return `${name.charAt(0).toUpperCase()}${name.slice(1)} ${year}${suffix}`;
+    }
+    return body;
+  };
+}
+
 /** EB tags → the user-facing evidence labels of §8.6.4 (LEG-05), each label once. */
 function useEvidenceLabels() {
   const { t } = useLingui();
-  return (tags: readonly EvidenceTag[]): string[] => {
-    const label = (tag: EvidenceTag): string => {
-      switch (tag) {
-        case 'MA':
-        case 'SR':
-        case 'POS':
-        case 'RCT-T':
-          return t`Strong research`;
-        case 'RCT':
-        case 'RCT-U':
-        case 'OBS':
-        case 'PREPRINT':
-        case 'NARR':
-          return t`Limited research`;
-        case 'PRACT':
-        case 'DELPHI/SURVEY':
-          return t`Coaching convention`;
-        case 'INF':
-        case 'MODEL':
-          return t`App estimate`;
-        case 'OFFICIAL':
-          return t`Official standard`;
-      }
-    };
-    return [...new Set(tags.map(label))];
+  const label = (tag: EvidenceTag): string => {
+    switch (tag) {
+      case 'MA':
+      case 'SR':
+      case 'POS':
+      case 'RCT-T':
+        return t`Strong research`;
+      case 'RCT':
+      case 'RCT-U':
+      case 'OBS':
+      case 'PREPRINT':
+      case 'NARR':
+        return t`Limited research`;
+      case 'PRACT':
+      case 'DELPHI/SURVEY':
+        return t`Coaching convention`;
+      case 'INF':
+      case 'MODEL':
+        return t`App estimate`;
+      case 'OFFICIAL':
+        return t`Official standard`;
+      default:
+        return assertNever(tag);
+    }
   };
+  return (tags: readonly EvidenceTag[]): string[] => [...new Set(tags.map(label))];
 }

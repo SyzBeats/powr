@@ -240,6 +240,18 @@
   userOverridable: false
   note: 'Sets without effort never create e1RM PRs; load and rep PRs are unaffected.'
 
+- id: load.baseline.refineAfterDays
+  value: 90
+  unit: days
+  evidence: [INF]
+  sources: [src.powr-prd]
+  ebRef: 'PRD ONB-08 (a 1RM older than 3 months shows a hint that it will be refined automatically); EB §Load › e1RM drift (refresh on heavy sets)'
+  verified: true
+  userOverridable: false
+  note: >-
+    About 3 months (PRD ONB-08). The baseline still sets the starting e1RM; the hint says that
+    the logged sets refine it. Time off is handled by the return ramp (ONB-04, PRG-13), not here.
+
 - id: load.trend.noiseHeavySd
   value: 0.04
   unit: fraction

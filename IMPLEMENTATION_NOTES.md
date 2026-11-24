@@ -1200,3 +1200,222 @@ deletes the file.
 - Tailwind source exclusion for `scripts/` and `e2e/` (proposal above; `src/ui/app.css` is M2b's).
 - Trusted Types in production (TD-03, v1.1): add the two directives to
   `deploy/security-headers.conf` once ECharts' tooltip is confirmed compatible.
+
+## M2c planning gaps
+
+Written 2026-11-24 by the M2c work (roadmap A.4 "M2c Planning gaps", added by the product owner
+before M3): ONB-08 baselines, the PLN-02 template override, the PLN-08 block length, TD-36 (the
+time-budget step in the next-block proposal), the lint clean-up to zero warnings with warnings
+denied, and the rules diff fix from the M2b open items. Status: `pnpm verify` green (numbers under
+"Evidence").
+
+### What landed
+
+| Task                 | PRD / TD                | Where                                                                                                                                                                                                                                                                                                                                                                                                 |
+| -------------------- | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1. Baselines         | ONB-08, PRG-05, PRG-08  | Domain `baselineE1rm`, `calibrationFallback` (`packages/domain/src/e1rm/baseline.ts`); use cases `baselineLifts`, `estimateBaseline`, the baseline check in `completeOnboarding` (`packages/application/src/planning/baselines.ts`); step "Your current lifts" (`apps/web/src/features/onboarding/BaselinesStep.tsx`, `baseline-input.ts`), route `/onboarding/baselines` and `/plan/setup/baselines` |
+| 2. Template override | PLN-02                  | Use case `templateChoices` (`plan.ts`); `TemplateChooser.tsx` (sheet) in the preview; refused choices show the generator's reason with "Use the recommended plan"; the choice is kept in the draft (`OnboardingAnswers.planOptions`) while the user changes days; a new style drops it                                                                                                                |
+| 3. Block length      | PLN-08                  | Domain `defaultAccumulationWeeks` (`generate.ts`), `plan.mesocycle` args `defaultWeeks` and `chosen`; `PlanPreview.blockLength` (range and default); preview control "Training weeks before the lighter week" (3–8) with "Recommended: 5 weeks" and "Why?", and "Your first block" on the calendar (`PlanPreviewView.tsx`)                                                                            |
+| 4. Next block        | PLN-13, PLN-14, TD-36   | `NextMesocycleInput.template`; the time step (`fitTime`, `allocateWithRepair`, `prioritiseForBudget`, `annotate`, `budgetNote`, `loweredTargetNote`) moved from `generate.ts` to `planning/budget.ts` and runs in `proposeNextMesocycle`; `validate.strength.belowMinimum` with cause `timeBudget` gets the input fixes; the next-block screen shows the shared `BudgetNote` (`parts.tsx`)            |
+| 5. Lint              | NFR-MNT-04, ADR-0016/17 | Zero warnings; `"lint": "oxlint --type-aware --deny-warnings"`; `assertNever` (`apps/web/src/features/exhaustive.ts`); Lingui messages for the source names and the page title; two narrow `ignore` patterns; OQ-T10 probe asserts the flag                                                                                                                                                           |
+| 6. Rules diff        | §8.6.5 check 6          | `parsePreviousRules` in `packages/rules/scripts/build.ts`: the diff reads an older `rules.json` without today's parameter set or value schemas, and reads it before the build overwrites `generated/rules.json`; missing parameters are listed as added                                                                                                                                               |
+| Tests                |                         | `packages/domain/test/reference/baseline.test.ts`, `test/planning/budget.test.ts` (TD-36 reference tests), `packages/application/test/m2c.test.ts`, `plan-properties.test.ts` (next-block properties), `plan-matrix.test.ts` (next-block guarantees and summary), `packages/rules/scripts/build.test.ts`, `apps/web/test/m2c.test.tsx`, `pseudo-locale.test.tsx`, `apps/web/e2e/m2c.spec.ts`          |
+
+**Task 1 in detail.** The step sits between "Priorities" and "Your plan" and is the second
+optional step: "Skip this step" moves on in one tap (NFR-USE-02; the step counter grows by one).
+It asks for the plan's main lifts (`baselineLifts`): the compound exercises of the primary slots of
+the plan the answers give, competition lifts first (squat, bench press, deadlift), one per movement
+pattern, at most four, loaded with a bar, dumbbells or a machine. Powerlifting with a commercial
+gym: barbell back squat, bench press, deadlift; a 3-day bodybuilder: back squat, dumbbell bench
+press, seated cable row, Romanian deadlift. Lifts already started stay listed. Per lift: "Not now",
+"A recent set" (weight, reps, reps left in the tank 0–4 or "Not sure") or "My 1-rep max" (weight,
+optional date). Each complete entry shows "Estimated 1-rep max: …" from the engine with "Why?"; a
+1RM more than 90 days old shows "You lifted this max a while ago. POWR starts from it and refines
+it automatically from the sets you log." (PRD ONB-08). The step's own "Why?" explains the
+calibration fallback (`e1rm.baseline.none`: first 1–2 exposures at RIR 3–4, a load the user picks;
+`progression.calibration`). An entry the engine cannot use (effective reps above 15) shows the
+engine's reason instead of an estimate and is still stored as given.
+
+**Where the result is stored (for M3).** The entries are raw user data in `Profile.baselines`
+(`Baseline { exerciseId, kind, load, reps, rir, date? }`; a 1RM is stored with reps 1 and RIR 0),
+written by `completeOnboarding` in its one transaction, validated there (`invalidBaselines`: load
+
+> 0 and ≤ 2,000 kg, whole reps 1–100, RIR 0–10 in half steps or null, at most 20, one per
+> exercise) and covered by the strict version-2 profile record and the backups. The starting e1RM is
+> **derived**, not stored, as the concept's core rule asks (§4: everything but the raw logs is a
+> function of them and the versions): M3's session engine calls `baselineE1rm(baseline,
+> exercise.load, today, rules)` (`@powr/domain/e1rm`) for an exercise that has a baseline and no
+> logged sets, and seeds `dExerciseState` with the result (`e1rmKg`, its `weight` and
+> `effortLogSd`); a later equation setting or registry change recomputes it. The first-session load
+> is then PRG-05's `loadForTarget`. No schema or Dexie change was needed: `Profile.baselines` and its
+> record schema existed since M2a. The onboarding draft (meta, JSON) also keeps the step's inputs as
+> typed (`Draft.baselineInputs`, web only) and the preview's plan choices (`planOptions`), so a
+> resumed onboarding shows them again; `completeOnboarding` deletes the draft.
+
+**Task 3: the default and its why.** `defaultAccumulationWeeks` is the user's own
+`deload.planned.everyWeeks` (a settings override), else the template's accumulation weeks: 5 in
+every MVP template, the registry's evidence default `deload.planned.everyWeeks` = 5 ([DELPHI/SURVEY,
+INF], Rogerson 2024: athletes deload every 5.6 ± 2.3 weeks; Bell 2023: deloads in each mesocycle,
+frequency by response; EB §Defaults › Deloads "every 4–6 weeks, user-selectable 3–8"). The range is
+`planning.mesocycle.accumulationWeeks` (3–8, PRD PLN-08). The block's "Why?" (`plan.mesocycle`) now
+says "This is the plan's default, in line with how often strength athletes and coaches report
+taking a lighter week" or "You chose this length; the plan's default is 5 weeks", with the
+parameters and their sources. Picking the default again removes the choice. The E2E test picks 7
+weeks: the first block lists weeks 1–8 with week 8 as the lighter week, and the accepted plan has
+seven training weeks and the deload (application test).
+
+**Task 2: what "override" can mean today.** Every MVP style × days cell has exactly one template
+(15 templates, 15 cells), so another plan always needs other training days (`plan.template.none`,
+reason `mismatch`) or another level (`plan.template.levelMismatch`). The chooser therefore lists
+all plans of the style, recommended first, with "Recommended for your N training days and your
+level.", "Needs N training days a week." or "Made for other levels (…).", computed with the
+generator's own `selectTemplate`. A refused choice shows the generator's text; "Change days" keeps
+the choice, so with matching days the plan is generated with `plan.template.chosen` ("You chose
+Upper/lower ×2 …"). Missing equipment (`plan.lift.unavailable`, substitutions, dropped slots) and
+the time budget (the time-budget note and issues) show in the regenerated preview, as for the
+default plan.
+
+### Evidence for the new parameter (rules 1.2.0 → 1.3.0: 127 → 128 parameters, 31 `verified: false`)
+
+| Parameter                       | Value | Evidence and sources | Verified | Why                                                                                                                                                                                                                                                                  |
+| ------------------------------- | ----- | -------------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `load.baseline.refineAfterDays` | 90    | [INF] `src.powr-prd` | true     | PRD ONB-08: "Entering a 1RM older than 3 months shows a hint that it will be refined automatically." The PRD's own number (about 3 months), so `verified: true` as M2a did for PRD numbers. The e1RM is not discounted: time off has the ONB-04 return ramp (PRG-13) |
+
+Stamp `1.3.0+b74ec9402fc3`. `pnpm --filter @powr/rules build -- --diff <1.2.0 rules.json>` prints
+"- Added load.baseline.refineAfterDays: `90` [INF]". Content unchanged (0.2.0).
+
+**The baseline estimate uses only existing engine rules:** effective reps = reps + RIR (+ the RIR
+bias for RIR ≥ 3, `load.rirBias`), the user's equation (Wathan default, `load.e1rm.equation`,
+EB §Defaults › Load), unknown RIR → the prior 2 at weight × 0.5 (`load.unknownEffort.*`, EB
+"Unknown RIR → assume 2–3 or mark non-informative"), exclusion above 15 effective reps
+(`load.e1rm.weightByReff`, EB set weighting). Reference values: 100 kg × 4 at RIR 2 → r_eff 6 →
+Wathan 83.1% → 120.3 kg (EB worked example; RTS 83.7%); 120.9 kg × 5 at RIR 2 → e1RM 150 kg, and
+PRG-05 gives back 120.9 kg for 5 at RPE 8 (PRD PRG-05 example); 102.5 kg × 5 with unknown RIR →
+127.1 kg. Two UI limits are not training logic and stay constants: at most 4 lifts in the step
+(`MAX_BASELINE_LIFTS`, a short optional step) and at most 30 reps typed (`MAX_BASELINE_REPS`; the
+engine decides what it can use).
+
+### TD-36: plan-matrix snapshot diff
+
+The plan-matrix test (`packages/application/test/plan-matrix.test.ts`) now also proposes the next
+block for every generated plan (mesocycle 0 as accepted, no logged sets, seed + 1, as the use case
+does) and asserts the same guarantees: no avoidable violation, only available exercises, every day
+over budget + 10% flagged. The snapshot gained a second entry, "matches the reviewed next-block
+summary" (124 lines, the 60-minute next blocks: exercises, sets, violations with cause, and the
+lowered targets as `muscle:full→sets`). The first-plan entry is **unchanged** (the move of the time
+step to `budget.ts` is behaviour-neutral, and the strength input fixes do not show in the
+summary).
+
+The next-block entry against the same next blocks computed before TD-36 (recorded from the old
+code, then the change):
+
+- **60 minutes (the snapshot):** 85 of 124 lines changed; exercise counts −1 in 6 lines, equal in
+  79; total sets −1 in 4, equal in 56, +1 in 16, +2 in 8, +4 in 1; violations in the changed lines
+  581 → 460; 83 next blocks carry lowered targets (227 targets). Example `bb-full-body-2day |
+  commercial-gym | intermediate`: 12 violations → 9, 36 → 38 sets; elbow flexors 15 → 5, side
+  delts 15 → 4, triceps 15 → 4.5 lowered; abs and calves rise from below the floor to "low", the
+  same pattern as the first plan (9 violations, 38 sets).
+- **Every budget** (a scratch run over all 1,620 combinations, not committed): 744 next blocks,
+  352 changed (30 min 96, 45 min 101, 60 min 85, 75 min 44, 90 min 26, 90+ none). 344 next blocks
+  now carry lowered targets (1,109 targets; the first plans: 346 and 1,124); most often 15 → 4,
+  then 15 → 5, 15 → 8, 15 → 9. Before TD-36, **34 next blocks had an avoidable violation**
+  (`time.overBudget` at 30 min in 28 and at 45 min in 6: a rotated exercise with longer rest or
+  more warm-up pushed a day over the budget, and the next block had no time fit); now none. 76
+  next blocks have 1–3 exercises fewer (the time fit or the local repair leaves out an optional or
+  secondary accessory, with a `plan.time.trimmed` note). No powerlifting next block lowers a
+  target. The 30 `strength.belowMinimum[timeBudget]` issues are unchanged in number and now carry
+  the input fixes (e.g. "Allow 45 min" and "Add a training day" for the 30-minute PL 3-day plan,
+  and 45 minutes does give the deadlift its minimum dose).
+
+Reference tests (`packages/domain/test/planning/budget.test.ts`): at 45 minutes the next block
+keeps the priority muscle at its full target (18) and lowers the others towards the minimum dose
+(chest 6, elbow flexors 10, glutes 11, lats 6, mid-back 6, quads 9.5) with the budget note
+(`emphasis: priorities`, 90 minutes would fit) and `report.ok`; without priorities the template
+emphasis stays full and the same muscles as in the first plan are lowered; without a budget
+nothing changes; the strength minimum-dose issue gets `[sessionMinutes 45, addDay]`. Property tests
+(`plan-properties.test.ts`, also run once with 1,500 runs each): the next block is deterministic,
+lowers targets only with a budget, never below the minimum dose, never for priority or
+maintenance muscles, has a budget note exactly when it lowers, offers a longer session (or "90+")
+and another day for every time-budget issue (now including the strength dose), never drops a
+locked slot, never proposes an unavailable or avoided exercise and has no avoidable violation.
+
+### Task 5: lint clean-up
+
+44 warnings before (`pnpm lint` on the baseline): 26 `lingui(no-unlocalized-strings)`, 16
+`typescript(consistent-return)` and 2 `unicorn(consistent-function-scoping)`. Now 0, and `pnpm lint` is `oxlint --type-aware --deny-warnings`, so CI's
+quality job and `pnpm verify` fail on any warning. No rule was turned off or downgraded.
+
+- **UI text:** the source names of the Why sheet ("PubMed {pmid}", "POWR {topic}") moved into a
+  hook `useSourceName()` with Lingui messages; the page title is the message `{title} · POWR`
+  (translated, because screen readers announce it and the order is a translator's choice).
+- **Not UI text, restructured:** the imperial-region codes became a regex literal.
+- **Not UI text, ignored narrowly** (the rule's `ignore` list in `oxlint.config.ts`): route patterns
+  with TanStack `$params` (`$` added to the existing identifier pattern) and single camelCase tokens
+  (`^[a-z][a-z0-9]*(?:[A-Z][a-z0-9]*)+$`: union members and `kind` discriminants such as
+  `'setWeekday'`, `'doToday'`). English text starts with a capital or contains a space, so it never
+  matches; the plugin's type-aware `useTsTypes` would cover these, but oxlint gives JS plugins no
+  type information. The file-wide disable comment in `why/args.ts` became unnecessary and is gone.
+- **`consistent-return`:** every exhaustive switch ends with `default: return assertNever(value)`
+  (`labels.ts`, `plan/format.ts`, `parts.tsx`, `WhySheet.tsx`, `OnboardingFlow.tsx`); effects that
+  return a cleanup on one path return `undefined` explicitly on the other. `targetSource` gained an
+  explicit `case 'timeBudget'` (it fell through `default` before).
+- **`consistent-function-scoping`:** `WhySheet`'s `label` and `m2b.test.ts`'s `withPlan` moved out.
+- **Gate check:** the OQ-T10 probe test (`tools/arch-test`) asserts that the `lint` script keeps
+  `--deny-warnings` and that the Lingui warning fails under it.
+
+### Decisions and deviations
+
+| Brief / concept says                                                         | What I did                                                                                                                                                                                                                                                                                                                 |
+| ---------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Store the result where M3's session screen will read it"                    | The raw entries in `Profile.baselines`; the starting e1RM is derived with `baselineE1rm` when M3 needs it (§4: derived data is a function of raw data and versions), not stored next to the entry                                                                                                                          |
+| ONB-08 "the main lifts of the chosen style"                                  | The plan's primary compound lifts, competition lifts first, one per movement pattern, at most four (so a bodybuilder is asked about the lifts the plan prescribes, not about a barbell bench press the plan does not use). Proposed PRD wording below                                                                      |
+| PLN-02 "pick a different template than the default for their style and days" | With one MVP template per cell, the chooser lists every plan of the style with the generator's verdict; another plan always needs other days or another level, and the preview explains a refusal in the existing words. Choosing another style's plan is not offered (the generator refuses it; "Change goal" is the way) |
+| TD-36 "run the same step"                                                    | The next block runs the first plan's whole time step: the time fit (a rotated exercise can push a day over the budget; 34 next blocks had an avoidable over-budget violation before), the local repair and the tiers. Locked slots are never dropped or cut. The rotations list leaves out slots the time fit dropped      |
+| The time-budget fixes in the next block                                      | The next-block screen shows the note and the fixes as text ("Possible fix: …" in the checks); applying "Allow N min" or "Add a training day" is a re-plan (`/plan/setup`), because the next block keeps the plan's schedule                                                                                                |
+| Block length "in plan setup or the plan preview"                             | In the preview (the onboarding and re-planning flows share it), next to the template; the first block shows on the calendar as a list of weeks with their start dates                                                                                                                                                      |
+| The baselines step's inputs                                                  | Kept as typed text in the draft (`baselineInputs`), so "102." keeps its point while typing and an unfinished entry is pointed out on Continue (summary and field, WCAG 3.3.1) rather than dropped; "Skip this step" keeps complete entries, as for the priorities step                                                     |
+| The lift list reloads when the first entry adds its lift to the kept list    | The step keeps showing the previous list while a new one loads, so the cards and the focus in them never vanish                                                                                                                                                                                                            |
+| Rules diff "lists it as added"                                               | Also reads the older file before the build rewrites `generated/rules.json`, so `--diff packages/rules/generated/rules.json` diffs against the committed file instead of itself                                                                                                                                             |
+
+### Evidence
+
+`pnpm verify` green on 2026-11-24: lint (0 errors, 0 warnings, `--deny-warnings`), format, token
+gate (unchanged: lowest text 4.56, on fills 5.41, UI 3.88, heat map 3.13), knip, catalog check (832
+messages), typecheck, 649 tests in 61 files (631 unit, property, reference, migration and
+architecture tests in 56 files plus 18 component tests in 5 files; baseline 617), build, licence
+gate (33 distributed, 841 build-only, passed), size (entry JS **178.08 kB** gzip of 186 kB, was
+178.42; CSS 5.82 kB; service worker 7.69 kB; precache 79 files + sw.js, 471.1 kB; startup path 5
+scripts, 0 with Zod) and 39 E2E tests (34 before), 5 of them new in `e2e/m2c.spec.ts` (baselines entered, kept and shown again when re-planning; the step skipped in
+one tap with the calibration "Why?"; a template override refused with the generator's reason and
+then planned with four days at 45 minutes, with the time-budget note; a block-length change from 5
+to 7 weeks on the calendar; the next block at 45 minutes with the time-budget note). axe (WCAG 2.2
+A/AA) finds no serious or critical issue in light and dark on the baselines step (empty and
+filled), the template sheet, the refused choice, the chosen plan, the block length and the next
+block; reflow at 320 px and 200% text on the filled baselines step and the preview with the block
+control; the +30% expansion test covers the baselines step and the preview's new controls.
+Screenshots at 360 × 780, light and dark, were handed to the coordinator outside the repository.
+
+### Open items
+
+- **For M3:** seed `dExerciseState` from `Profile.baselines` with `baselineE1rm` for exercises
+  without logged sets (and show the PRD ONB-08 hint again on the first exposure of an old 1RM);
+  a baseline of one exercise is not transferred to its variants yet (e.g. a back-squat 1RM to a
+  paused squat); the session's calibration (PRG-08) is what runs without a baseline.
+- **Product owner:** (1) whether a bodybuilder's "main lifts" should be the plan's primary
+  compound lifts (as built) or only the competition lifts; (2) whether the next block may leave out
+  optional accessories to fit the budget (as built, like the first plan) or should keep the
+  exercise list and only flag; (3) whether PLN-02 should get real alternatives per cell (the PRD
+  table names "Full body ×5" for bodybuilding at 5 days), so that an override is possible without
+  changing days; (4) `load.baseline.refineAfterDays` 90 days as "older than 3 months".
+  **Answered 2026-11-24:** (1) the plan's primary compound lifts, as built; (2) yes, as built;
+  (3) later content pass (TD-37); (4) 90 days stays. PRD v0.5 carries the ONB-08 and PLN-02
+  wording.
+- **Found on the way, fixed by the coordinator before the merge:** the body step's decimal fields
+  (height, body weight) stored the parsed number on every keystroke, so the typed point was lost:
+  typing "80.5" in "Body weight" gave **805**. Both now use `DecimalField` (`ui/field.tsx`), which
+  shows the text as typed while it still means the current value ("80.", "80,5") and the value
+  itself when it changes from outside. Component tests type "180.5" and "80,5" and check the
+  fields and the saved draft. The equipment editor's `type="number"` fields were not affected; a
+  component test now types a 2.5 collar weight to keep it that way.
+- Manual TalkBack pass (S22): the baselines step's regions and toggle groups, the template sheet's
+  radio cards with long descriptions, and the native date input.

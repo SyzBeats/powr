@@ -140,11 +140,29 @@ export async function onboardToPreview(page: Page, choices: OnboardingChoices = 
   await page.getByRole('button', { name: 'Use this preset' }).click();
 }
 
-/** Skips the optional priorities step and waits for the generated preview. */
+/** Skips the optional priorities step. */
 export async function skipPriorities(page: Page, onStep?: (name: string) => Promise<void>) {
   await expect(page.getByRole('heading', { level: 1, name: 'Priorities' })).toBeVisible();
   await onStep?.('onboarding-priorities');
   await page.getByRole('button', { name: 'Skip this step' }).click();
+}
+
+/** Skips the optional baselines step (ONB-08: one tap) and waits for the generated preview. */
+export async function skipBaselines(page: Page, onStep?: (name: string) => Promise<void>) {
+  await expect(page.getByRole('heading', { level: 1, name: 'Your current lifts' })).toBeVisible();
+  await onStep?.('onboarding-baselines');
+  await page.getByRole('button', { name: 'Skip this step' }).click();
+  await expectPreview(page);
+}
+
+/** The generated plan preview (ONB-10). */
+export async function expectPreview(page: Page) {
   await expect(page.getByRole('heading', { level: 1, name: 'Your plan' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Accept plan' })).toBeVisible({ timeout: 15_000 });
+}
+
+/** Skips both optional steps (priorities, baselines) and waits for the generated preview. */
+export async function skipOptionalSteps(page: Page, onStep?: (name: string) => Promise<void>) {
+  await skipPriorities(page, onStep);
+  await skipBaselines(page, onStep);
 }

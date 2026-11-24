@@ -292,8 +292,14 @@ const config: OxlintConfig = {
         'lingui/no-unlocalized-strings': [
           'warn',
           {
-            // Identifiers, tokens and paths: no spaces and no capitals.
-            ignore: ['^[a-z0-9@./:_#()\\[\\]=*,!%+-]+$'],
+            ignore: [
+              // Identifiers, tokens and paths (with TanStack `$param`s): no spaces, no capitals.
+              '^[a-z0-9@./:_#()\\[\\]=*,!%+$-]+$',
+              // camelCase union members (enum values, `kind` discriminants such as 'setWeekday').
+              // The plugin's type-aware `useTsTypes` would skip them, but oxlint gives JS plugins
+              // no type information.
+              '^[a-z][a-z0-9]*(?:[A-Z][a-z0-9]*)+$',
+            ],
             ignoreNames: [
               'className',
               'to',

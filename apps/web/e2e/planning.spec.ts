@@ -4,7 +4,7 @@ import {
   checkReflow,
   checkScreen,
   onboardToPreview,
-  skipPriorities,
+  skipOptionalSteps,
 } from './planning';
 
 test.describe('onboarding and planning (M2b: ONB, EQP, PLN)', () => {
@@ -14,7 +14,7 @@ test.describe('onboarding and planning (M2b: ONB, EQP, PLN)', () => {
   test('core path: preview with "Why?", accept, the plan is there afterwards', async ({ page }) => {
     const onStep = (name: string) => checkScreen(page, name);
     await onboardToPreview(page, { onStep });
-    await skipPriorities(page, onStep);
+    await skipOptionalSteps(page, onStep);
     await checkScreen(page, 'plan-preview');
 
     // "Why?" on the template choice: message, evidence label, focus back to the trigger.
@@ -76,7 +76,7 @@ test.describe('onboarding and planning (M2b: ONB, EQP, PLN)', () => {
     await expect(page.getByText('Toggle what you have access to.')).toBeVisible();
     await checkScreen(page, 'equipment-editor-onboarding');
     await page.getByRole('button', { name: 'Continue' }).click();
-    await skipPriorities(page);
+    await skipOptionalSteps(page);
     await expect(page.getByText('Bodyweight plan')).toBeVisible();
     await expect(page.getByText(/saved your equipment list empty/)).toBeVisible();
     await page.getByRole('button', { name: 'Accept plan' }).click();
@@ -87,7 +87,7 @@ test.describe('onboarding and planning (M2b: ONB, EQP, PLN)', () => {
     page,
   }) => {
     await onboardToPreview(page);
-    await skipPriorities(page);
+    await skipOptionalSteps(page);
     await page.getByRole('button', { name: 'Accept plan' }).click();
     await expect(page).toHaveURL(/\/plan$/);
 
@@ -112,7 +112,7 @@ test.describe('onboarding and planning (M2b: ONB, EQP, PLN)', () => {
 
   test('the plan editor validates live and applies a fix in one tap (PLN-09)', async ({ page }) => {
     await onboardToPreview(page);
-    await skipPriorities(page);
+    await skipOptionalSteps(page);
     await page.getByRole('button', { name: 'Accept and edit' }).click();
     await expect(page.getByRole('heading', { level: 1, name: 'Edit plan' })).toBeVisible();
     // The live summary is a polite status region (WCAG 4.1.3).
@@ -144,7 +144,7 @@ test.describe('onboarding and planning (M2b: ONB, EQP, PLN)', () => {
   test('a missed session can be done today, merged or skipped (PLN-11)', async ({ page }) => {
     await page.clock.install({ time: new Date('2026-11-30T08:00:00') });
     await onboardToPreview(page, { days: ['Monday', 'Wednesday', 'Friday'] });
-    await skipPriorities(page);
+    await skipOptionalSteps(page);
     await page.getByRole('button', { name: 'Accept plan' }).click();
     await expect(page).toHaveURL(/\/plan$/);
 
@@ -182,7 +182,7 @@ test.describe('onboarding and planning (M2b: ONB, EQP, PLN)', () => {
       style: 'Powerlifting',
       days: ['Monday', 'Wednesday', 'Friday'],
     });
-    await skipPriorities(page);
+    await skipOptionalSteps(page);
     await page.getByRole('button', { name: 'Accept plan' }).click();
     await expect(page).toHaveURL(/\/plan$/);
   });
@@ -254,7 +254,7 @@ test.describe('onboarding and planning (M2b: ONB, EQP, PLN)', () => {
       await checkScreen(page, path.slice(1).replace('/', '-'));
     }
     await onboardToPreview(page);
-    await skipPriorities(page);
+    await skipOptionalSteps(page);
     await page.getByRole('button', { name: 'Accept plan' }).click();
     await expect(page).toHaveURL(/\/plan$/);
 

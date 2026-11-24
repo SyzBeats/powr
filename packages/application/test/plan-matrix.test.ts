@@ -2,8 +2,18 @@ import { describe, expect, it } from 'vitest';
 
 import { builtInContent } from '@powr/content/built-in';
 import type { ExerciseDef, IsoWeekday, TemplateDef, TrainingStyle } from '@powr/domain';
+import type { LocalDate, Mesocycle } from '@powr/domain';
 import { isAvailable, itemsOf, profileFromPreset } from '@powr/domain/equipment';
-import { generatePlan, setsOf, type PlanProposal, type RestRules } from '@powr/domain/planning';
+import {
+  generatePlan,
+  proposeNextMesocycle,
+  setsOf,
+  type NextMesocycleProposal,
+  type PlanProposal,
+  type PlanRequest,
+  type RestRules,
+  type ValidationReport,
+} from '@powr/domain/planning';
 import { TRAINEE_LEVELS, type RuleSet, type TraineeLevel } from '@powr/domain/rules';
 import { BUILT_IN_RULES } from '@powr/rules/built-in';
 import { resolveRules } from '@powr/rules/resolve';
@@ -55,36 +65,89 @@ function rulesFor(level: TraineeLevel, style: TrainingStyle, exercise?: Exercise
   return rules;
 }
 
-function generate(
+function planRequest(
   template: TemplateDef,
   presetId: string,
   level: TraineeLevel,
   budget: number | null,
-) {
+  seed = 1,
+): PlanRequest {
   const preset = presets.find((entry) => entry.id === presetId)!;
   const profile = profileFromPreset(preset, content.equipment().items, {
     id: 'p',
     name: 'Gym',
     unit: 'kg',
   });
+  return {
+    style: template.style,
+    level,
+    weekdays: WEEKDAYS[template.daysPerWeek]!,
+    weekStartsOn: 1,
+    sessionMinutes: budget,
+    equipment: itemsOf(profile),
+    priorities: [],
+    avoid: { exercises: [], patterns: [] },
+    preferred: [],
+    recentVolume: [],
+    templateId: template.id,
+    variety: false,
+    seed,
+  };
+}
+
+function catalogFor(template: TemplateDef, level: TraineeLevel) {
   const restRules = (exercise: ExerciseDef): RestRules => rulesFor(level, template.style, exercise);
+  return { exercises: content.exercises(), templates, restRules };
+}
+
+function generate(
+  template: TemplateDef,
+  presetId: string,
+  level: TraineeLevel,
+  budget: number | null,
+) {
   return generatePlan(
+    planRequest(template, presetId, level, budget),
+    catalogFor(template, level),
+    rulesFor(level, template.style),
+  );
+}
+
+const START = '2026-11-30' as LocalDate;
+
+/**
+ * PLN-13 for a generated plan: its first mesocycle as accepted, then the next block's proposal
+ * with no logged sets (the targets re-derived), as `proposeNextMesocycle` in the application
+ * does (the seed moves on by one).
+ */
+function next(
+  proposal: PlanProposal,
+  template: TemplateDef,
+  presetId: string,
+  level: TraineeLevel,
+  budget: number | null,
+) {
+  const current: Mesocycle = {
+    index: 0,
+    startDate: START,
+    accumulationWeeks: proposal.accumulationWeeks,
+    deloadWeeks: proposal.deloadWeeks,
+    status: 'active',
+    level,
+    days: proposal.days,
+    targets: proposal.targets,
+    liftTargets: proposal.liftTargets,
+    deload: { postponed: false, skipped: false, broughtForward: false },
+  };
+  return proposeNextMesocycle(
     {
-      style: template.style,
-      level,
-      weekdays: WEEKDAYS[template.daysPerWeek]!,
-      weekStartsOn: 1,
-      sessionMinutes: budget,
-      equipment: itemsOf(profile),
-      priorities: [],
-      avoid: { exercises: [], patterns: [] },
-      preferred: [],
-      recentVolume: [],
-      templateId: template.id,
-      variety: false,
-      seed: 1,
+      current,
+      template,
+      request: planRequest(template, presetId, level, budget, 2),
+      logged: null,
+      startDate: '2027-01-04' as LocalDate,
     },
-    { exercises: content.exercises(), templates, restRules },
+    catalogFor(template, level),
     rulesFor(level, template.style),
   );
 }
@@ -102,7 +165,7 @@ function expectedFailure(
 
 /** What the matrix asserts about one combination, as one comparable object. */
 function check(
-  proposal: PlanProposal | null,
+  proposal: { readonly days: PlanProposal['days']; readonly report: ValidationReport } | null,
   rule: string,
   items: ReadonlySet<string>,
   budget: number | null,
@@ -130,7 +193,10 @@ function check(
   };
 }
 
-function summary(proposal: PlanProposal): string {
+function summary(proposal: {
+  readonly days: PlanProposal['days'];
+  readonly report: ValidationReport;
+}): string {
   const violations = proposal.report.issues
     .filter((issue) => issue.severity === 'violation')
     .map((issue) => `${issue.key.split(':').slice(0, 2).join(':')}[${issue.cause}]`);
@@ -140,6 +206,15 @@ function summary(proposal: PlanProposal): string {
   );
   const exercises = proposal.days.reduce((sum, day) => sum + day.slots.length, 0);
   return `${exercises} ex, ${sets} sets${violations.length > 0 ? `; ${violations.join(' ')}` : ''}`;
+}
+
+/** The next block's line: the week summary plus the targets the time budget lowered (TD-36). */
+function nextSummary(proposal: NextMesocycleProposal): string {
+  const { mesocycle } = proposal;
+  const lowered = mesocycle.targets
+    .filter((target) => target.source === 'timeBudget')
+    .map((target) => `${target.muscle}:${target.full}→${target.sets}`);
+  return `${summary({ days: mesocycle.days, report: proposal.report })}${lowered.length > 0 ? `; lowered ${lowered.join(' ')}` : ''}`;
 }
 
 describe('template matrix (PLN-01, EQP-04)', () => {
@@ -155,6 +230,7 @@ describe('template matrix (PLN-01, EQP-04)', () => {
   });
 
   const lines: string[] = [];
+  const nextLines: string[] = [];
   let slowest = 0;
 
   describe.each(templates.map((template) => [template.id, template] as const))(
@@ -183,10 +259,33 @@ describe('template matrix (PLN-01, EQP-04)', () => {
               unavailable: [],
               unflaggedOverBudget: [],
             });
+            // PLN-13: the next block keeps the same guarantees (TD-36: the same time-budget step).
+            const proposed = result.value
+              ? next(result.value, template, presetId, level, budget).value
+              : null;
+            expect({
+              label: `${label} next`,
+              ...check(
+                proposed ? { days: proposed.mesocycle.days, report: proposed.report } : null,
+                'plan.mesocycle',
+                items,
+                budget,
+              ),
+            }).toEqual({
+              label: `${label} next`,
+              rule: 'plan.mesocycle',
+              generated: failure === null,
+              avoidable: [],
+              unavailable: [],
+              unflaggedOverBudget: [],
+            });
             if (budget !== 60) continue;
             lines.push(
               `${template.id} | ${presetId} | ${level}: ${result.value ? summary(result.value) : `✗ ${result.why.rule}`}`,
             );
+            if (proposed) {
+              nextLines.push(`${template.id} | ${presetId} | ${level}: ${nextSummary(proposed)}`);
+            }
             // Determinism (PLN-01): the same request gives the same plan.
             expect(generate(template, presetId, level, budget)).toEqual(result);
           }
@@ -197,6 +296,10 @@ describe('template matrix (PLN-01, EQP-04)', () => {
 
   it('matches the reviewed summary (§8.6.5 check 5: a changed default that changes plans shows here)', () => {
     expect(lines.toSorted().join('\n')).toMatchSnapshot();
+  });
+
+  it('matches the reviewed next-block summary (PLN-13 at 60 minutes, no logged sets)', () => {
+    expect(nextLines.toSorted().join('\n')).toMatchSnapshot();
   });
 
   it('generates any plan of the matrix within 1 s (NFR-PERF-09)', () => {

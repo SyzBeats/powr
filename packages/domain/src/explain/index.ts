@@ -19,6 +19,8 @@ export const RULE_IDS = [
   'e1rm.set.excluded',
   'e1rm.session',
   'e1rm.loadForTarget',
+  'e1rm.baseline',
+  'e1rm.baseline.none',
   'trend.series',
   'trend.change.insufficientData',
   'trend.change.none',

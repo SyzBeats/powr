@@ -1,20 +1,20 @@
 import { Trans, useLingui } from '@lingui/react/macro';
 import { CalendarDays } from 'lucide-react';
+import type { ReactNode } from 'react';
 
 import type { PlanPreview } from '@powr/application/planning';
 import type { EquipmentProfile, MuscleId } from '@powr/domain';
 import type { Explanation } from '@powr/domain/explain';
 import type { PlanFix } from '@powr/domain/planning';
 
-import { Callout } from '#ui/badge';
-import { Button } from '#ui/button';
+import { Badge, Callout } from '#ui/badge';
 import { Card } from '#ui/screen';
+import { Segmented } from '#ui/segmented';
 
-import { formatLocalDate, formatMinutes } from '../../i18n/format';
+import { addLocalDays, formatLocalDate, formatMinutes } from '../../i18n/format';
 import { useLabels } from '../labels';
 import { WhyButton, WhyNamesContext, WhyText } from '../why/WhySheet';
-import { isInputFix, useFixText } from './format';
-import { DayCard, IssueList, LiftList, VolumeList } from './parts';
+import { BudgetNote, DayCard, IssueList, LiftList, VolumeList } from './parts';
 
 /** The `plan.volume.target` explanation of each muscle, from the proposal's notes. */
 function targetWhy(notes: readonly Explanation[]) {
@@ -23,37 +23,41 @@ function targetWhy(notes: readonly Explanation[]) {
 }
 
 /**
- * ONB-10 plan preview: split and level with their "Why?", the weekly calendar, every day with
- * exercises, sets and estimated minutes, the weekly volume per muscle against its band, the
- * progression model, start date, notes (time budget, bodyweight-only) and the PLN-01 report.
+ * ONB-10 plan preview: split and level with their "Why?", the template choice (PLN-02), the
+ * block length (PLN-08) with the block on the calendar, every day with exercises, sets and
+ * estimated minutes, the weekly volume per muscle against its band, the progression model, start
+ * date, notes (time budget, bodyweight-only) and the PLN-01 report.
  */
 export function PlanPreviewView({
   preview,
   equipment,
   novice,
   onInputFix,
+  templateControl,
+  onBlockLength,
 }: {
   preview: PlanPreview;
   equipment: EquipmentProfile | undefined;
   novice: boolean;
   onInputFix?: (fix: PlanFix) => void;
+  /** PLN-02: the "choose a different plan" control, under the template's "Why?". */
+  templateControl?: ReactNode;
+  /** PLN-08: called with the accumulation weeks the user picks. */
+  onBlockLength?: (weeks: number) => void;
 }) {
   const { t } = useLingui();
   const labels = useLabels();
-  const fixText = useFixText();
   const { proposal } = preview;
   const minutesOf = (dayKey: string) =>
     proposal.report.analysis.days.find((day) => day.dayKey === dayKey)?.minutes;
   const budget = preview.schedule.sessionMinutes;
   const noEquipment = equipment !== undefined && equipment.items.length === 0;
   const budgetNote = proposal.notes.find((note) => note.rule === 'plan.volume.budget');
-  const budgetFixes = proposal.report.issues
-    .flatMap((issue) => (issue.cause === 'timeBudget' ? issue.fixes : []))
-    .filter(isInputFix)
-    .filter((fix, index, all) => all.findIndex((other) => other.kind === fix.kind) === index);
+  const blockNote = proposal.notes.find((note) => note.rule === 'plan.mesocycle');
   const level = labels.level(preview.level);
   const template = proposal.template.name.en;
   const weeks = proposal.accumulationWeeks;
+  const { min, max, defaultWeeks } = preview.blockLength;
   const start = formatLocalDate(preview.startDate, 'long');
   const progression = labels.progression(proposal.progression.primary);
   const names = {
@@ -64,6 +68,13 @@ export function PlanPreviewView({
     (issue) =>
       issue.severity === 'violation' || issue.cause === null || issue.cause === 'timeBudget',
   );
+  // PLN-08 on the calendar: every week of the first block with its start, the deload last.
+  const blockWeeks = Array.from({ length: weeks + proposal.deloadWeeks }, (_, index) => ({
+    week: index + 1,
+    start: addLocalDays(preview.startDate, 7 * index),
+    deload: index >= weeks,
+  }));
+  const weekChoices = Array.from({ length: max - min + 1 }, (_, index) => String(min + index));
 
   return (
     <WhyNamesContext value={names}>
@@ -76,6 +87,7 @@ export function PlanPreviewView({
           <div className="flex flex-wrap gap-2">
             <WhyButton why={preview.why} subject={template} />
           </div>
+          {templateControl}
           <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1">
             <dt className="text-fg-muted">
               <Trans>Level</Trans>
@@ -87,8 +99,9 @@ export function PlanPreviewView({
             <dt className="text-fg-muted">
               <Trans>Block</Trans>
             </dt>
-            <dd>
+            <dd className="flex flex-wrap items-center gap-1">
               <Trans>{weeks} weeks of training, then a lighter week</Trans>
+              {blockNote ? <WhyButton why={blockNote} subject={t`the block length`} /> : null}
             </dd>
             <dt className="text-fg-muted">
               <Trans>Progress</Trans>
@@ -99,6 +112,24 @@ export function PlanPreviewView({
             </dt>
             <dd>{start}</dd>
           </dl>
+          {onBlockLength ? (
+            <div className="flex flex-col gap-2">
+              <p className="font-semibold">
+                <Trans>Training weeks before the lighter week</Trans>
+              </p>
+              <p className="text-sm text-fg-muted">
+                <Trans>
+                  Recommended: {defaultWeeks} weeks. Pick from {min} to {max}.
+                </Trans>
+              </p>
+              <Segmented<string>
+                label={t`Training weeks before the lighter week`}
+                value={String(weeks)}
+                onChange={(value) => onBlockLength(Number(value))}
+                options={weekChoices.map((value) => ({ value, label: value }))}
+              />
+            </div>
+          ) : null}
         </Card>
 
         {noEquipment ? (
@@ -113,23 +144,7 @@ export function PlanPreviewView({
         ) : null}
 
         {budgetNote ? (
-          <Callout tone="warning" title={t`Your session time is tight`}>
-            <p>
-              <WhyText why={budgetNote} />
-            </p>
-            {onInputFix && budgetFixes.length > 0 ? (
-              <div className="flex flex-wrap gap-2 pt-1">
-                {budgetFixes.map((fix) => (
-                  <Button key={fix.kind} onClick={() => onInputFix(fix)}>
-                    {fixText(fix, (_, slot) => slot)}
-                  </Button>
-                ))}
-              </div>
-            ) : null}
-            <div>
-              <WhyButton why={budgetNote} subject={t`the time budget`} />
-            </div>
-          </Callout>
+          <BudgetNote note={budgetNote} issues={proposal.report.issues} onInputFix={onInputFix} />
         ) : null}
 
         <section className="flex flex-col gap-2" aria-labelledby="preview-calendar">
@@ -160,6 +175,29 @@ export function PlanPreviewView({
               <Trans>Your session budget: {formatMinutes(budget)}</Trans>
             </p>
           ) : null}
+          <h3 id="preview-block" className="pt-2 text-lg font-bold">
+            <Trans>Your first block</Trans>
+          </h3>
+          <ol aria-labelledby="preview-block" className="flex flex-col gap-1">
+            {blockWeeks.map((entry) => (
+              <li
+                key={entry.week}
+                className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1 rounded-xl bg-surface px-3 py-2"
+              >
+                <span className="font-semibold">
+                  <Trans>Week {entry.week}</Trans>
+                </span>
+                <span className="flex flex-wrap items-center gap-2">
+                  <Trans>from {formatLocalDate(entry.start)}</Trans>
+                  {entry.deload ? (
+                    <Badge tone="info" icon={null}>
+                      <Trans>Lighter week</Trans>
+                    </Badge>
+                  ) : null}
+                </span>
+              </li>
+            ))}
+          </ol>
         </section>
 
         <section className="flex flex-col gap-3" aria-labelledby="preview-days">

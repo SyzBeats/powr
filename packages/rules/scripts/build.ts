@@ -7,7 +7,6 @@ import { parse } from 'yaml';
 
 import { compileRules, type CompiledRules, type RuleFile } from '../src/compile';
 import { RULES_VERSION, rulesStamp, type ParamDef } from '../src/index';
-import { parseCompiledRules } from '../src/resolve';
 import { SOURCES_DIR, loadSourceRegistry } from './sources';
 
 /**
@@ -131,8 +130,49 @@ function show(def: ParamDef): string {
   return `\`${canonicalJson(def.value)}\` [${def.evidence.join(', ')}]`;
 }
 
+/**
+ * Reads an older `rules.json` for the diff report. Unlike `parseCompiledRules` (the app's
+ * check of the current file), it does not require today's parameter set or value schemas: an
+ * older registry lacks the parameters added since (they are listed as added) and may hold values
+ * in an older shape. Only what the report prints is checked. Throws on anything else.
+ */
+export function parsePreviousRules(json: unknown): CompiledRules {
+  const file = json as Partial<Record<keyof CompiledRules, unknown>> | null;
+  if (
+    file === null ||
+    typeof file !== 'object' ||
+    file.format !== 1 ||
+    typeof file.version !== 'string' ||
+    typeof file.hash !== 'string' ||
+    !Array.isArray(file.params)
+  ) {
+    throw new Error('not a compiled rules.json (format 1)');
+  }
+  for (const [index, def] of (file.params as unknown[]).entries()) {
+    const row = def as Partial<Record<keyof ParamDef, unknown>> | null;
+    if (
+      row === null ||
+      typeof row !== 'object' ||
+      typeof row.id !== 'string' ||
+      !('value' in row) ||
+      !Array.isArray(row.evidence) ||
+      typeof row.verified !== 'boolean'
+    ) {
+      throw new Error(`params[${index}] is not a parameter row`);
+    }
+  }
+  return file as unknown as CompiledRules;
+}
+
 function main(args: readonly string[]): number {
   const { compiled, issues } = buildRules();
+  // Read the older file first: `--diff generated/rules.json` names the file this build rewrites.
+  const diffIndex = args.indexOf('--diff');
+  const previousFile = diffIndex === -1 ? undefined : args[diffIndex + 1];
+  const previous =
+    previousFile !== undefined && existsSync(previousFile)
+      ? parsePreviousRules(JSON.parse(readFileSync(previousFile, 'utf8')))
+      : null;
   if (!compiled) {
     process.stderr.write(
       `Rules build failed:\n${issues.map((issue) => `- ${issue}`).join('\n')}\n`,
@@ -145,12 +185,7 @@ function main(args: readonly string[]): number {
     `Wrote ${GENERATED_FILE} (${rulesStamp(compiled)}, ${compiled.params.length} parameters)\n`,
   );
   process.stdout.write(`${unverifiedReport(compiled)}\n`);
-  const diffIndex = args.indexOf('--diff');
-  const previousFile = diffIndex === -1 ? undefined : args[diffIndex + 1];
-  if (previousFile !== undefined && existsSync(previousFile)) {
-    const previous = parseCompiledRules(JSON.parse(readFileSync(previousFile, 'utf8')));
-    process.stdout.write(`\n${diffRules(previous, compiled)}\n`);
-  }
+  if (previous) process.stdout.write(`\n${diffRules(previous, compiled)}\n`);
   return 0;
 }
 

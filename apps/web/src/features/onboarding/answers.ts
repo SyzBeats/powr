@@ -1,5 +1,5 @@
 import type { OnboardingAnswers } from '@powr/application/planning';
-import type { EquipmentProfile, IsoWeekday, Profile } from '@powr/domain';
+import type { Baseline, EquipmentProfile, IsoWeekday, Profile } from '@powr/domain';
 
 /** The steps in order (ONB-01…10). `welcome` is the legal gate and only part of first-run. */
 export const STEPS = [
@@ -10,19 +10,39 @@ export const STEPS = [
   'body',
   'equipment',
   'priorities',
+  'baselines',
   'preview',
 ] as const;
 export type Step = (typeof STEPS)[number];
 
-/** Steps the user may skip (ONB-12); the core path is the rest (NFR-USE-02). */
-export const OPTIONAL_STEPS: readonly Step[] = ['priorities'];
+/** Steps the user may skip in one tap (ONB-12); the core path is the rest (NFR-USE-02). */
+export const OPTIONAL_STEPS: readonly Step[] = ['priorities', 'baselines'];
 
 export function isStep(value: string): value is Step {
   return (STEPS as readonly string[]).includes(value);
 }
 
-/** Answers collected so far (the draft, ONB-12). */
-export type Draft = Partial<OnboardingAnswers>;
+/** What the user knows about a lift (ONB-08): nothing, a recent set or a 1-rep max. */
+export type BaselineKind = 'none' | Baseline['kind'];
+
+/** One lift of the baselines step as typed (text, so "102." keeps its point while typing). */
+export interface BaselineInput {
+  readonly kind: BaselineKind;
+  readonly load: string;
+  readonly reps: string;
+  /** Reps in reserve; null: "not sure" (the unknown-effort prior applies, E-1). */
+  readonly rir: number | null;
+  /** The day of a 1RM, 'YYYY-MM-DD', or '' when not given. */
+  readonly date: string;
+}
+
+/**
+ * Answers collected so far (the draft, ONB-12), plus the baselines step's inputs as typed, so an
+ * unfinished entry is pointed out rather than dropped, and a resumed onboarding shows it again.
+ */
+export type Draft = Partial<OnboardingAnswers> & {
+  readonly baselineInputs?: Readonly<Record<string, BaselineInput>>;
+};
 
 /** The units of the answers: the user's choice, else the locale's default (ONB-02). */
 export function draftUnits(draft: Draft, locale: string = deviceLocale()): Profile['units'] {
@@ -34,6 +54,9 @@ export function deviceLocale(): string {
   return navigator.languages[0] ?? navigator.language ?? 'en';
 }
 
+/** The regions that weigh in pounds (ISO 3166 codes: United States, Liberia, Myanmar). */
+const IMPERIAL_REGIONS = /^(?:US|LR|MM)$/;
+
 /** Lb for the few countries that weigh in pounds, kg elsewhere (ONB-02 default, editable). */
 function defaultUnits(locale: string): Profile['units'] {
   const region = (() => {
@@ -43,7 +66,7 @@ function defaultUnits(locale: string): Profile['units'] {
       return '';
     }
   })();
-  const imperial = ['US', 'LR', 'MM'].includes(region);
+  const imperial = IMPERIAL_REGIONS.test(region);
   return imperial
     ? { load: 'lb', bodyweight: 'lb', length: 'in' }
     : { load: 'kg', bodyweight: 'kg', length: 'cm' };
@@ -83,6 +106,7 @@ export function completeAnswers(
     startTimes: draft.startTimes ?? [],
     baselines: draft.baselines ?? [],
     meet: draft.meet ?? null,
+    ...(draft.planOptions ? { planOptions: draft.planOptions } : {}),
   };
 }
 
@@ -114,6 +138,7 @@ export function stepOfField(field: string): Step {
   if (field.startsWith('schedule')) return 'schedule';
   if (field.startsWith('equipment')) return 'equipment';
   if (field === 'priorities') return 'priorities';
+  if (field === 'baselines') return 'baselines';
   if (field === 'birthYear' || field === 'bodyweight' || field === 'height') return 'body';
   return 'goal';
 }

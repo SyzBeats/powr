@@ -76,6 +76,25 @@ describe('onboarding steps (ONB-01…07)', () => {
     expect(await seriousViolations()).toEqual([]);
   });
 
+  it('decimal body values keep the point while typing (80.5 stays 80.5)', async () => {
+    const container = await createTestContainer();
+    await acknowledge(container);
+    renderRoute(container, '/onboarding/body');
+    expect(await screen.findByRole('heading', { level: 1, name: 'Units and body' })).toBeTruthy();
+    const height = screen.getByRole<HTMLInputElement>('textbox', { name: 'Height' });
+    const bodyweight = screen.getByRole<HTMLInputElement>('textbox', { name: 'Body weight' });
+    await userEvent.type(height, '180.5');
+    await userEvent.type(bodyweight, '80,5');
+    expect(height.value).toBe('180.5');
+    expect(bodyweight.value).toBe('80,5');
+    await userEvent.click(screen.getByRole('button', { name: 'Continue' }));
+    await waitFor(async () =>
+      expect(await loadOnboardingDraft(container.deps)).toMatchObject({
+        answers: { height: { value: 180.5 }, bodyweight: { value: 80.5 } },
+      }),
+    );
+  });
+
   it('"Just let me log" stores a profile without a plan (PLN-15)', async () => {
     const container = await createTestContainer();
     await acknowledge(container);

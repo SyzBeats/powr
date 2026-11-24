@@ -4,7 +4,7 @@ import { ArrowLeft } from 'lucide-react';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 
 import type { OnboardingAnswers, PlanPreview, PlanPreviewError } from '@powr/application/planning';
-import type { EquipmentProfile, IsoWeekday, PresetId } from '@powr/domain';
+import type { EquipmentProfile, IsoWeekday, LocalDate, PresetId, TemplateId } from '@powr/domain';
 import type { PlanFix } from '@powr/domain/planning';
 
 import { Callout } from '#ui/badge';
@@ -18,8 +18,12 @@ import {
   useProfile,
   useWeekStart,
 } from '../../hooks/use-planning';
+import { todayLocal } from '../../i18n/format';
+import { assertNever } from '../exhaustive';
+import { useLabels } from '../labels';
 import { LEGAL_VERSIONS } from '../legal/versions';
 import { PlanPreviewView } from '../plan/PlanPreviewView';
+import { TemplateChooser } from '../plan/TemplateChooser';
 import { WhySimpleContext, WhyText } from '../why/WhySheet';
 import {
   OPTIONAL_STEPS,
@@ -33,6 +37,8 @@ import {
   type Draft,
   type Step,
 } from './answers';
+import { MAX_BASELINE_REPS, unfinishedBaselines } from './baseline-input';
+import { BaselinesStep, baselineErrorKey } from './BaselinesStep';
 import {
   BodyStep,
   EquipmentStep,
@@ -103,7 +109,7 @@ export function OnboardingFlow({
   const legal = mode === 'replan' ? true : (loaded?.legal ?? null);
 
   useEffect(() => {
-    if (mode !== 'onboarding') return;
+    if (mode !== 'onboarding') return undefined;
     let cancelled = false;
     void run(async (planning, deps) => ({
       saved: await planning.loadOnboardingDraft(deps),
@@ -138,7 +144,16 @@ export function OnboardingFlow({
 
   const index = steps.indexOf(step);
   const update = (patch: Draft) => {
-    setEdits((current) => ({ ...(current ?? base), ...patch }));
+    setEdits((current) => {
+      const before = current ?? base;
+      const merged = { ...before, ...patch };
+      // A template belongs to one style (PLN-02): a new style starts from its recommended plan.
+      if (patch.style !== undefined && patch.style !== before?.style && merged.planOptions) {
+        const { templateId: _dropped, ...rest } = merged.planOptions;
+        return { ...merged, planOptions: rest };
+      }
+      return merged;
+    });
     setErrors({});
   };
   const save = async (target: Step, answers: Draft) => {
@@ -317,6 +332,17 @@ export function OnboardingFlow({
           {continueButton}
         </Screen>
       );
+    case 'baselines':
+      return (
+        <WhySimpleContext value={novice}>
+          <Screen title={t`Your current lifts`}>
+            {header}
+            {errorSummary}
+            <BaselinesStep {...props} />
+            {continueButton}
+          </Screen>
+        </WhySimpleContext>
+      );
     case 'preview':
       return (
         <WhySimpleContext value={novice}>
@@ -332,6 +358,8 @@ export function OnboardingFlow({
           />
         </WhySimpleContext>
       );
+    default:
+      return assertNever(step);
   }
 }
 
@@ -517,13 +545,17 @@ function PreviewStep({
   const result = generated && generated.key === key ? generated.result : null;
 
   useEffect(() => {
-    if (key === null) return;
+    if (key === null) return undefined;
     let cancelled = false;
     const input = JSON.parse(key.slice(key.indexOf(':') + 1)) as OnboardingAnswers;
     void run((planning, deps) =>
       planning.generatePlanPreview(deps, {
         answers: input,
-        options: { weekStartsOn: Number(key.slice(0, key.indexOf(':'))) as IsoWeekday },
+        // PLN-02 template and PLN-08 block length, as chosen in this preview.
+        options: {
+          weekStartsOn: Number(key.slice(0, key.indexOf(':'))) as IsoWeekday,
+          ...input.planOptions,
+        },
         startTimes: input.startTimes,
       }),
     ).then((next) => {
@@ -554,6 +586,21 @@ function PreviewStep({
     else if (fix.kind === 'addDay') goTo('schedule');
   };
 
+  // PLN-02 and PLN-08: the choices live in the draft, so going back to a step keeps them.
+  const options = draft.planOptions ?? {};
+  const chooseTemplate = (templateId: TemplateId | null) => {
+    const { templateId: _previous, ...rest } = options;
+    update({ planOptions: templateId ? { ...rest, templateId } : rest });
+  };
+  const chooseWeeks = (weeks: number) => {
+    const { accumulationWeeks: _previous, ...rest } = options;
+    const defaultWeeks = result?.ok ? result.value.blockLength.defaultWeeks : null;
+    update({ planOptions: weeks === defaultWeeks ? rest : { ...rest, accumulationWeeks: weeks } });
+  };
+  const templateControl = answers ? (
+    <TemplateChooser answers={answers} selected={options.templateId} onSelect={chooseTemplate} />
+  ) : null;
+
   return (
     <Screen title={t`Your plan`}>
       {header}
@@ -579,6 +626,11 @@ function PreviewStep({
             </p>
           )}
           <div className="flex flex-wrap gap-2 pt-1">
+            {options.templateId ? (
+              <Button variant="primary" onClick={() => chooseTemplate(null)}>
+                <Trans>Use the recommended plan</Trans>
+              </Button>
+            ) : null}
             <Button onClick={() => goTo('equipment')}>
               <Trans>Change equipment</Trans>
             </Button>
@@ -589,6 +641,7 @@ function PreviewStep({
               <Trans>Change days</Trans>
             </Button>
           </div>
+          {templateControl}
         </Callout>
       ) : (
         <>
@@ -597,6 +650,8 @@ function PreviewStep({
             equipment={equipment}
             novice={novice}
             onInputFix={inputFix}
+            templateControl={templateControl}
+            onBlockLength={chooseWeeks}
           />
           {problem ? <Callout tone="danger">{problem}</Callout> : null}
           <Card>
@@ -647,8 +702,29 @@ function PreviewStep({
  */
 function useStepValidation() {
   const { t } = useLingui();
+  const labels = useLabels();
   return (step: Step, draft: Draft): Record<string, string> => {
     const errors: Record<string, string> = {};
+    if (step === 'baselines') {
+      // An entry started but not complete is pointed out, not dropped (WCAG 3.3.1).
+      const unit = draftUnits(draft).load;
+      for (const { exerciseId, problems } of unfinishedBaselines(
+        draft,
+        unit,
+        todayLocal() as LocalDate,
+      )) {
+        const name = labels.exercise(exerciseId);
+        if (problems.includes('load'))
+          errors[baselineErrorKey(exerciseId, 'load')] =
+            t`${name}: enter the weight in ${unit}, or choose "Not now".`;
+        if (problems.includes('reps'))
+          errors[baselineErrorKey(exerciseId, 'reps')] =
+            t`${name}: enter the reps as a whole number from 1 to ${MAX_BASELINE_REPS}.`;
+        if (problems.includes('date'))
+          errors[baselineErrorKey(exerciseId, 'date')] =
+            t`${name}: the date can't be in the future. Leave it empty if you're not sure.`;
+      }
+    }
     if (step === 'goal' && !draft.style) errors['style'] = t`Choose what you want from training.`;
     if (step === 'experience') {
       if (!draft.experience?.trainingAge)
@@ -691,7 +767,9 @@ function useFieldErrors() {
                 ? t`Check your birth year and body weight.`
                 : step === 'priorities'
                   ? t`Pick at most three priority muscles.`
-                  : t`Check your goal.`;
+                  : step === 'baselines'
+                    ? t`Check the weights and reps of your lifts.`
+                    : t`Check your goal.`;
         return [field, where];
       }),
     );

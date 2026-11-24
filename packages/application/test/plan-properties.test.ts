@@ -2,9 +2,21 @@ import * as fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
 
 import { builtInContent } from '@powr/content/built-in';
-import { MOVEMENT_PATTERNS, type IsoWeekday } from '@powr/domain';
+import {
+  MOVEMENT_PATTERNS,
+  type IsoWeekday,
+  type LocalDate,
+  type Mesocycle,
+  type MuscleTarget,
+} from '@powr/domain';
 import { isAvailable } from '@powr/domain/equipment';
-import { generatePlan, type PlanRequest } from '@powr/domain/planning';
+import {
+  generatePlan,
+  proposeNextMesocycle,
+  type PlanProposal,
+  type PlanRequest,
+  type ValidationIssue,
+} from '@powr/domain/planning';
 import { TRAINEE_LEVELS, type RuleSet, type TraineeLevel } from '@powr/domain/rules';
 import { BUILT_IN_RULES } from '@powr/rules/built-in';
 import { resolveRules } from '@powr/rules/resolve';
@@ -71,6 +83,98 @@ const request: fc.Arbitrary<PlanRequest> = fc
 const generate = (input: PlanRequest, catalog = { exercises, templates }) =>
   generatePlan(input, catalog, rulesFor(input.level, input.style));
 
+/**
+ * PLN-13 after a generated plan: its first mesocycle as accepted (the slots with an odd index
+ * locked when `lock` is set), then the next block for the same answers, as the application's
+ * `proposeNextMesocycle` asks for it (no logged sets, the seed moved on by one).
+ */
+function proposeNext(input: PlanRequest, proposal: PlanProposal, lock = false) {
+  const current: Mesocycle = {
+    index: 0,
+    startDate: '2026-11-30' as LocalDate,
+    accumulationWeeks: proposal.accumulationWeeks,
+    deloadWeeks: proposal.deloadWeeks,
+    status: 'active',
+    level: proposal.level,
+    days: proposal.days.map((day) => ({
+      ...day,
+      slots: day.slots.map((slot, index) =>
+        lock && index % 2 === 1 ? { ...slot, locked: true } : slot,
+      ),
+    })),
+    targets: proposal.targets,
+    liftTargets: proposal.liftTargets,
+    deload: { postponed: false, skipped: false, broughtForward: false },
+  };
+  return {
+    current,
+    next: proposeNextMesocycle(
+      {
+        current,
+        template: proposal.template,
+        request: { ...input, seed: input.seed + 1 },
+        logged: null,
+        startDate: '2027-01-04' as LocalDate,
+      },
+      { exercises, templates },
+      rulesFor(input.level, input.style),
+    ).value,
+  };
+}
+
+/** The issues the time budget causes: lowered targets, and shortfalls it leaves (PLN-14, TD-36). */
+const timeBudgetIssues = (issues: readonly ValidationIssue[]) =>
+  issues.filter(
+    (issue) =>
+      issue.why.rule === 'validate.volume.timeBudget' ||
+      ((issue.why.rule === 'validate.volume.low' ||
+        issue.why.rule === 'validate.volume.belowFloor' ||
+        issue.why.rule === 'validate.strength.belowMinimum') &&
+        issue.cause === 'timeBudget'),
+  );
+
+/** PLN-14: the lowered targets keep to the rule, whether in a first plan or a next block. */
+function expectLoweredByRule(
+  input: PlanRequest,
+  targets: readonly MuscleTarget[],
+  fullTargets: readonly MuscleTarget[] | null,
+) {
+  const rules = rulesFor(input.level, input.style);
+  const minimumDose = rules['volume.hypertrophy.minimumDose'].value.setsPerWeek;
+  const lowered = targets.filter((target) => target.source === 'timeBudget');
+  expect(input.sessionMinutes === null ? lowered : []).toEqual([]);
+  for (const target of lowered) {
+    expect({ ...target, priority: input.priorities.includes(target.muscle) }).toEqual({
+      ...target,
+      priority: false,
+    });
+    expect(target.sets).toBeGreaterThanOrEqual(minimumDose);
+    expect(target.full).toBeGreaterThan(target.sets);
+    // A maintained (optional-only) muscle is never lowered further.
+    expect(fullTargets?.find((entry) => entry.muscle === target.muscle)?.source).not.toBe(
+      'maintenance',
+    );
+  }
+  for (const target of targets) {
+    expect(target.full === undefined).toBe(target.source !== 'timeBudget');
+  }
+  return lowered;
+}
+
+/** PLN-14: every time-budget issue offers a longer session (or "90+") and, below six days, a day. */
+function expectInputFixes(issues: readonly ValidationIssue[], budget: number, dayCount: number) {
+  for (const issue of timeBudgetIssues(issues)) {
+    const longer = issue.fixes.find((fix) => fix.kind === 'sessionMinutes');
+    const minutes = longer?.kind === 'sessionMinutes' ? longer.minutes : undefined;
+    expect({
+      key: issue.key,
+      // A longer session than now, at most 90 minutes, or null ("90+").
+      longer: minutes === null || (minutes !== undefined && minutes > budget && minutes <= 90),
+      addDay: issue.fixes.some((fix) => fix.kind === 'addDay'),
+    }).toEqual({ key: issue.key, longer: true, addDay: dayCount < 6 });
+  }
+}
+
 describe('plan generation properties (PLN-01, EQP-04, EXL-08)', () => {
   it('is deterministic: same request and seed give the same plan, whatever the content order', () => {
     fc.assert(
@@ -118,21 +222,7 @@ describe('plan generation properties (PLN-01, EQP-04, EXL-08)', () => {
       fc.property(request, (input) => {
         const proposal = generate(input).value;
         if (!proposal) return;
-        const rules = rulesFor(input.level, input.style);
-        const minimumDose = rules['volume.hypertrophy.minimumDose'].value.setsPerWeek;
-        const lowered = proposal.targets.filter((target) => target.source === 'timeBudget');
-        expect(input.sessionMinutes === null ? lowered : []).toEqual([]);
-        for (const target of lowered) {
-          expect({ ...target, priority: input.priorities.includes(target.muscle) }).toEqual({
-            ...target,
-            priority: false,
-          });
-          expect(target.sets).toBeGreaterThanOrEqual(minimumDose);
-          expect(target.full).toBeGreaterThan(target.sets);
-        }
-        for (const target of proposal.targets) {
-          expect(target.full === undefined).toBe(target.source !== 'timeBudget');
-        }
+        const lowered = expectLoweredByRule(input, proposal.targets, null);
         expect(
           proposal.notes.some((note) => note.rule === 'plan.volume.budget'),
           'a budget note exactly when a target was lowered',
@@ -147,25 +237,7 @@ describe('plan generation properties (PLN-01, EQP-04, EXL-08)', () => {
       fc.property(request, (input) => {
         const proposal = generate(input).value;
         if (!proposal || input.sessionMinutes === null) return;
-        const budget = input.sessionMinutes;
-        const issues = proposal.report.issues.filter(
-          (issue) =>
-            issue.why.rule === 'validate.volume.timeBudget' ||
-            ((issue.why.rule === 'validate.volume.low' ||
-              issue.why.rule === 'validate.volume.belowFloor') &&
-              issue.cause === 'timeBudget'),
-        );
-        for (const issue of issues) {
-          const longer = issue.fixes.find((fix) => fix.kind === 'sessionMinutes');
-          const minutes = longer?.kind === 'sessionMinutes' ? longer.minutes : undefined;
-          expect({
-            key: issue.key,
-            // A longer session than now, at most 90 minutes, or null ("90+").
-            longer:
-              minutes === null || (minutes !== undefined && minutes > budget && minutes <= 90),
-            addDay: issue.fixes.some((fix) => fix.kind === 'addDay'),
-          }).toEqual({ key: issue.key, longer: true, addDay: proposal.days.length < 6 });
-        }
+        expectInputFixes(proposal.report.issues, input.sessionMinutes, proposal.days.length);
         expect(
           proposal.report.issues.filter((issue) => issue.why.rule === 'validate.volume.timeBudget'),
         ).toHaveLength(proposal.targets.filter((target) => target.source === 'timeBudget').length);
@@ -189,6 +261,65 @@ describe('plan generation properties (PLN-01, EQP-04, EXL-08)', () => {
           ),
           unexplained: result.value === null && !explained.includes(result.why.rule),
         }).toEqual({ avoidable: [], unexplained: false });
+      }),
+      { numRuns: runs(100) },
+    );
+  }, 120_000);
+});
+
+describe('next-block properties (PLN-13, PLN-14; TD-36)', () => {
+  it('is deterministic and applies the same time-budget step as the first plan', () => {
+    fc.assert(
+      fc.property(request, fc.boolean(), (input, lock) => {
+        const proposal = generate(input).value;
+        if (!proposal) return;
+        const { current, next } = proposeNext(input, proposal, lock);
+        expect(proposeNext(input, proposal, lock).next).toEqual(next);
+        const lowered = expectLoweredByRule(input, next.mesocycle.targets, current.targets);
+        expect(
+          next.notes.some((note) => note.rule === 'plan.volume.budget'),
+          'a budget note exactly when a target was lowered',
+        ).toBe(lowered.length > 0);
+        if (input.sessionMinutes !== null) {
+          expectInputFixes(next.report.issues, input.sessionMinutes, next.mesocycle.days.length);
+        }
+        expect(
+          next.report.issues.filter((issue) => issue.why.rule === 'validate.volume.timeBudget'),
+        ).toHaveLength(lowered.length);
+        // Locked slots stay, whatever the budget (PLN-13).
+        const keys = new Set(
+          next.mesocycle.days.flatMap((day) => day.slots.map((slot) => `${day.key}/${slot.key}`)),
+        );
+        for (const day of current.days) {
+          for (const slot of day.slots.filter((candidate) => candidate.locked)) {
+            expect(keys.has(`${day.key}/${slot.key}`), `${day.key}/${slot.key} kept`).toBe(true);
+          }
+        }
+      }),
+      { numRuns: runs(100) },
+    );
+  }, 120_000);
+
+  it('never proposes an unavailable or avoided exercise, and no avoidable violation', () => {
+    fc.assert(
+      fc.property(request, (input) => {
+        const proposal = generate(input).value;
+        if (!proposal) return;
+        const { next } = proposeNext(input, proposal);
+        for (const slot of next.mesocycle.days.flatMap((day) => day.slots)) {
+          const exercise = content.exercise(slot.exerciseId)!;
+          expect({
+            id: slot.exerciseId,
+            available: isAvailable(exercise, input.equipment),
+          }).toEqual({ id: slot.exerciseId, available: true });
+          expect(input.avoid.exercises).not.toContain(slot.exerciseId);
+          expect(input.avoid.patterns).not.toContain(exercise.pattern);
+        }
+        expect(
+          next.report.issues.filter(
+            (issue) => issue.severity === 'violation' && issue.cause === null,
+          ),
+        ).toEqual([]);
       }),
       { numRuns: runs(100) },
     );
