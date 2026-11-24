@@ -26,7 +26,9 @@ function expectPrototypeUntouched() {
 
 const SETTINGS = '{"id":"me","theme":"dark"}';
 const SESSION =
-  '{"id":"s1","localDate":"2026-11-23","startedAt":{"epochMs":1795456000000,"offsetMin":60,"zone":"Europe/Zurich"},"status":"finished","versions":{"engine":"0.0.0","rules":"0.0.0+m0","content":"0.0.0+m0"}}';
+  '{"id":"s1","localDate":"2026-11-23","startedAt":{"epochMs":1795456000000,"offsetMin":60,"zone":"Europe/Zurich"},"status":"finished","versions":{"engine":"0.0.0","rules":"0.0.0+m0","content":"0.0.0+m0"},"origin":"freestyle","equipmentProfileId":null,"exercises":[{"key":"a","exerciseId":"ex.barbell-back-squat","origin":"plan","goal":"strength","priority":"primary","progression":"rpe","prescription":null,"sets":[{"key":"s1","type":"working","reps":[5,5],"rir":[2,2],"load":null}],"restSeconds":180,"skipped":false}],"groups":[],"cursor":null,"timer":null,"readiness":null,"changes":[],"revision":3,"undo":null}';
+const READINESS =
+  '{"id":"r1","localDate":"2026-11-23","recordedAt":{"epochMs":1795456000000,"offsetMin":60,"zone":"Europe/Zurich"},"sessionId":"s1","items":{"energy":3,"prs":7}}';
 const POLLUTE = '{"polluted":"yes"}';
 
 describe('regression: FC_SEED=637004341 (backup round-trip produced a `__proto__` key)', () => {
@@ -102,6 +104,27 @@ describe('crafted backups that try prototype pollution are rejected', () => {
     ],
     ['equipment profile with prototype', { equipmentProfiles: `[{"id":"e","prototype":1}]` }],
     ['profile with __proto__', { profile: `[{"id":"me","__proto__":${POLLUTE}}]` }],
+    // M3a: the session core, the set fields and the readiness table.
+    [
+      'session slot with a nested __proto__',
+      {
+        sessions: `[${SESSION.replace('"skipped":false', `"skipped":false,"__proto__":${POLLUTE}`)}]`,
+      },
+    ],
+    [
+      'session undo snapshot with constructor.prototype',
+      {
+        sessions: `[${SESSION.replace('"undo":null', `"undo":{"token":"u1","constructor":{"prototype":${POLLUTE}}}`)}]`,
+      },
+    ],
+    [
+      'readiness check-in with a nested __proto__',
+      { readiness: `[${READINESS.replace('"energy":3', `"energy":3,"__proto__":${POLLUTE}`)}]` },
+    ],
+    [
+      'settings session preferences with prototype',
+      { settings: `[{"id":"me","theme":"dark","session":{"exercises":[{"prototype":1}]}}]` },
+    ],
   ])('%s → invalidData', async (_name, data) => {
     const result = await decodeBackup(await craftBackup({ data }));
     expect(result).toMatchObject({
@@ -176,6 +199,7 @@ describe('crafted backups that try prototype pollution are rejected', () => {
           meta: '[{"key":"a","value":{"list":[{"x":1}],"constructorName":"ok"}}]',
           settings: `[${SETTINGS}]`,
           sessions: `[${SESSION}]`,
+          readiness: `[${READINESS}]`,
         },
       }),
     );

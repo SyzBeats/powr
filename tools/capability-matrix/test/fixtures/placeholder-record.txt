@@ -1,0 +1,27 @@
+{
+  "harnessVersion": 2,
+  "placeholder": true,
+  "exportedAt": "2026-11-24T12:00:00.000Z",
+  "device": "PLACEHOLDER (not a device test)",
+  "browser": { "family": "chrome", "major": 142, "platform": "android", "displayMode": "standalone" },
+  "runs": [
+    {
+      "runId": "rplaceholder1",
+      "variant": "C",
+      "restMs": 60000,
+      "condition": "locked",
+      "batterySaver": false,
+      "status": "done",
+      "outcome": "on-time"
+    },
+    {
+      "runId": "rplaceholder2",
+      "variant": "E",
+      "restMs": 180000,
+      "condition": "locked",
+      "batterySaver": true,
+      "status": "interrupted",
+      "outcome": null
+    }
+  ]
+}

@@ -22,6 +22,8 @@ export const ALLOWED_DEPENDENCIES: Readonly<Record<string, readonly string[]>> =
   '@powr/tools-arch-test': [],
   '@powr/tools-icons': [],
   '@powr/tools-tokens-check': [],
+  // Compiles S-1 device-test records into the app's capability matrix (§8.8.5): data only.
+  '@powr/tools-capability-matrix': [],
   // Content build: validates content against the rules package's source registry (§8.12).
   '@powr/tools-content-build': ['@powr/domain', '@powr/rules', '@powr/content'],
 };

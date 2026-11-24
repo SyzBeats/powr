@@ -13,6 +13,7 @@ import { useSetWeekStart, useWeekStart } from '../../hooks/use-planning';
 import { useSetTheme, useThemePreference } from '../../hooks/use-settings';
 import { localeWeekStart } from '../../i18n/format';
 import { useLabels } from '../labels';
+import { AlertsSection } from './AlertsSection';
 
 const DebugTools = lazy(() => import('../debug/DebugTools'));
 
@@ -63,6 +64,8 @@ export function SettingsScreen() {
           ]}
         />
       </Card>
+
+      <AlertsSection />
 
       <Card className="gap-1">
         <Link to="/settings/equipment" className={linkClass}>

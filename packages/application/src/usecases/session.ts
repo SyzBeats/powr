@@ -1,5 +1,6 @@
 import {
   ENGINE_VERSION,
+  SESSION_DEFAULTS,
   nextSetIndex,
   toLocalDate,
   validateSetValues,
@@ -62,6 +63,8 @@ export async function logSet(
           rules: deps.rules.version,
           content: deps.content.version,
         },
+        // A quick-log session has no slots (M0 screen); the M3 session core stays empty.
+        ...SESSION_DEFAULTS,
       };
       await repos.sessions.put(session);
     }
@@ -96,15 +99,27 @@ export type FinishSessionError = { readonly kind: 'noActiveSession' };
 
 /**
  * Finishes the active session. The runtime flag is cleared in a second step; if that is lost,
- * `reconcileRuntimeFlags` repairs it on the next start (§8.2.4).
+ * `reconcileRuntimeFlags` repairs it on the next start (§8.2.4). The derived state of its
+ * exercises is dropped in the same transaction, so the session engine rebuilds it with this
+ * session on next use (the M3 finish rebuilds it right away, `@powr/application/session`).
  */
 export async function finishSession(deps: Deps): Promise<Result<Session, FinishSessionError>> {
   const now = deps.clock.now();
-  const finished = await deps.uow.write(['sessions'], async (repos) => {
+  const finished = await deps.uow.write(['sessions', 'sets', 'dExerciseState'], async (repos) => {
     const active = await repos.sessions.getActive();
     if (!active) return undefined;
-    const session: Session = { ...active, status: 'finished', endedAt: now };
+    const session: Session = {
+      ...active,
+      status: 'finished',
+      endedAt: now,
+      cursor: null,
+      timer: null,
+      undo: null,
+      revision: active.revision + 1,
+    };
     await repos.sessions.put(session);
+    const sets = await repos.sets.bySession(active.id);
+    await repos.derived.invalidate([...new Set(sets.map((set) => set.exerciseId))]);
     return session;
   });
   if (!finished) return err({ kind: 'noActiveSession' });

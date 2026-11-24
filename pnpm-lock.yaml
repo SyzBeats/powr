@@ -427,6 +427,8 @@ importers:
 
   tools/arch-test: {}
 
+  tools/capability-matrix: {}
+
   tools/content-build:
     dependencies:
       '@powr/content':

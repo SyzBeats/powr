@@ -78,6 +78,33 @@ export async function claimRuntimeFlag(key: `fired:${string}`, value: FiredFlag)
   }
 }
 
+/**
+ * Deletes `fired:` flags set more than `olderThanMs` before `now`. They only matter while their
+ * rest runs; the page prunes them when a session ends (§8.8.4).
+ */
+export async function pruneFiredFlags(olderThanMs: number, now = Date.now()): Promise<number> {
+  const db = await openRuntimeDb();
+  try {
+    const tx = db.transaction(STORE, 'readwrite');
+    const store = tx.objectStore(STORE);
+    const keys = await promisify<IDBValidKey[]>(
+      store.getAllKeys(IDBKeyRange.bound('fired:', 'fired:￿')),
+    );
+    let deleted = 0;
+    for (const key of keys) {
+      const flag = await promisify<FiredFlag | undefined>(store.get(key));
+      if (!flag || now - flag.at > olderThanMs) {
+        store.delete(key);
+        deleted++;
+      }
+    }
+    await transactionDone(tx);
+    return deleted;
+  } finally {
+    db.close();
+  }
+}
+
 function promisify<T>(request: IDBRequest): Promise<T> {
   return new Promise((resolve, reject) => {
     request.addEventListener('success', () => resolve(request.result as T));

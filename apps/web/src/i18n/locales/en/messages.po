@@ -11,6 +11,10 @@ msgstr ""
 msgid " or "
 msgstr " or "
 
+#: src/features/settings/AlertsSection.tsx
+msgid "\"Resting until\" notification"
+msgstr "\"Resting until\" notification"
+
 #. placeholder {0}: day.slots.length
 #: src/features/plan/parts.tsx
 msgid "{0, plural, one {# exercise} other {# exercises}}"
@@ -97,6 +101,11 @@ msgstr "{0}: {1} to {2}"
 
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
+msgid "why.readiness.adjust"
+msgstr "{action, select, capTopSet {Stop your top sets with {rirAdd, plural, one {# more rep} other {# more reps}} in reserve today.} dropBackoff {Leave out {dropSets, plural, one {# back-off set} other {# back-off sets}} per exercise today.} trimVolume {After a short night before an afternoon or evening session, keep the weights and do {dropSets, plural, one {# set} other {# sets}} fewer per exercise.} easeCompounds {After several short nights, stop the multi-joint lifts with {rirAdd, plural, one {# more rep} other {# more reps}} in reserve.} other {A lighter session is an option today.}} It's your call: nothing changes unless you accept."
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
 msgid "why.plan.time.trimmed.simple"
 msgstr "{action, select, removed {{slot} was left out of {dayKey} so the workout fits your {budget} minutes.} fewerSets {{slot} on {dayKey} has fewer sets so the workout fits your {budget} minutes.} removedForVolume {{slot} was left out of {dayKey} to make time for muscles that needed more sets.} other {{dayKey} was shortened to fit your time.}}"
 
@@ -164,6 +173,10 @@ msgstr "{dayKey} takes about {minutes} min: working sets, rest, warm-up sets and
 msgid "why.plan.duration.simple"
 msgstr "{dayKey} takes about {minutes} minutes, including warm-ups and rest."
 
+#: src/hooks/use-timers.ts
+msgid "{duration} left"
+msgstr "{duration} left"
+
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.e1rm.session"
@@ -205,6 +218,11 @@ msgstr "{failedSessions, plural, one {# session} other {# sessions in a row}} mi
 
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
+msgid "why.readiness.assessment"
+msgstr "{flag, select, insufficientData {POWR compares your check-in with your usual once it has {minEntries} check-ins from the last weeks; it has {entries} so far.} low {Your check-in is lower than usual for you (score {composite}). A lighter session is an option.} modify {Your check-in is well below your usual{prsLowDays, plural, =0 {} =1 {} other {, and you have felt under-recovered for # days in a row}}. Consider adjusting today's session.} other {Your check-in is within your usual range.}}{shortNights, plural, =0 {} =1 {} other { You have slept short for # nights in a row.}}"
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
 msgid "why.volume.sessionCap.exceeded"
 msgstr "{fractional, number} sets for this muscle in one session, counting partial credit ({direct, number} direct): above the per-session soft cap, so expect low return per extra set. Consider moving some to another day."
 
@@ -230,6 +248,11 @@ msgstr "{kind, select, oneRepMax {Your known 1-rep max, {e1rm}, is your starting
 
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
+msgid "why.session.fixed"
+msgstr "{kind, select, warmup {A warm-up set{load, select, none {} other { at {load}}}. Warm-ups don't count towards your volume, your estimated max or your PRs.} timed {A timed set of {durationS, plural, one {# second} other {# seconds}}.} other {This set has a set load{load, select, none {} other {: {load}}}, from your plan or a change you made.}}"
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
 msgid "why.progression.rpe.load"
 msgstr "{load, select, none {No load can be suggested for {reps, plural, one {# rep} other {# reps}} with {rir, plural, one {# rep} other {# reps}} in reserve (RIR) yet. Choose a load yourself; your logged sets will refine the estimate.} other {{load} for {reps, plural, one {# rep} other {# reps}} should leave about {rir, plural, one {# rep} other {# reps}} in reserve (RIR), based on your estimated 1-rep max (e1RM).}}"
 
@@ -247,6 +270,11 @@ msgstr "{locked, select, yes {{exercise} stays because you locked it.} other {{e
 #: src/features/why/messages.ts
 msgid "why.plan.slot.kept.simple"
 msgstr "{locked, select, yes {{exercise} stays, as you asked.} other {{exercise} stays, so you can keep building on it.}}"
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.session.lastTime"
+msgstr "{mode, select, manual {Manual mode: the same as last time{load, select, none {} other {, {load}}}, {reps, plural, one {# rep} other {# reps}}, without progression.} repsUp {This exercise progresses by reps: aim for {reps, plural, one {# rep} other {# reps}}, one more than last time.} previousSet {The same load as your last set{load, select, none {} other {: {load}}}.} other {There's nothing to go by yet. Enter what you do, and POWR suggests from there.}}"
 
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
@@ -352,6 +380,21 @@ msgstr "{name}: the date can't be in the future. Leave it empty if you're not su
 #: src/features/why/messages.ts
 msgid "why.progression.percent.load"
 msgstr "{pct, number}% of {base}, rounded to a load you can set up."
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.pr.load"
+msgstr "{previous, select, none {Load PR: {value} is the heaviest you have lifted on {exerciseId}.} other {Load PR: {value} on {exerciseId}, heavier than your best of {previous}.}}"
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.pr.rep"
+msgstr "{previous, select, none {Rep PR: the first time you did {reps, plural, one {# rep} other {# reps}} or more with {value}.} other {Rep PR: {value} for {reps, plural, one {# rep} other {# reps}}, more than your best of {previous} for at least as many reps.}}"
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.pr.volume"
+msgstr "{previous, select, none {Volume PR: {value} lifted in total on {exerciseId} in one session.} other {Volume PR: {value} lifted in total on {exerciseId} in one session, more than your best of {previous}.}}"
 
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
@@ -536,6 +579,11 @@ msgstr "{source, select, priority {{muscle}: {sets, plural, one {# weekly set} o
 
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
+msgid "why.session.calibration"
+msgstr "{status, select, uncalibrated {POWR doesn't know your strength on this exercise yet, so it calibrates: pick a weight you could lift about 12 times and stop with {rirMin}–{rirMax} reps in reserve (RIR). Your estimated 1-rep max (e1RM) comes from these sets.} calibrating {POWR is still calibrating this exercise: stop with {rirMin}–{rirMax} reps in reserve (RIR).{load, select, none {} other { The load, {load}, comes from your sets so far.}}} other {Stop with {rirMin}–{rirMax} reps in reserve (RIR).{load, select, none {} other { The load is {load}.}}}} After {exposuresMin}–{exposuresMax} sessions with this exercise, the loads follow your progress."
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
 msgid "why.warmup.compound"
 msgstr "{steps, plural, one {# warm-up set} other {# warm-up sets}} before {workingLoad}: enough to practise the movement and ramp up for this multi-joint exercise."
 
@@ -683,6 +731,10 @@ msgstr "1–2 months ago"
 msgid "1–2 weeks ago"
 msgstr "1–2 weeks ago"
 
+#: src/hooks/use-timers.ts
+msgid "10 seconds left"
+msgstr "10 seconds left"
+
 #: src/features/plan/format.ts
 msgid "10–20 sets"
 msgstr "10–20 sets"
@@ -698,6 +750,10 @@ msgstr "2–4 weeks ago"
 #: src/features/plan/format.ts
 msgid "21–30 sets"
 msgstr "21–30 sets"
+
+#: src/features/settings/AlertsSection.tsx
+msgid "3-2-1 countdown beeps"
+msgstr "3-2-1 countdown beeps"
 
 #: src/features/plan/format.ts
 msgid "4–9 sets"
@@ -843,6 +899,14 @@ msgstr "After {daysOff, plural, one {# day} other {# days}} off, your old number
 msgid "After a break, the first weeks start a little lighter."
 msgstr "After a break, the first weeks start a little lighter."
 
+#: src/features/settings/AlertsSection.tsx
+msgid "Alerts"
+msgstr "Alerts"
+
+#: src/features/settings/AlertsSection.tsx
+msgid "Alerts while screen is locked:"
+msgstr "Alerts while screen is locked:"
+
 #: src/features/plan/PlanEditorScreen.tsx
 msgid "All checks pass."
 msgstr "All checks pass."
@@ -855,6 +919,14 @@ msgstr "Allometric score: {value, number}. Your lift divided by your bodyweight 
 #: src/features/plan/format.ts
 msgid "Allow {minutes} per session"
 msgstr "Allow {minutes} per session"
+
+#: src/features/settings/AlertsSection.tsx
+msgid "Allow notifications"
+msgstr "Allow notifications"
+
+#: src/features/settings/AlertsSection.tsx
+msgid "Allow notifications so POWR can tell you when a rest ends while the screen is locked or you are in another app."
+msgstr "Allow notifications so POWR can tell you when a rest ends while the screen is locked or you are in another app."
 
 #: src/features/plan/format.ts
 msgid "Allow sessions of more than 90 minutes"
@@ -1244,6 +1316,13 @@ msgstr "Delete {0}?"
 msgid "Details"
 msgstr "Details"
 
+#. placeholder {0}: status.tested.onTime
+#. placeholder {1}: status.tested.runs
+#. placeholder {2}: status.tested.device
+#: src/features/settings/AlertsSection.tsx
+msgid "Device test: {0} of {1} alerts on time ({2})."
+msgstr "Device test: {0} of {1} alerts on time ({2})."
+
 #: src/features/plan/PlanEditorScreen.tsx
 msgid "Discard"
 msgstr "Discard"
@@ -1335,6 +1414,10 @@ msgstr "Edit plan"
 msgid "effort-based loading (RPE)"
 msgstr "effort-based loading (RPE)"
 
+#: src/hooks/use-timers.ts
+msgid "Ends at {endsAt}"
+msgstr "Ends at {endsAt}"
+
 #: src/features/onboarding/OnboardingFlow.tsx
 msgid "Enter a four-digit year, e.g. 1990, or leave it empty."
 msgstr "Enter a four-digit year, e.g. 1990, or leave it empty."
@@ -1364,6 +1447,11 @@ msgstr "Equipment saved."
 #: src/features/why/messages.ts
 msgid "why.e1rm.set"
 msgstr "Estimated 1-rep max (e1RM) from this set: {e1rm}. With {rir, plural, one {# rep} other {# reps}} in reserve (RIR), the set counts like {reff, number} reps to failure, about {pct, number, percent} of your max."
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.pr.e1rm"
+msgstr "Estimated 1-rep max (e1RM) PR: {value}{previous, select, none {} other {, up from {previous}}}. It's an estimate from a set with logged effort, not a tested max."
 
 #. placeholder {0}: formatMass(displayMass({ value: estimate.value.e1rmKg, unit: 'kg' }, unit), unit)
 #: src/features/onboarding/BaselinesStep.tsx
@@ -1513,6 +1601,11 @@ msgstr "Go to Home"
 msgid "Going on holiday or feeling ill? Pause the plan so nothing counts as missed."
 msgstr "Going on holiday or feeling ill? Pause the plan so nothing counts as missed."
 
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.guardrail.failure"
+msgstr "Going to failure on heavy squats, deadlifts or bench presses adds about {extraHoursMin}–{extraHoursMax} hours of recovery and gives no extra strength. Stopping a rep or two short works as well."
+
 #: src/features/plan/PlanPreviewView.tsx
 msgid "Hard sets per week; a set for a helping muscle counts half. Most people grow well with 10 to 20."
 msgstr "Hard sets per week; a set for a helping muscle counts half. Most people grow well with 10 to 20."
@@ -1636,6 +1729,18 @@ msgstr "I'm back: end the break"
 msgid "Illness"
 msgstr "Illness"
 
+#: src/features/settings/AlertsSection.tsx
+msgid "In device tests with this browser, no alert arrived with the screen locked. Keep the screen on during workouts."
+msgstr "In device tests with this browser, no alert arrived with the screen locked. Keep the screen on during workouts."
+
+#: src/features/settings/AlertsSection.tsx
+msgid "In device tests with this browser, rest alerts arrived on time with the screen locked."
+msgstr "In device tests with this browser, rest alerts arrived on time with the screen locked."
+
+#: src/features/settings/AlertsSection.tsx
+msgid "In device tests with this browser, some alerts came late or not at all with the screen locked. Keep the screen on during workouts for reliable alerts."
+msgstr "In device tests with this browser, some alerts came late or not at all with the screen locked. Keep the screen on during workouts for reliable alerts."
+
 #: src/features/legal/LegalScreens.tsx
 msgid "In short"
 msgstr "In short"
@@ -1679,6 +1784,35 @@ msgstr "Keep {name} in the next block"
 #: src/features/equipment/SubstitutionReview.tsx
 msgid "Keep it for now"
 msgstr "Keep it for now"
+
+#. placeholder {0}: status.reason
+#: src/features/settings/AlertsSection.tsx
+msgid "Keep screen on: Not available right now ({0})."
+msgstr "Keep screen on: Not available right now ({0})."
+
+#: src/features/settings/AlertsSection.tsx
+msgid "Keep screen on: Not available right now. The browser refused, for example because battery saver is on."
+msgstr "Keep screen on: Not available right now. The browser refused, for example because battery saver is on."
+
+#: src/features/settings/AlertsSection.tsx
+msgid "Keep screen on: Not supported on this browser."
+msgstr "Keep screen on: Not supported on this browser."
+
+#: src/features/settings/AlertsSection.tsx
+msgid "Keep screen on: Off."
+msgstr "Keep screen on: Off."
+
+#: src/features/settings/AlertsSection.tsx
+msgid "Keep screen on: On now."
+msgstr "Keep screen on: On now."
+
+#: src/features/settings/AlertsSection.tsx
+msgid "Keep screen on: Used during workouts."
+msgstr "Keep screen on: Used during workouts."
+
+#: src/features/settings/AlertsSection.tsx
+msgid "Keep the screen on during workouts"
+msgstr "Keep the screen on during workouts"
 
 #: src/features/equipment/EquipmentEditor.tsx
 msgid "Kettlebell weights"
@@ -1786,6 +1920,14 @@ msgstr "Lighter week: fewer sets and more reps in reserve, so you recover and co
 msgid "Like this phone ({localeDay})"
 msgstr "Like this phone ({localeDay})"
 
+#: src/features/settings/AlertsSection.tsx
+msgid "Limited"
+msgstr "Limited"
+
+#: src/features/settings/AlertsSection.tsx
+msgid "Limited (best effort)"
+msgstr "Limited (best effort)"
+
 #: src/features/why/WhySheet.tsx
 msgid "Limited research"
 msgstr "Limited research"
@@ -1891,6 +2033,10 @@ msgstr "Merged into another session"
 msgid "Microplates"
 msgstr "Microplates"
 
+#: src/hooks/use-timers.ts
+msgid "Minimum rest reached"
+msgstr "Minimum rest reached"
+
 #: src/features/equipment/EquipmentEditor.tsx
 msgid "Models differ: check the weight on your bar."
 msgstr "Models differ: check the weight on your bar."
@@ -1992,6 +2138,14 @@ msgstr "New to me"
 msgid "Next block"
 msgstr "Next block"
 
+#: src/hooks/use-timers.ts
+msgid "Next exercise"
+msgstr "Next exercise"
+
+#: src/hooks/use-timers.ts
+msgid "Next exercise in {duration}"
+msgstr "Next exercise in {duration}"
+
 #: src/features/home/HomeScreen.tsx
 msgid "Next planned session"
 msgstr "Next planned session"
@@ -2057,6 +2211,14 @@ msgstr "No problem: the workout on {date} is marked as skipped, and your plan ca
 msgid "why.e1rm.set.unknownEffort"
 msgstr "No reps in reserve (RIR) were logged for this set, so POWR assumed {rir}. Estimated 1-rep max (e1RM): {e1rm}. The set counts less than sets with logged effort, so log RIR when you can."
 
+#: src/features/settings/AlertsSection.tsx
+msgid "No sound."
+msgstr "No sound."
+
+#: src/features/settings/AlertsSection.tsx
+msgid "No vibration."
+msgstr "No vibration."
+
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.warmup.none.simple"
@@ -2109,6 +2271,14 @@ msgstr "Not quite right?"
 msgid "Not saved. Check the values and try again."
 msgstr "Not saved. Check the values and try again."
 
+#: src/features/settings/AlertsSection.tsx
+msgid "Not supported"
+msgstr "Not supported"
+
+#: src/features/settings/AlertsSection.tsx
+msgid "Not supported on this device."
+msgstr "Not supported on this device."
+
 #: src/features/onboarding/BaselinesStep.tsx
 msgid "Not sure"
 msgstr "Not sure"
@@ -2125,9 +2295,29 @@ msgstr "Nothing is dropped without you deciding. Choose for each one:"
 msgid "Nothing planned in the next three weeks."
 msgstr "Nothing planned in the next three weeks."
 
+#: src/features/settings/AlertsSection.tsx
+msgid "Notifications are blocked for POWR, so nothing can alert you while the screen is locked. You can allow them in the browser's site settings."
+msgstr "Notifications are blocked for POWR, so nothing can alert you while the screen is locked. You can allow them in the browser's site settings."
+
 #: src/features/legal/LegalScreens.tsx
 msgid "Notifications are only used for rest-timer alerts, and only after you allow them. POWR asks for nothing else without a reason you can see."
 msgstr "Notifications are only used for rest-timer alerts, and only after you allow them. POWR asks for nothing else without a reason you can see."
+
+#: src/features/settings/AlertsSection.tsx
+msgid "Notifications: Allowed"
+msgstr "Notifications: Allowed"
+
+#: src/features/settings/AlertsSection.tsx
+msgid "Notifications: Blocked"
+msgstr "Notifications: Blocked"
+
+#: src/features/settings/AlertsSection.tsx
+msgid "Notifications: Not allowed yet"
+msgstr "Notifications: Not allowed yet"
+
+#: src/features/settings/AlertsSection.tsx
+msgid "Notifications: Not supported on this browser"
+msgstr "Notifications: Not supported on this browser"
 
 #: src/features/labels.ts
 msgid "novice"
@@ -2325,6 +2515,10 @@ msgstr "POWR gives general training suggestions, not medical advice. Check with 
 msgid "POWR suggests; you confirm. You are responsible for the decisions you make with its suggestions."
 msgstr "POWR suggests; you confirm. You are responsible for the decisions you make with its suggestions."
 
+#: src/features/settings/AlertsSection.tsx
+msgid "POWR uses notifications only for rest timers: one when a rest ends while you are away from the app, and an optional silent one with the end time. Nothing is sent over the internet."
+msgstr "POWR uses notifications only for rest timers: one when a rest ends while you are away from the app, and an optional silent one with the end time. Nothing is sent over the internet."
+
 #: src/features/onboarding/steps.tsx
 msgid "Prefer not to say"
 msgstr "Prefer not to say"
@@ -2408,6 +2602,10 @@ msgstr "Read the full privacy notice"
 msgid "Ready for offline use"
 msgstr "Ready for offline use"
 
+#: src/hooks/use-timers.ts
+msgid "Ready when you are"
+msgstr "Ready when you are"
+
 #: src/features/labels.ts
 msgid "rear-delt fly"
 msgstr "rear-delt fly"
@@ -2423,6 +2621,10 @@ msgstr "Recommended for your {days} training days and your level."
 #: src/features/plan/PlanPreviewView.tsx
 msgid "Recommended: {defaultWeeks} weeks. Pick from {min} to {max}."
 msgstr "Recommended: {defaultWeeks} weeks. Pick from {min} to {max}."
+
+#: src/features/settings/AlertsSection.tsx
+msgid "Recommended: alerts are most reliable while POWR is on screen. Keeping the screen on uses more battery."
+msgstr "Recommended: alerts are most reliable while POWR is on screen. Keeping the screen on uses more battery."
 
 #: src/app/StartupError.tsx
 #: src/features/shell/RouteError.tsx
@@ -2496,6 +2698,27 @@ msgstr "Rest about {seconds, number} seconds before your next set. {restClass, s
 #: src/features/plan/PlanScreen.tsx
 msgid "Rest day"
 msgstr "Rest day"
+
+#: src/features/settings/AlertsSection.tsx
+#: src/hooks/use-timers.ts
+msgid "Rest over"
+msgstr "Rest over"
+
+#: src/hooks/use-timers.ts
+msgid "Rest over, {ago} ago"
+msgstr "Rest over, {ago} ago"
+
+#: src/hooks/use-timers.ts
+msgid "Rest started, {duration}"
+msgstr "Rest started, {duration}"
+
+#: src/hooks/use-timers.ts
+msgid "Rest started, minimum {duration}"
+msgstr "Rest started, minimum {duration}"
+
+#: src/hooks/use-timers.ts
+msgid "Resting"
+msgstr "Resting"
 
 #: src/features/data/DataScreen.tsx
 #: src/features/home/HomeScreen.tsx
@@ -2578,6 +2801,10 @@ msgstr "Sessions in a break do not count as missed. When you are back, the first
 #: src/features/why/WhySheet.tsx
 msgid "Set {0}: {1} × {2}{3}"
 msgstr "Set {0}: {1} × {2}{3}"
+
+#: src/hooks/use-timers.ts
+msgid "Set timer started, {duration}"
+msgstr "Set timer started, {duration}"
 
 #: src/features/home/HomeScreen.tsx
 #: src/features/onboarding/OnboardingFlow.tsx
@@ -2679,6 +2906,14 @@ msgstr "Some planned exercises need equipment you removed"
 msgid "Something went wrong"
 msgstr "Something went wrong"
 
+#: src/features/settings/AlertsSection.tsx
+msgid "Sound"
+msgstr "Sound"
+
+#: src/features/settings/AlertsSection.tsx
+msgid "Sound played."
+msgstr "Sound played."
+
 #. placeholder {0}: param.sources.map(sourceName).join('; ')
 #: src/features/why/WhySheet.tsx
 msgid "Sources: {0}"
@@ -2764,6 +2999,10 @@ msgstr "Strength scores and some formulas differ by sex. You can skip this."
 msgid "Strong research"
 msgstr "Strong research"
 
+#: src/features/settings/AlertsSection.tsx
+msgid "Supported"
+msgstr "Supported"
+
 #: src/features/plan/PlanEditorScreen.tsx
 msgid "Swap {name}"
 msgstr "Swap {name}"
@@ -2783,6 +3022,14 @@ msgstr "Talk to a doctor before you start or change a training or nutrition prog
 #: src/features/plan/parts.tsx
 msgid "Target met"
 msgstr "Target met"
+
+#: src/features/settings/AlertsSection.tsx
+msgid "Test alert"
+msgstr "Test alert"
+
+#: src/hooks/use-alert-settings.ts
+msgid "Test alert: rest over"
+msgstr "Test alert: rest over"
 
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
@@ -2874,6 +3121,11 @@ msgstr "The exercises for it already have the most sets that make sense."
 
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
+msgid "why.pr.firstTime"
+msgstr "The first time you logged {exerciseId}. From your next session with it, POWR tracks your PRs."
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
 msgid "why.validate.volume.targetOutsideBand.simple"
 msgstr "The goal you set for {muscle} ({target, number} sets a week) is unusual. You can keep it, or pick a number closer to the usual range."
 
@@ -2881,6 +3133,11 @@ msgstr "The goal you set for {muscle} ({target, number} sets a week) is unusual.
 #: src/features/why/messages.ts
 msgid "why.deload.skipped"
 msgstr "The lighter (deload) week is skipped: its {sessions, plural, one {# session is} other {# sessions are}} back to regular training. Fine now and then; the next block plans a lighter week again."
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.progression.linear.weekHold"
+msgstr "The load stays at {load} this week: at your level the weight goes up once a week, not every session."
 
 #: src/features/plan/NextMesocycleScreen.tsx
 msgid "the next block"
@@ -2961,6 +3218,14 @@ msgstr "This backup is damaged or was edited, so it cannot be restored. Nothing 
 msgid "This backup was made by a newer version of POWR. Update the app first."
 msgstr "This backup was made by a newer version of POWR. Update the app first."
 
+#: src/features/settings/AlertsSection.tsx
+msgid "This browser cannot show notifications from POWR, so alerts only work while POWR is on screen. Keep the screen on during workouts."
+msgstr "This browser cannot show notifications from POWR, so alerts only work while POWR is on screen. Keep the screen on during workouts."
+
+#: src/features/settings/AlertsSection.tsx
+msgid "This browser has not been tested yet. POWR tries every way it has, but an alert may come late or not at all while the screen is locked or you are in another app."
+msgstr "This browser has not been tested yet. POWR tries every way it has, but an alert may come late or not at all while the screen is locked or you are in another app."
+
 #: src/features/plan/PlanScreen.tsx
 msgid "this change"
 msgstr "this change"
@@ -3031,6 +3296,11 @@ msgstr "This session changed meanwhile. Try again."
 msgid "why.schedule.moved"
 msgstr "This session moved from {from} to {to}. If that brings hard sessions for the same muscles close together, a spacing note shows it."
 
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.session.adjustment.load"
+msgstr "This session uses {pct}% of your normal working load ({pctMin}–{pctMax}%), so {from} becomes {load}. Lighter days like this are part of training."
+
 #: src/features/plan/parts.tsx
 msgid "this warning"
 msgstr "this warning"
@@ -3059,6 +3329,22 @@ msgstr "Tick that you have read the health notice and the privacy summary."
 #: src/features/labels.ts
 msgid "time budget"
 msgstr "time budget"
+
+#: src/hooks/use-timers.ts
+msgid "Time for your next set."
+msgstr "Time for your next set."
+
+#: src/hooks/use-timers.ts
+msgid "Time is up"
+msgstr "Time is up"
+
+#: src/hooks/use-timers.ts
+msgid "Time is up, {ago} ago"
+msgstr "Time is up, {ago} ago"
+
+#: src/hooks/use-timers.ts
+msgid "Time to switch to the next exercise."
+msgstr "Time to switch to the next exercise."
 
 #: src/features/home/HomeScreen.tsx
 #: src/features/plan/PlanScreen.tsx
@@ -3200,6 +3486,22 @@ msgstr "Version {version}"
 msgid "Version {version}. Draft, pending legal review."
 msgstr "Version {version}. Draft, pending legal review."
 
+#: src/features/settings/AlertsSection.tsx
+msgid "Vibrated."
+msgstr "Vibrated."
+
+#: src/features/settings/AlertsSection.tsx
+msgid "Vibration"
+msgstr "Vibration"
+
+#: src/features/settings/AlertsSection.tsx
+msgid "Volume"
+msgstr "Volume"
+
+#: src/features/settings/AlertsSection.tsx
+msgid "Warning 10 seconds before the end of a rest"
+msgstr "Warning 10 seconds before the end of a rest"
+
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.plan.schedule.weekdays.simple"
@@ -3311,6 +3613,10 @@ msgstr "When did you lift it? (optional)"
 #: src/features/plan/PlanEditorScreen.tsx
 msgid "When should the changes start?"
 msgstr "When should the changes start?"
+
+#: src/features/settings/AlertsSection.tsx
+msgid "When you leave POWR during a rest, a silent notification shows when the rest ends."
+msgstr "When you leave POWR during a rest, a silent notification shows when the rest ends."
 
 #: src/features/equipment/EquipmentScreens.tsx
 msgid "Where do you train?"
@@ -3439,6 +3745,11 @@ msgstr "You need at least one equipment profile."
 msgid "why.plan.template.chosen.simple"
 msgstr "You picked {template}, and it fits your {days, plural, one {# training day} other {# training days}} a week."
 
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.guardrail.shortRest"
+msgstr "You rested {restSeconds, plural, one {# second} other {# seconds}} between sets of a competition lift. Heavy sets go better after at least {minimum, plural, one {# second} other {# seconds}}."
+
 #: src/features/plan/PlanPreviewView.tsx
 msgid "You saved your equipment list empty, so this plan uses bodyweight exercises only. Add equipment any time in Settings and POWR offers to swap exercises in."
 msgstr "You saved your equipment list empty, so this plan uses bodyweight exercises only. Add equipment any time in Settings and POWR offers to swap exercises in."
@@ -3531,6 +3842,10 @@ msgstr "Your logged training stays. This only removes the equipment list."
 msgid "your logged volume"
 msgstr "your logged volume"
 
+#: src/hooks/use-timers.ts
+msgid "Your minimum rest is over."
+msgstr "Your minimum rest is over."
+
 #: src/features/plan/parts.tsx
 msgid "Your number of training days does not allow it."
 msgstr "Your number of training days does not allow it."
@@ -3580,6 +3895,11 @@ msgstr "Your recent training shows signs you could use a lighter week, so we sug
 msgid "your recent volume"
 msgstr "your recent volume"
 
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.guardrail.slowReps"
+msgstr "Your reps took about {repSeconds} seconds each. Reps slower than {limit} seconds build no more muscle; lowering under control for 2–4 seconds is enough."
+
 #. placeholder {0}: formatMinutes(budget)
 #: src/features/plan/PlanPreviewView.tsx
 msgid "Your session budget: {0}"
@@ -3597,6 +3917,10 @@ msgstr "Your session time doesn't fit every muscle's full weekly target, so {low
 #: src/features/plan/parts.tsx
 msgid "Your session time is tight"
 msgstr "Your session time is tight"
+
+#: src/hooks/use-timers.ts
+msgid "Your set timer has ended."
+msgstr "Your set timer has ended."
 
 #: src/features/why/WhySheet.tsx
 msgid "Your setting"

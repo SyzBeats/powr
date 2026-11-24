@@ -38,6 +38,9 @@
       "path": "tools/tokens-check"
     },
     {
+      "path": "tools/capability-matrix"
+    },
+    {
       "path": "./tsconfig.root.json"
     }
   ]

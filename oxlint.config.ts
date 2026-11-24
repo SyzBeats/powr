@@ -83,6 +83,17 @@ const LAZY_PLANNING: ImportPattern = {
 };
 
 /**
+ * The workout session use cases (M3a) are a lazy chunk too: the session reducer, the engine and
+ * the rules resolver stay off the startup path (§8.19). The session screens' loader (M3b) carries
+ * the one disable comment; type imports are allowed.
+ */
+const LAZY_SESSION: ImportPattern = {
+  regex: '^@powr/application/session$',
+  allowTypeImports: true,
+  message: "The session use cases are lazy-loaded: use import('@powr/application/session').",
+};
+
+/**
  * The built-in content data is a lazy chunk too (TD-17): the single loader in src/app/boot.tsx
  * carries the disable comment. The content schemas (Zod) are build-time only.
  */
@@ -266,6 +277,7 @@ const config: OxlintConfig = {
           APP_ZOD,
           LAZY_BACKUP,
           LAZY_PLANNING,
+          LAZY_SESSION,
           LAZY_CONTENT,
           CONTENT_SCHEMA,
           RULES_SUBPATHS,
@@ -347,6 +359,7 @@ const config: OxlintConfig = {
           APP_ZOD,
           LAZY_BACKUP,
           LAZY_PLANNING,
+          LAZY_SESSION,
           LAZY_CONTENT,
           CONTENT_SCHEMA,
           RULES_SUBPATHS,
@@ -365,6 +378,7 @@ const config: OxlintConfig = {
           },
           LAZY_BACKUP,
           LAZY_PLANNING,
+          LAZY_SESSION,
           LAZY_CONTENT,
           CONTENT_SCHEMA,
           RULES_SUBPATHS,
@@ -383,6 +397,7 @@ const config: OxlintConfig = {
           APP_ZOD,
           LAZY_BACKUP,
           LAZY_PLANNING,
+          LAZY_SESSION,
           LAZY_CONTENT,
           CONTENT_SCHEMA,
           RULES_SUBPATHS,
@@ -401,6 +416,7 @@ const config: OxlintConfig = {
           APP_ZOD,
           LAZY_BACKUP,
           LAZY_PLANNING,
+          LAZY_SESSION,
           LAZY_CONTENT,
           CONTENT_SCHEMA,
           RULES_SUBPATHS,

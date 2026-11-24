@@ -11,6 +11,10 @@ msgstr ""
 msgid " or "
 msgstr ""
 
+#: src/features/settings/AlertsSection.tsx
+msgid "\"Resting until\" notification"
+msgstr ""
+
 #. placeholder {0}: day.slots.length
 #: src/features/plan/parts.tsx
 msgid "{0, plural, one {# exercise} other {# exercises}}"
@@ -97,6 +101,11 @@ msgstr ""
 
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
+msgid "why.readiness.adjust"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
 msgid "why.plan.time.trimmed.simple"
 msgstr ""
 
@@ -164,6 +173,10 @@ msgstr ""
 msgid "why.plan.duration.simple"
 msgstr ""
 
+#: src/hooks/use-timers.ts
+msgid "{duration} left"
+msgstr ""
+
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.e1rm.session"
@@ -205,6 +218,11 @@ msgstr ""
 
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
+msgid "why.readiness.assessment"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
 msgid "why.volume.sessionCap.exceeded"
 msgstr ""
 
@@ -230,6 +248,11 @@ msgstr ""
 
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
+msgid "why.session.fixed"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
 msgid "why.progression.rpe.load"
 msgstr ""
 
@@ -246,6 +269,11 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.plan.slot.kept.simple"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.session.lastTime"
 msgstr ""
 
 #. js-lingui-explicit-id
@@ -351,6 +379,21 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.progression.percent.load"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.pr.load"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.pr.rep"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.pr.volume"
 msgstr ""
 
 #. js-lingui-explicit-id
@@ -536,6 +579,11 @@ msgstr ""
 
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
+msgid "why.session.calibration"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
 msgid "why.warmup.compound"
 msgstr ""
 
@@ -683,6 +731,10 @@ msgstr ""
 msgid "1–2 weeks ago"
 msgstr ""
 
+#: src/hooks/use-timers.ts
+msgid "10 seconds left"
+msgstr ""
+
 #: src/features/plan/format.ts
 msgid "10–20 sets"
 msgstr ""
@@ -697,6 +749,10 @@ msgstr ""
 
 #: src/features/plan/format.ts
 msgid "21–30 sets"
+msgstr ""
+
+#: src/features/settings/AlertsSection.tsx
+msgid "3-2-1 countdown beeps"
 msgstr ""
 
 #: src/features/plan/format.ts
@@ -843,6 +899,14 @@ msgstr ""
 msgid "After a break, the first weeks start a little lighter."
 msgstr ""
 
+#: src/features/settings/AlertsSection.tsx
+msgid "Alerts"
+msgstr ""
+
+#: src/features/settings/AlertsSection.tsx
+msgid "Alerts while screen is locked:"
+msgstr ""
+
 #: src/features/plan/PlanEditorScreen.tsx
 msgid "All checks pass."
 msgstr ""
@@ -854,6 +918,14 @@ msgstr ""
 
 #: src/features/plan/format.ts
 msgid "Allow {minutes} per session"
+msgstr ""
+
+#: src/features/settings/AlertsSection.tsx
+msgid "Allow notifications"
+msgstr ""
+
+#: src/features/settings/AlertsSection.tsx
+msgid "Allow notifications so POWR can tell you when a rest ends while the screen is locked or you are in another app."
 msgstr ""
 
 #: src/features/plan/format.ts
@@ -1244,6 +1316,13 @@ msgstr ""
 msgid "Details"
 msgstr ""
 
+#. placeholder {0}: status.tested.onTime
+#. placeholder {1}: status.tested.runs
+#. placeholder {2}: status.tested.device
+#: src/features/settings/AlertsSection.tsx
+msgid "Device test: {0} of {1} alerts on time ({2})."
+msgstr ""
+
 #: src/features/plan/PlanEditorScreen.tsx
 msgid "Discard"
 msgstr ""
@@ -1335,6 +1414,10 @@ msgstr ""
 msgid "effort-based loading (RPE)"
 msgstr ""
 
+#: src/hooks/use-timers.ts
+msgid "Ends at {endsAt}"
+msgstr ""
+
 #: src/features/onboarding/OnboardingFlow.tsx
 msgid "Enter a four-digit year, e.g. 1990, or leave it empty."
 msgstr ""
@@ -1363,6 +1446,11 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.e1rm.set"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.pr.e1rm"
 msgstr ""
 
 #. placeholder {0}: formatMass(displayMass({ value: estimate.value.e1rmKg, unit: 'kg' }, unit), unit)
@@ -1513,6 +1601,11 @@ msgstr ""
 msgid "Going on holiday or feeling ill? Pause the plan so nothing counts as missed."
 msgstr ""
 
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.guardrail.failure"
+msgstr ""
+
 #: src/features/plan/PlanPreviewView.tsx
 msgid "Hard sets per week; a set for a helping muscle counts half. Most people grow well with 10 to 20."
 msgstr ""
@@ -1636,6 +1729,18 @@ msgstr ""
 msgid "Illness"
 msgstr ""
 
+#: src/features/settings/AlertsSection.tsx
+msgid "In device tests with this browser, no alert arrived with the screen locked. Keep the screen on during workouts."
+msgstr ""
+
+#: src/features/settings/AlertsSection.tsx
+msgid "In device tests with this browser, rest alerts arrived on time with the screen locked."
+msgstr ""
+
+#: src/features/settings/AlertsSection.tsx
+msgid "In device tests with this browser, some alerts came late or not at all with the screen locked. Keep the screen on during workouts for reliable alerts."
+msgstr ""
+
 #: src/features/legal/LegalScreens.tsx
 msgid "In short"
 msgstr ""
@@ -1678,6 +1783,35 @@ msgstr ""
 
 #: src/features/equipment/SubstitutionReview.tsx
 msgid "Keep it for now"
+msgstr ""
+
+#. placeholder {0}: status.reason
+#: src/features/settings/AlertsSection.tsx
+msgid "Keep screen on: Not available right now ({0})."
+msgstr ""
+
+#: src/features/settings/AlertsSection.tsx
+msgid "Keep screen on: Not available right now. The browser refused, for example because battery saver is on."
+msgstr ""
+
+#: src/features/settings/AlertsSection.tsx
+msgid "Keep screen on: Not supported on this browser."
+msgstr ""
+
+#: src/features/settings/AlertsSection.tsx
+msgid "Keep screen on: Off."
+msgstr ""
+
+#: src/features/settings/AlertsSection.tsx
+msgid "Keep screen on: On now."
+msgstr ""
+
+#: src/features/settings/AlertsSection.tsx
+msgid "Keep screen on: Used during workouts."
+msgstr ""
+
+#: src/features/settings/AlertsSection.tsx
+msgid "Keep the screen on during workouts"
 msgstr ""
 
 #: src/features/equipment/EquipmentEditor.tsx
@@ -1786,6 +1920,14 @@ msgstr ""
 msgid "Like this phone ({localeDay})"
 msgstr ""
 
+#: src/features/settings/AlertsSection.tsx
+msgid "Limited"
+msgstr ""
+
+#: src/features/settings/AlertsSection.tsx
+msgid "Limited (best effort)"
+msgstr ""
+
 #: src/features/why/WhySheet.tsx
 msgid "Limited research"
 msgstr ""
@@ -1891,6 +2033,10 @@ msgstr ""
 msgid "Microplates"
 msgstr ""
 
+#: src/hooks/use-timers.ts
+msgid "Minimum rest reached"
+msgstr ""
+
 #: src/features/equipment/EquipmentEditor.tsx
 msgid "Models differ: check the weight on your bar."
 msgstr ""
@@ -1992,6 +2138,14 @@ msgstr ""
 msgid "Next block"
 msgstr ""
 
+#: src/hooks/use-timers.ts
+msgid "Next exercise"
+msgstr ""
+
+#: src/hooks/use-timers.ts
+msgid "Next exercise in {duration}"
+msgstr ""
+
 #: src/features/home/HomeScreen.tsx
 msgid "Next planned session"
 msgstr ""
@@ -2057,6 +2211,14 @@ msgstr ""
 msgid "why.e1rm.set.unknownEffort"
 msgstr ""
 
+#: src/features/settings/AlertsSection.tsx
+msgid "No sound."
+msgstr ""
+
+#: src/features/settings/AlertsSection.tsx
+msgid "No vibration."
+msgstr ""
+
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.warmup.none.simple"
@@ -2109,6 +2271,14 @@ msgstr ""
 msgid "Not saved. Check the values and try again."
 msgstr ""
 
+#: src/features/settings/AlertsSection.tsx
+msgid "Not supported"
+msgstr ""
+
+#: src/features/settings/AlertsSection.tsx
+msgid "Not supported on this device."
+msgstr ""
+
 #: src/features/onboarding/BaselinesStep.tsx
 msgid "Not sure"
 msgstr ""
@@ -2125,8 +2295,28 @@ msgstr ""
 msgid "Nothing planned in the next three weeks."
 msgstr ""
 
+#: src/features/settings/AlertsSection.tsx
+msgid "Notifications are blocked for POWR, so nothing can alert you while the screen is locked. You can allow them in the browser's site settings."
+msgstr ""
+
 #: src/features/legal/LegalScreens.tsx
 msgid "Notifications are only used for rest-timer alerts, and only after you allow them. POWR asks for nothing else without a reason you can see."
+msgstr ""
+
+#: src/features/settings/AlertsSection.tsx
+msgid "Notifications: Allowed"
+msgstr ""
+
+#: src/features/settings/AlertsSection.tsx
+msgid "Notifications: Blocked"
+msgstr ""
+
+#: src/features/settings/AlertsSection.tsx
+msgid "Notifications: Not allowed yet"
+msgstr ""
+
+#: src/features/settings/AlertsSection.tsx
+msgid "Notifications: Not supported on this browser"
 msgstr ""
 
 #: src/features/labels.ts
@@ -2325,6 +2515,10 @@ msgstr ""
 msgid "POWR suggests; you confirm. You are responsible for the decisions you make with its suggestions."
 msgstr ""
 
+#: src/features/settings/AlertsSection.tsx
+msgid "POWR uses notifications only for rest timers: one when a rest ends while you are away from the app, and an optional silent one with the end time. Nothing is sent over the internet."
+msgstr ""
+
 #: src/features/onboarding/steps.tsx
 msgid "Prefer not to say"
 msgstr ""
@@ -2408,6 +2602,10 @@ msgstr ""
 msgid "Ready for offline use"
 msgstr ""
 
+#: src/hooks/use-timers.ts
+msgid "Ready when you are"
+msgstr ""
+
 #: src/features/labels.ts
 msgid "rear-delt fly"
 msgstr ""
@@ -2422,6 +2620,10 @@ msgstr ""
 
 #: src/features/plan/PlanPreviewView.tsx
 msgid "Recommended: {defaultWeeks} weeks. Pick from {min} to {max}."
+msgstr ""
+
+#: src/features/settings/AlertsSection.tsx
+msgid "Recommended: alerts are most reliable while POWR is on screen. Keeping the screen on uses more battery."
 msgstr ""
 
 #: src/app/StartupError.tsx
@@ -2495,6 +2697,27 @@ msgstr ""
 
 #: src/features/plan/PlanScreen.tsx
 msgid "Rest day"
+msgstr ""
+
+#: src/features/settings/AlertsSection.tsx
+#: src/hooks/use-timers.ts
+msgid "Rest over"
+msgstr ""
+
+#: src/hooks/use-timers.ts
+msgid "Rest over, {ago} ago"
+msgstr ""
+
+#: src/hooks/use-timers.ts
+msgid "Rest started, {duration}"
+msgstr ""
+
+#: src/hooks/use-timers.ts
+msgid "Rest started, minimum {duration}"
+msgstr ""
+
+#: src/hooks/use-timers.ts
+msgid "Resting"
 msgstr ""
 
 #: src/features/data/DataScreen.tsx
@@ -2577,6 +2800,10 @@ msgstr ""
 #. placeholder {3}: set.rir !== null ? ` @ RIR ${set.rir}` : ''
 #: src/features/why/WhySheet.tsx
 msgid "Set {0}: {1} × {2}{3}"
+msgstr ""
+
+#: src/hooks/use-timers.ts
+msgid "Set timer started, {duration}"
 msgstr ""
 
 #: src/features/home/HomeScreen.tsx
@@ -2679,6 +2906,14 @@ msgstr ""
 msgid "Something went wrong"
 msgstr ""
 
+#: src/features/settings/AlertsSection.tsx
+msgid "Sound"
+msgstr ""
+
+#: src/features/settings/AlertsSection.tsx
+msgid "Sound played."
+msgstr ""
+
 #. placeholder {0}: param.sources.map(sourceName).join('; ')
 #: src/features/why/WhySheet.tsx
 msgid "Sources: {0}"
@@ -2764,6 +2999,10 @@ msgstr ""
 msgid "Strong research"
 msgstr ""
 
+#: src/features/settings/AlertsSection.tsx
+msgid "Supported"
+msgstr ""
+
 #: src/features/plan/PlanEditorScreen.tsx
 msgid "Swap {name}"
 msgstr ""
@@ -2782,6 +3021,14 @@ msgstr ""
 
 #: src/features/plan/parts.tsx
 msgid "Target met"
+msgstr ""
+
+#: src/features/settings/AlertsSection.tsx
+msgid "Test alert"
+msgstr ""
+
+#: src/hooks/use-alert-settings.ts
+msgid "Test alert: rest over"
 msgstr ""
 
 #. js-lingui-explicit-id
@@ -2874,12 +3121,22 @@ msgstr ""
 
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
+msgid "why.pr.firstTime"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
 msgid "why.validate.volume.targetOutsideBand.simple"
 msgstr ""
 
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.deload.skipped"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.progression.linear.weekHold"
 msgstr ""
 
 #: src/features/plan/NextMesocycleScreen.tsx
@@ -2961,6 +3218,14 @@ msgstr ""
 msgid "This backup was made by a newer version of POWR. Update the app first."
 msgstr ""
 
+#: src/features/settings/AlertsSection.tsx
+msgid "This browser cannot show notifications from POWR, so alerts only work while POWR is on screen. Keep the screen on during workouts."
+msgstr ""
+
+#: src/features/settings/AlertsSection.tsx
+msgid "This browser has not been tested yet. POWR tries every way it has, but an alert may come late or not at all while the screen is locked or you are in another app."
+msgstr ""
+
 #: src/features/plan/PlanScreen.tsx
 msgid "this change"
 msgstr ""
@@ -3031,6 +3296,11 @@ msgstr ""
 msgid "why.schedule.moved"
 msgstr ""
 
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.session.adjustment.load"
+msgstr ""
+
 #: src/features/plan/parts.tsx
 msgid "this warning"
 msgstr ""
@@ -3058,6 +3328,22 @@ msgstr ""
 
 #: src/features/labels.ts
 msgid "time budget"
+msgstr ""
+
+#: src/hooks/use-timers.ts
+msgid "Time for your next set."
+msgstr ""
+
+#: src/hooks/use-timers.ts
+msgid "Time is up"
+msgstr ""
+
+#: src/hooks/use-timers.ts
+msgid "Time is up, {ago} ago"
+msgstr ""
+
+#: src/hooks/use-timers.ts
+msgid "Time to switch to the next exercise."
 msgstr ""
 
 #: src/features/home/HomeScreen.tsx
@@ -3200,6 +3486,22 @@ msgstr ""
 msgid "Version {version}. Draft, pending legal review."
 msgstr ""
 
+#: src/features/settings/AlertsSection.tsx
+msgid "Vibrated."
+msgstr ""
+
+#: src/features/settings/AlertsSection.tsx
+msgid "Vibration"
+msgstr ""
+
+#: src/features/settings/AlertsSection.tsx
+msgid "Volume"
+msgstr ""
+
+#: src/features/settings/AlertsSection.tsx
+msgid "Warning 10 seconds before the end of a rest"
+msgstr ""
+
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.plan.schedule.weekdays.simple"
@@ -3310,6 +3612,10 @@ msgstr ""
 
 #: src/features/plan/PlanEditorScreen.tsx
 msgid "When should the changes start?"
+msgstr ""
+
+#: src/features/settings/AlertsSection.tsx
+msgid "When you leave POWR during a rest, a silent notification shows when the rest ends."
 msgstr ""
 
 #: src/features/equipment/EquipmentScreens.tsx
@@ -3439,6 +3745,11 @@ msgstr ""
 msgid "why.plan.template.chosen.simple"
 msgstr ""
 
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.guardrail.shortRest"
+msgstr ""
+
 #: src/features/plan/PlanPreviewView.tsx
 msgid "You saved your equipment list empty, so this plan uses bodyweight exercises only. Add equipment any time in Settings and POWR offers to swap exercises in."
 msgstr ""
@@ -3531,6 +3842,10 @@ msgstr ""
 msgid "your logged volume"
 msgstr ""
 
+#: src/hooks/use-timers.ts
+msgid "Your minimum rest is over."
+msgstr ""
+
 #: src/features/plan/parts.tsx
 msgid "Your number of training days does not allow it."
 msgstr ""
@@ -3580,6 +3895,11 @@ msgstr ""
 msgid "your recent volume"
 msgstr ""
 
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.guardrail.slowReps"
+msgstr ""
+
 #. placeholder {0}: formatMinutes(budget)
 #: src/features/plan/PlanPreviewView.tsx
 msgid "Your session budget: {0}"
@@ -3596,6 +3916,10 @@ msgstr ""
 
 #: src/features/plan/parts.tsx
 msgid "Your session time is tight"
+msgstr ""
+
+#: src/hooks/use-timers.ts
+msgid "Your set timer has ended."
 msgstr ""
 
 #: src/features/why/WhySheet.tsx

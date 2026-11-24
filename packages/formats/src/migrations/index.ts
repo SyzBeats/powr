@@ -1,3 +1,5 @@
+import { SESSION_DEFAULTS } from '@powr/domain';
+
 import { DATA_VERSION } from '../version';
 
 /** Migrates one record of `table` by one version. Returning null drops the record. */
@@ -11,12 +13,28 @@ export type RecordMigration = (table: string, record: unknown) => unknown;
 export type MigrationChain = Readonly<Record<number, RecordMigration>>;
 
 /**
- * 1 → 2 (M2, TD-19): seven new tables (profile, equipment profiles, plans, planned sessions,
- * breaks, meets, bodyweights) and two optional settings fields (`weekStart`, `overrides`). Every
- * v1 record is already valid at v2, so the step passes records through unchanged; it exists so
- * that the Dexie upgrade and backup import walk the chain like for any later version.
+ * The M3a session-core fields with their empty values, for a session record that has none (a v1
+ * record, or a version-2 record written by an M2 build before M3a amended version 2). Idempotent:
+ * fields that exist are kept.
  */
-const v1ToV2: RecordMigration = (_table, record) => record;
+export function withSessionDefaults<T extends object>(record: T): T {
+  const missing = Object.fromEntries(
+    Object.entries(SESSION_DEFAULTS).filter(([key]) => !(key in record)),
+  );
+  return Object.keys(missing).length === 0 ? record : { ...missing, ...record };
+}
+
+/**
+ * 1 → 2 (M2, TD-19; amended in M3a while version 2 was unreleased): eight new tables (profile,
+ * equipment profiles, plans, planned sessions, breaks, meets, bodyweights, readiness), optional
+ * settings fields (`weekStart`, `overrides`, `session`) and optional set fields; sessions gain the
+ * session core (slots, cursor, timer, readiness, undo), empty for a v1 session. Every other v1
+ * record passes through unchanged.
+ */
+const v1ToV2: RecordMigration = (table, record) =>
+  table === 'sessions' && record !== null && typeof record === 'object'
+    ? withSessionDefaults(record)
+    : record;
 
 export const MIGRATIONS: MigrationChain = { 1: v1ToV2 };
 

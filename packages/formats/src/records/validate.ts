@@ -9,6 +9,7 @@ import {
   plannedSessionRecordSchema,
   planRecordSchema,
   profileRecordSchema,
+  readinessRecordSchema,
   sessionRecordSchema,
   setRecordSchema,
   settingsRecordSchema,
@@ -27,6 +28,7 @@ const RAW_TABLE_SCHEMAS = {
   breaks: breakRecordSchema,
   meets: meetRecordSchema,
   bodyweights: bodyweightRecordSchema,
+  readiness: readinessRecordSchema,
 } as const satisfies Record<RawTableName, z.ZodType>;
 
 export type RecordIssue = { table: RawTableName; index: number; message: string };

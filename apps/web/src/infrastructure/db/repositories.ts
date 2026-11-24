@@ -1,7 +1,19 @@
-import type { Repositories } from '@powr/application';
-import { RAW_TABLE_NAMES, type RawTables } from '@powr/formats';
+import { Dexie } from 'dexie';
+
+import { DERIVED_TABLE_NAMES, type Repositories } from '@powr/application';
+import type { Session } from '@powr/domain';
+import { RAW_TABLE_NAMES, withSessionDefaults, type RawTables } from '@powr/formats';
 
 import type { PowrDb } from './schema';
+
+/**
+ * Session records written by an M2 build before M3a amended version 2 lack the session core;
+ * reading through the same default-filler as the 1 → 2 migration keeps them usable.
+ */
+const oneSession = (record: Session | undefined): Session | undefined =>
+  record && withSessionDefaults(record);
+const allSessions = (records: Session[]): Session[] =>
+  records.map((record) => withSessionDefaults(record));
 
 /** Repositories over Dexie tables. Inside `db.transaction` they join the transaction automatically. */
 export function createRepositories(db: PowrDb): Repositories {
@@ -20,19 +32,33 @@ export function createRepositories(db: PowrDb): Repositories {
       },
     },
     sessions: {
-      get: (id) => db.sessions.get(id),
-      getActive: () => db.sessions.where('status').equals('active').first(),
-      put: async (session) => {
-        await db.sessions.put(session);
+      get: async (id) => oneSession(await db.sessions.get(id)),
+      getActive: async () => oneSession(await db.sessions.where('status').equals('active').first()),
+      put: async (record) => {
+        await db.sessions.put(record);
       },
-      latestBefore: (date) => db.sessions.where('localDate').below(date).last(),
-      inRange: (from, to) => db.sessions.where('localDate').between(from, to, true, true).toArray(),
+      delete: (id) => db.sessions.delete(id),
+      byIds: async (ids) =>
+        allSessions((await db.sessions.bulkGet([...ids])).filter((record) => record !== undefined)),
+      latestBefore: async (date) =>
+        oneSession(await db.sessions.where('localDate').below(date).last()),
+      inRange: async (from, to) =>
+        allSessions(await db.sessions.where('localDate').between(from, to, true, true).toArray()),
     },
     sets: {
       add: async (set) => {
         await db.sets.add(set);
       },
+      put: async (set) => {
+        await db.sets.put(set);
+      },
+      delete: (id) => db.sets.delete(id),
       bySession: (id) => db.sets.where('sessionId').equals(id).toArray(),
+      byExercise: (id) =>
+        db.sets
+          .where('[exerciseId+performedAt.epochMs]')
+          .between([id, Dexie.minKey], [id, Dexie.maxKey])
+          .toArray(),
       inRange: (from, to) => db.sets.where('localDate').between(from, to, true, true).toArray(),
     },
     profile: {
@@ -87,6 +113,40 @@ export function createRepositories(db: PowrDb): Repositories {
       put: async (entry) => {
         await db.bodyweights.put(entry);
       },
+      list: () => db.bodyweights.orderBy('measuredAt.epochMs').toArray(),
+    },
+    readiness: {
+      put: async (entry) => {
+        await db.readiness.put(entry);
+      },
+      inRange: (from, to) =>
+        db.readiness.where('localDate').between(from, to, true, true).toArray(),
+      bySession: (id) => db.readiness.where('sessionId').equals(id).toArray(),
+    },
+    derived: {
+      exerciseStates: async (ids) =>
+        (await db.dExerciseState.bulkGet([...ids])).filter((state) => state !== undefined),
+      replaceExercise: async (exerciseId, derived) => {
+        await db.dExerciseState.put(derived.state);
+        await db.dSessionE1rm
+          .where('[exerciseId+localDate]')
+          .between([exerciseId, Dexie.minKey], [exerciseId, Dexie.maxKey])
+          .delete();
+        await db.dSessionE1rm.bulkPut([...derived.points]);
+        await db.dPrs.where('exerciseId').equals(exerciseId).delete();
+        await db.dPrs.bulkPut([...derived.prs]);
+      },
+      prsBySession: (id) => db.dPrs.where('sessionId').equals(id).toArray(),
+      prsByExercise: (id) => db.dPrs.where('exerciseId').equals(id).toArray(),
+      pointsByExercise: (id) =>
+        db.dSessionE1rm
+          .where('[exerciseId+localDate]')
+          .between([id, Dexie.minKey], [id, Dexie.maxKey])
+          .toArray(),
+      invalidate: (ids) => db.dExerciseState.bulkDelete([...ids]),
+      clear: async () => {
+        for (const table of DERIVED_TABLE_NAMES) await db.table(table).clear();
+      },
     },
     raw: {
       readAll: async (): Promise<RawTables> => {
@@ -96,6 +156,11 @@ export function createRepositories(db: PowrDb): Repositories {
       },
       replaceAll: async (tables) => {
         for (const table of RAW_TABLE_NAMES) await db.table(table).clear();
+        // Derived data is rebuilt from the new raw data on use (§8.2.8 "Import").
+        const scope = Dexie.currentTransaction?.storeNames ?? [];
+        for (const table of DERIVED_TABLE_NAMES) {
+          if (scope.includes(table)) await db.table(table).clear();
+        }
         for (const table of RAW_TABLE_NAMES) await db.table(table).bulkAdd(tables[table]);
       },
     },

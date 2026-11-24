@@ -1,8 +1,22 @@
 import { describe, expect, it } from 'vitest';
 
-import { MIGRATIONS, migrateRecord, migrateTables, type MigrationChain } from '../src';
-import { settingsRecordSchema as v1Settings } from '../src/records/v1';
-import { settingsRecordSchema as v2Settings } from '../src/records/v2';
+import { SESSION_DEFAULTS } from '@powr/domain';
+
+import {
+  MIGRATIONS,
+  migrateRecord,
+  migrateTables,
+  withSessionDefaults,
+  type MigrationChain,
+} from '../src';
+import {
+  sessionRecordSchema as v1SessionSchema,
+  settingsRecordSchema as v1Settings,
+} from '../src/records/v1';
+import {
+  sessionRecordSchema as v2SessionSchema,
+  settingsRecordSchema as v2Settings,
+} from '../src/records/v2';
 
 // A hypothetical chain v1 -> v2 -> v3, to exercise the mechanism before the first real migration.
 const chain: MigrationChain = {
@@ -27,12 +41,54 @@ describe('record migration chain', () => {
     }
   });
 
-  it('takes v1 records to v2 unchanged: v2 only adds tables and optional settings fields (TD-19)', () => {
+  it('accepts the optional alert settings at v2 and rejects incomplete or out-of-range ones (M3t)', () => {
+    const alerts = {
+      sound: true,
+      volume: 0.8,
+      vibration: true,
+      preAlert: true,
+      countdown: false,
+      restingNotice: true,
+      keepScreenOn: true,
+    };
+    expect(v2Settings.safeParse({ id: 'me', theme: 'dark', alerts }).success).toBe(true);
+    expect(
+      v2Settings.safeParse({ id: 'me', theme: 'dark', alerts: { ...alerts, volume: 1.5 } }).success,
+    ).toBe(false);
+    const { keepScreenOn: _, ...incomplete } = alerts;
+    expect(v2Settings.safeParse({ id: 'me', theme: 'dark', alerts: incomplete }).success).toBe(
+      false,
+    );
+    expect(
+      v2Settings.safeParse({ id: 'me', theme: 'dark', alerts: { ...alerts, voice: true } }).success,
+    ).toBe(false);
+    // v1 has no alerts: the field is v2-only (an unreleased version, amended in place).
+    expect(v1Settings.safeParse({ id: 'me', theme: 'dark', alerts }).success).toBe(false);
+  });
+
+  it('takes v1 records to v2 unchanged, except sessions, which gain an empty session core (TD-19, M3a)', () => {
     expect(Object.keys(MIGRATIONS)).toEqual(['1']);
     const settings = { id: 'me', theme: 'dark' };
     expect(migrateRecord('settings', settings, 1)).toBe(settings);
     expect(migrateRecord('sets', { id: 'a' }, 1)).toEqual({ id: 'a' });
     expect(migrateRecord('sets', { id: 'a' }, 2)).toEqual({ id: 'a' });
+    const v1Session = {
+      id: 's1',
+      localDate: '2026-11-23',
+      startedAt: { epochMs: 1_795_456_000_000, offsetMin: 60, zone: 'Europe/Zurich' },
+      status: 'active',
+      versions: { engine: '0.0.0', rules: '1.0.0', content: '0.1.0' },
+    };
+    expect(v1SessionSchema.safeParse(v1Session).success).toBe(true);
+    const migrated = migrateRecord('sessions', v1Session, 1);
+    expect(migrated).toEqual({ ...SESSION_DEFAULTS, ...v1Session });
+    expect(v2SessionSchema.safeParse(migrated).success).toBe(true);
+    // Idempotent, so the Dexie reader can apply it to M2-era version-2 records too.
+    expect(withSessionDefaults(migrated as object)).toBe(migrated);
+    expect(withSessionDefaults({ ...v1Session, revision: 4 })).toMatchObject({
+      revision: 4,
+      undo: null,
+    });
   });
 
   it('applies every step in order and drops records that a step removes', () => {

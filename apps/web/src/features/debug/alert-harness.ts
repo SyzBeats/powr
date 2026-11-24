@@ -1,20 +1,23 @@
-import type {
-  AlertScheduler,
-  AudioPort,
-  HapticsPort,
-  NotificationPort,
-  WakeLockPort,
-} from '@powr/application';
+import type { AlertEvent, AlertOptions, AlertPath, TimerState } from '../../hooks/use-timers';
 
 /**
- * Scripted rest timers for spike S-1 (§8.8.5): which hidden-state alert paths fire on a real
- * device, and how late. Variant C is the production design; E is the audio keep-alive experiment.
+ * Spike S-1 (technical concept §8.8.5, V-01): scripted rests on the **production** alert
+ * scheduler, so a device run measures the real code paths (page timeout, service-worker timer,
+ * notifications, the Labs audio keep-alive). A variant only chooses which hidden-state paths the
+ * scheduler arms: C is the production design, D adds the "resting until" notification (the
+ * production default when notifications are allowed), E adds the audio keep-alive (OQ-T3 = B).
  */
 export type Variant = 'A' | 'B' | 'C' | 'D' | 'E';
 
 export const VARIANTS: Record<
   Variant,
-  { label: string; page: boolean; sw: boolean; restingNotice: boolean; keepAlive: boolean }
+  {
+    readonly label: string;
+    readonly page: boolean;
+    readonly sw: boolean;
+    readonly restingNotice: boolean;
+    readonly keepAlive: boolean;
+  }
 > = {
   A: {
     label: 'A: page timeout only',
@@ -45,7 +48,7 @@ export const VARIANTS: Record<
     keepAlive: false,
   },
   E: {
-    label: 'E: C + audio keep-alive (experiment)',
+    label: 'E: C + audio keep-alive (Labs experiment)',
     page: true,
     sw: true,
     restingNotice: false,
@@ -53,11 +56,26 @@ export const VARIANTS: Record<
   },
 };
 
-type AlertPath = 'visible' | 'page-timeout' | 'sw-timer';
+/** What the tester does after starting a run (S-1 conditions). */
+export type Condition = 'locked' | 'switched' | 'visible';
+
+export const CONDITIONS: Record<Condition, string> = {
+  locked: 'Screen locked (power button)',
+  switched: 'App switched (home button)',
+  visible: 'Stayed on screen',
+};
 
 interface HarnessEvent {
   readonly at: number;
-  readonly event: 'start' | 'hidden' | 'visible' | 'fired' | 'end' | 'stopped';
+  readonly event:
+    | 'start'
+    | 'hidden'
+    | 'visible'
+    | 'fired'
+    | 'wake-lock'
+    | 'end'
+    | 'stopped'
+    | 'keep-alive';
   readonly visibility: DocumentVisibilityState;
   readonly path?: AlertPath;
   readonly delayMs?: number;
@@ -66,8 +84,12 @@ interface HarnessEvent {
 
 export interface HarnessRun {
   readonly runId: string;
+  /** The scheduler's alert key (`fired:<key>` in powr-runtime). */
+  readonly key: string;
   readonly variant: Variant;
   readonly device: string;
+  readonly condition: Condition;
+  readonly batterySaver: boolean;
   readonly restMs: number;
   readonly startedAt: number;
   readonly endsAt: number;
@@ -78,54 +100,59 @@ export interface HarnessRun {
   hiddenAtEnd: boolean | null;
   /** `interrupted`: the page was reloaded or killed during the run, itself an S-1 observation. */
   status: 'running' | 'done' | 'stopped' | 'interrupted';
-  /** on-time: alerted within 2 s while hidden; late; missed: only noticed on return; visible: page was visible. */
+  /**
+   * on-time: alerted within 2 s while hidden; late; missed: nothing alerted, noticed on return;
+   * visible: the page was on screen at the end (no hidden-state measurement).
+   */
   outcome: 'on-time' | 'late' | 'missed' | 'visible' | null;
 }
 
-interface BatteryReading {
-  level: number;
-  charging: boolean;
-}
-
-export interface HarnessPorts {
-  readonly audio: AudioPort;
-  readonly haptics: HapticsPort;
-  readonly notifications: NotificationPort;
-  readonly alerts: AlertScheduler;
-  readonly wakeLock: WakeLockPort;
-  readonly log: (data: Record<string, string | number | boolean | null>) => void;
+export interface BatteryReading {
+  readonly level: number;
+  readonly charging: boolean;
 }
 
 export interface RunConfig {
   readonly variant: Variant;
   readonly restMs: number;
   readonly device: string;
+  readonly condition: Condition;
+  readonly batterySaver: boolean;
   readonly holdWakeLock: boolean;
   readonly keepAliveGain: number;
 }
 
 const ON_TIME_MS = 2000;
-const TICK_MS = 250;
-const NOTIFICATION_URL = '/debug/alerts';
+const HARNESS_URL = '/debug/alerts';
 
-/** Starts one scripted rest. Must be called from a user gesture (audio unlock, vibration). */
-export async function startRun(
+export function newRun(
   config: RunConfig,
-  ports: HarnessPorts,
-  onChange: (run: HarnessRun) => void,
-): Promise<{ readonly stop: () => void }> {
-  const variant = VARIANTS[config.variant];
-  const startedAt = Date.now();
+  now: number,
+  notificationPermission: string,
+): { run: HarnessRun; timer: TimerState } {
+  const runId = `r${now.toString(36)}`;
+  const timer: TimerState = {
+    id: runId,
+    kind: 'rest',
+    mode: 'countdown',
+    startedAtEpochMs: now,
+    targetMs: config.restMs,
+    adjustMs: 0,
+    fired: {},
+  };
   const run: HarnessRun = {
-    runId: `r${startedAt.toString(36)}`,
+    runId,
+    key: `${runId}@${now + config.restMs}`,
     variant: config.variant,
     device: config.device,
+    condition: config.condition,
+    batterySaver: config.batterySaver,
     restMs: config.restMs,
-    startedAt,
-    endsAt: startedAt + config.restMs,
+    startedAt: now,
+    endsAt: now + config.restMs,
     settings: {
       wakeLock: config.holdWakeLock,
-      notificationPermission: ports.notifications.permission(),
+      notificationPermission,
       keepAliveGain: config.keepAliveGain,
     },
     battery: { start: null, end: null },
@@ -135,148 +162,88 @@ export async function startRun(
     status: 'running',
     outcome: null,
   };
+  return { run, timer };
+}
 
-  const publish = () => onChange(structuredClone(run));
-  const record = (event: HarnessEvent['event'], extra: Partial<HarnessEvent> = {}) => {
-    const entry: HarnessEvent = {
-      at: Date.now(),
-      event,
-      visibility: document.visibilityState,
-      ...extra,
-    };
-    run.events.push(entry);
-    ports.log({
-      runId: run.runId,
-      variant: run.variant,
-      event,
-      path: extra.path ?? null,
-      delayMs: extra.delayMs ?? null,
-      visibility: entry.visibility,
-      restMs: run.restMs,
-      result: run.outcome,
-    });
-    publish();
+/** The scheduler options of a variant: only the alert itself, no pre-alert or 3-2-1. */
+export function optionsFor(config: RunConfig): AlertOptions {
+  const variant = VARIANTS[config.variant];
+  return {
+    sound: true,
+    volume: 1,
+    vibration: true,
+    preAlert: false,
+    countdown: false,
+    restingNotice: variant.restingNotice,
+    keepAlive: variant.keepAlive ? { gain: config.keepAliveGain } : false,
+    paths: { page: variant.page, serviceWorker: variant.sw },
+    url: HARNESS_URL,
   };
+}
 
-  let pageTimeout: ReturnType<typeof setTimeout> | null = null;
-  let finished = false;
-
-  const fire = async (path: AlertPath) => {
-    if (run.firstAlert) return;
-    if (!(await ports.alerts.claimFired(run.runId, 'page'))) return;
-    const delayMs = Date.now() - run.endsAt;
-    run.firstAlert = { path, delayMs };
-    run.hiddenAtEnd ??= document.visibilityState === 'hidden';
-    ports.audio.play('restEnd', 1);
-    const vibrated = ports.haptics.vibrate([200, 100, 200]);
-    let shown = false;
-    if (path === 'page-timeout') {
-      shown = await ports.notifications.show({
-        title: 'Rest over',
-        body: `Test rest (${run.variant}) finished`,
-        tag: 'rest',
-        url: NOTIFICATION_URL,
-        renotify: true,
+/** Records one scheduler event in the run; returns whether the run is complete. */
+export function applyEvent(
+  run: HarnessRun,
+  event: AlertEvent,
+  at: number,
+  visibility: DocumentVisibilityState,
+): boolean {
+  const push = (entry: Omit<HarnessEvent, 'at' | 'visibility'>) =>
+    run.events.push({ at, visibility, ...entry });
+  switch (event.type) {
+    case 'armed':
+      push({ event: 'start', detail: `remainingMs=${Math.round(event.remainingMs)}` });
+      return false;
+    case 'hidden':
+      push({ event: 'hidden', detail: `paths=${event.paths.join('+') || 'none'}` });
+      return false;
+    case 'end':
+      if (!run.firstAlert) {
+        run.firstAlert = { path: event.path, delayMs: Math.round(event.delayMs) };
+        run.hiddenAtEnd = event.hidden;
+        run.outcome = classify(run);
+      }
+      push({ event: 'fired', path: event.path, delayMs: Math.round(event.delayMs) });
+      return event.path === 'visible';
+    case 'visible':
+      push({
+        event: 'visible',
+        detail: `endedWhileHidden=${event.endedWhileHidden} overMs=${Math.round(event.overMs)}`,
       });
-    }
-    run.outcome = classify(run);
-    record('fired', { path, delayMs, detail: `vibrate=${vibrated} notification=${shown}` });
-    if (document.visibilityState === 'visible') await finish('end');
-  };
-
-  const onVisibilityChange = () => void handleVisibility();
-  const handleVisibility = async () => {
-    if (document.visibilityState === 'hidden') {
-      record('hidden');
-      const remaining = run.endsAt - Date.now();
-      if (variant.page)
-        pageTimeout = setTimeout(() => void fire('page-timeout'), Math.max(0, remaining));
-      if (variant.sw) {
-        await ports.alerts.armRestEnd({
-          timerId: run.runId,
-          endsAtEpochMs: run.endsAt,
-          title: 'Rest over',
-          body: `Test rest (${run.variant}) finished (service worker)`,
-          url: NOTIFICATION_URL,
-        });
-      }
-      if (variant.restingNotice) {
-        const until = new Date(run.endsAt).toLocaleTimeString([], {
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit',
-        });
-        await ports.notifications.show({
-          title: 'Resting',
-          body: `Ends at ${until}`,
-          tag: 'rest',
-          url: NOTIFICATION_URL,
-          silent: true,
-        });
-      }
-      return;
-    }
-    // Visible again: disarm, then find out whether the service worker fired while we were away.
-    if (pageTimeout) clearTimeout(pageTimeout);
-    await ports.alerts.disarm(run.runId);
-    const fired = await ports.alerts.firedBy(run.runId);
-    if (fired?.by === 'sw' && !run.firstAlert) {
-      run.firstAlert = { path: 'sw-timer', delayMs: fired.at - run.endsAt };
-      run.hiddenAtEnd = true;
-      run.outcome = classify(run);
-      record('fired', { path: 'sw-timer', delayMs: fired.at - run.endsAt });
-    }
-    record('visible');
-    await ports.notifications.closeByTag('rest');
-    if (config.holdWakeLock) await ports.wakeLock.acquire();
-    if (run.firstAlert) await finish('end');
-  };
-
-  const tick = setInterval(() => {
-    if (Date.now() < run.endsAt) return;
-    if (run.hiddenAtEnd === null) run.hiddenAtEnd = document.visibilityState === 'hidden';
-    if (document.visibilityState === 'visible') void fire('visible');
-  }, TICK_MS);
-
-  const finish = async (event: 'end' | 'stopped') => {
-    if (finished) return;
-    finished = true;
-    clearInterval(tick);
-    if (pageTimeout) clearTimeout(pageTimeout);
-    document.removeEventListener('visibilitychange', onVisibilityChange);
-    await ports.alerts.disarm(run.runId);
-    ports.audio.stopKeepAlive();
-    await ports.wakeLock.release();
-    run.battery.end = await readBattery();
-    run.status = event === 'end' ? 'done' : 'stopped';
-    record(event);
-  };
-
-  // Listen before the first await, so a screen lock right after the tap is not missed.
-  document.addEventListener('visibilitychange', onVisibilityChange);
-  record('start');
-  await ports.audio.unlock();
-  if (config.holdWakeLock)
-    record('start', { detail: `wakeLock=${await ports.wakeLock.acquire()}` });
-  if (variant.keepAlive) {
-    const playing = await ports.audio.startKeepAlive({
-      title: 'POWR rest timer (test)',
-      gain: config.keepAliveGain,
-    });
-    record('start', { detail: `keepAlive=${playing}` });
+      return run.firstAlert !== null;
+    case 'keep-alive':
+      push({ event: 'keep-alive', detail: `playing=${event.playing}` });
+      return false;
+    default:
+      return false;
   }
-  run.battery.start = await readBattery();
-  return { stop: () => void finish('stopped') };
 }
 
 function classify(run: HarnessRun): HarnessRun['outcome'] {
   if (!run.firstAlert) return null;
   if (!run.hiddenAtEnd) return 'visible';
-  if (run.firstAlert.path === 'visible') return 'missed';
+  if (run.firstAlert.path === 'on-return') return 'missed';
   return run.firstAlert.delayMs <= ON_TIME_MS ? 'on-time' : 'late';
 }
 
-async function readBattery(): Promise<BatteryReading | null> {
+/** For an interrupted run, the service worker (or the page before the kill) may have fired. */
+export function completeInterrupted(
+  run: HarnessRun,
+  fired: { readonly by: 'page' | 'sw'; readonly at: number } | undefined,
+): HarnessRun {
+  if (run.status !== 'interrupted' || run.firstAlert || !fired) return run;
+  const next: HarnessRun = {
+    ...run,
+    firstAlert: {
+      path: fired.by === 'sw' ? 'sw-timer' : 'page-timeout',
+      delayMs: Math.max(0, fired.at - run.endsAt),
+    },
+    hiddenAtEnd: true,
+  };
+  return { ...next, outcome: classify(next) };
+}
+
+export async function readBattery(): Promise<BatteryReading | null> {
   const getBattery = (
     navigator as { getBattery?: () => Promise<{ level: number; charging: boolean }> }
   ).getBattery;

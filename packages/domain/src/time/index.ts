@@ -19,12 +19,31 @@ export function makeInstantTz(epochMs: number, zone: string): InstantTz {
   return { epochMs, offsetMin: zoned.offsetNanoseconds / 60_000_000_000, zone: zoned.timeZoneId };
 }
 
+/** The instant of a wall-clock time ('HH:MM') on a day in a zone (backdated logging, WKT-15). */
+export function instantAt(date: LocalDate, time: string, zone: string): InstantTz {
+  const zoned = Temporal.PlainDate.from(date).toZonedDateTime({
+    timeZone: zone,
+    plainTime: Temporal.PlainTime.from(time),
+  });
+  return {
+    epochMs: zoned.epochMilliseconds,
+    offsetMin: zoned.offsetNanoseconds / 60_000_000_000,
+    zone: zoned.timeZoneId,
+  };
+}
+
 /** The calendar day of an instant in the zone it was captured in. */
 export function toLocalDate(instant: InstantTz): LocalDate {
   return Temporal.Instant.fromEpochMilliseconds(instant.epochMs)
     .toZonedDateTimeISO(zoneOf(instant))
     .toPlainDate()
     .toString() as LocalDate;
+}
+
+/** The local hour (0–23) of an instant in the zone it was captured in. */
+export function localHourOf(instant: InstantTz): number {
+  return Temporal.Instant.fromEpochMilliseconds(instant.epochMs).toZonedDateTimeISO(zoneOf(instant))
+    .hour;
 }
 
 /** ISO 8601 with offset, e.g. "2026-11-23T18:04:11.123+01:00". */

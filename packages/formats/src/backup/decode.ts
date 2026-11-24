@@ -214,10 +214,38 @@ function findBrokenReference(
   isKnownExercise: ((exerciseId: string) => boolean) | undefined,
 ): string | null {
   const sessionIds = new Set(tables.sessions.map((session) => session.id));
+  const sessions = new Map(tables.sessions.map((session) => [session.id, session]));
   for (const set of tables.sets) {
     if (!sessionIds.has(set.sessionId)) return `set ${set.id} references a missing session`;
     if (isKnownExercise && !isKnownExercise(set.exerciseId)) {
       return `set ${set.id} references unknown exercise ${set.exerciseId}`;
+    }
+    // M3a: a set of a slot belongs to a slot and a planned set of its session.
+    if (set.slotKey !== undefined) {
+      const slot = sessions
+        .get(set.sessionId)
+        ?.exercises.find((entry) => entry.key === set.slotKey);
+      if (!slot) return `set ${set.id} references a missing session exercise`;
+      if (set.setKey !== undefined && !slot.sets.some((planned) => planned.key === set.setKey)) {
+        return `set ${set.id} references a missing planned set`;
+      }
+    }
+  }
+  for (const session of tables.sessions) {
+    for (const exercise of session.exercises) {
+      if (isKnownExercise && !isKnownExercise(exercise.exerciseId)) {
+        return `session ${session.id} references unknown exercise ${exercise.exerciseId}`;
+      }
+    }
+    const keys = new Set(session.exercises.map((exercise) => exercise.key));
+    if (keys.size !== session.exercises.length) return `session ${session.id} repeats a slot key`;
+    if (session.groups.some((group) => group.slotKeys.some((key) => !keys.has(key)))) {
+      return `session ${session.id} groups a missing exercise`;
+    }
+  }
+  for (const entry of tables.readiness) {
+    if (entry.sessionId !== undefined && !sessionIds.has(entry.sessionId)) {
+      return `readiness check-in ${entry.id} references a missing session`;
     }
   }
   if (tables.sessions.filter((session) => session.status === 'active').length > 1) {

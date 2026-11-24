@@ -352,3 +352,20 @@
   verified: true
   userOverridable: false
   note: 'Data only in M1; the per-exercise correction factor it triggers is not implemented yet.'
+
+# PR detection (MOT-01, M3). e1RM PRs are estimates: only sets the e1RM pipeline trusts produce
+# them (EB §Load › Real change; PRD R-07 "e1RM noise causes false PRs").
+
+- id: load.pr.minSetWeight
+  value: 0.5
+  unit: fraction
+  range: { min: 0.1, max: 1 }
+  evidence: [INF]
+  sources: [src.powr-prd, src.halperin2022, src.grgic2020]
+  ebRef: 'PRD MOT-01 (e1RM PR only from qualifying sets per PRG-01 weighting), R-07; EB §Load › e1RM algorithm (set weights 1.0 / 0.5 / ≤ 0.1)'
+  verified: false
+  userOverridable: false
+  note: >-
+    A POWR design value: the set's base weight (RPE and effective-rep tiers, before the set-order
+    decay) must reach the 0.5 tier (RPE ≥ 7 and ≤ 12 effective reps). Sets without entered
+    effort never qualify (load.unknownEffort.eligibleForE1rmPr, E-1).

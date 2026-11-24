@@ -21,7 +21,10 @@ import type {
   Prescription,
   PresetId,
   Profile,
+  ReadinessEntry,
   Session,
+  SessionExercise,
+  TimerState,
   SessionId,
   SetId,
   TemplateId,
@@ -55,6 +58,61 @@ const versions = fc.record({
   content: fc.constant('0.0.0+m0'),
 });
 
+/** M3a: a session slot with planned sets (sets of the arbitrary tables carry no slot keys). */
+const sessionExercise = (key: string): fc.Arbitrary<SessionExercise> =>
+  fc
+    .record({
+      exerciseId: fc.constantFrom(...EXERCISES) as fc.Arbitrary<ExerciseId>,
+      sets: fc.integer({ min: 0, max: 4 }),
+      note: fc.option(fc.constantFrom('Grip wider', 'Sitz 3 – 🙂'), { nil: undefined }),
+      skipped: fc.boolean(),
+      loadPct: fc.option(fc.constant({ min: 85, max: 100 }), { nil: undefined }),
+    })
+    .map(({ exerciseId, sets, note, skipped, loadPct }) => ({
+      key,
+      exerciseId,
+      origin: 'plan',
+      planSlotKey: key,
+      goal: 'hypertrophy',
+      priority: 'primary',
+      progression: 'doubleProgression',
+      prescription: {
+        mode: 'doubleProgression',
+        sets: Math.max(1, sets),
+        repRange: [8, 12],
+        rir: [1, 2],
+      },
+      sets: Array.from({ length: sets }, (_, index) => ({
+        key: index === 0 ? 'w1' : `s${index}`,
+        type: index === 0 ? 'warmup' : 'working',
+        reps: [8, 12],
+        rir: index === 0 ? null : [1, 2],
+        load: index === 0 ? { value: 40, unit: 'kg' } : null,
+        ...(index === 0 ? { restSeconds: 45 } : {}),
+      })),
+      restSeconds: 120,
+      ...(loadPct ? { loadPct } : {}),
+      ...(note ? { note } : {}),
+      skipped,
+    }));
+
+const timer: fc.Arbitrary<TimerState> = fc
+  .record({
+    kind: fc.constantFrom('rest', 'set', 'transition'),
+    mode: fc.constantFrom('countdown', 'countup'),
+    startedAtEpochMs: fc.integer({ min: 0, max: 4_102_444_800_000 }),
+    targetMs: fc.integer({ min: 0, max: 600_000 }),
+    adjustMs: fc.integer({ min: -40, max: 40 }).map((steps) => steps * 15_000),
+    end: fc.boolean(),
+    softMin: fc.option(fc.integer({ min: 0, max: 120_000 }), { nil: undefined }),
+  })
+  .map(({ end, softMin, ...rest }) => ({
+    id: 'timer-1',
+    ...rest,
+    fired: end ? { end: true } : {},
+    ...(softMin === undefined ? {} : { softMinMs: softMin }),
+  }));
+
 const session = (id: string, status: Session['status']): fc.Arbitrary<Session> =>
   fc
     .record({
@@ -62,40 +120,125 @@ const session = (id: string, status: Session['status']): fc.Arbitrary<Session> =
       startedAt: instantTz,
       endedAt: fc.option(instantTz, { nil: undefined }),
       versions,
+      exercises: fc
+        .integer({ min: 0, max: 3 })
+        .chain((count) =>
+          fc.tuple(
+            ...Array.from({ length: count }, (_, index) => sessionExercise(`a${index + 1}`)),
+          ),
+        ),
+      timer: fc.option(timer, { nil: null }),
+      revision: fc.nat({ max: 500 }),
+      readiness: fc.option(
+        fc.constantFrom(
+          { status: 'skipped' as const },
+          { status: 'done' as const, entryId: 'r-1', flag: 'low' as const, composite: -1.2 },
+        ),
+        { nil: null },
+      ),
+      withUndo: fc.boolean(),
     })
-    .map(({ endedAt, ...rest }) => ({
-      id: id as SessionId,
-      status,
-      ...rest,
-      ...(endedAt && status !== 'active' ? { endedAt } : {}),
-    }));
+    .map(({ endedAt, exercises, timer: running, revision, readiness, withUndo, ...rest }) => {
+      const core = {
+        id: id as SessionId,
+        status,
+        ...rest,
+        ...(endedAt && status !== 'active' ? { endedAt } : {}),
+        origin: 'planned' as const,
+        equipmentProfileId: null,
+        exercises,
+        groups:
+          exercises.length >= 2
+            ? [
+                {
+                  key: 'g1',
+                  kind: 'superset' as const,
+                  slotKeys: [exercises[0]!.key, exercises[1]!.key],
+                },
+              ]
+            : [],
+        cursor: exercises[0]?.sets[0]
+          ? { slotKey: exercises[0].key, setKey: exercises[0].sets[0].key }
+          : null,
+        timer: status === 'active' ? running : null,
+        readiness,
+        changes: exercises[0]
+          ? [{ kind: 'capTopSet' as const, slotKeys: [exercises[0].key], rirAdd: 1 }]
+          : [],
+        revision,
+      };
+      return {
+        ...core,
+        undo:
+          withUndo && status === 'active'
+            ? {
+                token: `u${revision}`,
+                expiresAtEpochMs: core.startedAt.epochMs + 30_000,
+                session: { ...core, cursor: null },
+                restoreSets: [],
+                removeSetIds: ['removed-set' as SetId],
+              }
+            : null,
+      };
+    });
 
 const loggedSet = (id: string, sessionId: string): fc.Arbitrary<LoggedSet> =>
-  fc.record({
-    id: fc.constant(id as SetId),
-    sessionId: fc.constant(sessionId as SessionId),
-    exerciseId: fc.constantFrom(...EXERCISES) as fc.Arbitrary<ExerciseId>,
-    index: fc.integer({ min: 0, max: 30 }),
-    type: fc.constantFrom('warmup', 'working', 'top', 'backoff', 'amrap', 'timed'),
-    load: fc.option(
-      fc.record({
-        value: fc.integer({ min: -400, max: 3600 }).map((quarters) => quarters / 4),
-        unit: fc.constantFrom('kg', 'lb'),
-      }),
-      { nil: null },
-    ),
-    reps: fc.option(fc.integer({ min: 0, max: 1000 }), { nil: null }),
-    effort: fc.oneof(
-      fc.record({
-        rir: fc.integer({ min: 0, max: 20 }).map((half) => half / 2),
-        source: fc.constant('entered' as const),
-      }),
-      fc.constant({ rir: null, source: 'none' as const }),
-    ),
-    state: fc.constantFrom('done', 'skipped'),
-    performedAt: instantTz,
-    localDate,
-  });
+  fc
+    .record({
+      id: fc.constant(id as SetId),
+      sessionId: fc.constant(sessionId as SessionId),
+      exerciseId: fc.constantFrom(...EXERCISES) as fc.Arbitrary<ExerciseId>,
+      index: fc.integer({ min: 0, max: 30 }),
+      type: fc.constantFrom('warmup', 'working', 'top', 'backoff', 'amrap', 'timed'),
+      load: fc.option(
+        fc.record({
+          value: fc.integer({ min: -400, max: 3600 }).map((quarters) => quarters / 4),
+          unit: fc.constantFrom('kg', 'lb'),
+        }),
+        { nil: null },
+      ),
+      reps: fc.option(fc.integer({ min: 0, max: 1000 }), { nil: null }),
+      effort: fc.oneof(
+        fc.record({
+          rir: fc.integer({ min: 0, max: 20 }).map((half) => half / 2),
+          source: fc.constant('entered' as const),
+        }),
+        fc.constant({ rir: null, source: 'none' as const }),
+      ),
+      state: fc.constantFrom('done', 'skipped'),
+      performedAt: instantTz,
+      localDate,
+    })
+    .chain((set) =>
+      // M3a optional fields: technique, per-side reps, duration, flags, rest, prescription, note.
+      fc
+        .record({
+          technique: fc.option(
+            fc.record({
+              kind: fc.constantFrom('drop', 'myoReps', 'cluster'),
+              units: fc.nat({ max: 4 }),
+            }),
+            { nil: undefined },
+          ),
+          sides: fc.option(fc.tuple(fc.nat({ max: 20 }), fc.nat({ max: 20 })), { nil: undefined }),
+          durationMs: fc.option(fc.nat({ max: 600_000 }), { nil: undefined }),
+          failure: fc.boolean(),
+          restBeforeMs: fc.option(fc.nat({ max: 900_000 }), { nil: undefined }),
+          note: fc.option(fc.constantFrom('Belt on', 'Schmerz – links'), { nil: undefined }),
+        })
+        .map(({ technique, sides, durationMs, failure, restBeforeMs, note }) => ({
+          ...set,
+          ...(technique ? { technique } : {}),
+          ...(sides ? { repsLeft: sides[0], repsRight: sides[1] } : {}),
+          ...(durationMs === undefined ? {} : { durationMs }),
+          ...(failure ? { flags: { failure: true } } : {}),
+          ...(restBeforeMs === undefined ? {} : { restBeforeMs }),
+          ...(set.state === 'done' && set.reps !== null
+            ? { prescription: { load: set.load, reps: set.reps, rir: set.effort.rir } }
+            : {}),
+          ...(note ? { note } : {}),
+        })),
+    );
 
 /** The keys a backup never contains (§8.3.5); fast-check also generates them on its own. */
 const RESERVED = ['__proto__', 'constructor', 'prototype'] as const;
@@ -145,15 +288,54 @@ const metaRecords = metaRecordsOf(
     .filter((value) => !hasReservedKey(value)),
 );
 
+/** The M3t alert settings (SET-03, SET-04, SET-10). */
+const alertSettings: fc.Arbitrary<NonNullable<SettingsRecord['alerts']>> = fc.record({
+  sound: fc.boolean(),
+  volume: fc.integer({ min: 0, max: 100 }).map((percent) => percent / 100),
+  vibration: fc.boolean(),
+  preAlert: fc.boolean(),
+  countdown: fc.boolean(),
+  restingNotice: fc.boolean(),
+  keepScreenOn: fc.boolean(),
+});
+
 const settingsRecords: fc.Arbitrary<SettingsRecord[]> = fc
   .option(
-    fc.record({
-      id: fc.constant('me' as const),
-      theme: fc.constantFrom('light', 'dark', 'system'),
-    }),
+    fc.record(
+      {
+        id: fc.constant('me' as const),
+        theme: fc.constantFrom('light', 'dark', 'system'),
+        prefs: fc.option(
+          fc.record({
+            restMode: fc.constantFrom('countdown' as const, 'countup' as const),
+            hintsOff: fc.subarray(['failure', 'shortRest'] as const),
+            manual: fc.boolean(),
+          }),
+          { nil: null },
+        ),
+        alerts: alertSettings,
+      },
+      { requiredKeys: ['id', 'theme', 'prefs'] },
+    ),
     { nil: null },
   )
-  .map((settings) => (settings ? [settings] : []));
+  .map((settings): SettingsRecord[] => {
+    if (!settings) return [];
+    const { prefs, ...rest } = settings;
+    return [
+      prefs
+        ? {
+            ...rest,
+            session: {
+              restMode: prefs.restMode,
+              hintsOff: [...prefs.hintsOff],
+              rounding: 'nearestTiesDown',
+              exercises: [{ exerciseId: 'ex.barbell-bench-press', manual: prefs.manual }],
+            },
+          }
+        : rest,
+    ];
+  });
 
 /** Valid raw tables: unique IDs, sets reference existing sessions, at most one active session. */
 export const rawTables: fc.Arbitrary<RawTables> = tablesWith(metaRecords);
@@ -191,8 +373,48 @@ function tablesWith(meta: fc.Arbitrary<MetaRecord[]>): fc.Arbitrary<RawTables> {
               .chain(([setIds, owners]) =>
                 fc.tuple(...setIds.map((setId, index) => loggedSet(setId, owners[index] ?? ''))),
               );
+      const readiness = fc.uniqueArray(fc.uuid(), { maxLength: 3 }).chain((ids) =>
+        fc.tuple(
+          ...ids.map((id, index) =>
+            fc
+              .record({
+                localDate,
+                recordedAt: instantTz,
+                energy: fc.option(fc.integer({ min: 1, max: 5 }), { nil: null }),
+                prs: fc.option(fc.integer({ min: 0, max: 10 }), { nil: undefined }),
+                sleepHours: fc.option(
+                  fc.integer({ min: 0, max: 48 }).map((half) => half / 2),
+                  {
+                    nil: undefined,
+                  },
+                ),
+              })
+              .map(({ localDate: date, recordedAt, energy, prs, sleepHours }): ReadinessEntry => ({
+                id,
+                localDate: date,
+                recordedAt,
+                ...(sessionIds[index] ? { sessionId: sessionIds[index] as SessionId } : {}),
+                items: {
+                  energy,
+                  ...(prs === undefined ? {} : { prs }),
+                  ...(sleepHours === undefined ? {} : { sleepHours }),
+                },
+                ...(index === 0
+                  ? { soreMuscles: [{ muscle: 'mu.quads' as never, rating: 3 }] }
+                  : {}),
+              })),
+          ),
+        ),
+      );
       return fc
-        .record({ meta, settings: settingsRecords, sessions, sets, planning: planningTables })
+        .record({
+          meta,
+          settings: settingsRecords,
+          sessions,
+          sets,
+          readiness,
+          planning: planningTables,
+        })
         .map(({ planning, ...core }) => ({ ...core, ...planning }));
     });
 }

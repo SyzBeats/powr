@@ -8,14 +8,18 @@ import type {
   MeetInfo,
   Plan,
   PlanId,
+  ExerciseId,
   PlannedSession,
   PlannedSessionId,
   Profile,
+  ReadinessEntry,
   Session,
   SessionId,
+  SetId,
   TrainingBreak,
 } from '@powr/domain';
 import type { RuleSet } from '@powr/domain/rules';
+import type { ExerciseState, PrRecord, SessionE1rmPoint } from '@powr/domain/session';
 import type { MetaRecord, RawTableName, RawTables, SettingsRecord } from '@powr/formats';
 import type { ParamOverride, ResolveContext } from '@powr/rules';
 
@@ -36,8 +40,15 @@ export interface IdGenerator {
   next(): string;
 }
 
-/** The raw tables (§8.2.2) at the current dataVersion; derived tables arrive with M3/M4. */
-export type TableName = RawTableName;
+/**
+ * Derived tables (§8.2.2, §8.2.8): rebuildable caches, never backed up. M3a: the exercise state,
+ * one e1RM point per exercise and session, and the PR records.
+ */
+export const DERIVED_TABLE_NAMES = ['dExerciseState', 'dSessionE1rm', 'dPrs'] as const;
+export type DerivedTableName = (typeof DERIVED_TABLE_NAMES)[number];
+
+/** Every table of `powr` a unit of work may name. */
+export type TableName = RawTableName | DerivedTableName;
 
 export interface UnitOfWork {
   /** One IndexedDB transaction with strict durability. All writes inside commit or none do. */
@@ -57,6 +68,8 @@ export interface Repositories {
   breaks: BreakRepo;
   meets: MeetRepo;
   bodyweights: BodyweightRepo;
+  readiness: ReadinessRepo;
+  derived: DerivedRepo;
   raw: RawDataRepo;
 }
 
@@ -106,6 +119,37 @@ export interface MeetRepo {
 /** Bodyweight log (BOD-01); onboarding writes the first entry (ONB-02). */
 export interface BodyweightRepo {
   put(entry: BodyweightEntry): Promise<void>;
+  /** Every entry, by measurement time (the trend for bodyweight-loaded e1RMs, WKT-11). */
+  list(): Promise<BodyweightEntry[]>;
+}
+
+/** Readiness check-ins (RDY-01). */
+export interface ReadinessRepo {
+  put(entry: ReadinessEntry): Promise<void>;
+  /** Check-ins with `from ≤ localDate ≤ to` (the RDY-02 baseline window). */
+  inRange(from: LocalDate, to: LocalDate): Promise<ReadinessEntry[]>;
+  bySession(id: SessionId): Promise<ReadinessEntry[]>;
+}
+
+/** The derived data of one exercise, rebuilt together (§8.2.8). */
+export interface DerivedExercise {
+  readonly state: ExerciseState;
+  readonly points: readonly SessionE1rmPoint[];
+  readonly prs: readonly PrRecord[];
+}
+
+/** Derived tables; written with the raw data's transaction or right after it. */
+export interface DerivedRepo {
+  exerciseStates(ids: readonly ExerciseId[]): Promise<ExerciseState[]>;
+  /** Replaces an exercise's state, e1RM points and PRs. */
+  replaceExercise(exerciseId: ExerciseId, derived: DerivedExercise): Promise<void>;
+  prsBySession(id: SessionId): Promise<PrRecord[]>;
+  prsByExercise(id: ExerciseId): Promise<PrRecord[]>;
+  pointsByExercise(id: ExerciseId): Promise<SessionE1rmPoint[]>;
+  /** Drops the states of these exercises, so they are rebuilt from the raw logs on next use. */
+  invalidate(ids: readonly ExerciseId[]): Promise<void>;
+  /** Drops every derived record (import, "Verify data"). */
+  clear(): Promise<void>;
 }
 
 export interface MetaRepo {
@@ -140,6 +184,9 @@ export interface SessionRepo {
   get(id: SessionId): Promise<Session | undefined>;
   getActive(): Promise<Session | undefined>;
   put(session: Session): Promise<void>;
+  delete(id: SessionId): Promise<void>;
+  /** Several sessions by ID (missing ones are left out). */
+  byIds(ids: readonly SessionId[]): Promise<Session[]>;
   /** The latest session on a day before `date` (days since training, PRG-13). */
   latestBefore(date: LocalDate): Promise<Session | undefined>;
   /** Sessions with `from ≤ localDate ≤ to` (logged volume of a mesocycle, PLN-13). */
@@ -148,7 +195,11 @@ export interface SessionRepo {
 
 export interface SetRepo {
   add(set: LoggedSet): Promise<void>;
+  put(set: LoggedSet): Promise<void>;
+  delete(id: SetId): Promise<void>;
   bySession(id: SessionId): Promise<LoggedSet[]>;
+  /** Every set of an exercise, by `performedAt` (the derived-data rebuild, §6.9). */
+  byExercise(id: ExerciseId): Promise<LoggedSet[]>;
   /** Sets with `from ≤ localDate ≤ to`. */
   inRange(from: LocalDate, to: LocalDate): Promise<LoggedSet[]>;
 }
@@ -156,6 +207,7 @@ export interface SetRepo {
 /** Whole-dataset access for backup export and replace-all restore. */
 export interface RawDataRepo {
   readAll(): Promise<RawTables>;
+  /** Clears and refills every raw table; derived tables are cleared too (rebuilt on use). */
   replaceAll(tables: RawTables): Promise<void>;
 }
 
@@ -196,7 +248,8 @@ export interface AppInfo {
   readonly build: string;
 }
 
-export type { LiveQueries } from './queries';
+export type { ActiveSessionData, LiveQueries } from './queries';
+export { sessionExerciseIds } from './queries';
 export type {
   AlertScheduler,
   AudioPort,

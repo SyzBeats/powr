@@ -1,9 +1,19 @@
-// dataVersion 2 record schemas (M2): the onboarding and planning tables. meta, sessions and sets
-// are unchanged from v1; settings gains optional fields (expand → migrate → contract, §8.2.3).
-// Strict objects, range-checked numbers and length-limited strings (§8.3.5).
+// dataVersion 2 record schemas (M2): the onboarding and planning tables; settings gains optional
+// fields (expand → migrate → contract, §8.2.3). Amended by M3a while version 2 was unreleased:
+// sessions and sets gain the session core (slots, planned sets, cursor, timer, readiness, undo),
+// the raw table `readiness` and the settings' `session` preferences; v1 sessions get the empty
+// session-core fields in the 1 → 2 migration. Strict objects, range-checked numbers and
+// length-limited strings (§8.3.5).
 import {
   ADJUSTMENT_KINDS,
   ADJUSTMENT_NOTES,
+  SESSION_CHANGE_KINDS,
+  SESSION_STATUSES,
+  SET_LIMITS,
+  SET_TYPES,
+  SLOT_ORIGINS,
+  TIMER_KINDS,
+  ROUNDING_MODES,
   BODY_PHASES,
   BREAK_REASONS,
   COMPETITION_LIFTS,
@@ -34,6 +44,7 @@ import {
   TECHNIQUE_KINDS,
   TRAINEE_LEVELS,
 } from '@powr/domain/rules';
+import { GUARDRAIL_KINDS } from '@powr/domain/session';
 
 import { findUnsafeJson } from '../json';
 import { z } from '../zod';
@@ -43,12 +54,11 @@ import {
   localDateSchema,
   massSchema,
   metaRecordSchema,
-  sessionRecordSchema,
-  setRecordSchema,
+  setRecordSchema as v1SetRecordSchema,
   versionStampSchema,
 } from './v1';
 
-export { metaRecordSchema, sessionRecordSchema, setRecordSchema };
+export { metaRecordSchema };
 
 const NAME_MAX = 120;
 const NOTE_MAX = 2000;
@@ -396,9 +406,31 @@ const overrideValueSchema = z
   })
   .pipe(z.json());
 
+/** M3a: the session core's preferences (TMR-01/07, RDY-01, WKT-16, SET-05, PRG-03, WKT-11). */
+const sessionSettingsSchema = z.strictObject({
+  restAutoStart: z.boolean().exactOptional(),
+  restMode: z.enum(['countdown', 'countup']).exactOptional(),
+  readinessCheckIn: z.boolean().exactOptional(),
+  hintsOff: z.array(z.enum(GUARDRAIL_KINDS)).max(GUARDRAIL_KINDS.length).exactOptional(),
+  rounding: z.enum(ROUNDING_MODES).exactOptional(),
+  exercises: z
+    .array(
+      z.strictObject({
+        exerciseId: exerciseIdSchema,
+        manual: z.boolean().exactOptional(),
+        restAutoStart: z.boolean().exactOptional(),
+        perSide: z.boolean().exactOptional(),
+      }),
+    )
+    .max(500)
+    .exactOptional(),
+});
+
 export const settingsRecordSchema = z.strictObject({
   id: z.literal('me'),
   theme: z.enum(['light', 'dark', 'system']),
+  /** M3a session preferences; absent = the defaults. */
+  session: sessionSettingsSchema.exactOptional(),
   /** SET-11; absent = the locale's week start (fallback Monday). */
   weekStart: weekdaySchema.exactOptional(),
   /** SET-03/SET-07 parameter overrides, applied by the rules resolver. */
@@ -414,5 +446,213 @@ export const settingsRecordSchema = z.strictObject({
       }),
     )
     .max(200)
+    .exactOptional(),
+  /**
+   * Alerts and workout display (M3t; SET-03 pre-alert and 3-2-1, SET-04 sound, volume and
+   * vibration, SET-10 keep screen on, §8.8.4 the "Resting – ends at …" notification). Absent =
+   * the app's defaults; the app writes the whole object on every change.
+   */
+  alerts: z
+    .strictObject({
+      sound: z.boolean(),
+      /** In-app volume as gain, 0–1 (TMR-05). */
+      volume: z.number().min(0).max(1),
+      vibration: z.boolean(),
+      preAlert: z.boolean(),
+      countdown: z.boolean(),
+      restingNotice: z.boolean(),
+      keepScreenOn: z.boolean(),
+    })
+    .exactOptional(),
+});
+
+// --- M3a: the workout session (WKT, TMR, RDY; technical concept §5.6, §8.8.1) ---------------
+
+const keyOf = z.string().min(1).max(40);
+const effortSchema = z.strictObject({
+  rir: rirSchema.nullable(),
+  source: z.enum(['entered', 'none']),
+  openEnded: z.boolean().exactOptional(),
+});
+const techniqueSchema = z.strictObject({
+  kind: z.enum(TECHNIQUE_KINDS),
+  units: z.number().int().min(0).max(20).exactOptional(),
+});
+const repsSchema = z.number().int().min(0).max(SET_LIMITS.repsMax);
+
+/** v1's set record, extended (M3a): the "5+" flag on effort and the session-core fields. */
+export const setRecordSchema = v1SetRecordSchema.extend({
+  type: z.enum(SET_TYPES),
+  effort: effortSchema,
+  slotKey: keyOf.exactOptional(),
+  setKey: keyOf.exactOptional(),
+  technique: techniqueSchema.exactOptional(),
+  repsLeft: repsSchema.exactOptional(),
+  repsRight: repsSchema.exactOptional(),
+  durationMs: z.number().int().min(0).max(86_400_000).exactOptional(),
+  flags: z
+    .strictObject({
+      failure: z.boolean().exactOptional(),
+      failedRep: z.boolean().exactOptional(),
+      pain: z.boolean().exactOptional(),
+    })
+    .exactOptional(),
+  restBeforeMs: z.number().int().min(0).max(8.64e15).exactOptional(),
+  prescription: z
+    .strictObject({
+      load: massSchema.nullable(),
+      reps: repsSchema.nullable(),
+      rir: rirSchema.nullable(),
+      durationS: z.number().int().min(0).max(3600).exactOptional(),
+    })
+    .exactOptional(),
+  note: z.string().max(NOTE_MAX).exactOptional(),
+});
+
+const plannedSetSchema = z.strictObject({
+  key: keyOf,
+  type: z.enum(SET_TYPES),
+  reps: repRangeSchema.nullable(),
+  rir: rirRangeSchema.nullable(),
+  load: massSchema.nullable(),
+  durationS: z.number().int().min(1).max(3600).exactOptional(),
+  technique: techniqueSchema.exactOptional(),
+  restSeconds: z.number().int().min(0).max(1800).exactOptional(),
+});
+
+const sessionExerciseSchema = z.strictObject({
+  key: keyOf,
+  exerciseId: exerciseIdSchema,
+  origin: z.enum(SLOT_ORIGINS),
+  planSlotKey: keySchema.exactOptional(),
+  substitutedFrom: z
+    .strictObject({ exerciseId: exerciseIdSchema, scope: z.enum(['session', 'mesocycle']) })
+    .exactOptional(),
+  goal: z.enum(GOALS),
+  priority: z.enum(SLOT_PRIORITIES),
+  progression: z.enum([...PROGRESSION_MODELS, 'manual']),
+  prescription: prescriptionSchema.nullable(),
+  sets: z.array(plannedSetSchema).max(60),
+  restSeconds: z.number().int().min(0).max(1800).nullable(),
+  loadPct: rangeSchema(0, 150).exactOptional(),
+  lift: z.enum(COMPETITION_LIFTS).exactOptional(),
+  intensity: z.enum(LIFT_INTENSITIES).exactOptional(),
+  note: z.string().max(NOTE_MAX).exactOptional(),
+  skipped: z.boolean(),
+  perSide: z.boolean().exactOptional(),
+});
+
+/** The shared timer contract (§8.8.1); `softMinMs` and `slotKey` are M3a's optional fields. */
+const timerSchema = z.strictObject({
+  id: idSchema,
+  kind: z.enum(TIMER_KINDS),
+  mode: z.enum(['countdown', 'countup']),
+  startedAtEpochMs: z.number().int().min(0).max(8.64e15),
+  targetMs: z.number().int().min(0).max(86_400_000),
+  adjustMs: z.number().int().min(-86_400_000).max(86_400_000),
+  fired: z.strictObject({
+    preAlert: z.boolean().exactOptional(),
+    end: z.boolean().exactOptional(),
+  }),
+  softMinMs: z.number().int().min(0).max(86_400_000).exactOptional(),
+  slotKey: keyOf.exactOptional(),
+});
+
+const sessionCoreShape = {
+  id: idSchema,
+  localDate: localDateSchema,
+  startedAt: instantTzSchema,
+  endedAt: instantTzSchema.exactOptional(),
+  status: z.enum(SESSION_STATUSES),
+  versions: versionStampSchema,
+  origin: z.enum(['planned', 'freestyle', 'repeat']),
+  plannedSessionId: idSchema.exactOptional(),
+  plannedAdjustments: z
+    .array(z.enum(ADJUSTMENT_KINDS))
+    .max(ADJUSTMENT_KINDS.length)
+    .exactOptional(),
+  repeatOf: idSchema.exactOptional(),
+  backdated: z.boolean().exactOptional(),
+  equipmentProfileId: idSchema.nullable(),
+  exercises: z.array(sessionExerciseSchema).max(40),
+  groups: z
+    .array(
+      z.strictObject({
+        key: keyOf,
+        kind: z.enum(['superset', 'circuit']),
+        slotKeys: z.array(keyOf).min(2).max(10),
+      }),
+    )
+    .max(20),
+  cursor: z.strictObject({ slotKey: keyOf, setKey: keyOf }).nullable(),
+  timer: timerSchema.nullable(),
+  note: z.string().max(NOTE_MAX).exactOptional(),
+  readiness: z
+    .strictObject({
+      status: z.enum(['done', 'skipped']),
+      entryId: idSchema.exactOptional(),
+      flag: z.enum(['insufficientData', 'none', 'low', 'modify']).exactOptional(),
+      composite: z.number().min(-100).max(100).nullable().exactOptional(),
+    })
+    .nullable(),
+  changes: z
+    .array(
+      z.strictObject({
+        kind: z.enum(SESSION_CHANGE_KINDS),
+        slotKeys: z.array(keyOf).max(40),
+        rirAdd: z.number().min(0).max(10).exactOptional(),
+        dropSets: z.number().int().min(0).max(20).exactOptional(),
+        loadPct: rangeSchema(0, 150).exactOptional(),
+        setsPct: rangeSchema(0, 150).exactOptional(),
+        daysOff: z.number().int().min(0).max(100_000).exactOptional(),
+        calibrate: z.boolean().exactOptional(),
+      }),
+    )
+    .max(40),
+  revision: z.number().int().min(0),
+};
+
+const sessionCoreSchema = z.strictObject(sessionCoreShape);
+
+export const sessionRecordSchema = z.strictObject({
+  ...sessionCoreShape,
+  /** WKT-12: the last undoable event's snapshot (single level). */
+  undo: z
+    .strictObject({
+      token: z.string().min(1).max(40),
+      expiresAtEpochMs: z.number().int().min(0).max(8.64e15),
+      session: sessionCoreSchema,
+      restoreSets: z.array(setRecordSchema).max(100),
+      removeSetIds: z.array(idSchema).max(100),
+    })
+    .nullable(),
+});
+
+const scale5 = z.number().int().min(1).max(5).nullable().exactOptional();
+
+/** RDY-01 check-ins (raw table `readiness`). */
+export const readinessRecordSchema = z.strictObject({
+  id: idSchema,
+  localDate: localDateSchema,
+  recordedAt: instantTzSchema,
+  sessionId: idSchema.exactOptional(),
+  items: z.strictObject({
+    sleepHours: z
+      .number()
+      .min(0)
+      .max(24)
+      .refine((hours) => Number.isInteger(hours * 4), 'Sleep hours steps are 0.25')
+      .nullable()
+      .exactOptional(),
+    sleepQuality: scale5,
+    energy: scale5,
+    soreness: scale5,
+    stress: scale5,
+    motivation: scale5,
+    prs: z.number().int().min(0).max(10).nullable().exactOptional(),
+  }),
+  soreMuscles: z
+    .array(z.strictObject({ muscle: muscleIdSchema, rating: z.number().int().min(1).max(5) }))
+    .max(40)
     .exactOptional(),
 });

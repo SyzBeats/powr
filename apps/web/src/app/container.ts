@@ -1,6 +1,5 @@
 import type {
   AlertScheduler,
-  AudioPort,
   CapabilityProbe,
   Deps,
   HapticsPort,
@@ -10,6 +9,7 @@ import type {
 import type { ContentCatalog } from '@powr/content';
 import type { CompiledRules } from '@powr/rules';
 
+import { createTimerKit, type TimerKit } from '../infrastructure/alerts';
 import { capabilityProbe } from '../infrastructure/capabilities/probe';
 import {
   createLiveQueries,
@@ -18,7 +18,7 @@ import {
   type PowrDb,
 } from '../infrastructure/db';
 import { createDiagnostics, type Diagnostics } from '../infrastructure/diagnostics/log';
-import { audio } from '../infrastructure/platform/audio';
+import { audio, type AlertAudio } from '../infrastructure/platform/audio';
 import { systemClock } from '../infrastructure/platform/clock';
 import { downloadGateway } from '../infrastructure/platform/files';
 import { haptics } from '../infrastructure/platform/haptics';
@@ -33,13 +33,29 @@ import { createRulesProvider } from '../infrastructure/rules/provider';
 
 const APP = { version: __APP_VERSION__, build: __APP_BUILD__ } as const;
 
+// Timer and alert types for hooks and screens (hooks reach infrastructure only through here).
+export type {
+  AlertEvent,
+  AlertLevel,
+  AlertOptions,
+  AlertPath,
+  AlertStatusReport,
+  RestAlertTexts,
+  TimerDisplay,
+  TimerState,
+  WakeLockStatus,
+} from '../infrastructure/alerts';
+
 /** Platform capabilities used by screens through hooks; never touched directly by features. */
 export interface Platform {
   readonly wakeLock: WakeLockPort;
   readonly haptics: HapticsPort;
-  readonly audio: AudioPort;
+  readonly audio: AlertAudio;
   readonly notifications: NotificationPort;
+  /** Low level: service-worker `ARM_REST`/`DISARM` and the `fired:` flags (§8.8.4). */
   readonly alerts: AlertScheduler;
+  /** Timer display engine, rest-alert scheduler, wake-lock policy, honest status (§8.8, M3t). */
+  readonly timers: TimerKit;
   readonly capabilities: CapabilityProbe;
   readonly applyTheme: typeof applyTheme;
   readonly downloadText: (name: string, text: string) => void;
@@ -84,6 +100,13 @@ export function createContainer(
     audio,
     notifications,
     alerts: alertScheduler,
+    timers: createTimerKit({
+      audio,
+      haptics,
+      notifications,
+      transport: alertScheduler,
+      log: diagnostics.log,
+    }),
     capabilities: capabilityProbe,
     applyTheme,
     downloadText: (name, text) =>

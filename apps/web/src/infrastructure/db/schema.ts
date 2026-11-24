@@ -8,9 +8,11 @@ import type {
   Plan,
   PlannedSession,
   Profile,
+  ReadinessEntry,
   Session,
   TrainingBreak,
 } from '@powr/domain';
+import type { ExerciseState, PrRecord, SessionE1rmPoint } from '@powr/domain/session';
 import {
   MIGRATIONS,
   migrateRecord,
@@ -33,6 +35,10 @@ export interface SchemaVersion {
  * hold v1 data): onboarding and planning. Indexes follow the hot queries: the active plan
  * (`status`), the calendar and week view (`localDate`, `[planId+localDate]`), breaks by start.
  * Booleans are not valid IndexedDB keys, so `equipmentProfiles.isDefault` is not indexed.
+ * M3a amended version 2 while it was unreleased: `sessions.plannedSessionId`, the raw table
+ * `readiness` (check-ins by day and session) and the derived tables `dExerciseState`,
+ * `dSessionE1rm` (one point per exercise and session, charts read it by exercise and day) and
+ * `dPrs` (by exercise, set, session, day and type), §8.2.2.
  */
 export const SCHEMA_HISTORY: readonly SchemaVersion[] = [
   {
@@ -49,7 +55,7 @@ export const SCHEMA_HISTORY: readonly SchemaVersion[] = [
     stores: {
       meta: 'key',
       settings: 'id',
-      sessions: 'id, localDate, status, startedAt.epochMs',
+      sessions: 'id, localDate, status, startedAt.epochMs, plannedSessionId',
       sets: 'id, sessionId, [exerciseId+performedAt.epochMs], localDate',
       profile: 'id',
       equipmentProfiles: 'id',
@@ -58,6 +64,10 @@ export const SCHEMA_HISTORY: readonly SchemaVersion[] = [
       breaks: 'id, startDate',
       meets: 'id, date',
       bodyweights: 'id, localDate, measuredAt.epochMs',
+      readiness: 'id, localDate, sessionId',
+      dExerciseState: 'exerciseId',
+      dSessionE1rm: '[exerciseId+sessionId], [exerciseId+localDate], sessionId',
+      dPrs: 'id, exerciseId, setId, sessionId, localDate, type',
     },
   },
 ];
@@ -83,6 +93,10 @@ export class PowrDb extends Dexie {
   declare breaks: Table<TrainingBreak, string>;
   declare meets: Table<MeetInfo, string>;
   declare bodyweights: Table<BodyweightEntry, string>;
+  declare readiness: Table<ReadinessEntry, string>;
+  declare dExerciseState: Table<ExerciseState, string>;
+  declare dSessionE1rm: Table<SessionE1rmPoint, [string, string]>;
+  declare dPrs: Table<PrRecord, string>;
 
   constructor(options: PowrDbOptions = {}) {
     super(options.name ?? 'powr', {

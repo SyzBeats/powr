@@ -86,42 +86,59 @@ export function runTrend(
   level: TraineeLevel,
   rules: RuleSlice<'load.trend.processSdPerWeek'>,
 ): Explained<readonly TrendPoint[]> {
-  const processSd = rules['load.trend.processSdPerWeek'].value[level];
-  const qPerDay = (processSd * processSd) / 7;
   const sorted = observations.toSorted((a, b) =>
     a.localDate < b.localDate ? -1 : a.localDate > b.localDate ? 1 : 0,
   );
   const points: TrendPoint[] = [];
-  let mean = 0;
-  let variance = 0;
-  let previous: LocalDate | null = null;
+  let previous: TrendPoint | null = null;
   for (const observation of sorted) {
-    const z = Math.log(observation.e1rmKg);
-    const r = (observation.logSd * observation.logSd) / observation.weight;
-    if (previous === null) {
-      mean = z;
-      variance = Math.max(r, MIN_VARIANCE);
-    } else {
-      variance += qPerDay * Math.max(0, daysBetween(previous, observation.localDate));
-      const gain = variance / (variance + r);
-      mean += gain * (z - mean);
-      variance = Math.max((1 - gain) * variance, MIN_VARIANCE);
-    }
-    previous = observation.localDate;
-    const half = Z95 * Math.sqrt(variance);
-    points.push({
-      localDate: observation.localDate,
-      e1rmKg: Math.exp(mean),
-      lowKg: Math.exp(mean - half),
-      highKg: Math.exp(mean + half),
-      logMean: mean,
-      logVariance: variance,
-    });
+    previous = trendStep(previous, observation, level, rules);
+    points.push(previous);
   }
   return explained(points, 'trend.series', {
     args: { level, observations: sorted.length },
     params: [rules['load.trend.processSdPerWeek']],
   });
+}
+
+/**
+ * One step of the filter (the loop body of `runTrend`): the first observation starts the series,
+ * later ones predict P += q·Δdays and update with R = σ² / w. The session engine folds one
+ * observation per exposure into the stored trend state (M3, `dExerciseState`), so a stored series
+ * and `runTrend` over the same observations agree exactly.
+ */
+export function trendStep(
+  previous: TrendPoint | null,
+  observation: TrendObservation,
+  level: TraineeLevel,
+  rules: RuleSlice<'load.trend.processSdPerWeek'>,
+): TrendPoint {
+  const processSd = rules['load.trend.processSdPerWeek'].value[level];
+  const qPerDay = (processSd * processSd) / 7;
+  const z = Math.log(observation.e1rmKg);
+  const r = (observation.logSd * observation.logSd) / observation.weight;
+  let mean: number;
+  let variance: number;
+  if (previous === null) {
+    mean = z;
+    variance = Math.max(r, MIN_VARIANCE);
+  } else {
+    variance =
+      previous.logVariance +
+      qPerDay * Math.max(0, daysBetween(previous.localDate, observation.localDate));
+    const gain = variance / (variance + r);
+    mean = previous.logMean + gain * (z - previous.logMean);
+    variance = Math.max((1 - gain) * variance, MIN_VARIANCE);
+  }
+  const half = Z95 * Math.sqrt(variance);
+  return {
+    localDate: observation.localDate,
+    e1rmKg: Math.exp(mean),
+    lowKg: Math.exp(mean - half),
+    highKg: Math.exp(mean + half),
+    logMean: mean,
+    logVariance: variance,
+  };
 }
 
 export type ChangeRules = RuleSlice<

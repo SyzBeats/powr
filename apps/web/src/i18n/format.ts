@@ -145,3 +145,44 @@ export function formatMass(value: number, unit: 'kg' | 'lb'): string {
     maximumFractionDigits: 2,
   }).format(value);
 }
+
+/** A fraction as a percentage in the device locale, e.g. 0.8 → "80%". */
+export function formatPercent(fraction: number): string {
+  return new Intl.NumberFormat(deviceLocale(), {
+    style: 'percent',
+    maximumFractionDigits: 0,
+  }).format(fraction);
+}
+
+/**
+ * A timer as a clock, "1:30", "12:05", "1:02:03" (TMR-04). A countdown rounds up to whole
+ * seconds, so it shows 0:01 until it ends and "2:30" at the start of a 150 s rest; elapsed time
+ * ("Rest over · +0:42", the session clock) rounds down.
+ */
+export function formatClock(ms: number, round: 'up' | 'down' = 'up'): string {
+  const total = Math.max(0, round === 'up' ? Math.ceil(ms / 1000) : Math.floor(ms / 1000));
+  const hours = Math.floor(total / 3600);
+  const minutes = Math.floor((total % 3600) / 60);
+  const seconds = String(total % 60).padStart(2, '0');
+  return hours > 0
+    ? `${hours}:${String(minutes).padStart(2, '0')}:${seconds}`
+    : `${minutes}:${seconds}`;
+}
+
+/** A duration for screen readers, "2 minutes, 30 seconds" (NFR-A11Y-06), whole seconds. */
+export function formatDurationLong(ms: number): string {
+  const total = Math.max(0, Math.round(ms / 1000));
+  const minutes = Math.floor(total / 60);
+  const seconds = total % 60;
+  const unit = (value: number, name: 'minute' | 'second') =>
+    new Intl.NumberFormat(deviceLocale(), {
+      style: 'unit',
+      unit: name,
+      unitDisplay: 'long',
+    }).format(value);
+  const parts = [
+    ...(minutes > 0 ? [unit(minutes, 'minute')] : []),
+    ...(seconds > 0 || minutes === 0 ? [unit(seconds, 'second')] : []),
+  ];
+  return new Intl.ListFormat(deviceLocale(), { style: 'long', type: 'unit' }).format(parts);
+}

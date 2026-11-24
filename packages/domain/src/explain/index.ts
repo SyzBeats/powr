@@ -133,6 +133,22 @@ export const RULE_IDS = [
   'schedule.missed.skip',
   'schedule.missed.merge',
   'schedule.moved',
+  // M3: the workout session
+  'session.calibration',
+  'session.lastTime',
+  'session.fixed',
+  'session.adjustment.load',
+  'progression.linear.weekHold',
+  'pr.rep',
+  'pr.load',
+  'pr.e1rm',
+  'pr.volume',
+  'pr.firstTime',
+  'readiness.assessment',
+  'readiness.adjust',
+  'guardrail.failure',
+  'guardrail.shortRest',
+  'guardrail.slowReps',
 ] as const;
 export type RuleId = (typeof RULE_IDS)[number];
 

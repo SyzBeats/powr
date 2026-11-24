@@ -34,6 +34,8 @@ const STRENGTH_DOSE = ['lift', 'heavySets', 'min', 'max'];
 /** A stored session adjustment rebuilt for the sheet (`explainAdjustment`). */
 const ADJUSTMENT = ['loadMin', 'loadMax', 'setsMin', 'setsMax', 'rirAdd', 'daysOff', 'notes'];
 const RETURN = ['daysOff', 'action', 'weeks'];
+/** A PR record (MOT-01): the exercise, the set's reps, the new and the previous best. */
+const PR = ['exerciseId', 'reps', 'value', 'previous'];
 
 export const WHY_VALUES: { readonly [K in RuleId]: readonly string[] } = {
   'loading.round': ROUNDING,
@@ -177,4 +179,35 @@ export const WHY_VALUES: { readonly [K in RuleId]: readonly string[] } = {
   'schedule.missed.skip': ['session', 'date'],
   'schedule.missed.merge': ['session', 'target', 'merged', 'dropped', ...ADJUSTMENT],
   'schedule.moved': ['session', 'from', 'to', 'swappedWith'],
+  // M3a: the workout session
+  'session.calibration': [
+    'status',
+    'exposures',
+    'exposuresMin',
+    'exposuresMax',
+    'rirMin',
+    'rirMax',
+    'load',
+  ],
+  'session.lastTime': ['mode', 'load', 'reps', 'date'],
+  'session.fixed': ['kind', 'load', 'durationS', 'reps'],
+  'session.adjustment.load': ['pct', 'pctMin', 'pctMax', 'from', 'load'],
+  'progression.linear.weekHold': ['load'],
+  'pr.rep': PR,
+  'pr.load': PR,
+  'pr.e1rm': PR,
+  'pr.volume': PR,
+  'pr.firstTime': ['exerciseId'],
+  'readiness.assessment': [
+    'flag',
+    'composite',
+    'entries',
+    'minEntries',
+    'prsLowDays',
+    'shortNights',
+  ],
+  'readiness.adjust': ['action', 'flag', 'rirAdd', 'dropSets', 'slots'],
+  'guardrail.failure': ['extraHoursMin', 'extraHoursMax'],
+  'guardrail.shortRest': ['restSeconds', 'minimum'],
+  'guardrail.slowReps': ['repSeconds', 'limit'],
 };

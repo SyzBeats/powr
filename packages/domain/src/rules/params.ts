@@ -258,6 +258,14 @@ export interface ReadinessAdjustments {
   readonly dropBackoffSets: Range;
 }
 
+/** RDY-03 sleep rules (EB §Monitoring › Sleep & stress). */
+export interface SleepRules {
+  /** A night shorter than this many hours is short. */
+  readonly shortHours: number;
+  /** This many short nights in a row lower expectations on multi-joint lifts. */
+  readonly consecutiveShortNights: number;
+}
+
 export interface SessionSpacing {
   readonly nonFailureHours: Range;
   readonly failureHours: Range;
@@ -381,6 +389,8 @@ export interface ParamValues {
   'load.trend.changeThresholds': ChangeThresholds;
   'load.trend.reference': { readonly weeks: number; readonly sessions: number };
   'load.reanchor.trigger': { readonly maxReps: number; readonly minRpe: number };
+  /** MOT-01: e1RM PRs come only from sets the e1RM pipeline weighs at least this much (R-07). */
+  'load.pr.minSetWeight': number;
   // volume.yaml
   'volume.hypertrophy.weeklyBands': WeeklyVolumeBands;
   'volume.hypertrophy.tiers': readonly VolumeTier[];
@@ -423,6 +433,8 @@ export interface ParamValues {
   'progression.stall.resetPct': number;
   'progression.apre.sixRm': AprePreset;
   'progression.calibration': { readonly exposures: Range; readonly targetRir: Range };
+  /** PRG-08: one exposure calibrates when one of its sets has at least this e1RM set weight. */
+  'progression.calibration.reliableSetWeight': number;
   'progression.classification.slopePctPerWeek': {
     readonly noviceFrom: number;
     readonly advancedBelow: number;
@@ -449,6 +461,8 @@ export interface ParamValues {
   'session.rest.warmupLight': number;
   'session.rest.warmupBeforeWork': number;
   'session.rest.countUpSoftMin': CountUpSoftMin;
+  /** WKT-16: rest on a competition lift below this many seconds gets a hint (never < 2:00). */
+  'session.rest.competitionMinimum': number;
   'session.tempo.default': string;
   'session.tempo.eccentricSeconds': Range;
   'session.tempo.warnRepSeconds': number;
@@ -471,6 +485,9 @@ export interface ParamValues {
   'monitoring.readiness.baseline': ReadinessBaseline;
   'monitoring.readiness.thresholds': ReadinessThresholds;
   'monitoring.readiness.adjustments': ReadinessAdjustments;
+  'monitoring.readiness.sleep': SleepRules;
+  /** RDY-03: a session starting at or after this local hour is a "PM session". */
+  'monitoring.readiness.pmFromHour': number;
   'monitoring.spacing': SessionSpacing;
   // scoring.yaml
   'scoring.display': ScoringDisplay;

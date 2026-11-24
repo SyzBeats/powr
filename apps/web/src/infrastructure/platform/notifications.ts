@@ -11,16 +11,22 @@ export const notifications: NotificationPort = {
     if (!('Notification' in globalThis) || Notification.permission !== 'granted') return false;
     const registration = await navigator.serviceWorker?.getRegistration();
     if (!registration) return false;
+    // A silent notification must not carry a vibration pattern, not even an empty one: Chromium
+    // throws a TypeError ("Silent notifications must not specify vibration patterns").
     const options = {
       body,
       tag,
       renotify,
       silent,
       data: { url },
-      vibrate: silent ? [] : [200, 100, 200],
+      ...(silent ? {} : { vibrate: [200, 100, 200] }),
     };
-    await registration.showNotification(title, options);
-    return true;
+    try {
+      await registration.showNotification(title, options);
+      return true;
+    } catch {
+      return false;
+    }
   },
   async closeByTag(tag) {
     const registration = await navigator.serviceWorker?.getRegistration();

@@ -1,0 +1,141 @@
+import { useLingui } from '@lingui/react/macro';
+import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from 'react';
+
+import type { NotificationPermissionState } from '@powr/application';
+import type { SettingsRecord } from '@powr/formats';
+
+import { announce } from '#ui/announcer';
+
+import type { AlertStatusReport, WakeLockStatus } from '../app/container';
+import { useContainer } from '../app/container-context';
+import { useObservable } from './use-observable';
+
+/**
+ * Alert settings (SET-03, SET-04, SET-10), stored in the settings record as `alerts`. Absent
+ * fields mean the defaults below; a change writes the whole object.
+ */
+export type AlertSettings = Required<NonNullable<SettingsRecord['alerts']>>;
+
+const DEFAULT_ALERT_SETTINGS: AlertSettings = {
+  sound: true,
+  volume: 0.8,
+  vibration: true,
+  preAlert: true,
+  countdown: false,
+  restingNotice: true,
+  keepScreenOn: true,
+};
+
+export function useAlertSettings(): AlertSettings & { readonly loaded: boolean } {
+  const { deps } = useContainer();
+  const observable = useMemo(() => deps.queries.settings(), [deps]);
+  const settings = useObservable(observable);
+  const stored = settings.loaded ? settings.value?.alerts : undefined;
+  return useMemo(
+    () => ({ ...DEFAULT_ALERT_SETTINGS, ...stored, loaded: settings.loaded }),
+    [stored, settings.loaded],
+  );
+}
+
+/**
+ * Persists a change of the alert settings. Written through the unit of work like the theme;
+ * M3a/M3b may move it into a `setAlertSettings` use case (IMPLEMENTATION_NOTES.md, M3t).
+ */
+export function useSetAlertSettings() {
+  const { deps, platform } = useContainer();
+  return useCallback(
+    async (patch: Partial<AlertSettings>) => {
+      if (patch.keepScreenOn !== undefined)
+        platform.timers.screenWake.setEnabled(patch.keepScreenOn);
+      await deps.uow.write(['settings'], async (repos) => {
+        const current = await repos.settings.get();
+        const alerts: AlertSettings = { ...DEFAULT_ALERT_SETTINGS, ...current?.alerts, ...patch };
+        await repos.settings.put({
+          ...current,
+          id: 'me',
+          theme: current?.theme ?? 'system',
+          alerts,
+        });
+      });
+    },
+    [deps, platform],
+  );
+}
+
+/** Notification permission, requested only by a tap after an in-app explanation (§8.8.4). */
+export function useNotificationPermission() {
+  const { platform } = useContainer();
+  const [permission, setPermission] = useState<NotificationPermissionState>(() =>
+    platform.notifications.permission(),
+  );
+  useEffect(() => {
+    // The user may change it in the browser's site settings while the app is open.
+    let status: PermissionStatus | null = null;
+    let cancelled = false;
+    const update = () => setPermission(platform.notifications.permission());
+    void navigator.permissions
+      ?.query({ name: 'notifications' })
+      .then((result) => {
+        if (cancelled) return;
+        status = result;
+        result.addEventListener('change', update);
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+      status?.removeEventListener('change', update);
+    };
+  }, [platform]);
+  const request = useCallback(async () => {
+    const result = await platform.notifications.request();
+    setPermission(result);
+    return result;
+  }, [platform]);
+  return { permission, request };
+}
+
+/**
+ * "Alerts while screen is locked: Supported / Limited / Not supported" for this browser (§8.8.5),
+ * re-evaluated when the permission or the resting-notice setting changes. Null while loading.
+ */
+export function useAlertStatus(
+  permission: NotificationPermissionState,
+  restingNotice: boolean,
+): AlertStatusReport | null {
+  const { platform } = useContainer();
+  const [report, setReport] = useState<AlertStatusReport | null>(null);
+  const variant = platform.timers.labs.audioKeepAlive() ? 'E' : restingNotice ? 'D' : 'C';
+  useEffect(() => {
+    let cancelled = false;
+    void platform.timers.alertStatus(variant, permission).then((next) => {
+      if (!cancelled) setReport(next);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [platform, variant, permission]);
+  return report;
+}
+
+export function useWakeLockStatus(): WakeLockStatus {
+  const { screenWake } = useContainer().platform.timers;
+  return useSyncExternalStore(screenWake.subscribe, screenWake.status);
+}
+
+/**
+ * "Test alert" (SET-04): the rest-end alert now, with the current settings, in every channel
+ * (sound at the in-app volume, vibration, the polite announcement); the caller shows the done
+ * state. Runs in the tap, so it also unlocks audio.
+ */
+export function useTestAlert() {
+  const { platform } = useContainer();
+  const settings = useAlertSettings();
+  const { t } = useLingui();
+  return useCallback(async () => {
+    const unlocked = await platform.audio.unlock();
+    if (settings.sound && unlocked) platform.audio.play('restEnd', settings.volume);
+    const vibrated = settings.vibration && platform.haptics.vibrate([200, 100, 200]);
+    announce(t`Test alert: rest over`);
+    return { sound: settings.sound && unlocked, vibrated };
+  }, [platform, settings, t]);
+}

@@ -40,3 +40,21 @@
   tag: INF
   status: active
   note: No validated readiness cut-offs exist (EB §Gaps #10); the defaults are adjustable heuristics.
+
+- id: src.craven2022
+  citation: >-
+    Craven et al. 2022. [Meta-analysis, 69 publications: sleep loss reduced exercise performance
+    by 7.56%; effects consistent for total deprivation and late restriction; PM tasks impaired,
+    AM tasks largely unaffected.] Sports Med. DOI 10.1007/s40279-022-01706-y.
+  url: https://doi.org/10.1007/s40279-022-01706-y
+  tag: MA
+  status: active
+
+- id: src.knowles2018
+  citation: >-
+    Knowles et al. 2018. [Systematic review: a single night of sleep deprivation had little effect
+    on muscle strength; consecutive nights of restriction reduced multi-joint, not single-joint,
+    force.] J Sci Med Sport. DOI 10.1016/j.jsams.2018.01.012.
+  url: https://doi.org/10.1016/j.jsams.2018.01.012
+  tag: SR
+  status: active

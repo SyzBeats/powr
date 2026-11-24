@@ -1419,3 +1419,563 @@ Screenshots at 360 × 780, light and dark, were handed to the coordinator outsid
   component test now types a 2.5 collar weight to keep it that way.
 - Manual TalkBack pass (S22): the baselines step's regions and toggle groups, the template sheet's
   radio cards with long descriptions, and the native date input.
+
+## M3a session core
+
+Written 2026-11-24 by the M3a work (roadmap A.4 "M3 Workout session", the part without UI:
+the session core below the screens; M3t built the timers, alerts, wake lock and audio in
+parallel, M3b wires both into the screens). Status: `pnpm verify` green (numbers under
+"Evidence").
+
+### What landed
+
+| Area                  | Where                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | PRD (logic side)                                     |
+| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| Session model         | `packages/domain/src/model/session.ts`: `Session` (origin, planned-session link, exercise slots, superset groups, cursor, timer, note, readiness, accepted changes, revision, undo), `SessionExercise` (planned vs actual: plan slot, substitution, prescription, planned sets, rest, load percentage, note, skipped, per side), `PlannedSet`, `LoggedSet` (slot and planned-set keys, technique, per-side reps, duration, flags, rest before, prescription snapshot, note, "5+" effort), `TimerState`, `ReadinessEntry`, `SessionChange`, `UndoEntry`, `SESSION_DEFAULTS` | WKT-02…05, 09…12, TMR-04/08/09, RDY-01               |
+| Reducer               | `@powr/domain/session` (new subpath, pure): `reduceSession(state, event, ctx) → { state, effects, result }`, `startSession(input, ctx)`                                                                                                                                                                                                                                                                                                                                                                                                                                    | §8.5, WKT-01…16, TMR-01…13                           |
+| Engine in the session | `session/suggest.ts` (set suggestions with "Why?"), `history.ts` (derived exercise state, trend steps, calibration state machine, baseline seeding), `prs.ts`, `readiness.ts`, `guardrails.ts`, `build.ts` (planned sets, warm-ups, freestyle and repeat), `past.ts` (backdated sessions and edits), `view.ts` (session view, summary, remaining time), `timers.ts`, `values.ts` (WKT-03 checks)                                                                                                                                                                           | PRG-03…08, 11…13, WKT-06/07/13/16, MOT-01, RDY-02/03 |
+| Trend                 | `trendStep` in `@powr/domain/trend` (one filter step; `runTrend` now loops over it, golden tests unchanged)                                                                                                                                                                                                                                                                                                                                                                                                                                                                | PRG-02                                               |
+| Rules                 | registry 1.3.0 → **1.4.0** (`1.4.0+d3aff3c74c11`), 128 → 133 parameters, 31 → 34 `verified: false`; 16 new `RuleId`s with English `why.*` messages                                                                                                                                                                                                                                                                                                                                                                                                                         | PRG-18, PRG-09                                       |
+| Records               | `packages/formats/src/records/v2.ts` amended (unreleased version 2): session, set, readiness and settings `session` schemas; `withSessionDefaults` and the 1 → 2 migration; reference checks; v2 fixture `fixtures/backups/v2/m3-active-session.zip`                                                                                                                                                                                                                                                                                                                       | DAT-05…07, NFR-SEC-02                                |
+| Application           | `@powr/application/session` (new lazy entry): the use cases below; ports for the readiness and derived tables, more set/session/bodyweight queries, two live queries; M0 `logSet`/`finishSession` write M3-shaped sessions                                                                                                                                                                                                                                                                                                                                                 | §5.5, §6.2, §6.9                                     |
+| Persistence           | `apps/web/src/infrastructure/db`: Dexie version 2 amended (`sessions.plannedSessionId`, tables `readiness`, `dExerciseState`, `dSessionE1rm`, `dPrs`), repositories, live queries `activeSessionData` and `sessionPrs`                                                                                                                                                                                                                                                                                                                                                     | §8.2.2, §8.2.4, §8.2.8                               |
+| Lint                  | `LAZY_SESSION` in `oxlint.config.ts`: `@powr/application/session` is import()-only in the app (M3b's loader carries the one disable comment, like `usePlanning`)                                                                                                                                                                                                                                                                                                                                                                                                           | §8.19                                                |
+| "Why?" texts          | `apps/web/src/features/why/{messages,args}.ts` and both catalogs: messages for the 16 new rules (needed to keep the PRG-09 coverage test and the `WHY_MESSAGES` type complete; no screen change)                                                                                                                                                                                                                                                                                                                                                                           | PRG-09                                               |
+
+PRD IDs covered on the logic side: WKT-01…16 (WKT-07 through the existing loading service),
+TMR-01…03, 07, 08, 09, 11, 13 (the data and the state; display, alerts, sound and wake lock are
+M3t), TMR-10 (tempo parsing for the rep-speed guardrail; the metronome is M3t/M3b), PRG-03…08,
+PRG-11…13 as they apply in a session, RDY-01…03, MOT-01 (detection; the celebration UI is M3b).
+
+### Application API for M3b (`@powr/application/session`, lazy)
+
+All take the container's `deps`; expected failures are `Result`s. Every outcome carries the
+domain `SessionView` (every planned set with its logged record or its suggestion and "Why?",
+the last-time panel with its note, calibration status, e1RM, timer with a computed view,
+clock and remaining time, PRs so far, volume per muscle, stale flag, live undo token) and the
+platform effects to run.
+
+| Use case                                                                                                                                                               | Returns                                                                                                              | Notes                                                                                                                                                                                               |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `startWorkout(deps, { source, warmups? })`, `source`: `{ kind: 'planned', plannedSessionId }`, `{ kind: 'freestyle', exerciseIds }` or `{ kind: 'repeat', sessionId }` | `Result<WorkoutOutcome, StartWorkoutError>` (`activeSession` with its ID, `unknownPlannedSession`, `unknownSession`) | WKT-01: one active session, checked inside the write transaction; warm-up ramps where a working load is known; `result.readiness.proposals` holds the per-lift return-from-break proposals (PRG-13) |
+| `dispatch(deps, event)`                                                                                                                                                | `Result<WorkoutOutcome, WorkoutError>` (`noActiveSession`, `rejected` with the reducer's reason)                     | Any `SessionEvent` (table below), one strict transaction                                                                                                                                            |
+| `resumeWorkout(deps)`                                                                                                                                                  | as `dispatch`                                                                                                        | WKT-14: `RESUME`; re-arms the stored timer, `result.stale` after 6 h ("Finish session at last logged set?" → `finishWorkout({ as, endAt: 'lastSet' })`), the still-valid undo token                 |
+| `finishWorkout(deps, { as: 'finished' or 'partial', endAt?: 'now' or 'lastSet' })`                                                                                     | as `dispatch`, plus `summary` (WKT-13) and `lowReadinessDays`                                                        | Marks the planned session done, rebuilds the exercises' derived data; pass `lowReadinessDays` to the planning entry's `checkReactiveDeload` (PRG-12)                                                |
+| `discardWorkout(deps)`                                                                                                                                                 | as `dispatch`                                                                                                        | WKT-13 (the UI confirms first)                                                                                                                                                                      |
+| `observeActiveSession(deps)`                                                                                                                                           | `Observable<SessionView or null>`                                                                                    | The live session screen (one Dexie live query, ordered emissions)                                                                                                                                   |
+| `substitutionOptions(deps, slotKey)`                                                                                                                                   | ranked `SlotCandidate[]`                                                                                             | WKT-08: same pattern first, then exercises training a primary muscle directly; equipment-valid, not avoided, MAP-03 ranking                                                                         |
+| `rememberRest(deps, { exerciseId, seconds })`                                                                                                                          | `Result<void, …>`                                                                                                    | TMR-03 "remember for this exercise": a per-exercise rest override in settings, applied to the active session's slots                                                                                |
+| `updateSessionPreferences(deps, patch)`                                                                                                                                | void                                                                                                                 | Settings `session` (below)                                                                                                                                                                          |
+| `workoutSummary(deps, sessionId)`                                                                                                                                      | `SessionSummary or null`                                                                                             | The summary of any session against the history before it                                                                                                                                            |
+| `logPastSession(deps, { localDate, startTime?, exercises, note? })`                                                                                                    | `Result<SessionState, PastSessionError>`                                                                             | WKT-15 backdated logging; recomputes the touched exercises                                                                                                                                          |
+| `previewPastEdit(deps, { sessionId, edits })`                                                                                                                          | `{ removed, added }` PRs                                                                                             | WKT-15 "this will remove a PR", before anything is written                                                                                                                                          |
+| `editPastSession(deps, { sessionId, edits })`, `deletePastSession(deps, sessionId)`                                                                                    | `Result<…>`                                                                                                          | Edits: `editSet`, `deleteSet`, `addSet`, `deleteExercise`, `note`; delete unlinks the check-in and puts a done planned session back to planned                                                      |
+| `ensureDerived`, `rebuildExercises`                                                                                                                                    |                                                                                                                      | Rebuild stale or missing derived data (used by the above; "Verify data" can call them)                                                                                                              |
+| `preferencesOf(settings)`                                                                                                                                              | `SessionPreferences`                                                                                                 | The settings record's `session` with defaults                                                                                                                                                       |
+
+**Events** (`SessionEvent`, `@powr/domain/session`). "Undo" = records an undo entry (WKT-12);
+"keep" = leaves the pending undo in place.
+
+| Event                                                                                                                                                              | What it does                                                                                                                                                                                                                                                    | Undo                                        |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
+| `CONFIRM_SET { slotKey, setKey, values, confirmImplausible? }`                                                                                                     | Logs a planned set (load, reps, RIR or none, "5+", per-side reps, duration, technique, flags, note, type); records the suggestion it replaced (PRG-03), the actual rest (TMR-08); starts the rest, warm-up or superset-transition timer (TMR-01/13); PRs, hints | undo                                        |
+| `EDIT_SET`, `SKIP_SET`, `DELETE_SET`                                                                                                                               | Edit a logged set; log a planned set as skipped (WKT-09: never deleted); delete a logged record                                                                                                                                                                 | undo                                        |
+| `ADD_SET`, `REMOVE_SET`, `SKIP_EXERCISE`, `ADD_EXERCISE`, `REMOVE_EXERCISE`, `REORDER`, `CHANGE_PRESCRIPTION`                                                      | On-the-fly changes (WKT-09): sets, exercises (defaults by goal and level), order, reps/RIR/load/duration/technique/set count/rest, manual mode                                                                                                                  | undo                                        |
+| `SUBSTITUTE { slotKey, exerciseId, scope }`                                                                                                                        | WKT-08; `mesocycle` also updates the rest of the mesocycle (effect `plan.substitute`)                                                                                                                                                                           | undo (session scope); clears it (mesocycle) |
+| `GROUP`, `UNGROUP`                                                                                                                                                 | Supersets and circuits (WKT-05)                                                                                                                                                                                                                                 | undo                                        |
+| `GENERATE_WARMUPS { slotKey, includeOptional? }`                                                                                                                   | WKT-06 ramp from the slot's suggested working load                                                                                                                                                                                                              | undo                                        |
+| `APPLY_CHANGES { changes }`                                                                                                                                        | Accepted readiness and return-from-break proposals (RDY-03, PRG-13)                                                                                                                                                                                             | undo                                        |
+| `SET_NOTE`, `SET_PER_SIDE`, `MOVE_CURSOR`, `SET_REST`, `READINESS { items or null, soreMuscles? }`                                                                 | Notes (WKT-10), per-side logging (WKT-11), the set in focus, slot rest, the check-in (RDY-01; null = skipped) with its assessment and proposals                                                                                                                 | keep                                        |
+| `TIMER_START { kind: 'rest' or 'set', mode?, targetMs?, slotKey? }`, `TIMER_STOP` (returns `elapsedMs`), `TIMER_ADJUST { deltaMs }`, `TIMER_SKIP`, `TIMER_RESTART` | TMR-03/07/09                                                                                                                                                                                                                                                    | keep                                        |
+| `TIMER_FIRED { timerId, which: 'preAlert' or 'end' }`                                                                                                              | Sets `fired.preAlert`/`fired.end` so a reload does not alert again (M3t's `pre-alert` and `end` events)                                                                                                                                                         | keep                                        |
+| `UNDO { token }`                                                                                                                                                   | Restores the session and the set records as before the last undoable event, timer included; PRs follow (computed from the sets); token valid 30 s (`UNDO_TTL_MS`)                                                                                               | clears                                      |
+| `FINISH { as, endAt? }`, `DISCARD`                                                                                                                                 | WKT-13/14                                                                                                                                                                                                                                                       | clears                                      |
+| `RESUME`                                                                                                                                                           | WKT-14 recovery; changes nothing, returns the effects to re-arm                                                                                                                                                                                                 | keep                                        |
+
+**Effects** (`SessionEffect`). The application runs the first five; `WorkoutOutcome.effects`
+(`PlatformEffect`) holds the rest for the app's effect runner (M3t/M3b).
+
+| Effect                                                          | Runs it                                                                           | When                                                                                            |
+| --------------------------------------------------------------- | --------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `persist { session, putSets, deleteSetIds, readiness? }`        | application, in the event's strict transaction                                    | Every accepted event that changes state                                                         |
+| `activeSession { sessionId or null }`                           | application, after the commit (`RuntimeFlags`, the service worker's update gate)  | Start, resume (re-asserted), finish, discard                                                    |
+| `plan.substitute { plannedSessionId, planSlotKey, exerciseId }` | application, same transaction                                                     | `SUBSTITUTE` with scope `mesocycle`                                                             |
+| `plan.complete { plannedSessionId }`                            | application, same transaction                                                     | `FINISH` of a planned session                                                                   |
+| `recompute { exerciseIds, fromDate }`                           | application, after the commit (rebuilds `dExerciseState`, `dSessionE1rm`, `dPrs`) | `FINISH`                                                                                        |
+| `timer.arm { timer }`                                           | app (M3t `restAlerts.arm(timer, …)`)                                              | A new timer, or a changed schedule (start, adjust, restart, undo, resume)                       |
+| `timer.disarm { timerId }`                                      | app (M3t `disarm(id)`)                                                            | The timer was replaced, skipped, stopped, or the session ended                                  |
+| `wakeLock { action }`                                           | app                                                                               | `acquire` on start and resume, `release` on finish and discard (PWA-06)                         |
+| `celebrate { prs }`                                             | app (M3b)                                                                         | A confirmed or edited set set PRs (MOT-02: one celebration per set)                             |
+| `cue { 'setConfirmed' or 'setSkipped' or 'undone' }`            | app (haptic tick)                                                                 | Confirm, skip, undo                                                                             |
+| `announce { announcement }`                                     | app (live region)                                                                 | `setLogged`, `setSkipped`, `restStarted`, `transition`, `exerciseDone`, `sessionDone`, `undone` |
+
+**Result** (`SessionResult`): `rejected`, `undoToken`, `setId`, `prs`, `next` (the cursor's
+suggestion with "Why?"), `hints` (WKT-16), `timer`, and per event `elapsedMs` (TIMER_STOP),
+`stale` (RESUME), `readiness` (READINESS and start: assessment and proposals); the outcome adds
+`swapWith` (a lighter later session of the week to swap with on low readiness, RDY-03; M3b calls
+the planning entry's `swapSessions`).
+
+**Settings** (one optional field, separate from M3t's `alerts`): `settings.session` =
+`{ restAutoStart?, restMode?: 'countdown' or 'countup', readinessCheckIn?, hintsOff?: GuardrailKind[],
+rounding?: RoundingMode, exercises?: { exerciseId, manual?, restAutoStart?, perSide? }[] }`
+(TMR-01, TMR-07, RDY-01, WKT-16, SET-05, PRG-03 manual mode, WKT-11). Per-exercise rest is a
+parameter override with `exerciseId` (`rememberRest`).
+
+### TimerState as built
+
+```ts
+interface TimerState {
+  readonly id: string;
+  readonly kind: 'rest' | 'set' | 'transition';
+  readonly mode: 'countdown' | 'countup';
+  readonly startedAtEpochMs: number;
+  readonly targetMs: number;
+  readonly adjustMs: number;
+  readonly fired: { readonly preAlert?: boolean; readonly end?: boolean };
+  readonly softMinMs?: number; // optional (M3a): count-up soft minimum, the gentle cue (TMR-07)
+  readonly slotKey?: string; // optional (M3a): the slot it belongs to (alert and display text)
+}
+```
+
+Exported from the `@powr/domain` root (`model/session.ts`). Warm-up rests are kind `rest`
+(the concept's `warmupRest` kind is not used). `targetMs + adjustMs` never goes below 0
+(`adjustTimer`); `timerView(timer, nowMs)` clamps elapsed, remaining and over at 0 (property
+test across clock jumps). The session clock (TMR-11) is `sessionElapsedMs(session, now)`.
+
+### The engine in the session
+
+- **Suggestion order** (`suggestSet`): fixed values (warm-up steps, timed sets, a fixed or
+  user-set load) → in the session after a working set of the slot: back-offs from the top set's
+  e1RM (PRG-05), the next set from the last set's e1RM when its RIR left the target range (RPE
+  mode) or during calibration, else the last set's load → from the history: manual mode or
+  load-less work from the last performance (reps up for pure bodyweight, A-19), double
+  progression (PRG-04) and linear with the stall rule (PRG-06; intermediates once a week) from
+  the last exposure, calibration while no reliable e1RM exists (PRG-08), else load for target
+  from the current e1RM (PRG-05; percent prescriptions as a percentage of it) → deload and
+  return-from-break loads at the middle of the slot's percentage of the normal load
+  (PRG-11/13). Every load goes through `roundToAchievable` with the user's equipment and
+  rounding mode (WKT-07). Pre-filled reps are the middle of the range, RIR the middle in half
+  steps.
+- **Calibration state machine** (PRG-08, TD-27): `uncalibrated` (no e1RM) → `calibrating`
+  → `calibrated`. A baseline (ONB-08) calibrates at once; one exposure with entered effort does
+  when one of its sets reaches `progression.calibration.reliableSetWeight` (0.5: RPE ≥ 7 and
+  ≤ 12 effective reps), otherwise the second does (`exposures.max`); without entered effort two
+  exposures with an e1RM do. While calibrating, targets are RIR 3–4, the first set has no load
+  (the user picks; "about 12 times"), and the next sets load from the first one's e1RM. For
+  double progression and linear progression the first exposure is the calibration: from the
+  second on they run from the last performance.
+- **Baselines** (M2c open item): `seedFromBaseline` makes the baseline's e1RM the first trend
+  observation (its own weight and noise, dated when lifted, else at onboarding), so logged
+  sessions refine it; a changed baseline, equation or override changes the state's key and
+  rebuilds it. Baselines still do not transfer to variants.
+- **PRs** (MOT-01): rep PR = more than the n-rep max (the heaviest load of any set with ≥ n
+  reps, so a heavier set with more reps also sets the lower rep maxes); load PR; e1RM PR only
+  from sets with entered effort whose base weight reaches `load.pr.minSetWeight` (0.5); volume
+  PR once per session, on the crossing set, valued at the session's final volume load; the first
+  exposure is a milestone without PRs; warm-ups, timed, assisted and band sets never count. In
+  the session PRs are computed from each exercise's bests and this session's sets, so undo and
+  edits move them; `dPrs` stores them for finished sessions.
+- **Readiness** (RDY-02/03): z-scores per item against the 28-day baseline (≥ 7 entries),
+  soreness and stress inverted, composite = mean; `low` ≤ −1.0, `modify` ≤ −1.5 or PRS ≤ 3 on two
+  days in a row; proposals: +1 RIR on top sets (or the working sets of RPE compound slots), drop
+  1 back-off set (2 when "modify"), after < 6 h sleep before a PM session trim one working set
+  per exercise, after ≥ 2 short nights +1 RIR on compounds; a lighter later day of the week is
+  offered as `swapWith`. Nothing applies without `APPLY_CHANGES`.
+- **Return from break per lift** (PRG-13, WKT-01): exercises last trained more than 7 days ago
+  get the first step of their row as a proposal at start (not when the planned session already
+  carries a deload or break adjustment).
+- **Guardrails** (WKT-16): session fractional sets above the per-session soft cap (once per
+  muscle), RIR 0 or a failure flag on a barbell squat or hinge or a heavy barbell press (≤ 6
+  reps), rest below 2:00 between sets of a competition lift, reps slower than 8 s (measured, or
+  from the exercise tempo). Each can be turned off (`hintsOff`).
+- **WKT-03 plausibility**: more than 100 reps, or a load above 3× the current e1RM, is rejected
+  as `implausible` until confirmed (`confirmImplausible`); constants, not training logic.
+
+### Persistence and recovery
+
+- **One event = one strict transaction** over sessions, sets, readiness, the derived exercise
+  state and (for plan effects) planned sessions and plans; the reducer runs inside it (pure,
+  synchronous), rules are resolved and stale derived data rebuilt before it (§8.2.4).
+- **Recovery** (WKT-14): the session record holds the cursor, the timer and the undo entry, so a
+  killed app resumes exactly; `resumeWorkout` re-arms the stored timer. Tested in memory (a new
+  process over the same data) and in Dexie (close and reopen).
+- **Derived data** (§8.2.8): `dExerciseState` (keyed by exercise; `key` fingerprints the engine,
+  rules and content versions, the overrides, the level, the baseline and, for bodyweight-loaded
+  exercises, the bodyweight log), `dSessionE1rm`, `dPrs`. They hold finished and partial
+  sessions only; the active session's PRs and suggestions are computed from them and its own
+  sets. A stale or missing state is rebuilt from the raw sets before use; finishing, editing,
+  deleting and backdating rebuild the touched exercises; M0's quick-log `finishSession` drops
+  their states (rebuilt on use); a restore clears the derived tables.
+- **Records** (version 2 amended, not a version 3): v1 session records get the empty session
+  core in the 1 → 2 step (`withSessionDefaults`); the Dexie readers apply the same function to
+  version-2 sessions an M2 build wrote. New strict schemas cover the nested undo snapshot; the
+  reserved-key and depth check already runs on every file (hostile-key tests added for the
+  session slots, the undo snapshot, readiness and the settings' `session`). Reference checks:
+  a set's slot and planned set exist in its session, a session's slots have unique keys and
+  known exercises, groups name existing slots, a check-in's session exists. Fixture
+  `v2/m3-active-session.zip` (active session with timer, undo, warm-ups, technique, check-in and
+  preferences) round-trips; the v1 fixture still imports.
+- **Dexie**: `sessions` gains the index `plannedSessionId`; new stores `readiness 'id,
+  localDate, sessionId'`, `dExerciseState 'exerciseId'`, `dSessionE1rm '[exerciseId+sessionId],
+  [exerciseId+localDate], sessionId'`, `dPrs 'id, exerciseId, setId, sessionId, localDate,
+  type'`. A developer device that already holds a version-2 database from an M2 build has the
+  old store layout at the same version number: clear the site data once (no beta users exist).
+
+### Evidence for the new parameters (rules 1.3.0 → 1.4.0: 128 → 133 parameters, 34 `verified: false`)
+
+| Parameter                                   | Value                 | Evidence and sources                                                                    | Verified | Why                                                                                                                                                                                                                          |
+| ------------------------------------------- | --------------------- | --------------------------------------------------------------------------------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `load.pr.minSetWeight`                      | 0.5                   | [INF] `src.powr-prd`, `src.halperin2022`, `src.grgic2020`                               | false    | PRD MOT-01 "e1RM PR only from qualifying sets per PRG-01 weighting" and R-07 (false PRs from noise); the EB set weights are 1.0 / 0.5 / ≤ 0.1; the 0.5 tier (RPE ≥ 7, ≤ 12 effective reps) as the cut is a POWR design value |
+| `progression.calibration.reliableSetWeight` | 0.5                   | [INF] `src.powr-technical-concept`, `src.halperin2022`                                  | false    | PRD PRG-08 "first 1–2 exposures": when one exposure suffices is not in the EB; a design value tied to the same set-weight tier                                                                                               |
+| `session.rest.competitionMinimum`           | 120 s                 | [SR] `src.grgic2018b`                                                                   | true     | EB §Defaults › Session "never < 2:00 on competition lifts"; PRD WKT-16                                                                                                                                                       |
+| `monitoring.readiness.sleep`                | short < 6 h, 2 nights | [MA, SR, INF] `src.craven2022` (new), `src.knowles2018` (new), `src.powr-eb-monitoring` | true     | EB §Monitoring › Sleep & stress rules (Craven 2022: PM tasks impaired; Knowles 2018: consecutive nights reduce multi-joint force)                                                                                            |
+| `monitoring.readiness.pmFromHour`           | 12                    | [INF] `src.craven2022`, `src.powr-eb-monitoring`                                        | false    | "PM session" is not defined in the EB; noon is a design value                                                                                                                                                                |
+
+`pnpm --filter @powr/rules build -- --diff <1.3.0 rules.json>` lists exactly these five as
+added. Two sources added to `data/sources/monitoring.yaml`.
+
+### Decisions and deviations
+
+| Concept / brief says                                           | What I did                                                                                                                                                                                                                                                 |
+| -------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| The reducer lives in `@powr/application/session` (§8.5)        | In `@powr/domain/session`, so the domain lint enforces its purity (no `Date`, no I/O); the application entry runs the effects and holds the use cases                                                                                                      |
+| `reduceSession(s, e, ctx)`                                     | State = `{ session, sets }` (the logged sets are their own records); `startSession` creates the first state; IDs come from a pool in the context (`ctx.ids`), time from `ctx.now`, so replays are deterministic                                            |
+| §6.2 writes `dPrs`, `dExerciseState`, `dWeekly` after each set | The derived tables hold finished sessions only; in-session PRs, suggestions and volume are computed from them plus the session's sets (undo and edits stay consistent without derived writes). `dWeekly` and `dStreak` are left to M4 (analytics, streaks) |
+| Derived writes with relaxed durability (§8.2.4)                | Strict like everything else: Dexie sets durability per database, not per transaction                                                                                                                                                                       |
+| Forward recompute in the engine worker (§6.9, §8.2.8)          | Per-exercise full rebuild in the lazy session chunk on the main thread (TD-32 still open): simple and exactly equal to the incremental path                                                                                                                |
+| "Sets without effort never create PRs" (brief)                 | As E-1 (§8.7.7): no e1RM PR from a set without effort (`load.unknownEffort.eligibleForE1rmPr`, property-tested); its actual load × reps can set rep, load and volume PRs, as E-1 states. **Product-owner decision** if no PR at all was meant              |
+| Rep PR "best load at that rep count, 1–12+" (MOT-01)           | Best load for at least that many reps (the rep-max table of ANL-04), every rep count; the first ever set of a rep count is a rep PR (except in the first exposure)                                                                                         |
+| `warmupRest` timer kind (§5.6 sketch)                          | Warm-up rests are `rest` timers (the shared contract has three kinds)                                                                                                                                                                                      |
+| Deload "load 85–100%"                                          | The middle of the slot's range on top of the normal suggestion (history-based loads only; in-session autoregulated loads already follow the day's performance)                                                                                             |
+| Undo (WKT-12)                                                  | One level, stored in the session record (survives a kill), token valid 30 s; restores the session (with a fresh revision) and the set records exactly; a mesocycle-wide substitution is not undoable                                                       |
+| Finish "partial" counts for the streak (MOT-03)                | `countsForStreak`: finished, or partial with ≥ 50% of the planned working sets done (added exercises not counted as planned)                                                                                                                               |
+| WKT-11 per-side reps                                           | `reps` is the weaker side when both sides are given; one set for volume (A-18)                                                                                                                                                                             |
+| APRE progression                                               | Loaded like RPE mode (the APRE-6 session structure is not built; no MVP template uses it)                                                                                                                                                                  |
+| Substitution list (WKT-08)                                     | Same pattern and primary muscles, without the plan's competition-lift rule (a swap for the session may leave the lift); the starting load of an exercise without history is the calibration (PRG-08), no cross-exercise conversion (the PRD's "Could")     |
+| Readiness scales (RDY-01)                                      | Sleep hours (0–24 in quarter hours), sleep quality, energy, soreness, stress, motivation 1–5, PRS 0–10; per-muscle soreness 1–5; every item optional                                                                                                       |
+
+### Evidence
+
+`pnpm verify` green on 2026-11-24: lint (0 errors, 0 warnings, `--deny-warnings`), format, token
+gate, knip, catalog check, typecheck, 708 tests in 64 files (651 before; 57 new), build, licence gate (33 distributed,
+841 build-only, passed), size (entry JS **179.0 kB** gzip of 186, was 178.08: the Dexie
+repositories and live queries of the new tables; the session use cases are the lazy entry and
+not in any chunk yet; CSS 5.82 kB; precache 78 files + sw.js, 476.1 kB; startup path 5 scripts,
+0 with Zod) and 39 E2E tests (unchanged; the session screens are M3b). New tests: `packages/domain/test/session/reference.test.ts` (27 reference tests: PRG-05
+golden 150 kg → 120 kg, back-offs −3.0% after RPE 9, PRG-04 32.5 kg × 8, PRG-06 +2.5 kg and the
+10% reset, PRG-08 calibration and its state machine, the EB baseline example 120.3 kg, deload
+92.5%, the heavy warm-up ramp, PRs, timers, guardrails, readiness z-scores and proposals, return
+from break, summary, past sessions, the view and remaining time),
+`packages/domain/test/session/properties.test.ts` (fast-check, 150 runs each in CI, 2,000 once:
+determinism, cursor validity and persistence, undo restores the previous state and its timer, no
+e1RM PR without entered effort, timers never negative after a recovery at any clock offset,
+technique credits match the registry table), `packages/application/test/m3a.test.ts` (start,
+one active session, log and undo, a crash before the commit, a simulated process kill, finish
+with derived rebuild, backdated logging and PR recompute in date order, the PR preview, edit and
+delete, readiness, remembered rest, substitution, the live view, restore clears derived),
+`apps/web/src/infrastructure/db/db.test.ts` (close and reopen with an active session and its
+timer, M2-era sessions read with defaults, derived replace/invalidate/clear), formats tests (v2
+fixture, v1 migration to the session core, hostile keys in the new records, the new reference
+checks).
+
+### Open items
+
+- **For M3b:** the session screens and their lazy loader (`import('@powr/application/session')`,
+  one lint disable like `usePlanning`); the effect runner wiring `timer.arm`/`disarm` to M3t's
+  `restAlerts.arm(timer, texts, options)` and `disarm(id)` and M3t's `pre-alert`/`end` events
+  back to `TIMER_FIRED`; the stale-session prompt; the PR celebration; English texts for
+  rejections, hints and announcements (the "Why?" texts exist); the docs pass.
+- **M4:** `dWeekly`, `dStreak` and the PR history screen (dPrs is ready); the personal curve fit
+  and the correction factor (TD-26); move rebuilds and plan generation to the engine worker
+  (TD-32); per-lift reactive-deload signals from `dSessionE1rm`.
+- Baselines do not transfer to variants (unchanged from M2c); no cross-exercise starting loads
+  (WKT-08 "Could").
+- PRG-07 "switch to rep/RPE progression when planned increases outrun the observed e1RM
+  trend" is not built (the slope is available in the trend state).
+- RDY-03 high-stress weeks ("+24 h spacing") is a planning concern; not proposed in the session.
+- The APRE-6 session structure (preset only; loaded like RPE mode).
+- Developer devices with an M2-era version-2 database: clear the site data once (same version
+  number, new stores).
+
+### Doc amendments for the docs pass
+
+- **Technical concept §5.4:** add the row `session` (reducer, events, effects, suggestions,
+  calibration, PRs, readiness, guardrails, timers, past sessions, views; WKT, TMR, PRG-03…13,
+  RDY-01…03, MOT-01) and note that `prs` and `readiness` are built inside it.
+- **§5.5:** ports `ReadinessRepo`, `DerivedRepo` (`exerciseStates`, `replaceExercise`,
+  `prsBySession`, `prsByExercise`, `pointsByExercise`, `invalidate`, `clear`), `SetRepo.put/
+  delete/byExercise`, `SessionRepo.delete/byIds`, `BodyweightRepo.list`; live queries
+  `activeSessionData`, `sessionPrs`; `TableName` includes the derived tables.
+- **§5.6:** replace the `Session`, `LoggedSet` and `TimerState` sketches with the built types
+  (above), add `SessionExercise`, `PlannedSet`, `ReadinessEntry`, `SessionChange`, `UndoEntry`;
+  `technique` is `{ kind, units? }`.
+- **§6.2:** the use case is `dispatch(CONFIRM_SET)`; the reducer is in `@powr/domain/session`;
+  derived tables are written at finish, in-session PRs are computed; the result carries
+  `prs`, `next`, `timer`, `undoToken`, `hints`.
+- **§6.9:** the recompute is a per-exercise rebuild in the session chunk until the engine worker
+  exists; `previewPastEdit` is `prs.previewEffect`.
+- **§8.2.2:** M3a state of version 2 (amended): `sessions.plannedSessionId`, `readiness`,
+  `dExerciseState`, `dSessionE1rm`, `dPrs` with the indexes above; `dWeekly`, `dStreak` M4.
+- **§8.2.4:** all writes are strict (derived included); the session tables of one event.
+- **§8.2.8:** the derived-state key and the invalidate-on-M0-finish rule; import clears derived.
+- **§8.3:** the v2 fixture `m3-active-session.zip`; the new reference checks.
+- **§8.5:** reducer location, state shape, the event and effect tables above, the ID pool, the
+  undo semantics, the property list.
+- **§8.7.5:** the calibration state machine and `reliableSetWeight`; baseline seeding.
+- **§8.7.7 E-1 / MOT-01:** the rep-PR definition (n-rep max), `load.pr.minSetWeight`.
+- **§8.8.1:** the contract with `softMinMs` and `slotKey`; no `warmupRest` kind.
+- **TD-27:** closed for PR detection and the calibration state machine; readiness and return
+  from break built in the session. **TD-32:** extend to the derived-data rebuild.
+  **TD-26:** unchanged (fit and correction factor).
+- **PRD:** MOT-01 rep PR wording ("more load than ever for at least that many reps"); RDY-01
+  item scales; WKT-08 alternatives may leave the competition lift for the session; WKT-03
+  plausibility numbers (3× e1RM, 100 reps) as product constants.
+
+## M3t timers and alerts
+
+Written 2026-11-24 by the M3t work (part of roadmap A.4 "M3 Workout session", in parallel with M3a,
+the session core): the timer and alert subsystem of technical concept §8.8, without a session
+screen (M3b wires it). Status: `pnpm verify` green (numbers under "Evidence").
+
+### What landed
+
+| Area                      | PRD / concept                                                      | Where                                                                                                                                                                                                                                                                                                                      |
+| ------------------------- | ------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Timer contract            | §8.8.1                                                             | `src/infrastructure/alerts/timer.ts`: a local `TimerState`, structurally identical to M3a's `@powr/domain` type (a comment names the contract); `computeDisplay`, `timerEndsAt`, `alertKey`                                                                                                                                |
+| Display engine            | TMR-04, TMR-07, TMR-09, TMR-11, TMR-12, NFR-PERF-02/10, NFR-REL-05 | `alerts/engine.ts` (monotonic anchor, wall-clock frame after a resume, clock-jump report), `alerts/ticker.ts` (4 Hz on a 250 ms grid, each tick on an animation frame, nothing while hidden or unsubscribed, recompute at once on `visibilitychange`, `pageshow`, `resume`), `alerts/lifecycle.ts`; hook `useTimerDisplay` |
+| Alerts while visible      | TMR-05, PWA-07, SET-03, NFR-A11Y-06/09                             | `platform/audio.ts` (Web Audio cues `restEnd`, `preAlert`, `countdown`, `gentle`, `pr`; `unlock()`; volume as gain; `suspend()`), `alerts/patterns.ts` (vibration), `alerts/scheduler.ts` (pre-alert at 10 s, 3-2-1, end), `ui/announcer.tsx` (the polite live region, mounted in the shell)                               |
+| Wake lock policy          | PWA-06, SET-10, R-15                                               | `alerts/wake-lock-policy.ts` (reference-counted holds, re-acquired on visible, released with the last holder or when the setting goes off, the refusal reason kept), hook `useScreenWakeLock`                                                                                                                              |
+| Alerts while hidden       | TMR-06, PWA-08, NG-13                                              | `alerts/scheduler.ts` (page one-shot timeout, `ARM_REST` service-worker timer, silent "Resting – ends at …", "Rest over" with `renotify`, `fired:<key>` dedupe, the return report), `sw/sw.ts`, `runtime-db` (`pruneFiredFlags`), `platform/notifications.ts`                                                              |
+| Honest status             | TMR-06, SET-04, PWA-13, V-01                                       | `alerts/status.ts`, `alerts/browser.ts`, `alerts/capability-matrix.json` (empty: S-1 has not run), `tools/capability-matrix` (`pnpm capability-matrix`)                                                                                                                                                                    |
+| Settings → Alerts         | SET-03, SET-04, SET-10, PWA-06, PWA-08                             | `features/settings/AlertsSection.tsx` (mounted in `SettingsScreen` with one line), `hooks/use-alert-settings.ts`; the settings record's new `alerts` field (`packages/formats/src/records/v2.ts`)                                                                                                                          |
+| Labs audio keep-alive (E) | OQ-T3 = B                                                          | `alerts/labs.ts` (device-local runtime flag, off, no user-facing toggle), the scheduler option `keepAlive`, harness variant E and its "Labs" checkbox on `/debug/alerts`                                                                                                                                                   |
+| S-1 harness               | V-01, §8.8.5                                                       | `features/debug/AlertsHarness.tsx`, `alert-harness.ts`: rebuilt on the production scheduler, timer engine and wake-lock policy; export `harnessVersion` 2                                                                                                                                                                  |
+| Composition               | §5.3                                                               | `app/container.ts`: `platform.timers` (`TimerKit`: engine, ticker, `restAlerts`, `screenWake`, `labs`, `displayStore`, `alertStatus`, `browser`); the scheduler and the status are lazy chunks (2.0 and 0.9 kB gzip)                                                                                                       |
+| Diagnostics               | §8.17                                                              | Codes `timer.clockJump` (`deltaMs`, `visibility`), `wakeLock.state` (`state`, `reason`), `alerts.end` (`path`, `delayMs`, `kind`, `hidden`), `alerts.error` (`name`)                                                                                                                                                       |
+
+Tests: `src/infrastructure/alerts/{engine,ticker,scheduler,status,wake-lock-policy}.test.ts` (a
+fake clock with wall, monotonic and deep-sleep time in `test-support.ts`),
+`src/infrastructure/runtime-db/runtime-db.test.ts`, `src/ui/announcer.test.ts`,
+`tools/capability-matrix/test/compile.test.ts`, `packages/formats/test/migrations.test.ts` (alert
+settings at v2; the backup round-trip arbitraries now generate them), `apps/web/test/alerts.test.tsx`
+(component tests), `apps/web/e2e/alerts.spec.ts`, `apps/web/e2e/diagnostics.spec.ts` (export v2).
+
+### API for M3b
+
+```tsx
+import { announce } from '#ui/announcer'; // the shell already mounts <LiveAnnouncer />
+
+import { usePlatform } from '../../hooks/use-app';
+import {
+  useScreenWakeLock,
+  useTimerAlerts,
+  useTimerDisplay,
+  useUnlockAudio,
+  type TimerState, // the local contract type; @powr/domain's after the merge
+} from '../../hooks/use-timers';
+import { formatClock } from '../../i18n/format';
+
+// "Start session" tap: creates and resumes the AudioContext inside the gesture (autoplay policy).
+const unlockAudio = useUnlockAudio();
+<Button
+  onClick={() => {
+    void unlockAudio();
+    startSession();
+  }}
+/>;
+
+// Display (session screen, ring, mini timer TMR-12, the session clock TMR-11 as a count-up):
+const display = useTimerDisplay(session.timer); // remainingMs, elapsedMs, overMs, phase, done, progress
+display.done
+  ? `Rest over · +${formatClock(display.overMs, 'down')}`
+  : formatClock(display.remainingMs);
+
+// Alerts: mount ONCE while a session runs (a shell-level session provider or the mini timer).
+const { endedWhileHidden } = useTimerAlerts(session.timer); // arms, re-arms on a new end, disarms on null
+useScreenWakeLock(sessionActive); // in the session screen and the mini timer (reference-counted)
+
+// Finish or discard: disarm everything, suspend the audio context, prune old fired flags.
+usePlatform().timers.restAlerts.stopAll();
+```
+
+- **`useTimerDisplay(timer, now?)`** returns a `TimerDisplay`: `phase` is `idle`, `running`,
+  `ending` (the last 10 s of a countdown, for emphasis) or `done` (countdown end, count-up soft
+  minimum); a count-up keeps counting in `elapsedMs` and `overMs`. About 4 updates a second while
+  visible, none while hidden, one at once on return. `now` freezes it (summaries, tests).
+- **`useTimerAlerts(timer, { url })`** reads the alert settings (and the Labs flag), builds the
+  translated notification texts, arms `platform.timers.restAlerts` and announces politely: "Rest
+  started, 2 minutes, 30 seconds", "… left" after an adjust, "10 seconds left" (pre-alert on),
+  "Rest over", "Rest over, 42 seconds ago" on return; never the 3-2-1 or seconds. Set and
+  transition timers have their own words ("Time is up", "Next exercise"). `endedWhileHidden` is
+  true after a return to an ended timer: show "Rest over · +0:42" (TMR-04).
+- **Visual done state:** `display.done` (`phase === 'done'`) drives the ring's done state and a
+  static screen-edge highlight; nothing may flash above 3 Hz, and motion follows reduced motion
+  (NFR-A11Y-08/09). The ring is M3b's.
+- **Imperative API** (if M3b runs M3a's effects directly): `const { restAlerts } =
+  usePlatform().timers;` `restAlerts.arm(timer, texts, options)`, `disarm(timerId)`, `stopAll()`,
+  `subscribe(listener)` with the events `armed`, `pre-alert`, `countdown`, `end` (`path`:
+  `visible`, `page-timeout`, `sw-timer`, `on-return`; `delayMs`; `hidden`), `hidden`, `visible`
+  (`endedWhileHidden`, `overMs`), `keep-alive`, `disarmed`. `arm` is idempotent for the same end
+  (options and texts update in place).
+- **Other sounds:** `usePlatform().audio.play('pr', volume)` with `haptics.vibrate([30, 40, 60])`
+  for the PR celebration (MOT-02); `'countdown'` for a 3-2-1 lead-in before a timed set (TMR-09).
+- **Announcer:** `announce(text)` from `#ui/announcer` for any other polite status (at most one per
+  second, the latest of a burst, a repeat of the text still shown dropped).
+
+**Wiring M3a's timer effects:**
+
+| M3a effect (carries a whole `TimerState`)          | M3t                                                                                                                                               |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| arm (rest after a set, set timer, transition)      | Render `useTimerAlerts(session.timer)` with the persisted timer, or call `restAlerts.arm(timer, texts, options)`                                  |
+| re-arm after an adjust (same `id`, new `adjustMs`) | The same call: a new end is a new alert key, the old service-worker timer is disarmed, and a rest extended after it ended alerts again            |
+| disarm by `id` (skip, next set confirmed)          | The timer becomes null, or `restAlerts.disarm(id)`                                                                                                |
+| session finished or discarded                      | `restAlerts.stopAll()` and `useScreenWakeLock(false)`                                                                                             |
+| `fired.preAlert` / `fired.end` in the record       | Subscribe to `pre-alert` / `end` and dispatch M3a's command, so a reload does not alert again; the scheduler skips what the record marks as fired |
+
+At the merge: replace the interface in `src/infrastructure/alerts/timer.ts` with
+`export type { TimerState } from '@powr/domain';` (nothing else changes).
+
+**Settings fields (merge with M3a's settings changes):** `SettingsRecord.alerts`, an optional
+strict object whose fields are all required: `sound`, `volume` (0–1), `vibration`, `preAlert`,
+`countdown`, `restingNotice`, `keepScreenOn`. Absent means the defaults in
+`hooks/use-alert-settings.ts` (sound on, 80%, vibration on, pre-alert on, 3-2-1 off, resting notice
+on, keep screen on). `useSetAlertSettings` writes it through `deps.uow` like the theme; a
+`setAlertSettings` use case in `@powr/application` would be the cleaner home (M3a owns packages).
+
+### Decisions and deviations
+
+| Concept / brief says                                                       | What I did                                                                                                                                                                                                                                                                                                                                                                                          |
+| -------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Clock jump > 2 s: "re-anchor and log a `clock-jump` diagnostic" (§8.8.1)   | While the page stays visible the display keeps its monotonic time (a clock change does not move a timer, NFR-REL-05); the jump is logged once (`timer.clockJump`) and the comparison baseline moves. On `visible`, `pageshow` and `resume` the anchor is rebuilt from the wall clock: Android's monotonic clock stops in deep sleep, so the wall clock is the truth after a hide, as after a reload |
+| Dedupe by `fired[timerId]` (§8.8.4)                                        | By `fired:<timerId>@<end>`: an adjust gives a new key, so a rest extended after it ended alerts again, and the page and the service worker dedupe on exactly the end they were armed for                                                                                                                                                                                                            |
+| The service worker claims the flag, then checks the permission (M0)        | It claims only when it can show a notification; without permission it no longer silences the page path (a beep)                                                                                                                                                                                                                                                                                     |
+| `ARM_REST` only for rests ending within 5 min                              | Unchanged in the service worker; for a longer rest the page arms it 5 minutes before the end, if the page still runs then                                                                                                                                                                                                                                                                           |
+| Hidden-state alerts for rest timers                                        | For every timer kind (rest, set, transition; a count-up at its soft minimum with the gentle cue), with the caller's texts                                                                                                                                                                                                                                                                           |
+| "A non-intrusive alert" when the rest ended while hidden (TMR-04)          | The `gentle` two-note cue (and a short vibration) on return, also after a reload into an ended rest                                                                                                                                                                                                                                                                                                 |
+| The silent "Resting" notification (M0 adapter)                             | **Bug fixed:** the M0 adapter passed `vibrate: []` with `silent: true`, which Chromium rejects ("Silent notifications must not specify vibration patterns"), so variant D never showed its notice; `show()` now resolves false instead of throwing                                                                                                                                                  |
+| `capability-matrix.json` shipped; records in `docs/device-tests/` (§8.8.5) | The matrix is `apps/web/src/infrastructure/alerts/capability-matrix.json`, bundled into the lazy status chunk (hashed, precached); the records (harness exports) go to `tools/capability-matrix/records/` because `docs/` is off limits here. `pnpm test` fails when the matrix is stale                                                                                                            |
+| The matrix is keyed by browser family and version range                    | Also by platform, display mode, condition (locked, switched), battery saver and variant. A cell holds for its major version + 2 (about two months). Battery saver cannot be detected, so the worse result counts. C and D stand for each other, E only for itself. "Supported" needs ≥ 3 runs                                                                                                       |
+| Labs keep-alive opt-in "only if S-1 shows it works"                        | Runtime flag `powr.labs.audioKeepAlive` (localStorage, per device), off; only the harness can switch it on; no user-facing toggle                                                                                                                                                                                                                                                                   |
+| Notification permission requested contextually (ONB-11)                    | Settings → Alerts only (the explanation, then the button); onboarding's system step stays TD-34                                                                                                                                                                                                                                                                                                     |
+| `unlock()` on the start tap                                                | Waits at most 500 ms for `resume()`: without user activation it stays pending until the next gesture                                                                                                                                                                                                                                                                                                |
+| A polite live region                                                       | `<div aria-live="polite" aria-atomic="true">` in the shell, not an `<output>`: queries for the screens' own status outputs (`getByRole('status')`) must not find it                                                                                                                                                                                                                                 |
+| Settings write path                                                        | A hook through `deps.uow` (no use case: `packages/**` is M3a's)                                                                                                                                                                                                                                                                                                                                     |
+| Test alert                                                                 | Immediate (sound at the set volume, vibration, the announcement, the done badge); no locked-screen test button                                                                                                                                                                                                                                                                                      |
+| E2E                                                                        | `e2e/alerts.spec.ts` runs in full Chromium (`test.use({ channel: 'chromium' })`, new headless): the default headless shell reports the notification permission "denied" even after `grantPermissions`. M0's variant B test moved there; with the claim fix it needs a real permission                                                                                                               |
+| `apps/web/tsconfig.app.json`                                               | `include` lists the matrix JSON (a composite project must list every imported JSON file)                                                                                                                                                                                                                                                                                                            |
+| Entry JS ≤ 186 kB                                                          | 178.08 → 181.76 kB gzip: about 2.95 kB for the engine, ticker, wake-lock policy, scheduler facade, cues and announcer, about 0.7 kB because Rolldown now splits shared modules into 14 first-wave scripts (5 before) once the new hooks are shared by two lazy routes (still 0 with Zod)                                                                                                            |
+
+### S-1 device test protocol (for the product owner)
+
+**Set-up, once per browser.** Serve the build as in section 1 ("Testing on the Galaxy S22":
+`pnpm build && pnpm docker:build && pnpm docker:run`, `adb reverse tcp:8080 tcp:8080`), or the beta
+server once S-7 exists. On the S22 open `http://localhost:8080/?debug=1` in **Chrome**, pass the
+legal gate ("Just let me log") and wait for "Ready for offline use". Write down the One UI, Android,
+Chrome (`chrome://version`) and Samsung Internet (Settings → About) versions. On the phone:
+notifications for the browser allowed, Do Not Disturb off, media volume up, vibration on. Open
+Settings → Developer tools → "Timer alert harness (S-1)", enter the label (for example "Galaxy S22
+SM-S901B, One UI 7, Android 15, Chrome 142, PWA") and tap "Allow notifications". For the
+**installed PWA** runs install the app (menu → Install app) and start it from the home screen; for
+the **tab** runs use the browser itself. Then repeat everything in **Samsung Internet**.
+
+**Cells, in priority order** (3 repetitions each; rests of 60 s, 3 min and 5 min unless noted):
+
+1. Variant D (the production default), Screen locked, battery saver off.
+2. Variant D, Screen locked, battery saver **on** (Settings → Battery → Power saving).
+3. Variant D, App switched (home button), battery saver off.
+4. Variant E (Labs keep-alive), Screen locked, battery saver off and on: the OQ-T3 go/no-go. Also
+   one 60-minute battery run for C and for E (for example 12 × 3 min with the screen locked).
+5. Variants A and B, Screen locked, battery saver off (which path carries the alert).
+6. 8 min, variants C and E, Screen locked (freezing; not counted for the status).
+7. Once with the notification permission denied (D, locked): Settings → Alerts must say "Not
+   supported" with the reason.
+
+**Each run.** Choose condition, battery saver, variant and rest length (keep "Hold the screen wake
+lock" on). Tap **Start run**, then at once lock the screen (power button) or press home. Wait until
+about 30 s after the planned end and note what the harness cannot see: sound heard, vibration felt,
+the notification on the lock screen or as a heads-up, and for E how the media notification looks.
+Unlock or return: the harness records the first path that alerted (`page-timeout`, `sw-timer`, or
+`on-return` = missed) and its delay, the wake-lock events and the battery level at start and end,
+and classifies the run (`on-time` within 2 s, `late`, `missed`). Check once per browser that a
+2:30 rest returned to after about 60 s shows 1:30 ± 1 s at once (TMR-04). A row "interrupted" means
+the page was killed; "Export results" fills in what the service worker did.
+
+**Records → matrix.** Tap **Export results** (a `.txt` with JSON, `harnessVersion` 2) after each
+browser and mode, then "Clear results". Copy the files off the phone (Downloads; `adb pull`) into
+`tools/capability-matrix/records/` as `<date>-<device>-<browser>-<mode>.txt`, run
+`pnpm capability-matrix` (it prints the entries per status) and commit the records together with
+`apps/web/src/infrastructure/alerts/capability-matrix.json`. Write the human record (the sheet
+above, battery numbers, screenshots of the notifications, the E go/no-go) as
+`docs/device-tests/<date>-s22.md` in the docs pass. A record with `"placeholder": true` compiles
+into rows that the app ignores (to try the pipeline). Settings → Alerts then says "Supported" only
+where the locked D or C cells of both battery-saver states for that browser, version range and mode
+are supported (≥ 3 runs, ≥ 95% on time within 2 s, rests of at most 5 min).
+
+### Evidence
+
+`pnpm verify` green on 2026-11-24 (exit 0): lint (0 errors, 0 warnings), format, token gate
+(unchanged: lowest text 4.56, on fills 5.41, UI 3.88; 239 colour utilities in 137 files), knip,
+catalog check (884 messages), typecheck, 715 tests in 70 files (baseline 651 in 61), build, licence
+gate (33 distributed, 841 build-only, passed), size (entry JS **181.76 kB** gzip of 186 kB, was
+178.08; CSS 5.87 kB; service worker 7.88 kB, was 7.70; precache 90 files + sw.js, 486.7 kB; startup
+path 14 scripts, 0 with Zod) and 45 E2E tests (39 before): `e2e/alerts.spec.ts` (7) covers QS-03
+with the Playwright clock (a 2:30 rest hidden for 60 s shows 1:29–1:31 within 500 ms), a device
+clock change while visible (`setSystemTime` +1 h: the timer does not move, `timer.clockJump` is
+logged), the service-worker path (variant B), the notification path with a real permission
+(variant D: "Resting" on hide, exactly one "Rest over", both closed on return, one `fired` event),
+the permission asked only after the explanation (0 requests on `/`, `/session`, `/plan`,
+`/settings`, 1 after the tap), axe (WCAG 2.2 A/AA) in light and dark on Settings → Alerts and on the
+harness (idle and running) and reflow at 320 px and 200% text. The unit tests cover anchoring, the
+clock jump, deep sleep and resume, clamps, the 4 Hz grid and silence while hidden, arm, disarm,
+dedupe in both orders, re-arm on an adjust, a missed rest, the 5-minute service-worker rule, the
+keep-alive lifecycle, the wake-lock states, the status rule and the matrix compiler.
+
+### Open items
+
+- **S-1 on the S22 (V-01, mandatory):** the matrix is empty, so every browser shows "Limited (best
+  effort)" (or "Not supported" without notifications). The E go/no-go and the Labs toggle wait for
+  it.
+- **M3b:** the session screen, the mini timer (TMR-12) and the session clock (TMR-11) on these
+  hooks; persisting `fired.preAlert` and `fired.end` through M3a's reducer; `stopAll()` on finish
+  and discard; the 3-2-1 lead-in of timed sets (TMR-09); tempo cues (TMR-10, not built); the PR
+  sound (MOT-02, cue ready). A `setAlertSettings` use case could replace the hook's direct write.
+- **Not E2E-testable:** a tap on a notification (`notificationclick` focuses the app, preferring a
+  window already at the notification's URL, or opens `/session`): check it in S-1 or S-2.
+- **SET-03 "pre-alert timing":** a switch at 10 s; a choice of seconds is a small change if wanted.
+  SET-04 voice cues (Could) are not built.
+- **Settings shows the wake-lock outcome of the last request** ("Used during workouts" until a
+  session asks); there is no probe button.
+- **`CheckRow` (M2b design system)** puts its description into the accessible name; an
+  `aria-describedby` would be shorter for TalkBack (visible in the Alerts section's rows).
+- **Size:** 4.24 kB of entry headroom are left; M3a and M3b additions to the startup path should
+  stay lazy.
+- **Manual TalkBack pass (S22):** the announcements during a real rest (once each, no flooding),
+  the volume slider's spoken value, the status badge.
+
+### Doc amendments for the docs pass
+
+- **§8.8.1:** the clock-jump behaviour above (monotonic while visible, logged once; the wall clock
+  on resume); 4 Hz on a 250 ms grid of timeouts, each on an animation frame; `useTimerDisplay`.
+- **§8.8.2:** the cues `restEnd`, `preAlert`, `countdown`, `gentle`, `pr`; `unlock()` waits at most
+  500 ms; the shell's live region (`#ui/announcer`) and the announcement texts; the pre-alert as a
+  switch at 10 s.
+- **§8.8.3:** the policy (reference-counted holds; the states off, held, released, denied,
+  unsupported; the Settings lines "Not supported on this browser" and "Not available right now"
+  with the reason).
+- **§8.8.4 and §6.2:** the alert key `timerId@end`; the service worker claims only with permission;
+  a rest longer than 5 min arms the service worker 5 min before its end; all timer kinds; the
+  gentle cue on return; silent notifications carry no vibration pattern.
+- **§8.8.5:** the matrix location and format, the records in `tools/capability-matrix/records/` (or
+  move them to `docs/device-tests/` and point the tool there), the compiler rule (≥ 3 runs, version
+  grace 2, the worse battery-saver result, C/D fallback), the status reasons, the harness export
+  `harnessVersion` 2 (condition, battery saver, browser, display mode, placeholder, alert key).
+- **§8.2.2 / settings record:** the optional `alerts` object (SET-03, SET-04, SET-10).
+- **§5.3 tree:** `src/infrastructure/alerts/`, `src/hooks/use-timers.ts`,
+  `src/hooks/use-alert-settings.ts`, `src/ui/announcer.tsx`, `tools/capability-matrix/`.
+- **§8.17:** the four new diagnostic codes. **§8.22:** the Labs runtime flag (device-local, no UI).
+- **§8.20:** `e2e/alerts.spec.ts` in full Chromium (`channel: 'chromium'`) for notifications; QS-03
+  automated with the Playwright clock (§10.2).
+- **§8.19:** entry JS 181.8 kB gzip (lazy chunks `scheduler` 2.0 kB and `status` 0.9 kB).
+- **ADR-0019:** the implementation landed; the matrix stays empty until S-1; follow-up unchanged.
+- **IMPLEMENTATION_NOTES section 1** ("Testing on the Galaxy S22", the `/debug/alerts` bullet):
+  point to the protocol above (condition, battery saver, export v2, `pnpm capability-matrix`).

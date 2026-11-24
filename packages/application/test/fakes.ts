@@ -1,11 +1,41 @@
 import { builtInContent } from '@powr/content/built-in';
 import { makeInstantTz, type SessionId } from '@powr/domain';
-import { emptyRawTables, type RawTableName, type RawTables } from '@powr/formats';
+import type { ExerciseState, PrRecord, SessionE1rmPoint } from '@powr/domain/session';
+import { RAW_TABLE_NAMES, emptyRawTables, type RawTableName, type RawTables } from '@powr/formats';
 import { rulesStamp, type ParamOverride, type ResolveContext } from '@powr/rules';
 import { BUILT_IN_RULES } from '@powr/rules/built-in';
 import { resolveRules } from '@powr/rules/resolve';
 
-import type { Deps, Repositories, RulesProvider, UnitOfWork } from '../src';
+import {
+  sessionExerciseIds,
+  type ActiveSessionData,
+  type Deps,
+  type Observable,
+  type Repositories,
+  type RulesProvider,
+  type UnitOfWork,
+} from '../src';
+
+/** The in-memory database: raw tables plus the derived tables (§8.2.2). */
+export type MemoryTables = RawTables & {
+  dExerciseState: ExerciseState[];
+  dSessionE1rm: SessionE1rmPoint[];
+  dPrs: PrRecord[];
+};
+
+/** A memory database from raw tables, or a copy of another one with its derived tables. */
+function emptyMemory(raw: RawTables | MemoryTables = emptyRawTables()): MemoryTables {
+  const copy = structuredClone(raw) as Partial<MemoryTables> & RawTables;
+  return {
+    ...copy,
+    dExerciseState: copy.dExerciseState ?? [],
+    dSessionE1rm: copy.dSessionE1rm ?? [],
+    dPrs: copy.dPrs ?? [],
+  };
+}
+
+const byTime = <T extends { performedAt: { epochMs: number } }>(entries: T[]): T[] =>
+  entries.toSorted((a, b) => a.performedAt.epochMs - b.performedAt.epochMs);
 
 function byDate<T extends { localDate: string }>(entries: T[]): T[] {
   return entries.toSorted((a, b) =>
@@ -14,7 +44,7 @@ function byDate<T extends { localDate: string }>(entries: T[]): T[] {
 }
 
 /** In-memory repositories over plain arrays: the fake of the Dexie adapters (§5.5). */
-function repositories(tables: RawTables): Repositories {
+function repositories(tables: MemoryTables): Repositories {
   const upsert = <T extends RawTableName>(table: T, key: string, record: RawTables[T][number]) => {
     const keyOf = (entry: RawTables[T][number]) =>
       (entry as unknown as Record<string, string>)[key];
@@ -43,6 +73,10 @@ function repositories(tables: RawTables): Repositories {
       get: async (id) => tables.sessions.find((session) => session.id === id),
       getActive: async () => tables.sessions.find((session) => session.status === 'active'),
       put: async (session) => upsert('sessions', 'id', session),
+      delete: async (id) => {
+        tables.sessions = tables.sessions.filter((session) => session.id !== id);
+      },
+      byIds: async (ids) => tables.sessions.filter((session) => ids.includes(session.id)),
       latestBefore: async (date) =>
         byDate(tables.sessions.filter((session) => session.localDate < date)).at(-1),
       inRange: async (from, to) =>
@@ -55,7 +89,12 @@ function repositories(tables: RawTables): Repositories {
         if (tables.sets.some((s) => s.id === set.id)) throw new Error('ConstraintError');
         tables.sets = [...tables.sets, set];
       },
+      put: async (set) => upsert('sets', 'id', set),
+      delete: async (id) => {
+        tables.sets = tables.sets.filter((set) => set.id !== id);
+      },
       bySession: async (id) => tables.sets.filter((set) => set.sessionId === id),
+      byExercise: async (id) => byTime(tables.sets.filter((set) => set.exerciseId === id)),
       inRange: async (from, to) =>
         tables.sets.filter((set) => set.localDate >= from && set.localDate <= to),
     },
@@ -108,25 +147,71 @@ function repositories(tables: RawTables): Repositories {
     },
     bodyweights: {
       put: async (entry) => upsert('bodyweights', 'id', entry),
+      list: async () =>
+        tables.bodyweights.toSorted((a, b) => a.measuredAt.epochMs - b.measuredAt.epochMs),
+    },
+    readiness: {
+      put: async (entry) => upsert('readiness', 'id', entry),
+      inRange: async (from, to) =>
+        tables.readiness.filter((entry) => entry.localDate >= from && entry.localDate <= to),
+      bySession: async (id) => tables.readiness.filter((entry) => entry.sessionId === id),
+    },
+    derived: {
+      exerciseStates: async (ids) =>
+        tables.dExerciseState.filter((state) => ids.includes(state.exerciseId)),
+      replaceExercise: async (exerciseId, derived) => {
+        tables.dExerciseState = [
+          ...tables.dExerciseState.filter((state) => state.exerciseId !== exerciseId),
+          derived.state,
+        ];
+        tables.dSessionE1rm = [
+          ...tables.dSessionE1rm.filter((point) => point.exerciseId !== exerciseId),
+          ...derived.points,
+        ];
+        tables.dPrs = [...tables.dPrs.filter((pr) => pr.exerciseId !== exerciseId), ...derived.prs];
+      },
+      prsBySession: async (id) => tables.dPrs.filter((pr) => pr.sessionId === id),
+      prsByExercise: async (id) => tables.dPrs.filter((pr) => pr.exerciseId === id),
+      pointsByExercise: async (id) =>
+        tables.dSessionE1rm.filter((point) => point.exerciseId === id),
+      invalidate: async (ids) => {
+        tables.dExerciseState = tables.dExerciseState.filter(
+          (state) => !ids.includes(state.exerciseId),
+        );
+      },
+      clear: async () => {
+        tables.dExerciseState = [];
+        tables.dSessionE1rm = [];
+        tables.dPrs = [];
+      },
     },
     raw: {
-      readAll: async () => structuredClone(tables),
+      readAll: async () =>
+        structuredClone(
+          Object.fromEntries(RAW_TABLE_NAMES.map((table) => [table, tables[table]])) as RawTables,
+        ),
       replaceAll: async (next) => {
-        Object.assign(tables, structuredClone(next));
+        Object.assign(tables, structuredClone(next), {
+          dExerciseState: [],
+          dSessionE1rm: [],
+          dPrs: [],
+        });
       },
     },
   };
 }
 
 /** In-memory unit of work: each write runs on a copy that replaces the state only on success. */
-function createMemoryUow(initial: RawTables = emptyRawTables()) {
-  let state = structuredClone(initial);
+function createMemoryUow(initial?: RawTables | MemoryTables) {
+  let state = emptyMemory(initial);
+  const listeners = new Set<() => void>();
 
   const uow: UnitOfWork = {
     async write(_tables, fn) {
       const draft = structuredClone(state);
       const result = await fn(repositories(draft));
       state = draft;
+      for (const listener of listeners) listener();
       return result;
     },
     async read(_tables, fn) {
@@ -134,7 +219,19 @@ function createMemoryUow(initial: RawTables = emptyRawTables()) {
     },
   };
 
-  return { uow, snapshot: () => structuredClone(state) };
+  /** A live query over the memory: emits now and after every committed write. */
+  function live<T>(query: (tables: MemoryTables) => T): Observable<T> {
+    return {
+      subscribe(observer) {
+        const emit = () => observer.next(query(structuredClone(state)));
+        listeners.add(emit);
+        emit();
+        return { unsubscribe: () => void listeners.delete(emit) };
+      },
+    };
+  }
+
+  return { uow, live, snapshot: () => structuredClone(state) };
 }
 
 /** The shipped registry, resolved like the app's lazy provider does. */
@@ -146,7 +243,10 @@ export const testRules: RulesProvider = {
   },
 };
 
-export function createTestDeps(initial?: RawTables, options: { readonly start?: string } = {}) {
+export function createTestDeps(
+  initial?: RawTables | MemoryTables,
+  options: { readonly start?: string } = {},
+) {
   const memory = createMemoryUow(initial);
   let epochMs = Date.parse(options.start ?? '2026-11-24T17:00:00Z');
   let idCounter = 0;
@@ -168,6 +268,19 @@ export function createTestDeps(initial?: RawTables, options: { readonly start?: 
       activePlan: () => unsupported(),
       plannedSessions: () => unsupported(),
       breaks: () => unsupported(),
+      activeSessionData: () =>
+        memory.live((tables): ActiveSessionData | undefined => {
+          const session = tables.sessions.find((entry) => entry.status === 'active');
+          if (!session) return undefined;
+          const sets = tables.sets.filter((set) => set.sessionId === session.id);
+          const ids = sessionExerciseIds(session, sets);
+          return {
+            session,
+            sets,
+            states: tables.dExerciseState.filter((entry) => ids.includes(entry.exerciseId)),
+          };
+        }),
+      sessionPrs: (id) => memory.live((tables) => tables.dPrs.filter((pr) => pr.sessionId === id)),
     },
     clock: {
       now: () => {

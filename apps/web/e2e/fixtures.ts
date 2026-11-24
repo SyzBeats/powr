@@ -77,6 +77,21 @@ export async function skipOnboarding(page: Page): Promise<void> {
   await expect(page.getByRole('heading', { level: 1, name: 'Log a set' })).toBeVisible();
 }
 
+/** Pretends the page went to the background (screen locked, app switched) or came back. */
+export async function setVisibility(page: Page, state: 'hidden' | 'visible'): Promise<void> {
+  await page.evaluate((visibility) => {
+    Object.defineProperty(document, 'visibilityState', {
+      configurable: true,
+      get: () => visibility,
+    });
+    Object.defineProperty(document, 'hidden', {
+      configurable: true,
+      get: () => visibility === 'hidden',
+    });
+    document.dispatchEvent(new Event('visibilitychange'));
+  }, state);
+}
+
 /** Waits until the service worker is active and the precache install has completed. */
 export async function waitForOfflineReady(page: Page): Promise<void> {
   await expect(page.getByTestId('offline-status')).toHaveText('Ready for offline use', {

@@ -2,7 +2,7 @@ import * as fc from 'fast-check';
 import { strFromU8, strToU8, unzipSync, zipSync } from 'fflate';
 import { describe, expect, it } from 'vitest';
 
-import type { Plan } from '@powr/domain';
+import { SESSION_DEFAULTS, type Plan } from '@powr/domain';
 
 import { RAW_TABLE_NAMES, emptyRawTables, type RawTables } from '../src';
 import {
@@ -41,6 +41,7 @@ function sorted(tables: RawTables): RawTables {
     breaks: byId(tables.breaks),
     meets: byId(tables.meets),
     bodyweights: byId(tables.bodyweights),
+    readiness: byId(tables.readiness),
   };
 }
 
@@ -65,6 +66,7 @@ function sampleTables(): RawTables {
         startedAt: source.createdAt,
         status: 'finished',
         versions: { engine: '0.0.0', rules: '0.0.0+m0', content: '0.0.0+m0' },
+        ...SESSION_DEFAULTS,
       },
     ],
     sets: [
@@ -132,6 +134,7 @@ describe('backup round-trip', () => {
       'data/breaks.json',
       'data/meets.json',
       'data/bodyweights.json',
+      'data/readiness.json',
       'README.txt',
     ]);
     expect(encoded.manifest).toMatchObject({
@@ -262,5 +265,28 @@ describe('backup import rejects bad files before anything is written', () => {
     const valid = await encodeBackup(tables, source);
     const unknownExercise = await decodeBackup(valid.bytes, { isKnownExercise: () => false });
     expect(unknownExercise).toMatchObject({ ok: false, error: { kind: 'brokenReference' } });
+
+    // M3a: a set of a missing session slot, a check-in of a missing session.
+    const slotless = { ...tables, sets: [{ ...tables.sets[0]!, slotKey: 'a', setKey: 's1' }] };
+    expect(await decodeBackup((await encodeBackup(slotless, source)).bytes)).toMatchObject({
+      ok: false,
+      error: { kind: 'brokenReference', detail: 'set set1 references a missing session exercise' },
+    });
+    const checkIn = {
+      id: 'r1',
+      localDate: '2026-11-23' as never,
+      recordedAt: source.createdAt,
+      sessionId: 'gone' as never,
+      items: { energy: 3 },
+    };
+    expect(
+      await decodeBackup((await encodeBackup({ ...tables, readiness: [checkIn] }, source)).bytes),
+    ).toMatchObject({
+      ok: false,
+      error: {
+        kind: 'brokenReference',
+        detail: 'readiness check-in r1 references a missing session',
+      },
+    });
   });
 });

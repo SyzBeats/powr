@@ -6,6 +6,7 @@ import type {
   Plan,
   PlannedSession,
   Profile,
+  ReadinessEntry,
   Session,
   TrainingBreak,
 } from '@powr/domain';
@@ -35,6 +36,8 @@ export interface RawRecordMap {
   breaks: TrainingBreak;
   meets: MeetInfo;
   bodyweights: BodyweightEntry;
+  // dataVersion 2, amended in M3a (unreleased): readiness check-ins (RDY-01).
+  readiness: ReadinessEntry;
 }
 
 export type RawTableName = keyof RawRecordMap;
@@ -53,6 +56,7 @@ export const RAW_TABLE_KEYS = {
   breaks: 'id',
   meets: 'id',
   bodyweights: 'id',
+  readiness: 'id',
 } as const satisfies Record<RawTableName, string>;
 
 export const RAW_TABLE_NAMES = Object.keys(RAW_TABLE_KEYS) as RawTableName[];
@@ -70,5 +74,6 @@ export function emptyRawTables(): RawTables {
     breaks: [],
     meets: [],
     bodyweights: [],
+    readiness: [],
   };
 }

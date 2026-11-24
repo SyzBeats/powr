@@ -7,7 +7,8 @@
   "exports": {
     ".": "./src/index.ts",
     "./backup": "./src/usecases/backup.ts",
-    "./planning": "./src/planning/index.ts"
+    "./planning": "./src/planning/index.ts",
+    "./session": "./src/session/index.ts"
   },
   "dependencies": {
     "@powr/content": "workspace:*",

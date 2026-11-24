@@ -33,6 +33,11 @@ const DIAGNOSTIC_CODES = {
     'restMs',
     'result',
   ],
+  // M3t (§8.8): the timer engine's clock-jump check, wake-lock outcomes, production alert ends.
+  'timer.clockJump': ['deltaMs', 'visibility'],
+  'wakeLock.state': ['state', 'reason'],
+  'alerts.end': ['path', 'delayMs', 'kind', 'hidden'],
+  'alerts.error': ['name'],
 } as const satisfies Record<string, readonly string[]>;
 
 type DiagnosticCode = keyof typeof DIAGNOSTIC_CODES;

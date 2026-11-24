@@ -132,6 +132,21 @@
   userOverridable: false
   note: 'Data only in M1; a POWR design rule for new users and exercises.'
 
+- id: progression.calibration.reliableSetWeight
+  value: 0.5
+  unit: fraction
+  range: { min: 0.1, max: 1 }
+  evidence: [INF]
+  sources: [src.powr-technical-concept, src.halperin2022]
+  ebRef: 'PRD PRG-08 (first 1–2 exposures at RIR 3–4); EB §Load › e1RM algorithm (set weights)'
+  verified: false
+  userOverridable: false
+  note: >-
+    A POWR design value for the calibration state machine (TD-27): uncalibrated → calibrating →
+    calibrated. One exposure with entered effort calibrates when one of its sets reaches this
+    e1RM set weight (the 0.5 tier: RPE ≥ 7 and ≤ 12 effective reps); otherwise the second
+    exposure does (progression.calibration exposures.max).
+
 - id: progression.classification.slopePctPerWeek
   value: { noviceFrom: 1, advancedBelow: 0.25, minWeeks: 8 }
   unit: mixed

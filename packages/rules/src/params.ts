@@ -140,6 +140,7 @@ export const PARAM_SCHEMAS = {
     veryLikelyTe: positive,
   }),
   'load.trend.reference': z.strictObject({ weeks: positive, sessions: z.number().int().min(1) }),
+  'load.pr.minSetWeight': fraction,
   'load.reanchor.trigger': z.strictObject({
     maxReps: z.number().int().min(1),
     minRpe: z.number().min(0).max(10),
@@ -225,6 +226,7 @@ export const PARAM_SCHEMAS = {
       .min(1),
   }),
   'progression.calibration': z.strictObject({ exposures: range(positive), targetRir: range(rir) }),
+  'progression.calibration.reliableSetWeight': fraction,
   'progression.classification.slopePctPerWeek': z.strictObject({
     noviceFrom: num,
     advancedBelow: num,
@@ -266,6 +268,7 @@ export const PARAM_SCHEMAS = {
   'session.rest.warmupLight': seconds,
   'session.rest.warmupBeforeWork': seconds,
   'session.rest.countUpSoftMin': z.strictObject({ compound: seconds, isolation: seconds }),
+  'session.rest.competitionMinimum': seconds,
   'session.tempo.default': z.string().regex(/^\d+-\d+-(?:\d+|X)-\d+$/, 'tempo looks like 2-0-X-0'),
   'session.tempo.eccentricSeconds': range(nonNegative),
   'session.tempo.warnRepSeconds': positive,
@@ -308,6 +311,11 @@ export const PARAM_SCHEMAS = {
     topSetRirAdd: rir,
     dropBackoffSets: range(nonNegative),
   }),
+  'monitoring.readiness.sleep': z.strictObject({
+    shortHours: z.number().min(0).max(24),
+    consecutiveShortNights: z.number().int().min(1),
+  }),
+  'monitoring.readiness.pmFromHour': z.number().int().min(0).max(23),
   'monitoring.spacing': z.strictObject({
     nonFailureHours: range(positive),
     failureHours: range(positive),

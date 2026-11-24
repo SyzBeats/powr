@@ -118,6 +118,7 @@ export const EB_DEFAULTS: ParamValues = {
   'load.trend.changeThresholds': { likelyTe: 1, sustainSessions: 2, veryLikelyTe: 2.8 },
   'load.trend.reference': { weeks: 4, sessions: 3 },
   'load.reanchor.trigger': { maxReps: 3, minRpe: 9 },
+  'load.pr.minSetWeight': 0.5,
   'volume.hypertrophy.weeklyBands': {
     floor: 4,
     defaultLow: 10,
@@ -188,6 +189,7 @@ export const EB_DEFAULTS: ParamValues = {
     ],
   },
   'progression.calibration': { exposures: { min: 1, max: 2 }, targetRir: { min: 3, max: 4 } },
+  'progression.calibration.reliableSetWeight': 0.5,
   'progression.classification.slopePctPerWeek': { noviceFrom: 1, advancedBelow: 0.25, minWeeks: 8 },
   'progression.classification.trainingAgeMonths': { intermediateFrom: 6, advancedFrom: 24 },
   'deload.planned.everyWeeks': 5,
@@ -247,6 +249,7 @@ export const EB_DEFAULTS: ParamValues = {
   'session.rest.warmupLight': 45,
   'session.rest.warmupBeforeWork': 90,
   'session.rest.countUpSoftMin': { compound: 90, isolation: 60 },
+  'session.rest.competitionMinimum': 120,
   'session.tempo.default': '2-0-X-0',
   'session.tempo.eccentricSeconds': { min: 1, max: 4 },
   'session.tempo.warnRepSeconds': 8,
@@ -285,6 +288,8 @@ export const EB_DEFAULTS: ParamValues = {
   'monitoring.readiness.baseline': { windowDays: 28, minEntries: 7 },
   'monitoring.readiness.thresholds': { lowZ: -1, modifyZ: -1.5, prsLow: 3, prsConsecutiveDays: 2 },
   'monitoring.readiness.adjustments': { topSetRirAdd: 1, dropBackoffSets: { min: 1, max: 2 } },
+  'monitoring.readiness.sleep': { shortHours: 6, consecutiveShortNights: 2 },
+  'monitoring.readiness.pmFromHour': 12,
   'monitoring.spacing': {
     nonFailureHours: { min: 24, max: 48 },
     failureHours: { min: 48, max: 72 },

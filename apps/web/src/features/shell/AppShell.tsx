@@ -2,6 +2,8 @@ import { useLingui } from '@lingui/react/macro';
 import { Link, Outlet, useRouterState } from '@tanstack/react-router';
 import { Settings } from 'lucide-react';
 
+import { LiveAnnouncer } from '#ui/announcer';
+
 import { BottomNav } from './BottomNav';
 import { UpdateBanner } from './UpdateBanner';
 
@@ -36,6 +38,8 @@ export function AppShell() {
         <Outlet />
       </main>
       {onboarding ? null : <BottomNav />}
+      {/* The one polite live region for timer and alert announcements (NFR-A11Y-06). */}
+      <LiveAnnouncer />
     </div>
   );
 }

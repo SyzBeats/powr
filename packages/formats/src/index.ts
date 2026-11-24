@@ -5,6 +5,7 @@ export {
   MIGRATIONS,
   migrateRecord,
   migrateTables,
+  withSessionDefaults,
   type MigrationChain,
   type RecordMigration,
 } from './migrations';

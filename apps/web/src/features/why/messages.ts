@@ -1304,4 +1304,110 @@ export const WHY_MESSAGES: { readonly [K in RuleId]: WhyMessage } = {
       message: 'Moved from {from} to {to}.',
     }),
   },
+  // --- The workout session (M3a) --------------------------------------------------------------
+  'session.calibration': {
+    full: msg({
+      id: 'why.session.calibration',
+      message:
+        "{status, select, uncalibrated {POWR doesn't know your strength on this exercise yet, so it calibrates: pick a weight you could lift about 12 times and stop with {rirMin}–{rirMax} reps in reserve (RIR). Your estimated 1-rep max (e1RM) comes from these sets.} calibrating {POWR is still calibrating this exercise: stop with {rirMin}–{rirMax} reps in reserve (RIR).{load, select, none {} other { The load, {load}, comes from your sets so far.}}} other {Stop with {rirMin}–{rirMax} reps in reserve (RIR).{load, select, none {} other { The load is {load}.}}}} After {exposuresMin}–{exposuresMax} sessions with this exercise, the loads follow your progress.",
+    }),
+  },
+  'session.lastTime': {
+    full: msg({
+      id: 'why.session.lastTime',
+      message:
+        "{mode, select, manual {Manual mode: the same as last time{load, select, none {} other {, {load}}}, {reps, plural, one {# rep} other {# reps}}, without progression.} repsUp {This exercise progresses by reps: aim for {reps, plural, one {# rep} other {# reps}}, one more than last time.} previousSet {The same load as your last set{load, select, none {} other {: {load}}}.} other {There's nothing to go by yet. Enter what you do, and POWR suggests from there.}}",
+    }),
+  },
+  'session.fixed': {
+    full: msg({
+      id: 'why.session.fixed',
+      message:
+        "{kind, select, warmup {A warm-up set{load, select, none {} other { at {load}}}. Warm-ups don't count towards your volume, your estimated max or your PRs.} timed {A timed set of {durationS, plural, one {# second} other {# seconds}}.} other {This set has a set load{load, select, none {} other {: {load}}}, from your plan or a change you made.}}",
+    }),
+  },
+  'session.adjustment.load': {
+    full: msg({
+      id: 'why.session.adjustment.load',
+      message:
+        'This session uses {pct}% of your normal working load ({pctMin}–{pctMax}%), so {from} becomes {load}. Lighter days like this are part of training.',
+    }),
+  },
+  'progression.linear.weekHold': {
+    full: msg({
+      id: 'why.progression.linear.weekHold',
+      message:
+        'The load stays at {load} this week: at your level the weight goes up once a week, not every session.',
+    }),
+  },
+  'pr.rep': {
+    full: msg({
+      id: 'why.pr.rep',
+      message:
+        '{previous, select, none {Rep PR: the first time you did {reps, plural, one {# rep} other {# reps}} or more with {value}.} other {Rep PR: {value} for {reps, plural, one {# rep} other {# reps}}, more than your best of {previous} for at least as many reps.}}',
+    }),
+  },
+  'pr.load': {
+    full: msg({
+      id: 'why.pr.load',
+      message:
+        '{previous, select, none {Load PR: {value} is the heaviest you have lifted on {exerciseId}.} other {Load PR: {value} on {exerciseId}, heavier than your best of {previous}.}}',
+    }),
+  },
+  'pr.e1rm': {
+    full: msg({
+      id: 'why.pr.e1rm',
+      message:
+        "Estimated 1-rep max (e1RM) PR: {value}{previous, select, none {} other {, up from {previous}}}. It's an estimate from a set with logged effort, not a tested max.",
+    }),
+  },
+  'pr.volume': {
+    full: msg({
+      id: 'why.pr.volume',
+      message:
+        '{previous, select, none {Volume PR: {value} lifted in total on {exerciseId} in one session.} other {Volume PR: {value} lifted in total on {exerciseId} in one session, more than your best of {previous}.}}',
+    }),
+  },
+  'pr.firstTime': {
+    full: msg({
+      id: 'why.pr.firstTime',
+      message:
+        'The first time you logged {exerciseId}. From your next session with it, POWR tracks your PRs.',
+    }),
+  },
+  'readiness.assessment': {
+    full: msg({
+      id: 'why.readiness.assessment',
+      message:
+        "{flag, select, insufficientData {POWR compares your check-in with your usual once it has {minEntries} check-ins from the last weeks; it has {entries} so far.} low {Your check-in is lower than usual for you (score {composite}). A lighter session is an option.} modify {Your check-in is well below your usual{prsLowDays, plural, =0 {} =1 {} other {, and you have felt under-recovered for # days in a row}}. Consider adjusting today's session.} other {Your check-in is within your usual range.}}{shortNights, plural, =0 {} =1 {} other { You have slept short for # nights in a row.}}",
+    }),
+  },
+  'readiness.adjust': {
+    full: msg({
+      id: 'why.readiness.adjust',
+      message:
+        "{action, select, capTopSet {Stop your top sets with {rirAdd, plural, one {# more rep} other {# more reps}} in reserve today.} dropBackoff {Leave out {dropSets, plural, one {# back-off set} other {# back-off sets}} per exercise today.} trimVolume {After a short night before an afternoon or evening session, keep the weights and do {dropSets, plural, one {# set} other {# sets}} fewer per exercise.} easeCompounds {After several short nights, stop the multi-joint lifts with {rirAdd, plural, one {# more rep} other {# more reps}} in reserve.} other {A lighter session is an option today.}} It's your call: nothing changes unless you accept.",
+    }),
+  },
+  'guardrail.failure': {
+    full: msg({
+      id: 'why.guardrail.failure',
+      message:
+        'Going to failure on heavy squats, deadlifts or bench presses adds about {extraHoursMin}–{extraHoursMax} hours of recovery and gives no extra strength. Stopping a rep or two short works as well.',
+    }),
+  },
+  'guardrail.shortRest': {
+    full: msg({
+      id: 'why.guardrail.shortRest',
+      message:
+        'You rested {restSeconds, plural, one {# second} other {# seconds}} between sets of a competition lift. Heavy sets go better after at least {minimum, plural, one {# second} other {# seconds}}.',
+    }),
+  },
+  'guardrail.slowReps': {
+    full: msg({
+      id: 'why.guardrail.slowReps',
+      message:
+        'Your reps took about {repSeconds} seconds each. Reps slower than {limit} seconds build no more muscle; lowering under control for 2–4 seconds is enough.',
+    }),
+  },
 };

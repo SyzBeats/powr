@@ -76,15 +76,17 @@ self.addEventListener('message', (event) => {
   }
 });
 
+// A tap on a rest notification focuses the open app (preferring the page it came from) or opens
+// the session screen (§8.8.4 step 6). The page closes the `rest` notifications when it returns.
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
   const url = (event.notification.data as { url?: string } | null)?.url ?? '/session';
   event.waitUntil(
     (async () => {
       const windows = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
-      const existing = windows.find(
-        (client) => new URL(client.url).origin === self.location.origin,
-      );
+      const ours = windows.filter((client) => new URL(client.url).origin === self.location.origin);
+      const existing =
+        ours.find((client) => new URL(client.url).pathname === url) ?? ours.at(0) ?? null;
       if (existing) await existing.focus();
       else await self.clients.openWindow(url);
     })(),
@@ -110,9 +112,11 @@ async function restTimer(message: Extract<PageToSwMessage, { type: 'ARM_REST' }>
   armedTimers.delete(message.timerId);
   if (!fire) return;
 
-  // Whichever path fires first claims the flag; the other one stays silent.
+  // Whichever path fires first claims the flag; the others stay silent. Without permission the
+  // service worker cannot alert at all, so it leaves the flag to the page (which can still beep).
+  if (Notification.permission !== 'granted') return;
   const claimed = await claimRuntimeFlag(`fired:${message.timerId}`, { by: 'sw', at: Date.now() });
-  if (!claimed || Notification.permission !== 'granted') return;
+  if (!claimed) return;
   await self.registration.showNotification(message.title, {
     body: message.body,
     tag: REST_NOTIFICATION_TAG,

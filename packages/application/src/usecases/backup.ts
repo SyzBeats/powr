@@ -9,6 +9,7 @@ import {
 } from '@powr/formats/backup';
 
 import type { Deps } from '../deps';
+import { DERIVED_TABLE_NAMES } from '../ports';
 import { err, ok, type Result } from '../result';
 
 export type { BackupError, DecodedBackup, ImportPreview } from '@powr/formats/backup';
@@ -77,7 +78,10 @@ export async function applyImport(deps: Deps, backup: DecodedBackup): Promise<Im
     at: deps.clock.now(),
   });
 
-  await deps.uow.write(RAW_TABLE_NAMES, (repos) => repos.raw.replaceAll(backup.tables));
+  // Derived tables are cleared with the raw data (rebuilt from it on use, §8.2.8 "Import").
+  await deps.uow.write([...RAW_TABLE_NAMES, ...DERIVED_TABLE_NAMES], (repos) =>
+    repos.raw.replaceAll(backup.tables),
+  );
 
   const active = backup.tables.sessions.find((session) => session.status === 'active');
   await deps.runtime.setActiveSession(active ? { id: active.id, build: deps.app.build } : null);

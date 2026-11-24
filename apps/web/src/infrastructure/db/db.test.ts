@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { finishSession, logSet, type Deps } from '@powr/application';
 // oxlint-disable-next-line no-restricted-imports -- tests load the content eagerly
 import { builtInContent } from '@powr/content/built-in';
-import { makeInstantTz, type ExerciseId } from '@powr/domain';
+import { SESSION_DEFAULTS, makeInstantTz, type ExerciseId } from '@powr/domain';
 import { MIGRATIONS, RAW_TABLE_NAMES, emptyRawTables, type MigrationChain } from '@powr/formats';
 
 import { createRepositories } from './repositories';
@@ -38,6 +38,8 @@ function depsFor(db: PowrDb): Deps {
       activePlan: unused,
       plannedSessions: unused,
       breaks: unused,
+      activeSessionData: unused,
+      sessionPrs: unused,
     },
     clock: { now: () => makeInstantTz(Date.parse('2026-11-24T18:00:00Z'), 'Europe/Zurich') },
     ids: { next: () => `id-${++id}` },
@@ -179,7 +181,10 @@ describe('schema upgrades use the shared record-migration chain (§8.2.3)', () =
     await upgraded.open();
     expect(upgraded.verno).toBe(2);
     expect(await upgraded.settings.toArray()).toEqual([{ id: 'me', theme: 'dark' }]);
-    expect(await upgraded.sessions.where('status').equals('active').toArray()).toEqual([session]);
+    // The 1 → 2 step gives v1 sessions the empty M3 session core (amended version 2, M3a).
+    expect(await upgraded.sessions.where('status').equals('active').toArray()).toEqual([
+      { ...SESSION_DEFAULTS, ...session },
+    ]);
     expect(await upgraded.sets.toArray()).toEqual([set]);
     expect(await upgraded.meta.toArray()).toEqual([{ key: 'lastBackup', value: { at: 'x' } }]);
     for (const table of [
@@ -190,6 +195,10 @@ describe('schema upgrades use the shared record-migration chain (§8.2.3)', () =
       'breaks',
       'meets',
       'bodyweights',
+      'readiness',
+      'dExerciseState',
+      'dSessionE1rm',
+      'dPrs',
     ]) {
       expect(await upgraded.table(table).count()).toBe(0);
     }
@@ -268,5 +277,148 @@ describe('planning repositories (dataVersion 2)', () => {
     expect(found.byPlan.map((entry) => entry.id)).toEqual(['s1', 's2']);
     expect(found.range.map((entry) => entry.id).toSorted()).toEqual(['s2', 's3']);
     expect(found.draft).toBeUndefined();
+  });
+});
+
+describe('session core tables (M3a, amended dataVersion 2)', () => {
+  const at = makeInstantTz(Date.parse('2026-11-24T17:00:00Z'), 'Europe/Zurich');
+  const session = {
+    id: 'm3-session',
+    localDate: '2026-11-24',
+    startedAt: at,
+    status: 'active',
+    versions: { engine: '0.0.0', rules: '1.4.0', content: '0.2.0' },
+    ...SESSION_DEFAULTS,
+    exercises: [
+      {
+        key: 'a',
+        exerciseId: squat,
+        origin: 'plan',
+        goal: 'strength',
+        priority: 'primary',
+        progression: 'rpe',
+        prescription: null,
+        sets: [{ key: 's1', type: 'working', reps: [5, 5], rir: [2, 2], load: null }],
+        restSeconds: 180,
+        skipped: false,
+      },
+    ],
+    cursor: { slotKey: 'a', setKey: 's1' },
+    timer: {
+      id: 't1',
+      kind: 'rest',
+      mode: 'countdown',
+      startedAtEpochMs: at.epochMs,
+      targetMs: 180_000,
+      adjustMs: 15_000,
+      fired: { preAlert: true },
+    },
+    revision: 3,
+  } as never;
+  const state = {
+    exerciseId: squat,
+    key: 'k1',
+    exposures: 2,
+    firstDate: '2026-11-17',
+    lastDate: '2026-11-20',
+    calibration: { entered: 2, reliable: true },
+    baseline: null,
+    strength: null,
+    all: null,
+    points: [],
+    last: null,
+    linear: [],
+    bests: { loadKg: 100, e1rmKg: 120, volumeKg: 1500, reps: [{ reps: 5, loadKg: 100 }] },
+    effort: [],
+  } as never;
+
+  it('keeps the active session with its timer across a close and reopen (WKT-14)', async () => {
+    const name = `powr-m3-${++dbCounter}`;
+    const first = openDb({ name });
+    await createUnitOfWork(first).write(['sessions', 'readiness'], async (repos) => {
+      await repos.sessions.put(session);
+      await repos.readiness.put({
+        id: 'r1',
+        localDate: '2026-11-24' as never,
+        recordedAt: at,
+        sessionId: 'm3-session' as never,
+        items: { energy: 3, prs: 6 },
+      });
+    });
+    first.close();
+
+    const reopened = openDb({ name });
+    const found = await createUnitOfWork(reopened).read(
+      ['sessions', 'readiness'],
+      async (repos) => ({
+        active: await repos.sessions.getActive(),
+        checkIns: await repos.readiness.bySession('m3-session' as never),
+      }),
+    );
+    expect(found.active).toEqual(session);
+    expect(found.checkIns.map((entry) => entry.id)).toEqual(['r1']);
+  });
+
+  it('reads an M2-era version-2 session (no session core) with the empty defaults', async () => {
+    const db = openDb();
+    const old = {
+      id: 'm2',
+      localDate: '2026-11-23',
+      startedAt: at,
+      status: 'active',
+      versions: { engine: '0.0.0', rules: '1.3.0', content: '0.2.0' },
+    };
+    await db.table('sessions').put(old);
+    const active = await createUnitOfWork(db).read(['sessions'], (repos) =>
+      repos.sessions.getActive(),
+    );
+    expect(active).toEqual({ ...SESSION_DEFAULTS, ...old });
+  });
+
+  it('replaces, invalidates and clears the derived tables; a restore clears them too', async () => {
+    const db = openDb();
+    const uow = createUnitOfWork(db);
+    const derived = ['dExerciseState', 'dSessionE1rm', 'dPrs'] as const;
+    const pr = {
+      id: 'set-1.load',
+      type: 'load',
+      exerciseId: squat,
+      sessionId: 's1',
+      setId: 'set-1',
+      localDate: '2026-11-20',
+      reps: 5,
+      valueKg: 100,
+      previousKg: null,
+    } as never;
+    const point = {
+      exerciseId: squat,
+      sessionId: 's1',
+      localDate: '2026-11-20',
+      e1rmKg: 120,
+      weight: 1,
+      strength: null,
+      all: null,
+    } as never;
+    const read = () =>
+      uow.read(derived, async (repos) => ({
+        states: await repos.derived.exerciseStates([squat]),
+        points: await repos.derived.pointsByExercise(squat),
+        prs: await repos.derived.prsBySession('s1' as never),
+      }));
+    await uow.write(derived, (repos) =>
+      repos.derived.replaceExercise(squat, { state, points: [point], prs: [pr] }),
+    );
+    expect(await read()).toEqual({ states: [state], points: [point], prs: [pr] });
+    await uow.write(['dExerciseState'], (repos) => repos.derived.invalidate([squat]));
+    expect((await read()).states).toEqual([]);
+
+    await uow.write(derived, (repos) =>
+      repos.derived.replaceExercise(squat, { state, points: [], prs: [pr] }),
+    );
+    expect((await read()).points).toEqual([]);
+    await uow.write([...RAW_TABLE_NAMES, ...derived], (repos) =>
+      repos.raw.replaceAll(emptyRawTables()),
+    );
+    expect(await read()).toEqual({ states: [], points: [], prs: [] });
   });
 });

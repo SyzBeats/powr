@@ -19,6 +19,7 @@ describe('internal dependency matrix', () => {
       '@powr/formats',
       '@powr/rules',
       '@powr/tools-arch-test',
+      '@powr/tools-capability-matrix',
       '@powr/tools-content-build',
       '@powr/tools-icons',
       '@powr/tools-licence',

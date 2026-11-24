@@ -32,6 +32,26 @@
   verified: true
   userOverridable: false
 
+- id: monitoring.readiness.sleep
+  value: { shortHours: 6, consecutiveShortNights: 2 }
+  unit: mixed
+  evidence: [MA, SR, INF]
+  sources: [src.craven2022, src.knowles2018, src.powr-eb-monitoring]
+  ebRef: 'EB §Monitoring › Sleep & stress (< 6 h before a PM session → trim volume or skip max singles; ≥ 2 consecutive short nights → lower multi-joint expectations); PRD RDY-03'
+  verified: true
+  userOverridable: true
+
+- id: monitoring.readiness.pmFromHour
+  value: 12
+  unit: none
+  range: { min: 10, max: 16 }
+  evidence: [INF]
+  sources: [src.craven2022, src.powr-eb-monitoring]
+  ebRef: 'EB §Monitoring › Sleep & stress (sleep loss impairs PM tasks; AM tasks largely unaffected); PRD RDY-03'
+  verified: false
+  userOverridable: true
+  note: 'A POWR design value: sessions starting at or after noon count as "PM sessions".'
+
 - id: monitoring.spacing
   value:
     nonFailureHours: { min: 24, max: 48 }

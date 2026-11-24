@@ -1,13 +1,18 @@
 import { liveQuery } from 'dexie';
 
-import type { LiveQueries } from '@powr/application';
+import { sessionExerciseIds, type LiveQueries } from '@powr/application';
+import { withSessionDefaults } from '@powr/formats';
 
 import type { PowrDb } from './schema';
 
 /** Dexie live queries re-run whenever their tables change, also when another context writes. */
 export function createLiveQueries(db: PowrDb): LiveQueries {
   return {
-    activeSession: () => liveQuery(() => db.sessions.where('status').equals('active').first()),
+    activeSession: () =>
+      liveQuery(async () => {
+        const active = await db.sessions.where('status').equals('active').first();
+        return active && withSessionDefaults(active);
+      }),
     sessionSets: (id) =>
       liveQuery(() => db.sets.where('sessionId').equals(id).sortBy('performedAt.epochMs')),
     settings: () => liveQuery(() => db.settings.get('me')),
@@ -20,5 +25,17 @@ export function createLiveQueries(db: PowrDb): LiveQueries {
         db.plannedSessions.where('localDate').between(from, to, true, true).toArray(),
       ),
     breaks: () => liveQuery(() => db.breaks.orderBy('startDate').toArray()),
+    activeSessionData: () =>
+      liveQuery(async () => {
+        const found = await db.sessions.where('status').equals('active').first();
+        if (!found) return undefined;
+        const session = withSessionDefaults(found);
+        const sets = await db.sets.where('sessionId').equals(session.id).toArray();
+        const states = (await db.dExerciseState.bulkGet(sessionExerciseIds(session, sets))).filter(
+          (state) => state !== undefined,
+        );
+        return { session, sets, states };
+      }),
+    sessionPrs: (id) => liveQuery(() => db.dPrs.where('sessionId').equals(id).toArray()),
   };
 }

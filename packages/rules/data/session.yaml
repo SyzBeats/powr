@@ -96,6 +96,16 @@
   verified: true
   userOverridable: true
 
+- id: session.rest.competitionMinimum
+  value: 120
+  unit: seconds
+  evidence: [SR]
+  sources: [src.grgic2018b]
+  ebRef: 'EB §Defaults › Session (rest, strength: never < 2:00 on competition lifts); PRD WKT-16, WKT-17'
+  verified: true
+  userOverridable: false
+  note: 'The in-session hint of WKT-16 ("rest on a competition lift is < 2 min").'
+
 - id: session.tempo.default
   value: 2-0-X-0
   unit: none
