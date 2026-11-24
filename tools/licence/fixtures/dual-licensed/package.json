@@ -1,0 +1,8 @@
+{
+  "name": "dual-licensed",
+  "version": "1.0.0",
+  "description": "Licence gate fixture: dual licence with a permissive option (chosen: MIT).",
+  "license": "MIT OR GPL-3.0-or-later",
+  "type": "module",
+  "main": "index.js"
+}

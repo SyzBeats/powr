@@ -1,0 +1,25 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "../../.tsbuild/web-node",
+    "rootDir": ".",
+    "lib": ["es2024", "dom"],
+    "types": ["node"],
+    "allowImportingTsExtensions": true
+  },
+  "include": [
+    "vite.config.ts",
+    "playwright.config.ts",
+    "lingui.config.ts",
+    "package.json",
+    "e2e",
+    "scripts",
+    "vitest.setup.ts",
+    ".size-limit.ts"
+  ],
+  "references": [
+    {
+      "path": "../../tools/licence"
+    }
+  ]
+}

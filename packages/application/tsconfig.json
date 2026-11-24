@@ -1,0 +1,23 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "../../.tsbuild/application",
+    "rootDir": ".",
+    "lib": ["es2024", "dom"]
+  },
+  "include": ["src", "test"],
+  "references": [
+    {
+      "path": "../domain"
+    },
+    {
+      "path": "../rules"
+    },
+    {
+      "path": "../content"
+    },
+    {
+      "path": "../formats"
+    }
+  ]
+}

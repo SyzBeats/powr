@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": ".tsbuild/root",
+    "rootDir": ".",
+    "types": ["node"],
+    "allowImportingTsExtensions": true,
+    "lib": ["es2024", "dom"]
+  },
+  "include": [
+    "vitest.config.ts",
+    "vitest.setup.ts",
+    "oxlint.config.ts",
+    "knip.config.ts",
+    "deploy/*.ts"
+  ]
+}

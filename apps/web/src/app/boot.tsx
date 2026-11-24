@@ -1,0 +1,115 @@
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+
+import { reconcileRuntimeFlags, requestPersistentStorage } from '@powr/application';
+import { DATA_VERSION } from '@powr/formats';
+
+import { activateLocale } from '../i18n';
+import { PowrDb } from '../infrastructure/db';
+import { applyTheme, storedTheme } from '../infrastructure/platform/theme';
+import {
+  registerServiceWorker,
+  type ServiceWorkerController,
+} from '../infrastructure/pwa/registration';
+import { App } from './App';
+import { createAppDiagnostics, createContainer, type Container } from './container';
+import { resolveDebugMode } from './debug-mode';
+import { StartupError } from './StartupError';
+import { useAppUi } from './ui-store';
+
+/** Boot sequence (§6.7): theme is already applied by theme-init.js before first paint. */
+export async function boot(rootElement: HTMLElement): Promise<void> {
+  activateLocale();
+  useAppUi.setState({ debug: resolveDebugMode(location.search) });
+
+  const root = createRoot(rootElement);
+  const diagnostics = createAppDiagnostics();
+  installErrorLogging(diagnostics);
+
+  // DB gate: open (and, from dataVersion 2 on, upgrade) before anything reads data.
+  const db = new PowrDb();
+  const openedAt = performance.now();
+  try {
+    await db.open();
+  } catch (error) {
+    diagnostics.log('error', 'db.error', { name: error instanceof Error ? error.name : 'unknown' });
+    root.render(<StartupError />);
+    return;
+  }
+  diagnostics.log('info', 'db.open', {
+    ms: Math.round(performance.now() - openedAt),
+    dataVersion: DATA_VERSION,
+  });
+
+  const serviceWorker = lazyServiceWorker(diagnostics);
+  const container = createContainer(db, serviceWorker, diagnostics);
+  await reconcileStartupState(container);
+
+  root.render(
+    <StrictMode>
+      <App container={container} />
+    </StrictMode>,
+  );
+  diagnostics.log('info', 'app.start', {
+    releaseTarget: __RELEASE_TARGET__,
+    standalone: matchMedia('(display-mode: standalone)').matches,
+  });
+
+  // Register after first render so it does not compete with first paint (§6.7). The service
+  // worker is a production-build feature; `vite dev` runs without it (§8.4).
+  if (import.meta.env.PROD) requestAnimationFrame(() => setTimeout(() => serviceWorker.start(), 0));
+  addEventListener('appinstalled', () => {
+    void requestPersistentStorage(container.deps, 'appinstalled');
+  });
+}
+
+async function reconcileStartupState(container: Container): Promise<void> {
+  // The service-worker install gate must agree with the database (§8.2.4).
+  await reconcileRuntimeFlags(container.deps);
+  // The settings table is the source of truth for the theme (it survives restore).
+  const settings = await container.deps.uow.read(['settings'], (repos) => repos.settings.get());
+  if (settings && settings.theme !== storedTheme()) applyTheme(settings.theme);
+}
+
+/** Defers registration until after first paint while handing out a stable controller now. */
+function lazyServiceWorker(
+  diagnostics: Container['diagnostics'],
+): ServiceWorkerController & { start(): void } {
+  let controller: ServiceWorkerController | null = null;
+  return {
+    start() {
+      controller ??= registerServiceWorker({
+        onOfflineReady: () => {
+          useAppUi.setState({ offlineReady: true });
+          diagnostics.log('info', 'sw.offlineReady');
+        },
+        onUpdateAvailable: () => {
+          useAppUi.setState({ updateAvailable: true });
+          diagnostics.log('info', 'sw.updateAvailable');
+        },
+        onError: (error) =>
+          diagnostics.log('error', 'sw.error', {
+            name: error instanceof Error ? error.name : 'unknown',
+          }),
+      });
+    },
+    checkForUpdate: async () => controller?.checkForUpdate(),
+    applyUpdate: () => controller?.applyUpdate(),
+    resetAppFiles: async () => controller?.resetAppFiles(),
+  };
+}
+
+function installErrorLogging(diagnostics: Container['diagnostics']): void {
+  addEventListener('error', (event) => {
+    diagnostics.log('error', 'error.unhandled', {
+      name: event.error instanceof Error ? event.error.name : 'Error',
+      source: `${event.filename.split('/').pop() ?? ''}:${event.lineno}`,
+    });
+  });
+  addEventListener('unhandledrejection', (event) => {
+    diagnostics.log('error', 'error.unhandled', {
+      name: event.reason instanceof Error ? event.reason.name : 'UnhandledRejection',
+      source: 'promise',
+    });
+  });
+}

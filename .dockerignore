@@ -1,0 +1,5 @@
+# The image only needs the built app and the nginx configuration.
+*
+!apps/web/dist/
+!deploy/nginx.conf
+!deploy/security-headers.conf

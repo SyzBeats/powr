@@ -1,0 +1,8 @@
+{
+  "name": "gpl-widget",
+  "version": "1.0.0",
+  "description": "Licence gate fixture: a copyleft package that must never ship.",
+  "license": "GPL-3.0-only",
+  "type": "module",
+  "main": "index.js"
+}

@@ -1,0 +1,339 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2026-11-24 08:59+0100\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: pseudo\n"
+
+#. placeholder {0}: backup.preview.counts.sets
+#: src/features/data/DataScreen.tsx
+msgid "{0, plural, one {Restoring replaces all data on this phone with this backup (# set). A safety copy of the current data is kept.} other {Restoring replaces all data on this phone with this backup (# sets). A safety copy of the current data is kept.}}"
+msgstr ""
+
+#: src/features/home/HomeScreen.tsx
+msgid "{count, plural, one {# set logged} other {# sets logged}}"
+msgstr ""
+
+#: src/features/session/LogSetScreen.tsx
+msgid "{weight} {unit} × {reps} · {time}"
+msgstr ""
+
+#: src/features/shell/UpdateBanner.tsx
+msgid "A new version is ready. Finish your workout to update."
+msgstr ""
+
+#: src/features/shell/UpdateBanner.tsx
+msgid "A new version of POWR is ready."
+msgstr ""
+
+#: src/features/settings/SettingsScreen.tsx
+msgid "About"
+msgstr ""
+
+#: src/features/data/DataScreen.tsx
+msgid "Backup"
+msgstr ""
+
+#: src/features/data/DataScreen.tsx
+msgid "Choose a POWR backup file (.zip)"
+msgstr ""
+
+#: src/features/session/LogSetScreen.tsx
+msgid "Confirm set"
+msgstr ""
+
+#: src/features/home/HomeScreen.tsx
+msgid "Continue workout"
+msgstr ""
+
+#: src/features/data/DataScreen.tsx
+msgid "Created"
+msgstr ""
+
+#: src/features/settings/SettingsScreen.tsx
+msgid "Dark"
+msgstr ""
+
+#: src/features/data/DataScreen.tsx
+#: src/features/settings/SettingsScreen.tsx
+msgid "Data and backups"
+msgstr ""
+
+#: src/features/session/LogSetScreen.tsx
+msgid "Decrease load"
+msgstr ""
+
+#: src/features/session/LogSetScreen.tsx
+msgid "Exercise"
+msgstr ""
+
+#: src/features/placeholder/screens.tsx
+#: src/features/shell/BottomNav.tsx
+msgid "Explore"
+msgstr ""
+
+#: src/features/data/DataScreen.tsx
+msgid "Export backup"
+msgstr ""
+
+#: src/features/session/LogSetScreen.tsx
+msgid "Fewer reps"
+msgstr ""
+
+#: src/features/session/LogSetScreen.tsx
+msgid "Finish workout"
+msgstr ""
+
+#: src/features/shell/NotFound.tsx
+msgid "Go to Home"
+msgstr ""
+
+#: src/features/home/HomeScreen.tsx
+#: src/features/shell/BottomNav.tsx
+msgid "Home"
+msgstr ""
+
+#: src/features/session/LogSetScreen.tsx
+msgid "Increase load"
+msgstr ""
+
+#: src/features/session/LogSetScreen.tsx
+msgid "kg"
+msgstr ""
+
+#: src/features/data/DataScreen.tsx
+msgid "Last backup: {lastText}"
+msgstr ""
+
+#: src/features/settings/SettingsScreen.tsx
+msgid "Light"
+msgstr ""
+
+#: src/features/session/LogSetScreen.tsx
+msgid "Load"
+msgstr ""
+
+#: src/features/home/HomeScreen.tsx
+#: src/features/session/LogSetScreen.tsx
+msgid "Log a set"
+msgstr ""
+
+#: src/features/home/HomeScreen.tsx
+msgid "Log your first set. Everything stays on this phone."
+msgstr ""
+
+#: src/features/shell/BottomNav.tsx
+msgid "Main"
+msgstr ""
+
+#: src/features/session/LogSetScreen.tsx
+msgid "More reps"
+msgstr ""
+
+#: src/features/session/LogSetScreen.tsx
+msgid "n/a"
+msgstr ""
+
+#: src/features/home/HomeScreen.tsx
+msgid "New phone? Restore your training data from a backup file."
+msgstr ""
+
+#: src/features/data/DataScreen.tsx
+msgid "No backup yet."
+msgstr ""
+
+#: src/features/session/LogSetScreen.tsx
+msgid "Not saved. Check the values and try again."
+msgstr ""
+
+#: src/features/shell/NotFound.tsx
+msgid "Page not found"
+msgstr ""
+
+#: src/features/placeholder/screens.tsx
+#: src/features/shell/BottomNav.tsx
+msgid "Plan"
+msgstr ""
+
+#: src/features/shell/AppShell.tsx
+msgid "POWR"
+msgstr ""
+
+#: src/app/StartupError.tsx
+msgid "POWR could not open its data"
+msgstr ""
+
+#: src/features/home/HomeScreen.tsx
+msgid "Preparing offline use…"
+msgstr ""
+
+#: src/features/placeholder/screens.tsx
+#: src/features/shell/BottomNav.tsx
+msgid "Progress"
+msgstr ""
+
+#: src/features/data/DataScreen.tsx
+msgid "Protect my data"
+msgstr ""
+
+#: src/features/home/HomeScreen.tsx
+msgid "Ready for offline use"
+msgstr ""
+
+#: src/app/StartupError.tsx
+#: src/features/shell/RouteError.tsx
+msgid "Reload"
+msgstr ""
+
+#: src/features/data/DataScreen.tsx
+msgid "REPLACE"
+msgstr ""
+
+#: src/features/data/DataScreen.tsx
+msgid "Replace all data"
+msgstr ""
+
+#: src/features/session/LogSetScreen.tsx
+msgid "Reps"
+msgstr ""
+
+#: src/features/session/LogSetScreen.tsx
+msgid "Reps in reserve"
+msgstr ""
+
+#: src/features/data/DataScreen.tsx
+#: src/features/home/HomeScreen.tsx
+msgid "Restore from a backup"
+msgstr ""
+
+#: src/features/data/DataScreen.tsx
+msgid "Restored. {sets} sets imported."
+msgstr ""
+
+#: src/features/data/DataScreen.tsx
+msgid "Saved to Downloads as {name}. Copy it off the phone, for example to cloud storage."
+msgstr ""
+
+#. placeholder {0}: reps ?? 0
+#: src/features/session/LogSetScreen.tsx
+msgid "Saved: {name}, {weight} kg × {0}"
+msgstr ""
+
+#: src/features/data/DataScreen.tsx
+msgid "Sets"
+msgstr ""
+
+#: src/features/settings/SettingsScreen.tsx
+#: src/features/shell/AppShell.tsx
+msgid "Settings"
+msgstr ""
+
+#: src/features/shell/RouteError.tsx
+msgid "Something went wrong"
+msgstr ""
+
+#: src/features/data/DataScreen.tsx
+msgid "Storage"
+msgstr ""
+
+#: src/features/data/DataScreen.tsx
+msgid "Storage protected: No"
+msgstr ""
+
+#: src/features/data/DataScreen.tsx
+msgid "Storage protected: Yes"
+msgstr ""
+
+#: src/features/settings/SettingsScreen.tsx
+msgid "System"
+msgstr ""
+
+#: src/features/settings/SettingsScreen.tsx
+msgid "Theme"
+msgstr ""
+
+#: src/features/data/DataScreen.tsx
+msgid "This backup contains invalid data, so it cannot be restored. Nothing was changed."
+msgstr ""
+
+#: src/features/data/DataScreen.tsx
+msgid "This backup is damaged or was edited, so it cannot be restored. Nothing was changed."
+msgstr ""
+
+#: src/features/data/DataScreen.tsx
+msgid "This backup was made by a newer version of POWR. Update the app first."
+msgstr ""
+
+#: src/features/data/DataScreen.tsx
+msgid "This file is too large or malformed to restore safely. Nothing was changed."
+msgstr ""
+
+#: src/features/data/DataScreen.tsx
+msgid "This is not a POWR backup file. Nothing was changed."
+msgstr ""
+
+#: src/features/shell/NotFound.tsx
+msgid "This page does not exist."
+msgstr ""
+
+#: src/features/placeholder/ComingSoon.tsx
+msgid "This part of POWR is not built yet."
+msgstr ""
+
+#: src/features/session/LogSetScreen.tsx
+msgid "This workout"
+msgstr ""
+
+#: src/features/shell/BottomNav.tsx
+msgid "Train"
+msgstr ""
+
+#: src/features/data/DataScreen.tsx
+msgid "Training days"
+msgstr ""
+
+#: src/features/data/DataScreen.tsx
+msgid "Type {confirmWord} to confirm"
+msgstr ""
+
+#: src/features/shell/UpdateBanner.tsx
+msgid "Update"
+msgstr ""
+
+#. placeholder {0}: formatBytes(status.estimate.usage)
+#. placeholder {1}: formatBytes(status.estimate.quota)
+#: src/features/data/DataScreen.tsx
+msgid "Using {0} of {1}"
+msgstr ""
+
+#. placeholder {0}: APP_INFO.version
+#. placeholder {1}: APP_INFO.build
+#: src/features/settings/SettingsScreen.tsx
+msgid "Version {0} ({1})"
+msgstr ""
+
+#: src/features/data/DataScreen.tsx
+msgid "Without protection the browser may delete POWR data when the phone runs low on space. Back up regularly either way: clearing site data or uninstalling deletes everything."
+msgstr ""
+
+#: src/features/session/LogSetScreen.tsx
+msgid "Workout finished."
+msgstr ""
+
+#: src/features/home/HomeScreen.tsx
+msgid "Workout in progress"
+msgstr ""
+
+#: src/features/data/DataScreen.tsx
+msgid "Workouts"
+msgstr ""
+
+#: src/app/StartupError.tsx
+msgid "Your data has not been changed. Close other POWR windows, then reload."
+msgstr ""
+
+#: src/features/shell/RouteError.tsx
+msgid "Your data is saved. Reload to continue."
+msgstr ""

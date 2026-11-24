@@ -1,0 +1,16 @@
+{
+  "name": "@powr/application",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Use cases, ports and orchestration.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@powr/content": "workspace:*",
+    "@powr/domain": "workspace:*",
+    "@powr/formats": "workspace:*",
+    "@powr/rules": "workspace:*"
+  }
+}

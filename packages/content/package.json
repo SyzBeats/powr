@@ -1,0 +1,14 @@
+{
+  "name": "@powr/content",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Exercise library, taxonomy, equipment and templates (M0: 3-exercise stub).",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@powr/domain": "workspace:*",
+    "zod": "4.6.7"
+  }
+}

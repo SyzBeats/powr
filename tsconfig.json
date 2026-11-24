@@ -1,0 +1,35 @@
+{
+  "files": [],
+  "references": [
+    {
+      "path": "packages/domain"
+    },
+    {
+      "path": "packages/rules"
+    },
+    {
+      "path": "packages/content"
+    },
+    {
+      "path": "packages/formats"
+    },
+    {
+      "path": "packages/application"
+    },
+    {
+      "path": "apps/web"
+    },
+    {
+      "path": "tools/licence"
+    },
+    {
+      "path": "tools/arch-test"
+    },
+    {
+      "path": "tools/icons"
+    },
+    {
+      "path": "./tsconfig.root.json"
+    }
+  ]
+}

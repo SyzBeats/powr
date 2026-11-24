@@ -1,0 +1,11 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "../../.tsbuild/web-sw",
+    "rootDir": ".",
+    "lib": ["es2024", "webworker"],
+    "types": ["vite/client"]
+  },
+  "include": ["src/sw", "src/infrastructure/runtime-db", "src/env.d.ts"],
+  "exclude": ["src/**/*.test.ts"]
+}

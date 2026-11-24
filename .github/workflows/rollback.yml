@@ -1,0 +1,47 @@
+# Rollback (technical concept §7.5): redeploy any earlier immutable image from GHCR, independent
+# of Coolify's own image retention. Secrets and variables as in deploy.yml.
+name: Rollback
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Environment to roll back
+        type: choice
+        options: [beta, production]
+        required: true
+      image_tag:
+        description: Existing GHCR tag of powr-web, e.g. 0.1.0-1a2b3c4 or v0.1.0
+        type: string
+        required: true
+
+permissions:
+  contents: read
+  packages: read
+
+jobs:
+  rollback:
+    name: Roll back ${{ inputs.environment }} to ${{ inputs.image_tag }}
+    runs-on: ubuntu-24.04
+    environment: ${{ inputs.environment }}
+    concurrency: deploy-${{ inputs.environment }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+      - name: Check that the image exists
+        env:
+          IMAGE_TAG: ${{ inputs.image_tag }}
+        run: docker manifest inspect "ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/powr-web:${IMAGE_TAG}" > /dev/null
+      - name: Point Coolify at the earlier image and deploy
+        run: deploy/coolify-deploy.sh "${{ inputs.image_tag }}"
+        env:
+          COOLIFY_API_URL: ${{ secrets.COOLIFY_API_URL }}
+          COOLIFY_TOKEN: ${{ secrets.COOLIFY_TOKEN }}
+          COOLIFY_APP_UUID: ${{ secrets.COOLIFY_APP_UUID }}
+          COOLIFY_WEBHOOK_URL: ${{ secrets.COOLIFY_WEBHOOK_URL }}
+      - name: Smoke test
+        run: deploy/wait-and-smoke.sh "${{ vars.APP_URL }}"

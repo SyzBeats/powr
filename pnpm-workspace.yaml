@@ -1,0 +1,38 @@
+packages:
+  - apps/*
+  - packages/*
+  - tools/*
+
+# Supply chain (§8.18, ADR-0021): new versions must be at least 7 days old.
+minimumReleaseAge: 10080
+
+# Exact versions pinned by the technical concept (Appendix B) that were younger than
+# 7 days when M0 was set up. Remove each entry once it has matured.
+# See IMPLEMENTATION_NOTES.md (WP0.1).
+minimumReleaseAgeExclude:
+  - pnpm
+  - '@pnpm/exe.*'
+  - oxlint@1.95.0
+  - '@oxlint/*'
+  - oxfmt@0.80.0
+  - '@oxfmt/*'
+  - oxlint-tsgolint@7.0.2008
+  - '@oxlint-tsgolint/*'
+  - knip@6.48.0
+  - lucide-react@1.78.0
+  - vitest@5.1.1
+  - '@vitest/*'
+  - fast-check@4.11.0
+
+# Dependency install scripts are blocked unless listed here. None of the current dependencies
+# needs one (Rolldown, oxlint and oxfmt ship prebuilt binaries as optional packages).
+allowBuilds: {}
+
+savePrefix: ''
+
+# pnpm 12 asks before a package installs agent "skills"; we do not let dependencies do that.
+permissions:
+  '@tanstack/react-router':
+    skills: false
+  '@tanstack/router-plugin':
+    skills: false

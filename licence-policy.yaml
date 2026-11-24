@@ -1,0 +1,46 @@
+# Licence policy (LEG-08, NFR-MNT-08, technical concept §8.21). Evaluated by tools/licence.
+# A distributed component must match `allowed`; build-only components may also match
+# `devOnlyAllowed`. Anything else fails the build unless an exception below covers it.
+allowed:
+  - MIT
+  - ISC
+  - BSD-2-Clause
+  - BSD-3-Clause
+  - Apache-2.0
+  - 0BSD
+  - Zlib
+  - CC0-1.0
+  - Unlicense
+  - OFL-1.1
+  - CC-BY-4.0
+  - BlueOak-1.0.0
+  - Python-2.0
+  # Original work of the publisher (artwork, content, texts).
+  - LicenseRef-Own-Work
+denied:
+  - GPL-*
+  - AGPL-*
+  - LGPL-*
+  - MPL-*
+  - EPL-*
+  - EUPL-*
+  - CDDL-*
+  - CC-BY-SA-*
+  - CC-BY-NC-*
+  - SSPL-*
+  - BUSL-*
+# Test and build tools that are never shipped: axe-core (accessibility tests),
+# lightningcss (CSS minifier used by Vite and Tailwind at build time).
+devOnlyAllowed:
+  - MPL-2.0
+# Reviewed exceptions: { package, version, licence, scope, reviewer, date, rationale }.
+exceptions:
+  - package: spdx-exceptions
+    version: 2.5.0
+    licence: CC-BY-3.0
+    scope: build-only
+    reviewer: implementation agent (to be confirmed by the product owner)
+    date: 2026-11-24
+    rationale: >-
+      SPDX exception-ID list used by the licence tool itself at build time (dependency of
+      spdx-expression-parse). Data only, attribution licence, never shipped.

@@ -1,0 +1,103 @@
+# Deployment (technical concept §7.5, ADR-0011). The image tested in CI is pushed to GHCR and
+# promoted unchanged: beta on every green main build, production on a version tag after approval.
+#
+# Secrets per GitHub environment (beta, production), see deploy/runbook.md:
+#   COOLIFY_API_URL, COOLIFY_TOKEN (Deploy permission only), COOLIFY_APP_UUID, COOLIFY_WEBHOOK_URL
+# Variables per environment: APP_URL (e.g. https://beta.<business-domain>)
+name: Deploy
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+  push:
+    tags: ['v*.*.*']
+
+permissions:
+  contents: read
+  packages: write
+  actions: read
+
+jobs:
+  beta:
+    name: Deploy beta
+    if: >-
+      github.event_name == 'workflow_run' &&
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push'
+    runs-on: ubuntu-24.04
+    environment: beta
+    concurrency: deploy-beta
+    env:
+      SHA: ${{ github.event.workflow_run.head_sha }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: image
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ github.token }}
+      - uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+      - name: Push the tested image with an immutable tag
+        id: image
+        run: |
+          version=$(node -p "require('./apps/web/package.json').version")
+          tag="${version}-${SHA::7}"
+          image="ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/powr-web"
+          docker load < powr-web-image.tar.gz
+          docker tag powr-web:ci "${image}:${tag}"
+          docker push "${image}:${tag}"
+          echo "tag=${tag}" >> "$GITHUB_OUTPUT"
+      - name: Point the Coolify beta application at the new tag and deploy
+        run: deploy/coolify-deploy.sh "${{ steps.image.outputs.tag }}"
+        env:
+          COOLIFY_API_URL: ${{ secrets.COOLIFY_API_URL }}
+          COOLIFY_TOKEN: ${{ secrets.COOLIFY_TOKEN }}
+          COOLIFY_APP_UUID: ${{ secrets.COOLIFY_APP_UUID }}
+          COOLIFY_WEBHOOK_URL: ${{ secrets.COOLIFY_WEBHOOK_URL }}
+      - name: Smoke test beta
+        run: deploy/wait-and-smoke.sh "${{ vars.APP_URL }}" "${SHA}"
+
+  production:
+    name: Deploy production
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-24.04
+    # Required reviewers are configured on this GitHub environment (manual approval).
+    environment: production
+    concurrency: deploy-production
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+      - name: Promote the beta image of this commit (never rebuilt)
+        id: image
+        run: |
+          version=$(node -p "require('./apps/web/package.json').version")
+          if [ "v${version}" != "${GITHUB_REF_NAME}" ]; then
+            echo "Tag ${GITHUB_REF_NAME} does not match apps/web version ${version}" >&2
+            exit 1
+          fi
+          image="ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/powr-web"
+          docker pull "${image}:${version}-${GITHUB_SHA::7}"
+          docker tag "${image}:${version}-${GITHUB_SHA::7}" "${image}:${GITHUB_REF_NAME}"
+          docker push "${image}:${GITHUB_REF_NAME}"
+          echo "tag=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+      - name: Point the Coolify production application at the release tag and deploy
+        run: deploy/coolify-deploy.sh "${{ steps.image.outputs.tag }}"
+        env:
+          COOLIFY_API_URL: ${{ secrets.COOLIFY_API_URL }}
+          COOLIFY_TOKEN: ${{ secrets.COOLIFY_TOKEN }}
+          COOLIFY_APP_UUID: ${{ secrets.COOLIFY_APP_UUID }}
+          COOLIFY_WEBHOOK_URL: ${{ secrets.COOLIFY_WEBHOOK_URL }}
+      - name: Smoke test production
+        run: deploy/wait-and-smoke.sh "${{ vars.APP_URL }}" "${GITHUB_SHA}"

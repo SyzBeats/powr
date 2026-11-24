@@ -1,0 +1,29 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "../../.tsbuild/web-app",
+    "rootDir": ".",
+    "lib": ["es2024", "dom", "dom.iterable"],
+    "jsx": "react-jsx",
+    "types": ["vite/client"]
+  },
+  "include": ["src"],
+  "exclude": ["src/sw/sw.ts"],
+  "references": [
+    {
+      "path": "../../packages/domain"
+    },
+    {
+      "path": "../../packages/rules"
+    },
+    {
+      "path": "../../packages/content"
+    },
+    {
+      "path": "../../packages/formats"
+    },
+    {
+      "path": "../../packages/application"
+    }
+  ]
+}

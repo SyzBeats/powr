@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+dev-dist/
+.tsbuild/
+*.tsbuildinfo
+apps/web/.licence/
+licence-inventory.json
+
+# Test output
+apps/web/playwright-report/
+apps/web/test-results/
+apps/web/blob-report/
+coverage/
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+*.local
+
+# Editors and OS
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# Logs
+*.log
+apps/web/.compiler-report.json
+
+# TanStack Router plugin scratch files
+.tanstack/

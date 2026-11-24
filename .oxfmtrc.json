@@ -1,0 +1,37 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "printWidth": 100,
+  "singleQuote": true,
+  "sortPackageJson": true,
+  "sortImports": {
+    "internalPattern": ["@powr/"],
+    "groups": [
+      "builtin",
+      "external",
+      "internal",
+      ["parent", "sibling", "index"],
+      "style",
+      "unknown"
+    ],
+    "newlinesBetween": true
+  },
+  "sortTailwindcss": {
+    "stylesheet": "apps/web/src/ui/app.css",
+    "functions": ["cn", "clsx", "cva"]
+  },
+  "ignorePatterns": [
+    "pnpm-lock.yaml",
+    "docs/**",
+    "reports/**",
+    "research_notes/**",
+    "deploy/Dockerfile",
+    "deploy/nginx.conf",
+    "deploy/security-headers.conf",
+    "apps/web/src/routeTree.gen.ts",
+    "apps/web/src/i18n/locales/**",
+    "apps/web/public/**",
+    "tools/licence/fixtures/**",
+    "**/dist/**",
+    ".tsbuild/**"
+  ]
+}

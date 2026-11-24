@@ -1,0 +1,17 @@
+{
+  "name": "@powr/tools-licence",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Licence inventory from the bundle graph and the SPDX policy gate (LEG-08).",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "spdx-expression-parse": "5.0.0",
+    "yaml": "2.9.1"
+  },
+  "devDependencies": {
+    "vite": "8.3.8"
+  }
+}

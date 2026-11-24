@@ -1,0 +1,7 @@
+{
+  "name": "@powr/tools-icons",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Generates the original placeholder app icons (no third-party art).",
+  "type": "module"
+}

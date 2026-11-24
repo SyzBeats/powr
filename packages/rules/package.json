@@ -1,0 +1,13 @@
+{
+  "name": "@powr/rules",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Rules registry: parameter schema, data and resolver.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "zod": "4.6.7"
+  }
+}
