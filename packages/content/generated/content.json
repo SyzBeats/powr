@@ -1,7 +1,7 @@
 {
   "format": 1,
-  "version": "0.1.0+sha.48eca1dc",
-  "hash": "48eca1dcbb5225cf6f29c7fe506d41688e9dad6de30855558472fe93e183cce9",
+  "version": "0.1.0+sha.958eb71f",
+  "hash": "958eb71ff2b6f421baa81967ad300ee379483b3d675a504733604c233ca4a9d6",
   "muscles": [
     {
       "id": "mu.chest",
@@ -1845,7 +1845,7 @@
       ],
       "load": {
         "type": "barbell",
-        "curveClass": "pooled",
+        "curveClass": "benchLike",
         "unilateral": false,
         "bodyweightLoaded": false
       },
@@ -2060,7 +2060,7 @@
       ],
       "load": {
         "type": "barbell",
-        "curveClass": "pooled",
+        "curveClass": "benchLike",
         "unilateral": false,
         "bodyweightLoaded": false
       },
@@ -2172,7 +2172,7 @@
       ],
       "load": {
         "type": "barbell",
-        "curveClass": "pooled",
+        "curveClass": "benchLike",
         "unilateral": false,
         "bodyweightLoaded": false
       },
@@ -2275,7 +2275,7 @@
       ],
       "load": {
         "type": "barbell",
-        "curveClass": "pooled",
+        "curveClass": "benchLike",
         "unilateral": false,
         "bodyweightLoaded": false
       },
@@ -2677,7 +2677,7 @@
       ],
       "load": {
         "type": "barbell",
-        "curveClass": "pooled",
+        "curveClass": "benchLike",
         "unilateral": false,
         "bodyweightLoaded": false
       },

@@ -16,9 +16,7 @@ const PREFIX = 'powr-content-';
 const OWN_WORK = {
   licence: 'LicenseRef-Own-Work',
   distributed: true,
-  approval:
-    'Pending product-owner review of this content set; LicenseRef-Own-Work itself is ' +
-    'allowlisted (approved by the product owner, 2026-11-24)',
+  approval: 'Own-work content approved by product owner Simeon Zimmermann, 2026-11-24',
 } as const;
 
 /**

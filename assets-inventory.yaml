@@ -12,22 +12,22 @@ assets:
     licence: LicenseRef-Own-Work
     distributed: true
     copyright: 'Exercise library: names, execution cues, muscle mappings and defaults written for POWR (own work, SZ WEB DEVELOPMENT)'
-    approval: Pending product-owner review of this content set; LicenseRef-Own-Work itself is allowlisted (approved by the product owner, 2026-11-24)
+    approval: Own-work content approved by product owner Simeon Zimmermann, 2026-11-24
   - name: powr-content-muscle-taxonomy
     version: 0.1.0
     licence: LicenseRef-Own-Work
     distributed: true
     copyright: Muscle taxonomy, body-map region IDs and display names written for POWR (own work, SZ WEB DEVELOPMENT)
-    approval: Pending product-owner review of this content set; LicenseRef-Own-Work itself is allowlisted (approved by the product owner, 2026-11-24)
+    approval: Own-work content approved by product owner Simeon Zimmermann, 2026-11-24
   - name: powr-content-equipment
     version: 0.1.0
     licence: LicenseRef-Own-Work
     distributed: true
     copyright: Equipment catalog and gym presets written for POWR (own work, SZ WEB DEVELOPMENT)
-    approval: Pending product-owner review of this content set; LicenseRef-Own-Work itself is allowlisted (approved by the product owner, 2026-11-24)
+    approval: Own-work content approved by product owner Simeon Zimmermann, 2026-11-24
   - name: powr-content-templates
     version: 0.1.0
     licence: LicenseRef-Own-Work
     distributed: true
     copyright: Program templates written for POWR (own work, SZ WEB DEVELOPMENT)
-    approval: Pending product-owner review of this content set; LicenseRef-Own-Work itself is allowlisted (approved by the product owner, 2026-11-24)
+    approval: Own-work content approved by product owner Simeon Zimmermann, 2026-11-24
