@@ -97,6 +97,8 @@ const config: OxlintConfig = {
     'react/rules-of-hooks': 'error',
     'react/exhaustive-deps': 'error',
     'react/no-danger': 'error',
+    // Design-system inputs (src/ui) render a native <input>; wrapping labels may contain them.
+    'jsx-a11y/label-has-associated-control': ['error', { controlComponents: ['Input'] }],
     // Branded IDs (ExerciseId, SessionId …) are created by assertion at trusted boundaries.
     'typescript/no-unsafe-type-assertion': 'off',
     // The automatic JSX runtime needs no React import.

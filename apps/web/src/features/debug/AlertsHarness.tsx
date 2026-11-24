@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 
 import { Button } from '#ui/button';
+import { Input } from '#ui/input';
 import { Card, Screen } from '#ui/screen';
 
 import { APP_INFO, useDiagnostics, usePlatform } from '../../hooks/use-app';
@@ -116,11 +117,10 @@ export function AlertsHarness() {
       <Card>
         <label className="flex flex-col gap-1 text-sm">
           Device and browser label
-          <input
+          <Input
             value={settings.device}
             onChange={(event) => setSettings({ ...settings, device: event.target.value })}
             placeholder="S22 Chrome PWA"
-            className="min-h-target rounded-xl border border-border bg-surface px-3"
           />
         </label>
         <fieldset className="flex flex-col gap-1">
@@ -151,7 +151,7 @@ export function AlertsHarness() {
           ))}
           <label className="flex items-center gap-2 text-sm">
             Custom seconds
-            <input
+            <Input
               type="number"
               inputMode="numeric"
               min={1}
@@ -160,7 +160,7 @@ export function AlertsHarness() {
               onChange={(event) =>
                 setSettings({ ...settings, restMs: Math.max(1, Number(event.target.value)) * 1000 })
               }
-              className="min-h-target w-24 rounded-xl border border-border bg-surface px-2"
+              className="w-24 px-2"
             />
           </label>
         </fieldset>
@@ -175,7 +175,7 @@ export function AlertsHarness() {
         </label>
         <label className="flex items-center gap-2 text-sm">
           Keep-alive gain (variant E)
-          <input
+          <Input
             type="number"
             step={0.001}
             min={0}
@@ -184,7 +184,7 @@ export function AlertsHarness() {
             onChange={(event) =>
               setSettings({ ...settings, keepAliveGain: Number(event.target.value) })
             }
-            className="min-h-target w-28 rounded-xl border border-border bg-surface px-2"
+            className="w-28 px-2"
           />
         </label>
         <p className="text-sm">

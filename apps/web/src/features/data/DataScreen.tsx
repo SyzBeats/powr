@@ -4,6 +4,7 @@ import { useState } from 'react';
 import type { BackupError, DecodedBackup } from '@powr/application/backup';
 
 import { Button } from '#ui/button';
+import { Input } from '#ui/input';
 import { Card, Screen } from '#ui/screen';
 
 import { useExportBackup, useImportBackup, useMeta, useStorageStatus } from '../../hooks/use-data';
@@ -181,13 +182,12 @@ function RestoreCard() {
           </p>
           <label className="flex flex-col gap-1 text-sm">
             {t`Type ${confirmWord} to confirm`}
-            <input
+            <Input
               value={confirmation}
               onChange={(event) => setConfirmation(event.target.value)}
               autoCapitalize="characters"
               autoComplete="off"
               data-testid="restore-confirm"
-              className="min-h-target rounded-xl border border-border bg-surface px-3"
             />
           </label>
           <Button
