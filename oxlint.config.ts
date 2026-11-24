@@ -83,6 +83,7 @@ const config: OxlintConfig = {
     react: { version: '19.3' },
   },
   ignorePatterns: [
+    '.claude/**',
     '**/node_modules/**',
     '**/dist/**',
     '**/dev-dist/**',

@@ -21,6 +21,7 @@
     "functions": ["cn", "clsx", "cva"]
   },
   "ignorePatterns": [
+    ".claude/**",
     "pnpm-lock.yaml",
     "docs/**",
     "reports/**",
