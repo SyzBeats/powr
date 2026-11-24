@@ -7,7 +7,7 @@ import type {
   NotificationPort,
   WakeLockPort,
 } from '@powr/application';
-import { builtInContent } from '@powr/content';
+import type { ContentCatalog } from '@powr/content';
 import { RULES_VERSION } from '@powr/rules';
 
 import { capabilityProbe } from '../infrastructure/capabilities/probe';
@@ -59,6 +59,7 @@ export interface Container {
 
 export function createContainer(
   db: PowrDb,
+  content: ContentCatalog,
   serviceWorker: ServiceWorkerController,
   diagnostics: Diagnostics,
 ): Container {
@@ -67,7 +68,7 @@ export function createContainer(
     queries: createLiveQueries(db),
     clock: systemClock,
     ids: uuidv7Generator,
-    content: builtInContent(),
+    content,
     rulesVersion: RULES_VERSION,
     app: APP,
     runtime: runtimeFlags,

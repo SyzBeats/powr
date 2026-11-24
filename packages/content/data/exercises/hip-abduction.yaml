@@ -1,0 +1,23 @@
+# Hip abduction. The EB has no row for it: convention (C).
+
+- id: ex.machine-hip-abduction
+  name: { en: Machine hip abduction }
+  synonyms: [hip abduction, seated hip abduction, abductor machine press]
+  pattern: hipAbduction
+  mechanics: isolation
+  substitutionGroups: [sg.hip-abduction]
+  equipment: { allOf: [eq.hip-abduction-machine], anyOf: [] }
+  muscles:
+    - { muscle: mu.glutes.med-min, credit: 1, evidence: C, source: src.powr-eb-mapping }
+  load: { type: machine, curveClass: legPressLike, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [10, 20], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-1
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 3, subRegions: [mu.glutes.med-min] }
+  cues:
+    - en: Sit with the pads on the outside of your knees and your back against the seat.
+    - en: Push your knees apart as far as the machine allows and hold for a moment.
+    - en: Let the pads come back together slowly.

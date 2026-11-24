@@ -17,3 +17,8 @@ export function convertMass(mass: Mass, unit: MassUnit): number {
   if (mass.unit === unit) return mass.value;
   return unit === 'kg' ? mass.value * KG_PER_LB : mass.value / KG_PER_LB;
 }
+
+/** A value in kg expressed in `unit` (calculations run in kg, §8.1). */
+export function fromKg(kg: number, unit: MassUnit): number {
+  return unit === 'kg' ? kg : kg / KG_PER_LB;
+}

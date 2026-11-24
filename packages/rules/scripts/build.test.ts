@@ -1,0 +1,174 @@
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+
+import { afterEach, describe, expect, it } from 'vitest';
+
+import { RULES_VERSION, parseCompiledRules, resolveRules, rulesStamp, type ParamDef } from '../src';
+import type { CompiledRules } from '../src/compile';
+import {
+  buildRules,
+  canonicalJson,
+  diffRules,
+  hashRules,
+  loadRuleFiles,
+  unverifiedReport,
+} from './build';
+import { loadSourceRegistry } from './sources';
+
+const tempDirs: string[] = [];
+afterEach(() => {
+  for (const dir of tempDirs.splice(0)) rmSync(dir, { recursive: true, force: true });
+});
+
+const { compiled, issues } = buildRules();
+
+function shipped(): CompiledRules {
+  expect(issues).toEqual([]);
+  if (!compiled) throw new Error('the shipped registry does not compile');
+  return compiled;
+}
+
+describe('shipped rules registry (data/*.yaml)', () => {
+  it('compiles: every row matches its schema, every MVP parameter is present', () => {
+    expect(issues).toEqual([]);
+    expect(shipped().version).toBe(RULES_VERSION);
+    expect(shipped().params.length).toBeGreaterThan(100);
+  });
+
+  it('cites only existing, non-excluded sources, and never the Barbalho papers (EB §Gaps #23)', () => {
+    const { sources } = loadSourceRegistry();
+    for (const def of shipped().params) {
+      expect(def.sources.length).toBeGreaterThan(0);
+      for (const id of def.sources) {
+        expect({ id: def.id, source: id, status: sources.get(id)?.status }).toEqual({
+          id: def.id,
+          source: id,
+          status: 'active',
+        });
+        expect(id).not.toMatch(/^src\.barbalho/);
+      }
+    }
+  });
+
+  it('ships every preprint-derived value as verified: false (E-2)', () => {
+    const { sources } = loadSourceRegistry();
+    const preprint = (def: ParamDef) =>
+      def.evidence.includes('PREPRINT') ||
+      def.sources.some((id) => sources.get(id)?.tag === 'PREPRINT');
+    const offenders = shipped().params.filter((def) => preprint(def) && def.verified);
+    expect(offenders.map((def) => def.id)).toEqual([]);
+    for (const id of [
+      'volume.hypertrophy.weeklyBands',
+      'volume.hypertrophy.tiers',
+      'volume.hypertrophy.perSessionSoftCap',
+      'volume.puos',
+      'volume.effort.hypertrophySlopePerRir',
+    ]) {
+      expect(shipped().params.find((def) => def.id === id)).toMatchObject({ id, verified: false });
+    }
+  });
+
+  it('keeps parameter IDs stable (ids.lock.json)', () => {
+    const lock = JSON.parse(readFileSync(new URL('../ids.lock.json', import.meta.url), 'utf8')) as {
+      ids: string[];
+    };
+    const ids = shipped().params.map((def) => def.id);
+    // Removed or renamed IDs, then new IDs (add those to ids.lock.json).
+    expect(lock.ids.filter((id) => !ids.includes(id))).toEqual([]);
+    expect(ids.filter((id) => !lock.ids.includes(id))).toEqual([]);
+  });
+
+  it('resolves for any context without issues', () => {
+    const resolved = resolveRules(shipped(), {
+      level: 'novice',
+      exercise: { id: 'ex.barbell-back-squat' as never, competitionLift: 'squat' },
+    });
+    expect(resolved.issues).toEqual([]);
+    expect(resolved.version).toBe(rulesStamp(shipped()));
+    expect(resolved.rules['session.rest.strength'].value).toBe(240);
+    expect(resolved.rules['session.rest.hypertrophyCompound'].value).toBe(90);
+    expect(resolved.rules['load.e1rm.equation'].meta).toMatchObject({
+      origin: 'default',
+      verified: true,
+    });
+  });
+
+  it('prints the preliminary (verified: false) rows', () => {
+    const report = unverifiedReport(shipped());
+    const count = shipped().params.filter((def) => !def.verified).length;
+    expect(report.split('\n')).toHaveLength(count + 1);
+    expect(report).toContain('- volume.puos [PREPRINT]');
+  });
+});
+
+describe('versioned, hashed rules.json', () => {
+  it('has a stable hash: the same data always hashes the same', () => {
+    const again = buildRules().compiled;
+    expect(again?.hash).toBe(shipped().hash);
+    expect(shipped().hash).toMatch(/^[0-9a-f]{64}$/);
+    expect(hashRules(RULES_VERSION, shipped().params)).toBe(shipped().hash);
+  });
+
+  it('ignores key order and file layout, but not values or the version', () => {
+    const params = shipped().params;
+    const reordered = params.map(
+      (def) => Object.fromEntries(Object.entries(def).toReversed()) as unknown as ParamDef,
+    );
+    expect(hashRules(RULES_VERSION, reordered)).toBe(shipped().hash);
+    const changed = params.map((def) =>
+      def.id === 'session.rest.strength' ? { ...def, value: 181 } : def,
+    );
+    expect(hashRules(RULES_VERSION, changed)).not.toBe(shipped().hash);
+    expect(hashRules('9.9.9', params)).not.toBe(shipped().hash);
+    expect(canonicalJson({ b: 1, a: [{ d: 1, c: 2 }] })).toBe('{"a":[{"c":2,"d":1}],"b":1}');
+  });
+
+  it('round-trips through JSON and validates on load', () => {
+    const json: unknown = JSON.parse(JSON.stringify(shipped()));
+    expect(parseCompiledRules(json)).toEqual(shipped());
+    const broken = {
+      ...shipped(),
+      params: shipped().params.filter((def) => def.id !== 'load.rirBias'),
+    };
+    expect(() => parseCompiledRules(JSON.parse(JSON.stringify(broken)))).toThrow(/load\.rirBias/);
+    const badValue = {
+      ...shipped(),
+      params: shipped().params.map((def) =>
+        def.id === 'session.rest.strength' ? { ...def, value: -1 } : def,
+      ),
+    };
+    expect(() => parseCompiledRules(JSON.parse(JSON.stringify(badValue)))).toThrow(
+      /expected number/i,
+    );
+  });
+
+  it('reports added, removed and changed parameters', () => {
+    const before = shipped();
+    const after: CompiledRules = {
+      ...before,
+      hash: 'f'.repeat(64),
+      params: before.params
+        .filter((def) => def.id !== 'volume.puos')
+        .map((def) => (def.id === 'session.rest.strength' ? { ...def, value: 170 } : def)),
+    };
+    const diff = diffRules(before, after);
+    expect(diff).toContain('- Changed session.rest.strength: `180` [SR] → `170` [SR]');
+    expect(diff).toContain('- Removed volume.puos');
+    expect(diffRules(before, before)).toContain('No parameter changed.');
+  });
+});
+
+describe('loadRuleFiles', () => {
+  it('reports YAML errors and stray files; skips the sources directory', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'powr-rules-'));
+    tempDirs.push(dir);
+    writeFileSync(join(dir, 'broken.yaml'), '- id: x\n  value: [unclosed\n');
+    writeFileSync(join(dir, 'notes.txt'), 'stray');
+    const { files, issues: loadIssues } = loadRuleFiles(dir);
+    expect(files).toEqual([]);
+    expect(loadIssues).toHaveLength(2);
+    expect(loadIssues[0]).toMatch(/^broken\.yaml: /);
+    expect(loadIssues[1]).toBe('notes.txt: only *.yaml parameter tables belong in data/');
+  });
+});

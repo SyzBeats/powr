@@ -1,0 +1,138 @@
+# Rows. Credits: "Rows (any)" row: lats, mid traps / rhomboids and posterior delt 1.0 (C); elbow
+# flexors 0.5 (H, Mannarino 2021: rows gave about 47% of the curl's elbow-flexor growth); spinal
+# erectors 0.25–0.5 for bent-over rows only (C; the lower bound is used).
+
+- id: ex.barbell-bent-over-row
+  name: { en: Barbell bent-over row }
+  synonyms: [barbell row, bent-over row, pendlay row]
+  pattern: horizontalPull
+  mechanics: compound
+  substitutionGroups: [sg.row]
+  equipment:
+    allOf: [eq.plates]
+    anyOf: [[eq.barbell-olympic, eq.barbell-womens]]
+  muscles:
+    - { muscle: mu.lats, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.mid-back, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.rear-delts, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.elbow-flexors, credit: 0.5, evidence: H, source: src.mannarino2021 }
+    - { muscle: mu.lower-back, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+  load: { type: barbell, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [6, 15], strength: [6, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 3 }
+  cues:
+    - en: Hinge forward until your torso is at about 30–45 degrees above the floor, back neutral.
+    - en: Pull the bar to your lower ribs, driving the elbows back past your torso.
+    - en: Lower until your arms are straight without letting your torso rise.
+
+- id: ex.one-arm-dumbbell-row
+  name: { en: One-arm dumbbell row }
+  synonyms: [single-arm dumbbell row, dumbbell row]
+  pattern: horizontalPull
+  mechanics: compound
+  substitutionGroups: [sg.row]
+  equipment:
+    allOf: [eq.dumbbells]
+    anyOf: [[eq.flat-bench, eq.adjustable-bench]]
+  muscles:
+    - { muscle: mu.lats, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.mid-back, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.rear-delts, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.elbow-flexors, credit: 0.5, evidence: H, source: src.mannarino2021 }
+  load: { type: dumbbell, curveClass: pooled, unilateral: true, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [6, 15], strength: [6, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 2 }
+  cues:
+    - en: Support yourself with one hand and knee on a bench, the other foot on the floor.
+    - en: Let the dumbbell hang straight down until your shoulder blade stretches forward.
+    - en: Row the dumbbell toward your hip, keeping your torso still.
+
+- id: ex.chest-supported-dumbbell-row
+  name: { en: Chest-supported dumbbell row }
+  synonyms: [incline dumbbell row, seal row with dumbbells]
+  pattern: horizontalPull
+  mechanics: compound
+  substitutionGroups: [sg.row]
+  equipment: { allOf: [eq.dumbbells, eq.adjustable-bench], anyOf: [] }
+  muscles:
+    - { muscle: mu.lats, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.mid-back, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.rear-delts, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.elbow-flexors, credit: 0.5, evidence: H, source: src.mannarino2021 }
+  load: { type: dumbbell, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [8, 15], strength: [6, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-1
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 2 }
+  cues:
+    - en: Lie chest-down on a bench set to about 30 degrees with a dumbbell in each hand.
+    - en: Row both dumbbells up until your elbows pass your torso.
+    - en: Keep your chest on the pad; lower until your arms are straight.
+
+- id: ex.seated-cable-row
+  name: { en: Seated cable row }
+  synonyms: [cable row, low row, seated row]
+  pattern: horizontalPull
+  mechanics: compound
+  substitutionGroups: [sg.row]
+  equipment:
+    allOf: []
+    anyOf: [[eq.seated-row, eq.cable-station, eq.dual-cable-station]]
+  muscles:
+    - { muscle: mu.lats, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.mid-back, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.rear-delts, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.elbow-flexors, credit: 0.5, evidence: H, source: src.mannarino2021 }
+  load: { type: machine, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [8, 15], strength: [6, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 3 }
+  cues:
+    - en: Sit tall with a slight knee bend and reach forward until your shoulder blades spread.
+    - en: Pull the handle to your lower ribs while your torso stays nearly upright.
+    - en: Squeeze your shoulder blades together, then let your arms extend fully again.
+
+- id: ex.inverted-row
+  name: { en: Inverted row }
+  synonyms: [ring row, bodyweight row, australian pull-up]
+  pattern: horizontalPull
+  mechanics: compound
+  substitutionGroups: [sg.row]
+  # Rings, or a bar set at hip height in a rack or Smith machine.
+  equipment:
+    allOf: []
+    anyOf: [[eq.rings, eq.power-rack, eq.smith-machine]]
+  muscles:
+    - { muscle: mu.lats, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.mid-back, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.rear-delts, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.elbow-flexors, credit: 0.5, evidence: H, source: src.mannarino2021 }
+  load: { type: bodyweightAdded, curveClass: pooled, unilateral: false, bodyweightLoaded: true }
+  defaults:
+    repRange: { hypertrophy: [6, 20], strength: [6, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-1
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 1 }
+  cues:
+    - en: Hang under rings or a bar at hip height with your body straight and heels on the floor.
+    - en: Pull your chest to your hands, keeping hips in line with shoulders and ankles.
+    - en: Walk your feet forward or raise them on a box to make it harder.

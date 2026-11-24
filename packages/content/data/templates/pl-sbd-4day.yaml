@@ -1,0 +1,166 @@
+# Powerlifting, 4 days: each competition lift at least twice a week (PLN-02 "SBD 4-day"), with
+# within-week undulation (EB §Progression › Periodization). Squat and deadlift twice, bench three
+# times. See pl-sbd-3day.yaml for how the stated rep ranges and RPE targets relate to the EB bands.
+
+id: tpl.pl-sbd-4day
+name: { en: SBD 4-day }
+description:
+  en: Four sessions with squat and deadlift twice and bench press three times a week, each with a heavy and a lighter exposure.
+style: powerlifting
+daysPerWeek: 4
+split: sbd
+levels: [intermediate, advanced]
+default: true
+periodization: block
+progression: { main: rpeLoad, accessory: doubleProgression, novice: linearLoad }
+mesocycle: { accumulationWeeks: 5, deloadWeeks: 1, deloadRule: deload.planned }
+days:
+  - key: squat-heavy
+    name: { en: Heavy squat and moderate bench }
+    slots:
+      - key: squat-heavy.squat
+        pattern: squat
+        targets: [mu.quads]
+        priority: primary
+        lift: squat
+        intensity: heavy
+        goal: strength
+        mode: topBackoff
+        repRange: [1, 3]
+        effort: { rpe: [8, 9] }
+        backoff: { repRange: [3, 5], effort: { rpe: [7, 8] } }
+      - key: squat-heavy.bench
+        pattern: horizontalPush
+        targets: [mu.chest]
+        priority: primary
+        lift: bench
+        intensity: moderate
+        goal: strength
+        mode: rpe
+        repRange: [3, 5]
+        effort: { rpe: [7, 8] }
+      - key: squat-heavy.leg-curl
+        pattern: kneeFlexion
+        targets: [mu.hamstrings]
+        priority: secondary
+        goal: strength
+        mode: doubleProgression
+      - key: squat-heavy.row
+        pattern: horizontalPull
+        targets: [mu.lats, mu.mid-back]
+        priority: secondary
+        goal: strength
+        mode: doubleProgression
+
+  - key: deadlift-heavy
+    name: { en: Heavy deadlift and light bench }
+    slots:
+      - key: deadlift-heavy.deadlift
+        pattern: hinge
+        targets: [mu.glutes, mu.lower-back]
+        priority: primary
+        lift: deadlift
+        intensity: heavy
+        goal: strength
+        mode: topBackoff
+        repRange: [1, 3]
+        effort: { rpe: [8, 9] }
+        backoff: { repRange: [3, 5], effort: { rpe: [7, 8] } }
+      - key: deadlift-heavy.bench
+        pattern: horizontalPush
+        targets: [mu.chest, mu.triceps]
+        priority: primary
+        lift: bench
+        allowVariants: true
+        intensity: light
+        goal: strength
+        mode: rpe
+        repRange: [4, 6]
+        effort: { rpe: [6, 7] }
+      - key: deadlift-heavy.pulldown
+        pattern: verticalPull
+        targets: [mu.lats]
+        priority: secondary
+        goal: strength
+        mode: doubleProgression
+      - key: deadlift-heavy.triceps
+        pattern: elbowExtension
+        targets: [mu.triceps]
+        priority: optional
+        goal: strength
+        mode: doubleProgression
+
+  - key: bench-heavy
+    name: { en: Heavy bench and light squat }
+    slots:
+      - key: bench-heavy.bench
+        pattern: horizontalPush
+        targets: [mu.chest]
+        priority: primary
+        lift: bench
+        intensity: heavy
+        goal: strength
+        mode: topBackoff
+        repRange: [1, 3]
+        effort: { rpe: [8, 9] }
+        backoff: { repRange: [3, 5], effort: { rpe: [7, 8] } }
+      - key: bench-heavy.squat
+        pattern: squat
+        targets: [mu.quads]
+        priority: primary
+        lift: squat
+        allowVariants: true
+        intensity: light
+        goal: strength
+        mode: rpe
+        repRange: [3, 5]
+        effort: { rpe: [6, 7] }
+      - key: bench-heavy.row
+        pattern: horizontalPull
+        targets: [mu.mid-back, mu.rear-delts]
+        priority: secondary
+        goal: strength
+        mode: doubleProgression
+      - key: bench-heavy.rear-delts
+        pattern: shoulderHorizontalAbduction
+        targets: [mu.rear-delts]
+        priority: optional
+        goal: strength
+        mode: doubleProgression
+
+  - key: volume
+    name: { en: Deadlift variant and bench volume }
+    slots:
+      - key: volume.deadlift
+        pattern: hinge
+        targets: [mu.glutes, mu.lower-back]
+        priority: primary
+        lift: deadlift
+        allowVariants: true
+        intensity: moderate
+        goal: strength
+        mode: rpe
+        repRange: [3, 5]
+        effort: { rpe: [7, 8] }
+      - key: volume.bench
+        pattern: horizontalPush
+        targets: [mu.chest]
+        priority: primary
+        lift: bench
+        intensity: moderate
+        goal: strength
+        mode: rpe
+        repRange: [4, 6]
+        effort: { rpe: [7, 8] }
+      - key: volume.press
+        pattern: verticalPush
+        targets: [mu.front-delts]
+        priority: secondary
+        goal: strength
+        mode: doubleProgression
+      - key: volume.abs
+        pattern: core
+        targets: [mu.abs]
+        priority: optional
+        goal: strength
+        mode: doubleProgression

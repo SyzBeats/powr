@@ -10,6 +10,7 @@ const DIAGNOSTIC_CODES = {
   'app.start': ['releaseTarget', 'standalone'],
   'db.open': ['ms', 'dataVersion'],
   'db.error': ['name'],
+  'content.error': ['name'],
   'set.logged': ['commitMs', 'startedSession'],
   'session.finished': [],
   'backup.exported': ['bytes', 'ms'],

@@ -1,0 +1,187 @@
+# Hinge pattern. Credits:
+# - "Conventional / sumo deadlift" (all C): glutes and spinal erectors 1.0; quadriceps,
+#   hamstrings and adductors 0.5 (sumo: adductors "1.0?" in the EB); upper traps and forearms 0.25.
+# - "RDL / stiff-leg deadlift / good morning": hamstrings and glute max 1.0, adductor magnus and
+#   spinal erectors 0.5, quadriceps 0. The EB bases the row on Bourne 2017 "by analogy"; Bourne
+#   measured the hamstrings only, so only the hamstring credit is tagged H here and glute max is C.
+
+- id: ex.barbell-deadlift
+  name: { en: Barbell deadlift }
+  synonyms: [deadlift, conventional deadlift]
+  pattern: hinge
+  mechanics: compound
+  competitionLift: deadlift
+  substitutionGroups: [sg.deadlift]
+  equipment:
+    allOf: [eq.plates]
+    anyOf: [[eq.barbell-olympic, eq.barbell-womens]]
+  muscles:
+    - { muscle: mu.glutes, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.lower-back, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.quads, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.hamstrings, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.adductors, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.upper-traps, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.forearms.flexors, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+  load: { type: barbell, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [6, 10], strength: [1, 6] }
+    restClass: strength
+    tempo: 2-0-X-0
+    fixedRom: true
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 3 }
+  cues:
+    - en: Start with the bar over mid-foot and your shins close to it.
+    - en: Brace, pull the slack out of the bar, then push the floor away.
+    - en: Keep the bar close and finish with hips and knees locked out together.
+    - en: Lower the bar under control along the same path, then reset before the next rep.
+
+- id: ex.sumo-deadlift
+  name: { en: Sumo deadlift }
+  synonyms: [sumo pull, wide-stance deadlift]
+  pattern: hinge
+  mechanics: compound
+  # Sumo is a legal competition deadlift, not a variant of conventional; the lifter's profile
+  # decides which stance is theirs (IMPLEMENTATION_NOTES.md, M1-B content).
+  competitionLift: deadlift
+  substitutionGroups: [sg.deadlift]
+  equipment:
+    allOf: [eq.plates]
+    anyOf: [[eq.barbell-olympic, eq.barbell-womens]]
+  muscles:
+    - { muscle: mu.glutes, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.lower-back, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.quads, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.hamstrings, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    # EB: "sumo: adductors 1.0?" (convention, marked uncertain in the EB).
+    - { muscle: mu.adductors, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.upper-traps, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.forearms.flexors, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+  load: { type: barbell, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [6, 10], strength: [1, 6] }
+    restClass: strength
+    tempo: 2-0-X-0
+    fixedRom: true
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 3 }
+  cues:
+    - en: Take a wide stance with toes turned out and grip the bar inside your legs.
+    - en: Push your knees out over your toes and bring your hips close to the bar.
+    - en: Brace and spread the floor with your feet as the bar leaves the ground.
+    - en: Lock out by squeezing your hips through without leaning back.
+
+- id: ex.deficit-deadlift
+  name: { en: Deficit deadlift }
+  synonyms: [deficit pull]
+  pattern: hinge
+  mechanics: compound
+  variantOf: ex.barbell-deadlift
+  substitutionGroups: [sg.deadlift]
+  equipment:
+    allOf: [eq.plates]
+    anyOf: [[eq.barbell-olympic, eq.barbell-womens]]
+  muscles:
+    - { muscle: mu.glutes, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.lower-back, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.quads, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.hamstrings, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.adductors, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.upper-traps, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.forearms.flexors, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+  load: { type: barbell, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [6, 10], strength: [1, 6] }
+    restClass: strength
+    tempo: 2-0-X-0
+    fixedRom: true
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 3 }
+  cues:
+    - en: Stand on a stable plate or platform about 2–5 cm high.
+    - en: Set up as in your competition pull; the extra depth comes from bending your knees and hips more.
+    - en: Keep your back neutral off the floor and stay over the bar longer.
+
+- id: ex.barbell-romanian-deadlift
+  name: { en: Barbell Romanian deadlift }
+  synonyms: [romanian deadlift, rdl, stiff-leg deadlift]
+  pattern: hinge
+  mechanics: compound
+  substitutionGroups: [sg.romanian-deadlift]
+  equipment:
+    allOf: [eq.plates]
+    anyOf: [[eq.barbell-olympic, eq.barbell-womens]]
+  muscles:
+    - { muscle: mu.hamstrings, credit: 1, evidence: H, source: src.bourne2017 }
+    - { muscle: mu.glutes.max, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.adductors, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.lower-back, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.quads, credit: 0, evidence: C, source: src.powr-eb-mapping }
+  load: { type: barbell, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [6, 12], strength: [6, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 3, subRegions: [mu.hamstrings.biarticular] }
+  cues:
+    - en: Start standing with the bar in your hands and knees softly bent.
+    - en: Push your hips back and slide the bar down your thighs with a neutral back.
+    - en: Lower until you feel a strong hamstring stretch, usually just below the knee.
+    - en: Drive your hips forward to stand tall without leaning back.
+
+- id: ex.dumbbell-romanian-deadlift
+  name: { en: Dumbbell Romanian deadlift }
+  synonyms: [dumbbell rdl, db rdl]
+  pattern: hinge
+  mechanics: compound
+  substitutionGroups: [sg.romanian-deadlift]
+  equipment: { allOf: [eq.dumbbells], anyOf: [] }
+  muscles:
+    - { muscle: mu.hamstrings, credit: 1, evidence: H, source: src.bourne2017 }
+    - { muscle: mu.glutes.max, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.adductors, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.lower-back, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.quads, credit: 0, evidence: C, source: src.powr-eb-mapping }
+  load: { type: dumbbell, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [8, 15], strength: [6, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 2, subRegions: [mu.hamstrings.biarticular] }
+  cues:
+    - en: Hold the dumbbells in front of your thighs with knees softly bent.
+    - en: Hinge at the hips and let the dumbbells travel close to your legs.
+    - en: Stop when your hamstrings are fully stretched and your back is still neutral.
+    - en: Squeeze your glutes to return to standing.
+
+- id: ex.single-leg-romanian-deadlift
+  name: { en: Single-leg Romanian deadlift }
+  synonyms: [single-leg rdl, one-leg rdl]
+  pattern: hinge
+  mechanics: compound
+  substitutionGroups: [sg.romanian-deadlift]
+  equipment: { allOf: [], anyOf: [] }
+  muscles:
+    - { muscle: mu.hamstrings, credit: 1, evidence: H, source: src.bourne2017 }
+    - { muscle: mu.glutes.max, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.adductors, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.lower-back, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.quads, credit: 0, evidence: C, source: src.powr-eb-mapping }
+  # Bodyweight barely counts toward the hamstring load; added weight (a dumbbell) is what is logged.
+  load: { type: bodyweightAdded, curveClass: pooled, unilateral: true, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [8, 20], strength: [6, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 1, subRegions: [mu.hamstrings.biarticular] }
+  cues:
+    - en: Stand on one leg with that knee softly bent; hold a weight in the opposite hand if you have one.
+    - en: Tip forward from the hip while your free leg reaches back in line with your torso.
+    - en: Keep your hips square to the floor and lower until your hamstring is fully stretched.

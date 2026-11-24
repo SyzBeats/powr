@@ -283,3 +283,304 @@ Member values are camelCase, like the existing unions (`TechniqueKind`, `curveCl
 - 2026-11-24: TD-21 resolved by the product owner (keep `#ui/cn` + colour bridge): `ui:add` script,
   colour bridge and theme-scoped `dark:` in `app.css`, `Input` re-added through the script. Run
   instructions, section 2, a section 3 row and section 4 updated.
+
+## M1-B content
+
+Content pipeline and first content set (technical concept Appendix A.4, M1 content part), built in
+parallel with the M1 engine and rules work. Status 2026-11-24: `pnpm verify` green.
+
+### Pipeline
+
+| Piece                     | Where                                                                                                                                                                      |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Authoring (YAML)          | `packages/content/data/`: `muscles.yaml`, `equipment.yaml`, `presets.yaml`, `exercises/<pattern>.yaml` (one file per movement pattern), `templates/<slug>.yaml`            |
+| Schemas (Zod)             | `@powr/content/schema` → `packages/content/src/schema/`; each schema `satisfies z.ZodType<…>` of its runtime type                                                          |
+| Runtime (no Zod, no data) | `@powr/content` → types (`src/types.ts`) and `createContentCatalog(bundle)` (`src/catalog.ts`)                                                                             |
+| Compiled data             | `packages/content/generated/content.json` (`format`, `version` = `0.1.0+sha.<8 hex>`, `hash` = SHA-256 of the canonical JSON), read by `@powr/content/built-in`            |
+| Build, lint, coverage     | `tools/content-build`: `src/load.ts`, `compile.ts`, `lint.ts`, `coverage.ts`, `ids.ts`, `inventory.ts`, `build.ts`, `cli.ts`                                               |
+| Commands                  | `pnpm content:build` writes `content.json`, `packages/content/ids.lock.json` and the `powr-content-*` entries of `assets-inventory.yaml`; `pnpm content:check` checks only |
+| App loading               | `src/app/boot.tsx` loads `@powr/content/built-in` with `import()` in parallel with `db.open()` and passes the catalog to `createContainer(db, content, …)`                 |
+
+- **Entry chunk (`pnpm size`, gzip):** 204.29 kB before, **202.38 kB** after. The content data is
+  the lazy chunk `built-in-*.js` (16.5 kB gzip, 122 kB raw), precached by the service worker. The
+  offline E2E test now logs a set with a library exercise after an offline reload.
+- **TD-17 is only partly closed.** Content no longer reaches Zod, but Zod's core stays in the entry
+  through two other importers: `@powr/rules` (the container imports `RULES_VERSION` from the
+  package root, which also builds the parameter schemas) and `src/routes/session.tsx`
+  (`validateSearch` with `z.object`). Measured once with both made Zod-free (then reverted): entry
+  **176.39 kB** gzip. Follow-up: the rules work makes the `@powr/rules` root schema-free (or loads
+  `rules.json` like content), and the session route validates its one search parameter without Zod.
+- Lint guards (oxlint, every app override): `@powr/content/built-in` only as a type import or
+  through the one `import()` in `boot.tsx` (disable comment, as for the backup loader);
+  `@powr/content/schema` never in app code.
+
+### Linter and coverage rules
+
+Schema (per entry, `@powr/content/schema`): ID formats (`ex.`, `mu.`, `eq.`, `preset.`, `tpl.`,
+`sg.`, `src.`), the enums of the M1 contract, unknown keys rejected, 3–6 cues of ≤ 140 characters
+that are sentences, tempo `e-p-c-p` (`X` allowed), rep ranges `[min, max]`, an `anyOf` group offers
+≥ 2 items, bar weights and stack increments in both kg and lb, preset inventories (unique plate
+denominations, dumbbell ranges in whole steps), template day count = `daysPerWeek`, half-point RIR
+0–5 or RPE 5–10, mesocycles of 3–8 accumulation weeks (PLN-08).
+
+Lint (`tools/content-build/src/lint.ts`, on schema-valid content):
+
+- IDs unique per kind; names and synonyms unique case-insensitively per kind (§8.12).
+- Taxonomy: a group ID has one segment, a sub-region is `<group>.<sub>`; body-map regions are unique
+  and only in views where the group is drawn.
+- Presets: items exist and are unique; an inventory field exists exactly when its item is selected;
+  inventories in both kg and lb.
+- Exercises: equipment exists and is not repeated; the load type matches the requirement (barbell →
+  a bar and plates, dumbbell → dumbbells or kettlebells, machine → a machine or cable, band →
+  bands); `bodyweightAssisted` ⇒ `bodyweightLoaded` ⇒ a bodyweight load type; muscles exist, none
+  twice, never a group together with its own sub-region (the roll-up would count one set twice); at
+  least one credit of 1; 0.25 ⇒ C; C ⇔ `src.powr-eb-mapping` (H and EMG cite a study);
+  `ranking.subRegions` are sub-regions credited ≥ 0.5 directly or through their group; `variantOf`
+  and `replacedBy` resolve to active exercises, no variant of a variant, no `competitionLift`
+  together with `variantOf`, deprecated ⇔ `replacedBy`; competition lifts and close variants have
+  `fixedRom`, rest class `strength`, the lift's pattern and strength reps within 1–6; isolation ⇒
+  `hypertrophyIsolation`; rep ranges within the EB bands (hypertrophy 5–30, strength 1–12); no
+  repeated cue; the file name matches the pattern.
+- Sources: every credit's source exists in the registry and is not excluded (`checkSourceRefs` with
+  `loadSourceRegistry()`, hence the tools package's `@powr/rules` dependency).
+- Templates: at most one default per style × days; unique day and slot keys; targets exist; goals
+  fit the style (bodybuilding hypertrophy, powerlifting strength, powerbuilding both); a lift slot
+  uses the lift's pattern; stated reps, RIR and RPE within the EB bands (main-lift strength reps 1–6,
+  RPE 6–9.5, hypertrophy RIR 0–4); every slot has at least one candidate exercise.
+- ID lock: every ID in `ids.lock.json` (200 IDs: exercises, substitution groups, muscles, equipment,
+  presets, templates) still exists; the build appends new ones.
+
+Coverage (`tools/content-build/test/coverage.test.ts`). Known gaps are exact lists, so closing a
+gap fails the test until the list shrinks:
+
+| Rule                                                             | Threshold | Known exceptions                                                                                                 |
+| ---------------------------------------------------------------- | --------- | ---------------------------------------------------------------------------------------------------------------- |
+| Exercises crediting each display group ≥ 0.5 (whole library)     | ≥ 2       | `mu.tibialis` (optional; the contract has no dorsiflexion pattern)                                               |
+| Exercises crediting or ranking each sub-region                   | ≥ 1       | none                                                                                                             |
+| Available exercises per preset with equipment                    | ≥ 15      | none (smallest: bodyweight and bands, 19)                                                                        |
+| Exercises crediting each display group ≥ 0.5 per preset (EXL-01) | ≥ 2       | bodyweight-bands × calves, forearms, lower back, upper traps; dumbbells-bench × upper traps; hotel × upper traps |
+| Competition lifts with a close variant                           | ≥ 1 each  | none                                                                                                             |
+| Movement patterns with an exercise                               | ≥ 1       | `carry`                                                                                                          |
+| PLN-02 cells with a default template                             | 1 each    | BB 2; PL 2, 5, 6; PB 2, 3, 5, 6                                                                                  |
+
+Proof tests (`tools/content-build/test/lint.test.ts`): a broken `variantOf`, `replacedBy`,
+equipment and muscle reference, a missing cue, an excluded source (`src.barbalho2019`), an unknown
+source, the 0.25 and C rules, a double roll-up credit, a missing primary, a duplicate synonym,
+competition-lift semantics, a wrong load type, a wrong file, a sub-region outside its group, preset
+mismatches, and template targets, bands, goals and defaults. Each is the only issue reported.
+
+### Content
+
+- **Taxonomy:** 19 display groups (PRD §7.2, tibialis `optional`) with 16 sub-regions; body-map
+  region IDs such as `front.chest`, `back.side-delts`, `front.chest.clavicular`; `area` (chest,
+  shoulders, arms, back, core, legs); `ebHypertrophyData` per muscle.
+- **Equipment:** 49 items in EQP-01 order (7 bars with kg and lb default weights, `variesByModel`
+  for all but the Olympic and women's bars) and 6 presets (EQP-02: commercial, home barbell,
+  dumbbells and bench, bodyweight and bands, hotel, custom empty) with kg and lb inventories.
+- **Exercises:** 74. By pattern: squat 5, hinge 6, horizontal push 7, vertical push 4, horizontal
+  pull 5, vertical pull 4, lunge 2, knee extension 2, knee flexion 3, elbow flexion 5, elbow
+  extension 4, shoulder abduction 3, hip extension 3, hip abduction 1, hip adduction 1, calf 4,
+  core 5, horizontal adduction 2, horizontal abduction 4, shrug 2, wrist flexion 1, wrist
+  extension 1. 217 credits: 42 H, 4 EMG, 171 C. Competition lifts: back squat, bench press,
+  deadlift, sumo deadlift; close variants: paused squat, long-pause and close-grip bench, deficit
+  deadlift. The M0 IDs `ex.barbell-back-squat`, `ex.barbell-bench-press` and `ex.barbell-deadlift`
+  are kept.
+- **Templates:** 7 defaults: BB full body ×3, upper/lower ×2, upper/lower + PPL (5 days), PPL ×2;
+  PL SBD ×3 (heavy/light/moderate), SBD 4-day; PB upper/lower with strength and hypertrophy days.
+- **Sources:** no `content-*.yaml` was needed; the credits cite 12 seeded studies and
+  `src.powr-eb-mapping`.
+
+### Decisions and deviations
+
+| Concept or brief says                                                   | What I did                                                                                                                                                                                                                           | Why                                                                                                                                             | Follow-up                                                                    |
+| ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| One YAML file per exercise (§8.12)                                      | One file per movement pattern (as briefed), checked by the lint                                                                                                                                                                      | 22 files instead of 74; "where does it go?" stays obvious                                                                                       | Amend §8.12                                                                  |
+| `content.json` emitted by the build (§8.12 step 5)                      | Committed under `packages/content/generated/` (pretty JSON, excluded from oxfmt); `build.test.ts` fails when it, `ids.lock.json` or the inventory entries are stale                                                                  | Typecheck, Vitest, knip and Vite import it without a pre-build step; same pattern as the Lingui catalogs                                        | Amend §8.12                                                                  |
+| `packages/content/scripts/{build,lint}.ts` (§5.3)                       | `tools/content-build` (`ALLOWED_DEPENDENCIES`: domain, rules, content); the CLI loads the pipeline through Vite's `runnerImport`                                                                                                     | The source check needs `@powr/rules`, which the content runtime must not depend on (section 5.3); plain `node` cannot resolve workspace sources | Amend §5.1, §5.3                                                             |
+| `mappingTemplate` expanding EB rows (§8.12 example)                     | Credits written out per exercise; each file header names the EB rows it follows                                                                                                                                                      | Explicit data per exercise; the C ⇔ convention-source and 0.25 ⇒ C rules keep the tags consistent                                               | Reconsider at 150+ exercises                                                 |
+| Content types to be agreed (section 4)                                  | `MuscleGroupDef`, `EquipmentDef`, `EquipmentPresetDef`, `TemplateDef`, `ContentBundle` and their enums in `@powr/content` (`src/types.ts`); `ContentCatalog` gained `muscles()`, `equipment()`, `templates()`, `template(id)` (§5.5) | `@powr/domain` is read-only for this work                                                                                                       | Merge: move or mirror what the engine needs into `@powr/domain`              |
+| Tempo of the competition lifts open (section 4)                         | `2-0-X-0` ("controlled down" = 2 s, inside the EB's 1–4 s); paused variants carry the pause (`2-2-X-0`, `2-3-X-0`)                                                                                                                   | Four-part format of TMR-10; the EB models the paused bench as its own exercise                                                                  | None                                                                         |
+| EB rows "RDL …" and "45° back extension": H (Bourne 2017)               | Hamstrings H; glute max C                                                                                                                                                                                                            | Bourne 2017 measured the hamstrings only                                                                                                        | Re-tag if glute data appear                                                  |
+| EB "Lateral raise: C/EMG"; incline "EMG + one unverified study"; curl H | Lateral raise C (no EMG source cited); incline cites `src.pmid34644424` only; curls cite `src.mannarino2021`; variants the table does not name (front and goblet squat, machine press, pike push-up, hammer and band curl) are C     | Registry note on `src.pmid36334406`: verify before it backs a credit; extrapolation is convention                                               | None                                                                         |
+| EB "sumo: adductors 1.0?"                                               | 1.0, tagged C, commented                                                                                                                                                                                                             | Closest to the table; C marks it as unvalidated                                                                                                 | None                                                                         |
+| No EB rows for abs, obliques, forearms, hip abduction and adduction     | C; trunk-flexion exercises credit the obliques 0.5 as synergists                                                                                                                                                                     | EB: count synergist sets as half                                                                                                                | None                                                                         |
+| Every exercise has a pattern (EXL-01)                                   | No tibialis or carry exercise and no timed exercise (planks)                                                                                                                                                                         | `MOVEMENT_PATTERNS` has no ankle dorsiflexion; `defaults.repRange` is required, so timed exercises and carries have no honest default           | Contract: a dorsiflexion pattern and duration defaults for timed and carries |
+| Sumo deadlift                                                           | `competitionLift: deadlift`, not `variantOf`                                                                                                                                                                                         | A legal competition deadlift; the lifter's stance is a profile choice                                                                           | Engine: allow two exercises per competition lift                             |
+| Dips                                                                    | Pattern `verticalPush`                                                                                                                                                                                                               | Pressing along the body's long axis; the chest credit comes from the mapping                                                                    | None                                                                         |
+| EQP-01 "each item has an icon"                                          | Items carry a `category`; the UI maps category to an icon                                                                                                                                                                            | No per-item artwork yet                                                                                                                         | M2 equipment editor                                                          |
+| Content entries of the licence inventory                                | The build owns the `powr-content-*` entries of `assets-inventory.yaml` (exercises, muscle taxonomy, equipment, templates; `LicenseRef-Own-Work`; version = content SemVer); the stub entry is gone                                   | LEG-08; the licence gate already reads this file                                                                                                | Product owner: approve the four entries (their `approval` says pending)      |
+| —                                                                       | Diagnostic code `content.error`; `packages/application/test/fakes.ts` and `apps/web/src/infrastructure/db/db.test.ts` import `@powr/content/built-in`                                                                                | Startup can now fail on the content chunk; `builtInContent` left the package root                                                               | None                                                                         |
+| EB bands in the rules registry                                          | The EB rep, RIR and RPE bands are constants in `lint.ts`                                                                                                                                                                             | The rules registry does not exist yet                                                                                                           | Read them from `rules.json` after the merge                                  |
+| Body map (§8.11)                                                        | Region IDs only; no `smallRegion` flags and no pain-log regions (RDY-04)                                                                                                                                                             | Both depend on the artwork                                                                                                                      | With the artwork (S-5)                                                       |
+
+### Assumptions the merge with the engine and rules work must align
+
+- **Presets → `PlateInventory` / `BarSpec`:** `preset.inventory[unit]` holds plain numbers in that
+  unit: `plates` and `microplates` as `{ weight, pairs }`, `dumbbells` as `{ weights }` or
+  `{ from, to, step }`, `kettlebells` as a list. Bars are catalog items with
+  `loading: { kind: 'bar', defaultWeight: Mass[] }` (one kg and one lb value) and `variesByModel`;
+  stacks have `defaultIncrement: Mass[]`; plate-loaded machines leave the empty weight to the user.
+  Presets carry no collars (EQP-03 default 0).
+- **Template prescription modes:** the PLN-07 list (`fixed`, `percent`, `rpe`, `doubleProgression`,
+  `topBackoff`, `amrap`, `timed`, `technique`), the names of the technical concept's `Prescription`
+  sketch. Slots are flat (`goal`, `mode`, optional `repRange`, `effort` as `{ rir }` or `{ rpe }`,
+  `rest`, and `backoff` for `topBackoff`); the generator allocates the sets.
+- **Rule references:** `mesocycle.deloadRule: deload.planned` (a parameter ID in the `paramDefSchema`
+  format; the ID itself is assumed). Slots without `effort` take the registry's effort target for
+  their `goal` (EB: hypertrophy RIR 1–2, strength RPE 6–9); slots without `rest` take the exercise's
+  `RestClass`. Progression models `doubleProgression` (PRG-04), `rpeLoad` (PRG-05), `linearLoad`
+  (PRG-06).
+- **Volume roll-up:** a group's credit from one exercise is the largest of its own and its
+  sub-regions' credits; the lint guarantees that no exercise credits a group and one of its
+  sub-regions together.
+- **Equipment availability:** `tools/content-build/src/coverage.ts` has its own `isAvailable`
+  (allOf + anyOf); the engine's `equipment` module should own it, and the tests can switch to it.
+- **Library order:** competition lifts first, then the `MOVEMENT_PATTERNS` order (the M0 log screen
+  preselects the first exercise, the back squat).
+
+### What remains
+
+- **74 → 150+ exercises (M4):** first the coverage gaps above (bodyweight calf, forearm, lower-back
+  and trap options; trap work for the dumbbell and hotel presets), then the variants the templates'
+  accessory slots will want (incline barbell, Smith and machine variants, more pulls and rows,
+  preacher and cable curls, lunges), the missing patterns (carry, dorsiflexion) once the contract
+  allows them, and partners for the seven single-member substitution groups. `pnpm content:build`
+  prints the current gaps.
+- Templates for the eight missing PLN-02 cells (2-day templates; PL 5 and 6; PB 3, 5 and 6), the PL
+  meet-prep variant (v1.1) and the PLN-01 constraint checks (M2).
+- Educational texts (§7.6, Markdown → restricted AST) and achievements (v1.2) are not started.
+- The TD-17 remainder (see Pipeline).
+
+## M1-A engine and rules
+
+Written 2026-11-24 by the M1 engine-and-rules work (roadmap A.4 "M1 Engine and content
+foundations", engine part). Content (taxonomy, equipment catalog, exercises, templates) is the
+parallel M1 content work and is not covered here.
+
+### Run instructions
+
+| Command                                                | What it does                                                                                                                                            |
+| ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `pnpm --filter @powr/rules build`                      | Validates `packages/rules/data/*.yaml` and the source registry, writes `packages/rules/dist/rules.json` (gitignored), prints the `verified: false` rows |
+| `pnpm --filter @powr/rules build -- --diff <old.json>` | Same, plus the registry diff report (added, removed, changed parameters) against an earlier `rules.json`                                                |
+| `pnpm test`                                            | Runs every registry check (schema, sources, Barbalho, ID lock, hash) and the golden tests under Vitest, as before                                       |
+
+Plain `node` cannot import the workspace sources (extensionless imports, section 5.3). The build
+runs with a 20-line resolve hook, `packages/rules/scripts/ts-resolve.ts` (`node --import`), that
+retries a relative import with `.ts` and `/index.ts`; Node 26 strips the types itself.
+
+### What landed
+
+`@powr/domain` (pure; temporal-polyfill only; new modules are subpath exports, the root index is
+unchanged apart from the new `units` and `time` helpers):
+
+| Subpath                    | Public API                                                                                                                                                                                                                | PRD                            |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------ |
+| root (`units`)             | `roundToStep(value, step, mode?, origin?)`, `displayMass(mass, unit, step = 0.1)`, `fromKg`, `cleanFloat`, `ROUNDING_MODES`/`RoundingMode`; `Length`, `toCm`, `convertLength`                                             | SET-02, SET-05, NFR-REL-07     |
+| root (`time`)              | `addDays`, `daysBetween`, `weekStartOf(date, weekStartsOn)`, `isoWeekOf`, `isoWeekKey`, `IsoWeekday`                                                                                                                      | SET-11                         |
+| `@powr/domain/rules`       | `ParamValues` (every parameter ID → value type), `ParamId`, `Param<V>`, `ParamMeta`, `RuleSet`, `RuleSlice<K>`, `TRAINEE_LEVELS`, `SEX_REFERENCES`, `PARAM_UNITS`, `TECHNIQUE_KINDS`/`Technique` …                        | PRG-18                         |
+| `@powr/domain/explain`     | `Explained<T>`, `Explanation`, `RULE_IDS`/`RuleId` (closed), `ParamRef`, `Fact`, `explain`, `explained`, `paramRef`, `paramsUsed`                                                                                         | PRG-09, LEG-05                 |
+| `@powr/domain/loading`     | `Implement` (`barbell`, `list`, `steps`, `loosePlates`), `BarSpec`, `PlateInventory`, `roundToAchievable(target, implement, mode)`, `nextLoadAbove`, `maxLoad`, `barbellTotal`, `effectiveLoadKg`, `externalLoadForTotal` | WKT-07, EQP-03, PRG-07, WKT-11 |
+| `@powr/domain/e1rm`        | `equationPct`, `rtsPct`, `tablePct`, `curvePct`, `effectiveReps`, `rirBias`, `setWeight`, `personalPriorRir`, `estimateSetE1rm`, `sessionE1rm`, `loadForTarget`                                                           | PRG-01, PRG-05                 |
+| `@powr/domain/trend`       | `trendObservation`, `isStrengthSet`, `runTrend` (local-level Kalman filter on ln e1RM), `labelChange`                                                                                                                     | PRG-02                         |
+| `@powr/domain/progression` | `suggestDoubleProgression`, `suggestRpeLoad`, `suggestBackoff`, `apreSession`, `suggestApre`, `suggestLinear`, `percentLoad`, `classifyTrainee`, `bodyRegionOf`                                                           | PRG-03…07, PRG-10              |
+| `@powr/domain/warmup`      | `generateWarmup(input, { implement, mode }, rules)`                                                                                                                                                                       | WKT-06                         |
+| `@powr/domain/volume`      | `isHardSet`, `setCredit`, `creditTable`, `parentMuscle`, `muscleVolume`, `weeklyMuscleVolume`, `classifyWeeklyVolume`, `checkSessionVolume`                                                                               | EXL-05, WKT-04                 |
+| `@powr/domain/rest`        | `restSeconds({ restClass, timeSaver }, rules)`                                                                                                                                                                            | TMR-02                         |
+| `@powr/domain/scoring`     | `score(formula, { sex, bodyweightKg, liftedKg, division, lift }, rules)` for `ipfGl`, `dots`, `ipfPoints`, `wilks`, `wilks2020`, `allometric`                                                                             | ANL-07                         |
+| `@powr/domain/bodyweight`  | `bodyweightTrend(weighIns, rules)`, `bodyweightRate(points, rules)`                                                                                                                                                       | BOD-02                         |
+
+Every suggestion and derived value is an `Explained<T>` with the rule ID, a `why.<rule>` message
+ID, arguments, facts and the registry parameters used (with evidence tags, sources, `verified` and
+origin). Engine functions take the rule slice they read (`RuleSlice<…>`) as an argument.
+
+`@powr/rules`: `data/*.yaml` (8 tables, 109 parameters), `src/params.ts` (one Zod value schema per
+parameter ID, tied to `ParamValues` with `satisfies`), `src/compile.ts` (`compileRules`: row schema,
+value/variant/range schemas, unique IDs, complete MVP set, sources exist and are not excluded, no
+blocked MVP row), `src/resolve.ts` (`resolveParam`, `resolveRules(compiled, context, overrides)` →
+`{ version, rules: RuleSet, issues }`, `parseCompiledRules`, `rulesStamp`), `src/context.ts`
+(`ResolveContext`, `matchesCondition`), `scripts/build.ts` (Node build, SHA-256 of canonical JSON,
+unverified report, diff report), `ids.lock.json` (stable parameter IDs). `RULES_VERSION` is now
+`1.0.0`; the compiled file adds the hash (`1.0.0+<hash12>`).
+
+| Table              | Parameters | `verified: false` |
+| ------------------ | ---------- | ----------------- |
+| `load.yaml`        | 25         | 7                 |
+| `volume.yaml`      | 21         | 10                |
+| `progression.yaml` | 14         | 3                 |
+| `deload.yaml`      | 6          | 0                 |
+| `session.yaml`     | 23         | 0                 |
+| `monitoring.yaml`  | 4          | 0                 |
+| `scoring.yaml`     | 12         | 4                 |
+| `bodyweight.yaml`  | 4          | 0                 |
+| **Total**          | **109**    | **24**            |
+
+New source files (71 sources): `load.yaml` 13, `volume.yaml` 13, `progression.yaml` 8,
+`deload.yaml` 4, `session.yaml` 15, `monitoring.yaml` 4, `scoring.yaml` 10, `bodyweight.yaml` 4.
+
+### Decisions and deviations
+
+| Concept / brief says                                                         | What I did                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| ---------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ResolvedRuleSet` is a typed tree, `rs.rest.strength.default.value` (§8.6.2) | A flat record keyed by the stable parameter ID: `rules['session.rest.strength'].value`. Same typing, IDs match explanations and overrides one to one                                                                                                                                                                                                                                                                                                                                            |
+| `ParamDef` with `range?`, `guard?: unknown` (§8.6.1)                         | `unit` is required (closed list `PARAM_UNITS`); `range` is checked with the parameter's own schema and drives the out-of-range note for user values; `guard` is a JSON object of UI warning thresholds; `sources` needs at least one ID; `label` defaults to `params.<id>`, `since` to `mvp`; optional `note`                                                                                                                                                                                   |
+| A `verified` flag per row                                                    | `verified: false` for preprint-derived values (Pelland tiers and bands, PUOS, Remmert caps, Marzagao noise, Robinson RIR slope), for values the EB flags as unverified (RIR bias, §Gaps #26; APRE table; RTS chart from a secondary source) and for POWR design values the EB gives only a direction for (set-order decay 0.85, Kalman process noise, novice widening 1.5, reference window, training-age mapping, calibration rule). A test fails if any row that cites a preprint is verified |
+| Scoring rows stay `verified: false` until the cross-check (§8.7.7)           | IPF Points coefficients are `verified: true` (the EB research note checked them against the IPF document, including C4 = 67.4926); Wilks, Wilks2020, DOTS and GL coefficients `verified: false`; the clamps and floors are rows of their own, tagged [INF] as an app implementation choice                                                                                                                                                                                                      |
+| Curve classes (E-3): benchLike = Wathan/RTS, legPressLike and pooled = Nuzzo | As specified, but data-driven: `load.curve.classMap` maps each class to `equation`, `nuzzoPooled`, `nuzzoBench` or `nuzzoLegPress`. Consequence: the user's equation setting (Wathan/Epley/Brzycki/RTS) only affects bench-like exercises; squat and deadlift (`pooled` in the content stub) use the Nuzzo pooled curve, which prescribes about 5–6% more load than Wathan at 5 @ RPE 8. **Product decision needed**; switching `pooled` to `equation` is a one-line data change                |
+| Nuzzo tables inverted                                                        | Piecewise-linear, anchored at 1 rep = 100%, flat beyond the last row. The RTS chart beyond 13.5 r_eff follows Wathan scaled to meet the chart (continuous and decreasing)                                                                                                                                                                                                                                                                                                                       |
+| Brzycki `w·36/(37 − r)`                                                      | The original `w / (1.0278 − 0.0278·r)`; equal to 4 decimals in the EB range, undefined from r ≈ 37. At 8 reps it gives 80.56% where the EB prints 80.5 (within the ±0.1 tolerance)                                                                                                                                                                                                                                                                                                              |
+| RIR bias (MVP 0 / +0.5)                                                      | Applied in both directions: to reported RIR in the e1RM and to the target RIR in load-for-target, so the two are exact inverses before rounding                                                                                                                                                                                                                                                                                                                                                 |
+| Ranges given as defaults in the EB                                           | One value per row: the conservative end where there is one (novice increments 2.5 kg lower / 1 kg upper, rounded up to an achievable step; rest-pause +0.33; intermediate +1%/week), the midpoint otherwise (APRE adjustments, warm-up rest 45/90 s, superset transition 20 s), and the EB range kept in `range` or `guard`                                                                                                                                                                     |
+| TMR-02 rows as context variants (section 5.2)                                | Squat/deadlift (4:00) and novice (1:30/1:00) are variants; time-saver, superset transition and warm-up rest are separate parameters because they are different timers; `restSeconds` picks the time-saver value for hypertrophy classes only                                                                                                                                                                                                                                                    |
+| `nutrition.yaml` holds the EMA α (§8.6.1)                                    | `bodyweight.yaml` (parameters and sources), because BOD-02 is MVP and the rest of nutrition is v1.2                                                                                                                                                                                                                                                                                                                                                                                             |
+| Return-from-break bands ≤ 7, 8–14, 15–28 days, 5–8 weeks, > 2–3 months       | Contiguous rows by `maxDays` 7, 14, 28, 56, open: days 29–34 fall into the "5–8 weeks" row and 57–90 into "rebuild", the more cautious side                                                                                                                                                                                                                                                                                                                                                     |
+| Sub-region roll-up                                                           | A set counts once for the parent `mu.<group>`, with the largest credit the exercise gives the group or any of its sub-regions (no data needed beyond the ID convention)                                                                                                                                                                                                                                                                                                                         |
+| Hard sets above 20 reps only at RIR ≤ 2                                      | Sets without effort count in every case (E-1 "RIR unknown counts"), also above 20 reps                                                                                                                                                                                                                                                                                                                                                                                                          |
+| Warm-ups: "never warm-up reps ≥ working reps at ≥ 70%"                       | Capped at working reps − 1 but never below 1, so a heavy-single day still gets its warm-up singles                                                                                                                                                                                                                                                                                                                                                                                              |
+| e1RM change "95% interval of Δ excludes 0"                                   | Var(Δ) = P_now + P_ref (ignores the positive covariance of filter states), which is conservative                                                                                                                                                                                                                                                                                                                                                                                                |
+| Plate math `nearest-ties-down` etc.                                          | Mode names `nearestTiesDown`, `down`, `up`. Targets are compared on the 0.01 grid of the implement's unit                                                                                                                                                                                                                                                                                                                                                                                       |
+| `@powr/rules` has no side effects                                            | `package.json` declares `"sideEffects": ["./src/zod.ts"]`, so the app (which imports only `RULES_VERSION`) does not pull the schemas into the entry chunk; entry JS is 204.09 kB gzip (204.3 kB before)                                                                                                                                                                                                                                                                                         |
+| Tooling                                                                      | Only package-local changes: `@powr/domain` subpath exports, `@powr/rules` `build` script, `./build/node` subpath and `sideEffects`. No change to the Vitest projects, knip, tsconfig references or the arch-test matrix (the `scripts/` project reaches `@powr/domain` through its `..` reference)                                                                                                                                                                                              |
+
+Not shipped, on purpose: Lombardi, Lander, O'Conner, the regression equations with intercepts and
+the Marzagao weight-dependent formula (EB §Gaps #3–4); velocity-based anything (MVT priors, VL
+presets, load–velocity 1RM, the Sánchez-Medina equation; NG-06, §Gaps #12–13); OPL's single-lift
+IPF constants (§Gaps #17); ACWR zones, Banister constants, "monotony > 2" (§Gaps #10–11); the RP
+landmark table (a coaching overlay for M4).
+
+### For the content work and the merge
+
+- **Equipment:** presets map onto `Implement` in `@powr/domain/loading`: a bar plus plate set →
+  `{ kind: 'barbell', bar: BarSpec, plates: PlateInventory, collarWeight? }` (plates as
+  `{ weight, pairs }` in the plate set's own unit, microplates included); a dumbbell rack or
+  kettlebells → `{ kind: 'list', unit, weights }`; adjustable dumbbells, cable and machine stacks →
+  `{ kind: 'steps', unit, start, step, max?, addOns? }`; dip belt → `{ kind: 'loosePlates', plates }`;
+  `LoadModel.increment` → `{ kind: 'steps', unit, start: 0, step }`. Collars are per collar.
+- **Templates:** `Goal` and `RestClass` come from the contract unchanged; the rules resolver's
+  `ResolveContext` matches `competitionLift`, `restClass`, `pattern`, `mechanics`, `curveClass`,
+  `level`, `style`, `goal`, `sex` and `timeSaver`. Templates should reference rep ranges and RIR
+  targets by goal; the registry holds the defaults (`volume.repRange.*`, `volume.effort.*`).
+- **New engine types the content may want:** `TraineeLevel` (`@powr/domain/rules`, for level rules
+  in templates) and `TechniqueKind` (for technique slots). Neither is in the shared contract; no
+  contract file was changed.
+- **Source IDs:** 71 new IDs in topic files. If the content work added any of the same works (e.g.
+  `src.schoenfeld2019b`, `src.wolf2025b`, `src.kassiano2023`…), the merge must keep one definition:
+  `pnpm test` fails on a duplicate ID across files.
+- **Curve class of squat and deadlift:** see the classMap decision above.
+
+### Not done / open items
+
+- Personal load–rep curve fit with shrinkage, the per-exercise correction factor (re-anchoring; only
+  its trigger is in the registry) and the rep-range artefact flag (technical concept §8.7.4/8.7.5).
+- PR detection (MOT-01) and the calibration state machine (PRG-08) only have their inputs
+  (`prEligible`, `progression.calibration`); deload, return-from-break, readiness and spacing are
+  data only.
+- `VersionStamp.rules` in the app still uses `RULES_VERSION` (`1.0.0`); from M2 it should use
+  `resolveRules(...).version` (`1.0.0+<hash12>`) of the loaded `rules.json`.
+- Message catalog: every `RuleId` needs an English `why.*` message (PRG-09 coverage test) once the UI
+  renders explanations.
+- Verification passes before the `verified: false` rows can flip: Pelland Sports Med 2026 and the
+  published Remmert paper (E-2), Russo 2025 for the RIR bias (§Gaps #26), primary Wilks/DOTS/GL
+  documents, an RTS original, the APRE source tables.
+
+- 2026-11-24: M1-A engine and rules: this section.

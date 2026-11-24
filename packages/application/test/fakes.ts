@@ -1,4 +1,4 @@
-import { builtInContent } from '@powr/content';
+import { builtInContent } from '@powr/content/built-in';
 import { makeInstantTz, type SessionId } from '@powr/domain';
 import { emptyRawTables, type RawTables } from '@powr/formats';
 import { RULES_VERSION } from '@powr/rules';

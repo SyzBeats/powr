@@ -1,0 +1,102 @@
+# Calf raises. Credits:
+# - "Standing calf raise": gastrocnemius 1.0 (H, Kassiano 2023: +15.2% with lengthened partials vs
+#   +6.7% full ROM vs +3.4% shortened partials), soleus 0.5 (C). The single-leg version on a step
+#   is a standing calf raise too.
+# - "Seated calf raise": soleus 1.0, gastrocnemius 0.25 (C). The seated dumbbell version reuses it.
+# The cues stress the stretched bottom position, as the Kassiano result suggests.
+
+- id: ex.standing-calf-raise
+  name: { en: Standing calf raise }
+  synonyms: [machine calf raise, standing calf machine raise]
+  pattern: calf
+  mechanics: isolation
+  substitutionGroups: [sg.straight-knee-calf-raise]
+  equipment:
+    allOf: []
+    anyOf: [[eq.standing-calf-raise-machine, eq.smith-machine]]
+  muscles:
+    - { muscle: mu.calves.gastrocnemius, credit: 1, evidence: H, source: src.kassiano2023 }
+    - { muscle: mu.calves.soleus, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+  load: { type: machine, curveClass: legPressLike, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [8, 20], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-1-X-0
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 3, subRegions: [mu.calves.gastrocnemius] }
+  cues:
+    - en: Stand on the edge of the step with your knees straight but not locked.
+    - en: Lower your heels as far as they go and hold the stretch for a second.
+    - en: Rise onto the balls of your feet; when the set gets hard, keep going in the bottom half.
+
+- id: ex.single-leg-calf-raise
+  name: { en: Single-leg calf raise }
+  synonyms: [one-leg calf raise, bodyweight calf raise]
+  pattern: calf
+  mechanics: isolation
+  substitutionGroups: [sg.straight-knee-calf-raise]
+  equipment: { allOf: [], anyOf: [] }
+  muscles:
+    - { muscle: mu.calves.gastrocnemius, credit: 1, evidence: H, source: src.kassiano2023 }
+    - { muscle: mu.calves.soleus, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+  load: { type: bodyweightAdded, curveClass: pooled, unilateral: true, bodyweightLoaded: true }
+  defaults:
+    repRange: { hypertrophy: [8, 20], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-1-X-0
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 2, subRegions: [mu.calves.gastrocnemius] }
+  cues:
+    - en: Stand on one foot on a step and hold onto something for balance.
+    - en: Let your heel sink below the step into a full stretch and pause there.
+    - en: Rise as high as you can; hold a dumbbell in the free hand to add load.
+
+- id: ex.seated-calf-raise
+  name: { en: Seated calf raise }
+  synonyms: [seated calf machine raise]
+  pattern: calf
+  mechanics: isolation
+  substitutionGroups: [sg.bent-knee-calf-raise]
+  equipment: { allOf: [eq.seated-calf-raise-machine, eq.plates], anyOf: [] }
+  muscles:
+    - { muscle: mu.calves.soleus, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.calves.gastrocnemius, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+  load: { type: machine, curveClass: legPressLike, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [10, 20], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-1-X-0
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 3, subRegions: [mu.calves.soleus] }
+  cues:
+    - en: Sit with the pad snug on your lower thighs and the balls of your feet on the platform.
+    - en: Drop your heels into a deep stretch and pause before each rep.
+    - en: Press up as high as you can without bouncing out of the bottom.
+
+- id: ex.seated-dumbbell-calf-raise
+  name: { en: Seated dumbbell calf raise }
+  synonyms: [seated db calf raise]
+  pattern: calf
+  mechanics: isolation
+  substitutionGroups: [sg.bent-knee-calf-raise]
+  equipment:
+    allOf: [eq.dumbbells]
+    anyOf: [[eq.flat-bench, eq.adjustable-bench]]
+  muscles:
+    - { muscle: mu.calves.soleus, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.calves.gastrocnemius, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+  load: { type: dumbbell, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [10, 20], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-1-X-0
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 2, subRegions: [mu.calves.soleus] }
+  cues:
+    - en: Sit on a bench with the balls of your feet on a plate or step.
+    - en: Rest the dumbbells on your knees and keep your knees bent at about 90 degrees.
+    - en: Lower your heels fully, pause, then rise as high as you can.

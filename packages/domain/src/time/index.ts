@@ -1,3 +1,7 @@
+/**
+ * Time (§8.1, ADR-0015): instants with their offset and zone, calendar days as `LocalDate`, day
+ * arithmetic and week boundaries. Temporal through the ponyfill; the domain never reads a clock.
+ */
 import { Temporal } from 'temporal-polyfill';
 
 import type { LocalDate } from '../ids';
@@ -56,4 +60,37 @@ function formatOffset(offsetMin: number): string {
   const hours = String(Math.floor(abs / 60)).padStart(2, '0');
   const minutes = String(abs % 60).padStart(2, '0');
   return `${sign}${hours}:${minutes}`;
+}
+
+/** ISO weekday: 1 = Monday … 7 = Sunday (Temporal's `dayOfWeek`). */
+export type IsoWeekday = 1 | 2 | 3 | 4 | 5 | 6 | 7;
+
+/** The calendar day `days` after `date` (negative: before). */
+export function addDays(date: LocalDate, days: number): LocalDate {
+  return Temporal.PlainDate.from(date).add({ days }).toString() as LocalDate;
+}
+
+/** Whole days from `from` to `to` (negative when `to` is earlier). */
+export function daysBetween(from: LocalDate, to: LocalDate): number {
+  return Temporal.PlainDate.from(from).until(to, { largestUnit: 'day' }).days;
+}
+
+/** The first day of the week that contains `date`, for the user's week start (SET-11). */
+export function weekStartOf(date: LocalDate, weekStartsOn: IsoWeekday = 1): LocalDate {
+  const day = Temporal.PlainDate.from(date);
+  const offset = (day.dayOfWeek - weekStartsOn + 7) % 7;
+  return day.subtract({ days: offset }).toString() as LocalDate;
+}
+
+/** ISO 8601 week (Monday start), e.g. 2026-11-24 → { year: 2026, week: 48 }. */
+export function isoWeekOf(date: LocalDate): { readonly year: number; readonly week: number } {
+  const day = Temporal.PlainDate.from(date);
+  // Defined for the ISO 8601 calendar, which PlainDate.from uses for 'YYYY-MM-DD' strings.
+  return { year: day.yearOfWeek ?? day.year, week: day.weekOfYear ?? 1 };
+}
+
+/** ISO week key such as "2026-W48". */
+export function isoWeekKey(date: LocalDate): string {
+  const { year, week } = isoWeekOf(date);
+  return `${year}-W${String(week).padStart(2, '0')}`;
 }

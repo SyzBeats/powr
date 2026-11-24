@@ -1,18 +1,30 @@
 import { describe, expect, it } from 'vitest';
 
-import type { ExerciseId } from '@powr/domain';
+import type { EquipmentId, ExerciseId, MuscleId } from '@powr/domain';
 
-import { builtInContent, createContentCatalog } from '../src';
-import { STUB_EXERCISES } from '../src/stub';
+import { createContentCatalog, type ContentBundle, type PresetId } from '../src';
+import { BUILT_IN_CONTENT, builtInContent } from '../src/built-in';
 
-describe('content catalog', () => {
-  it('ships three valid stub exercises', () => {
-    const ids = builtInContent()
-      .exercises()
-      .map((exercise) => exercise.id);
-    expect(ids).toEqual(['ex.barbell-back-squat', 'ex.barbell-bench-press', 'ex.barbell-deadlift']);
-    const squat = builtInContent().exercise('ex.barbell-back-squat' as ExerciseId);
-    expect(squat?.name.en).toBe('Barbell back squat');
+describe('built-in content catalog', () => {
+  const content = builtInContent();
+
+  it('carries the version and hash of the compiled bundle', () => {
+    expect(content.version).toBe(BUILT_IN_CONTENT.version);
+    expect(content.version.endsWith(`+sha.${BUILT_IN_CONTENT.hash.slice(0, 8)}`)).toBe(true);
+  });
+
+  it('lists the competition lifts first, back squat leading', () => {
+    expect(
+      content
+        .exercises()
+        .slice(0, 3)
+        .map((exercise) => exercise.competitionLift),
+    ).toEqual(['squat', 'bench', 'deadlift']);
+    expect(content.exercises()[0]?.id).toBe('ex.barbell-back-squat');
+  });
+
+  it('looks up exercises, muscles, equipment, presets and templates by ID', () => {
+    const squat = content.exercise('ex.barbell-back-squat' as ExerciseId);
     // EB §Session › Mapping: squats do not count toward the hamstrings (MRI evidence).
     expect(squat?.muscles).toContainEqual({
       muscle: 'mu.hamstrings',
@@ -20,20 +32,18 @@ describe('content catalog', () => {
       evidence: 'H',
       source: 'src.kubo2019',
     });
+    expect(content.muscles().muscle('mu.quads' as MuscleId)?.name.en).toBe('Quadriceps');
+    expect(content.muscles().muscle('mu.quads.vasti' as MuscleId)?.name.en).toBe('Vasti');
+    expect(content.equipment().item('eq.trap-bar' as EquipmentId)?.synonyms).toContain('hex bar');
+    expect(content.equipment().preset('preset.custom' as PresetId)?.items).toEqual([]);
+    for (const template of content.templates()) {
+      expect(content.template(template.id)).toBe(template);
+    }
+    expect(content.exercise('ex.unknown' as ExerciseId)).toBeUndefined();
   });
 
-  it('rejects invalid IDs, unknown keys, out-of-set values and duplicates', () => {
-    const squat: Record<string, unknown> = { ...(STUB_EXERCISES[0] as object), id: 'ex.squat' };
-    const muscles = squat['muscles'] as Record<string, unknown>[];
-    expect(() => createContentCatalog('t', [{ ...squat, id: 'Squat' }])).toThrow(/ex\.some-name/);
-    expect(() => createContentCatalog('t', [{ ...squat, colour: 'red' }])).toThrow(/colour/);
-    expect(() => createContentCatalog('t', [{ ...squat, pattern: 'twist' }])).toThrow(/pattern/);
-    expect(() =>
-      createContentCatalog('t', [{ ...squat, muscles: [{ ...muscles[0], credit: 0.75 }] }]),
-    ).toThrow(/credit/);
-    expect(() =>
-      createContentCatalog('t', [{ ...squat, muscles: [{ ...muscles[0], source: 'kubo-2019' }] }]),
-    ).toThrow(/src\.kubo2019/);
-    expect(() => createContentCatalog('t', [squat, squat])).toThrow(/Duplicate/);
+  it('refuses a bundle in another format', () => {
+    const future = { ...BUILT_IN_CONTENT, format: 2 } as unknown as ContentBundle;
+    expect(() => createContentCatalog(future)).toThrow(/format 2/);
   });
 });

@@ -1,0 +1,119 @@
+# Sources of the volume, frequency, load and effort parameters (data/volume.yaml; EB "Weekly
+# fractional sets drive muscle growth…" and "Consolidated default parameters › Volume, frequency,
+# load and effort"). Pelland 2024/2026 and Remmert 2025 are defined in exercise-mapping.yaml.
+# Citations as complete as the EB and its research note (volume_frequency_failure.md) give them.
+
+- id: src.bazvalle2022
+  citation: >-
+    Baz-Valle et al. 2022. [Weekly sets per muscle group in trained lifters: meta-analysis; "12–20
+    weekly sets per muscle group … an optimum standard recommendation".]
+  url: https://pubmed.ncbi.nlm.nih.gov/35291645/
+  tag: MA
+  status: active
+
+- id: src.acsm2026
+  citation: >-
+    American College of Sports Medicine 2026. [Position stand on resistance training, an umbrella
+    review of 137 systematic reviews: ≥ 10 sets/week for hypertrophy; ≥ 80% 1RM, 2–3 sets and ≥ 2
+    sessions/week for strength.]
+  url: https://pubmed.ncbi.nlm.nih.gov/41843416/
+  tag: POS
+  status: active
+
+- id: src.schoenfeld2019b
+  citation: >-
+    Schoenfeld et al. 2019. [Resistance training frequency and hypertrophy: meta-analysis of 25
+    studies; volume-equated frequency made no significant difference.]
+  url: https://pubmed.ncbi.nlm.nih.gov/30558493/
+  tag: MA
+  status: active
+  note: The suffix b follows EB order; Schoenfeld 2019 (PubMed 30153194) is mentioned first.
+
+- id: src.androulakiskorakakis2021
+  citation: >-
+    Androulakis-Korakakis et al. 2021. [Minimum effective training dose for powerlifters: mixed
+    methods (interviews, two interventions, survey); ~3–6 working sets of 1–5 reps per lift per
+    week at > 80% 1RM and RPE 7.5–9.5.]
+  url: https://pubmed.ncbi.nlm.nih.gov/34527944/
+  tag: DELPHI/SURVEY
+  status: active
+
+- id: src.scarpelli2022
+  citation: >-
+    Scarpelli et al. 2022. [Individualised volume at 1.2× the participant's logged weekly sets vs a
+    standard 22 sets; 16 trained participants.]
+  url: https://pubmed.ncbi.nlm.nih.gov/32108724/
+  tag: RCT-T
+  status: active
+
+- id: src.barsuhn2025
+  citation: >-
+    Barsuhn et al. 2025. [Raising previous training volume by 30% or 60% vs maintaining it in
+    trained lifters: no added growth.]
+  url: https://pubmed.ncbi.nlm.nih.gov/39665246/
+  tag: RCT-T
+  status: active
+
+- id: src.bickel2011
+  citation: >-
+    Bickel et al. 2011. [Maintenance doses of one-third and one-ninth of the training dose for 32
+    weeks after 16 weeks of training; younger and older adults.]
+  url: https://pubmed.ncbi.nlm.nih.gov/21131862/
+  tag: RCT
+  status: active
+
+- id: src.spiering2021
+  citation: >-
+    Spiering et al. 2021. [Minimal dose needed to maintain strength and muscle: narrative review;
+    "exercise intensity seems to be the key variable".]
+  url: https://pubmed.ncbi.nlm.nih.gov/33629972/
+  tag: NARR
+  status: active
+
+- id: src.lopez2021
+  citation: >-
+    Lopez et al. 2021. [Load and hypertrophy/strength: network meta-analysis; high load (≤ 8RM)
+    best for strength, similar hypertrophy.]
+  url: https://pubmed.ncbi.nlm.nih.gov/33433148/
+  tag: MA
+  status: active
+
+- id: src.lasevicius2018
+  citation: >-
+    Lasevicius et al. 2018. [20% vs 40%, 60% and 80% 1RM with volume matched to the 20% condition;
+    30 men, 12 weeks, within-subject design.]
+  url: https://pubmed.ncbi.nlm.nih.gov/29564973/
+  tag: RCT-U
+  status: active
+
+- id: src.robinson2024
+  citation: >-
+    Robinson, Pelland, Remmert, Refalo, Jukic, Steele & Zourdos 2024. Exploring the dose-response
+    relationship between estimated resistance training proximity to failure, strength gain, and
+    muscle hypertrophy: a series of meta-regressions. Sports Med 54(9):2209–2231.
+    DOI 10.1007/s40279-024-02069-2.
+  url: https://pubmed.ncbi.nlm.nih.gov/38970765/
+  seeAlso:
+    - https://sportrxiv.org/index.php/server/preprint/view/295
+  tag: MA
+  status: active
+  note: >-
+    The slopes the EB quotes (−0.48% muscle size per RIR) come from the preprint version; verify
+    against the final paper before hard-coding.
+
+- id: src.refalo2024b
+  citation: >-
+    Refalo et al. 2024. [Quadriceps growth training to failure vs stopping at 1–2 RIR; trained
+    participants.]
+  url: https://pubmed.ncbi.nlm.nih.gov/38393985/
+  tag: RCT-T
+  status: active
+
+- id: src.powr-eb-volume
+  citation: >-
+    POWR evidence base, "Weekly fractional sets drive muscle growth with diminishing returns" and
+    "Consolidated default parameters › Volume, frequency, load and effort"
+    (reports/Strength and hypertrophy evidence base.md).
+  tag: INF
+  status: active
+  note: The EB's own inferred volume policies ([INF]).

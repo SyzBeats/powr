@@ -1,0 +1,154 @@
+# Progression and autoregulation (EB §Defaults › Progression; EB §Progression). Not in the registry:
+# velocity-based training (MVT priors, velocity-loss presets, velocity readiness, load–velocity 1RM
+# prediction): out of scope (PRD NG-06) and unvalidated on Android (EB §Gaps #12–13).
+
+- id: progression.model.mainLift
+  value: { novice: linear, intermediate: rpe, advanced: rpe }
+  unit: none
+  guard: { presets: [apre] }
+  evidence: [RCT-T, MA]
+  sources: [src.helms2018, src.zhang2021]
+  ebRef: 'EB §Defaults › Progression (main-lift progression; fixed % for beginners); PRD PRG-05, PRG-06'
+  verified: true
+  userOverridable: true
+
+- id: progression.model.accessory
+  value: doubleProgression
+  unit: none
+  evidence: [RCT-T, POS]
+  sources: [src.plotkin2022, src.acsm2009]
+  ebRef: 'EB §Defaults › Progression (accessory progression); PRD PRG-04'
+  verified: true
+  userOverridable: true
+
+- id: progression.double.incrementGuardPct
+  value: { min: 2, max: 10 }
+  unit: pct
+  evidence: [POS]
+  sources: [src.acsm2009]
+  ebRef: 'EB §Defaults › Progression (ACSM +2–10% when 1–2 reps over target)'
+  verified: true
+  userOverridable: false
+  note: 'The engine adds the smallest achievable increment; this is the ACSM reference range.'
+
+- id: progression.increment.noviceLowerKg
+  value: 2.5
+  unit: kg
+  range: { min: 2.5, max: 5 }
+  evidence: [INF]
+  sources: [src.mcmaster2013, src.powr-eb-progression]
+  ebRef: 'EB §Defaults › Progression (novice +2.5–5 kg per session, lower body)'
+  verified: true
+  userOverridable: true
+  note: 'The low end; rounded up to the smallest achievable step that reaches it.'
+
+- id: progression.increment.noviceUpperKg
+  value: 1
+  unit: kg
+  range: { min: 1, max: 2.5 }
+  evidence: [INF]
+  sources: [src.mcmaster2013, src.powr-eb-progression]
+  ebRef: 'EB §Defaults › Progression (novice +1–2.5 kg per session, upper body)'
+  verified: true
+  userOverridable: true
+  note: "Without microplates this rounds up to the plates' smallest step (e.g. 2.5 kg)."
+
+- id: progression.increment.intermediatePctPerWeek
+  value: 1
+  unit: pctPerWeek
+  range: { min: 1, max: 2.5 }
+  evidence: [INF]
+  sources: [src.mcmaster2013, src.powr-eb-progression]
+  ebRef: 'EB §Defaults › Progression (intermediate +1–2.5% per week)'
+  verified: true
+  userOverridable: true
+
+- id: progression.increment.advancedLoadJumpWeeks
+  value: { min: 2, max: 4 }
+  unit: weeks
+  evidence: [INF]
+  sources: [src.mcmaster2013, src.powr-eb-progression]
+  ebRef: 'EB §Defaults › Progression (advanced: load jump every 2–4 weeks, otherwise reps, sets, RPE)'
+  verified: true
+  userOverridable: false
+
+- id: progression.increment.microplateKgPerSide
+  value: { min: 0.25, max: 0.5 }
+  unit: kg
+  evidence: [INF]
+  sources: [src.powr-eb-progression]
+  ebRef: 'EB §Defaults › Progression (microplates 0.25–0.5 kg per side)'
+  verified: true
+  userOverridable: false
+  note: 'Data only; the plate calculator uses whatever microplates the inventory lists.'
+
+- id: progression.stall.failedSessions
+  value: 2
+  unit: sessions
+  evidence: [PRACT]
+  sources: [src.powr-eb-progression]
+  ebRef: 'EB §Defaults › Progression (stall rule; an untested practitioner convention)'
+  verified: true
+  userOverridable: true
+
+- id: progression.stall.resetPct
+  value: 10
+  unit: pct
+  range: { min: 5, max: 10 }
+  evidence: [PRACT]
+  sources: [src.powr-eb-progression]
+  ebRef: 'EB §Defaults › Progression (stall rule: −5–10% and rebuild)'
+  verified: true
+  userOverridable: true
+
+- id: progression.apre.sixRm
+  value:
+    ramp:
+      - { reps: 10, pct: 50 }
+      - { reps: 6, pct: 75 }
+    adjustments:
+      - { minReps: 0, maxReps: 2, adjustKg: -3.75, rangeKg: { min: -5, max: -2.5 } }
+      - { minReps: 3, maxReps: 4, adjustKg: -1.25, rangeKg: { min: -2.5, max: 0 } }
+      - { minReps: 5, maxReps: 7, adjustKg: 0, rangeKg: { min: 0, max: 0 } }
+      - { minReps: 8, maxReps: 12, adjustKg: 3.75, rangeKg: { min: 2.5, max: 5 } }
+      - { minReps: 13, maxReps: null, adjustKg: 7.5, rangeKg: { min: 5, max: 10 } }
+  unit: mixed
+  evidence: [RCT-T, MA]
+  sources: [src.mann2010, src.huang2023, src.zhang2021]
+  ebRef: 'EB §Progression › Progression rules (APRE-6 table); §Defaults › Progression (APRE preset)'
+  verified: false
+  userOverridable: false
+  note: >-
+    The suggested change is the midpoint of each range, then rounded to the equipment. Secondary
+    sources differ slightly and the original tables were not retrieved.
+
+- id: progression.calibration
+  value: { exposures: { min: 1, max: 2 }, targetRir: { min: 3, max: 4 } }
+  unit: mixed
+  evidence: [INF]
+  sources: [src.powr-technical-concept, src.halperin2022]
+  ebRef: 'PRD PRG-08; technical concept §8.7.5 (calibration status); EB §Load › RIR accuracy (wide priors)'
+  verified: false
+  userOverridable: false
+  note: 'Data only in M1; a POWR design rule for new users and exercises.'
+
+- id: progression.classification.slopePctPerWeek
+  value: { noviceFrom: 1, advancedBelow: 0.25, minWeeks: 8 }
+  unit: mixed
+  evidence: [INF]
+  sources: [src.acsm2009, src.powr-eb-progression]
+  ebRef: 'EB §Defaults › Expectations (trainee classification by e1RM slope); PRD PRG-10'
+  verified: true
+  userOverridable: false
+
+- id: progression.classification.trainingAgeMonths
+  value: { intermediateFrom: 6, advancedFrom: 24 }
+  unit: mixed
+  evidence: [INF]
+  sources: [src.acsm2009, src.powr-eb-progression]
+  ebRef: 'EB §Progression › Classification (training age < 6 months, 6–24 months, 2–5 years, > 5 years)'
+  verified: false
+  userOverridable: false
+  note: >-
+    The EB lists four training-age bands but no mapping to three levels; mapping 2+ years to
+    advanced is a POWR choice until the observed slope takes over (≥ 8 weeks of data).

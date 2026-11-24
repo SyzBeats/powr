@@ -1,0 +1,55 @@
+# Lunge pattern. Credits: EB mapping row "Lunge / split squat" (all C): quadriceps 1.0, glutes
+# and adductors 0.5, hamstrings about 0.
+
+- id: ex.dumbbell-bulgarian-split-squat
+  name: { en: Dumbbell Bulgarian split squat }
+  synonyms: [bulgarian split squat, rear-foot-elevated split squat, rfess]
+  pattern: lunge
+  mechanics: compound
+  substitutionGroups: [sg.split-squat]
+  equipment:
+    allOf: [eq.dumbbells]
+    anyOf: [[eq.flat-bench, eq.adjustable-bench]]
+  muscles:
+    - { muscle: mu.quads, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.glutes, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.adductors, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.hamstrings, credit: 0, evidence: C, source: src.powr-eb-mapping }
+  load: { type: dumbbell, curveClass: pooled, unilateral: true, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [6, 15], strength: [6, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 2 }
+  cues:
+    - en: Rest the top of your back foot on a bench and stand about a long stride in front of it.
+    - en: Lower straight down until your front thigh is at least parallel to the floor.
+    - en: Keep most of your weight on the front foot and drive up through its whole sole.
+    - en: Finish all reps on one leg before you switch sides.
+
+- id: ex.bodyweight-split-squat
+  name: { en: Bodyweight split squat }
+  synonyms: [split squat, static lunge]
+  pattern: lunge
+  mechanics: compound
+  substitutionGroups: [sg.split-squat]
+  equipment: { allOf: [], anyOf: [] }
+  muscles:
+    - { muscle: mu.quads, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.glutes, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.adductors, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.hamstrings, credit: 0, evidence: C, source: src.powr-eb-mapping }
+  load: { type: bodyweightAdded, curveClass: pooled, unilateral: true, bodyweightLoaded: true }
+  defaults:
+    repRange: { hypertrophy: [8, 20], strength: [6, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 1 }
+  cues:
+    - en: Take a long split stance with both feet pointing forward.
+    - en: Drop your back knee toward the floor until it almost touches.
+    - en: Push up through the front foot; add a backpack or a pause when reps get easy.

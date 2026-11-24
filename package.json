@@ -22,6 +22,8 @@
     "licence:demo-gpl": "node tools/licence/src/demo-gpl.ts",
     "size": "pnpm --filter @powr/web size",
     "icons": "node tools/icons/src/generate.ts",
+    "content:build": "node tools/content-build/src/cli.ts",
+    "content:check": "node tools/content-build/src/cli.ts --check",
     "docker:build": "docker build -f deploy/Dockerfile -t powr-web:local .",
     "docker:run": "docker run --rm --name powr-web -p 8080:8080 powr-web:local",
     "docker:smoke": "node deploy/smoke.ts http://localhost:8080",

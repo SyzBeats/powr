@@ -5,7 +5,18 @@
   "description": "Entities, value objects and the pure calculation engine (no I/O).",
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./bodyweight": "./src/bodyweight/index.ts",
+    "./e1rm": "./src/e1rm/index.ts",
+    "./explain": "./src/explain/index.ts",
+    "./loading": "./src/loading/index.ts",
+    "./progression": "./src/progression/index.ts",
+    "./rest": "./src/rest/index.ts",
+    "./rules": "./src/rules/index.ts",
+    "./scoring": "./src/scoring/index.ts",
+    "./trend": "./src/trend/index.ts",
+    "./volume": "./src/volume/index.ts",
+    "./warmup": "./src/warmup/index.ts"
   },
   "dependencies": {
     "temporal-polyfill": "1.0.8"

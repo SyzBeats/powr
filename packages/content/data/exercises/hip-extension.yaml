@@ -1,0 +1,82 @@
+# Hip extension. Credits:
+# - "Hip thrust / bridge": glute max 1.0 (H, Plotkin 2023; adding hip thrusts raised glute growth
+#   in a preprint, Research Square rs-2882506); quadriceps and hamstrings 0.25 optional (C).
+# - "45° back extension": hamstrings (BFLH) H (Bourne 2017), glute max 1.0 and spinal erectors 0.5.
+#   Bourne measured the hamstrings only, so the glute credit is tagged C.
+
+- id: ex.barbell-hip-thrust
+  name: { en: Barbell hip thrust }
+  synonyms: [hip thrust, barbell glute bridge on bench]
+  pattern: hipExtension
+  mechanics: compound
+  substitutionGroups: [sg.hip-thrust]
+  equipment:
+    allOf: [eq.plates]
+    anyOf: [[eq.barbell-olympic, eq.barbell-womens], [eq.flat-bench, eq.adjustable-bench]]
+  muscles:
+    - { muscle: mu.glutes.max, credit: 1, evidence: H, source: src.plotkin2023 }
+    - { muscle: mu.quads, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.hamstrings, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+  load: { type: barbell, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [8, 15], strength: [6, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-1
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 3, subRegions: [mu.glutes.max] }
+  cues:
+    - en: Rest your upper back on the bench edge with a padded bar over your hips.
+    - en: Place your feet so your shins are vertical at the top.
+    - en: Drive through your heels until your hips are fully extended, chin tucked and ribs down.
+    - en: Pause briefly at the top, then lower until your hips nearly touch the floor.
+
+- id: ex.glute-bridge
+  name: { en: Glute bridge }
+  synonyms: [floor bridge, hip bridge]
+  pattern: hipExtension
+  mechanics: compound
+  substitutionGroups: [sg.hip-thrust]
+  equipment: { allOf: [], anyOf: [] }
+  muscles:
+    - { muscle: mu.glutes.max, credit: 1, evidence: H, source: src.plotkin2023 }
+    - { muscle: mu.quads, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.hamstrings, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+  # Bodyweight hardly loads the hip extensors here; added weight on the hips is what is logged.
+  load: { type: bodyweightAdded, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [10, 30], strength: [8, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-1
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 1, subRegions: [mu.glutes.max] }
+  cues:
+    - en: Lie on your back with knees bent and heels about a foot from your hips.
+    - en: Brace your abs and push through your heels until your hips are fully extended.
+    - en: Hold the top for a second; add a weight on your hips or go single-leg when it gets easy.
+
+- id: ex.45-degree-back-extension
+  name: { en: 45° back extension }
+  synonyms: [45 degree hip extension, hyperextension, back raise]
+  pattern: hipExtension
+  mechanics: compound
+  substitutionGroups: [sg.romanian-deadlift]
+  equipment: { allOf: [eq.back-extension-bench], anyOf: [] }
+  muscles:
+    - { muscle: mu.hamstrings.biarticular, credit: 1, evidence: H, source: src.bourne2017 }
+    - { muscle: mu.glutes.max, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.lower-back, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+  load: { type: bodyweightAdded, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [8, 20], strength: [6, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-1
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 2, subRegions: [mu.hamstrings.biarticular] }
+  cues:
+    - en: Set the pad just below your hip crease so your hips can bend freely.
+    - en: Hinge down from the hips with a neutral back until your hamstrings are stretched.
+    - en: Come up until your body forms a straight line; do not arch past it.
+    - en: Hold a plate or dumbbell against your chest to add load.

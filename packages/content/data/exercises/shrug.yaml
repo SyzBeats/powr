@@ -1,0 +1,49 @@
+# Shrugs. Credits: "Shrug" row (C): upper traps 1.0, forearm grip 0.25.
+
+- id: ex.barbell-shrug
+  name: { en: Barbell shrug }
+  synonyms: [shrug, barbell trap shrug]
+  pattern: shrug
+  mechanics: isolation
+  substitutionGroups: [sg.shrug]
+  equipment:
+    allOf: [eq.plates]
+    anyOf: [[eq.barbell-olympic, eq.barbell-womens, eq.trap-bar]]
+  muscles:
+    - { muscle: mu.upper-traps, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.forearms.flexors, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+  load: { type: barbell, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [8, 20], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-1
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 3 }
+  cues:
+    - en: Hold the bar at arm's length with a shoulder-width grip; use straps if your grip fails first.
+    - en: Lift your shoulders straight up toward your ears without rolling them.
+    - en: Hold the top briefly, then let your shoulders sink into a full stretch.
+
+- id: ex.dumbbell-shrug
+  name: { en: Dumbbell shrug }
+  synonyms: [db shrug]
+  pattern: shrug
+  mechanics: isolation
+  substitutionGroups: [sg.shrug]
+  equipment: { allOf: [eq.dumbbells], anyOf: [] }
+  muscles:
+    - { muscle: mu.upper-traps, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.forearms.flexors, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+  load: { type: dumbbell, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [8, 20], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-1
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 2 }
+  cues:
+    - en: Stand tall with a dumbbell in each hand at your sides.
+    - en: Shrug straight up as high as you can and pause.
+    - en: Lower slowly until your shoulders are fully down.

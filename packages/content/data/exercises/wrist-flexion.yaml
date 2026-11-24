@@ -1,0 +1,23 @@
+# Wrist flexion. The EB has no row for direct forearm work: convention (C).
+
+- id: ex.dumbbell-wrist-curl
+  name: { en: Dumbbell wrist curl }
+  synonyms: [wrist curl, seated wrist curl]
+  pattern: wristFlexion
+  mechanics: isolation
+  substitutionGroups: [sg.wrist-curl]
+  equipment: { allOf: [eq.dumbbells], anyOf: [] }
+  muscles:
+    - { muscle: mu.forearms.flexors, credit: 1, evidence: C, source: src.powr-eb-mapping }
+  load: { type: dumbbell, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [10, 25], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 2, subRegions: [mu.forearms.flexors] }
+  cues:
+    - en: Sit with your forearms on your thighs, palms up and wrists just past your knees.
+    - en: Let the dumbbells roll down to your fingertips for a full stretch.
+    - en: Curl your wrists up as far as they go without lifting your forearms.

@@ -1,0 +1,268 @@
+# Session design: rest, tempo, warm-up ramps and technique credits (EB §Defaults › Session; EB
+# §Session). Rest values are seconds. The squat/deadlift and novice rows of TMR-02 are context
+# variants; time-saver, superset transition and warm-up rests are their own parameters, because
+# they are different timers (technical concept §5.6 TimerState kinds). Not here yet: the duration
+# estimator and exercise ordering/rotation (planning, M2), static stretching (none by default) and
+# concurrent-training spacing (v1.x).
+
+- id: session.rest.strength
+  value: 180
+  unit: seconds
+  variants:
+    - when: { competitionLift: [squat, deadlift] }
+      value: 240
+  range: { min: 150, max: 300 }
+  guard: { neverBelowSeconds: 120, scope: competitionLift }
+  evidence: [SR]
+  sources: [src.grgic2018b]
+  ebRef: 'EB §Defaults › Session (rest, strength 3:00, squat/deadlift 4:00, 2:30–5:00); PRD TMR-02'
+  verified: true
+  userOverridable: true
+
+- id: session.rest.hypertrophyCompound
+  value: 150
+  unit: seconds
+  variants:
+    - when: { level: [novice] }
+      value: 90
+  range: { min: 120, max: 180 }
+  evidence: [MA, RCT-T]
+  sources: [src.singer2024, src.schoenfeld2016b, src.grgic2018b]
+  ebRef: 'EB §Defaults › Session (rest, hypertrophy compound 2:30, 2:00–3:00; novice 1:30); PRD TMR-02'
+  verified: true
+  userOverridable: true
+
+- id: session.rest.hypertrophyIsolation
+  value: 90
+  unit: seconds
+  variants:
+    - when: { level: [novice] }
+      value: 60
+  range: { min: 60, max: 120 }
+  evidence: [MA, RCT-T]
+  sources: [src.singer2024, src.grgic2018b]
+  ebRef: 'EB §Defaults › Session (rest, hypertrophy isolation 1:30, 1:00–2:00; novice 1:00); PRD TMR-02'
+  verified: true
+  userOverridable: true
+
+- id: session.rest.timeSaver
+  value: 60
+  unit: seconds
+  range: { min: 45, max: 75 }
+  guard: { appliesTo: hypertrophy classes only, prompt: add a set or accept a load drop }
+  evidence: [INF]
+  sources: [src.powr-eb-session, src.singer2024]
+  ebRef: 'EB §Session › Rest (short-rest / time-saving mode 1:00, 0:45–1:15); PRD TMR-02'
+  verified: true
+  userOverridable: true
+
+- id: session.rest.supersetTransition
+  value: 20
+  unit: seconds
+  range: { min: 0, max: 60 }
+  guard: { defaultBand: { min: 15, max: 30 } }
+  evidence: [MA, INF]
+  sources: [src.zhang2025, src.powr-eb-session]
+  ebRef: 'EB §Session › Rest (antagonist superset A→B 0:15–0:30, 0–1:00); PRD TMR-02, TMR-13'
+  verified: true
+  userOverridable: true
+
+- id: session.rest.warmupLight
+  value: 45
+  unit: seconds
+  range: { min: 30, max: 60 }
+  evidence: [INF]
+  sources: [src.powr-eb-session]
+  ebRef: 'EB §Session › Warm-up (rest 30–60 s after light steps); PRD TMR-02'
+  verified: true
+  userOverridable: true
+
+- id: session.rest.warmupBeforeWork
+  value: 90
+  unit: seconds
+  range: { min: 60, max: 120 }
+  evidence: [INF]
+  sources: [src.powr-eb-session]
+  ebRef: 'EB §Session › Warm-up (1–2 min before the first working set after ≥ 75% steps); PRD TMR-02'
+  verified: true
+  userOverridable: true
+
+- id: session.rest.countUpSoftMin
+  value: { compound: 90, isolation: 60 }
+  unit: seconds
+  evidence: [INF]
+  sources: [src.powr-eb-session]
+  ebRef: 'EB §Session › Rest ("ready when ready" count-up timer with a soft minimum)'
+  verified: true
+  userOverridable: true
+
+- id: session.tempo.default
+  value: 2-0-X-0
+  unit: none
+  guard: { cue: 'lower under control, lift with intent' }
+  evidence: [MA, RCT]
+  sources: [src.schoenfeld2015c, src.wilk2021]
+  ebRef: 'EB §Defaults › Session (tempo 2-0-X-0); PRD TMR-10'
+  verified: true
+  userOverridable: true
+  note: 'Eccentric–bottom pause–concentric–top pause; X = maximal intent.'
+
+- id: session.tempo.eccentricSeconds
+  value: { min: 1, max: 4 }
+  unit: seconds
+  evidence: [MA, NARR]
+  sources: [src.schoenfeld2015c, src.wilk2021]
+  ebRef: 'EB §Defaults › Session (eccentric 1–4 s)'
+  verified: true
+  userOverridable: false
+
+- id: session.tempo.warnRepSeconds
+  value: 8
+  unit: seconds
+  range: { min: 8, max: 10 }
+  evidence: [MA]
+  sources: [src.schoenfeld2015c]
+  ebRef: 'EB §Defaults › Session (warn if a rep takes longer than 8–10 s); PRD TMR-10'
+  verified: true
+  userOverridable: true
+  note: 'Hypertrophy is similar across 0.5–8 s rep durations; superslow reps above 10 s appear inferior.'
+
+- id: session.warmup.heavyTrigger
+  value: { maxReps: 5, minPctE1rm: 80 }
+  unit: mixed
+  evidence: [INF]
+  sources: [src.powr-eb-session]
+  ebRef: 'EB §Session › Warm-up (Rule 1: R ≤ 5 or W ≥ ~80% e1RM); PRD WKT-06'
+  verified: true
+  userOverridable: false
+
+- id: session.warmup.heavy
+  value:
+    barReps: 8
+    steps:
+      - { pct: 40, reps: 5 }
+      - { pct: 60, reps: 3 }
+      - { pct: 75, reps: 2 }
+      - { pct: 85, reps: 1 }
+    optional: []
+    topUp: { pct: 92, reps: 1, minPctE1rm: 90 }
+  unit: mixed
+  guard: { barReps: { min: 8, max: 10 }, topUpPct: { min: 92, max: 95 } }
+  evidence: [RCT-T, INF]
+  sources: [src.ribeiro2020, src.mccrary2015, src.powr-eb-session]
+  ebRef: 'EB §Session › Warm-up (Rule 1); §Defaults › Session (warm-up ramp); PRD WKT-06'
+  verified: true
+  userOverridable: false
+  note: 'The empty-bar set applies to barbells only.'
+
+- id: session.warmup.compound
+  value:
+    barReps: 8
+    steps:
+      - { pct: 50, reps: 6 }
+      - { pct: 70, reps: 4 }
+    optional:
+      - { pct: 85, reps: 2 }
+  unit: mixed
+  guard: { firstStepPct: { min: 40, max: 50 }, firstStepReps: { min: 6, max: 8 } }
+  evidence: [RCT-T, INF]
+  sources: [src.ribeiro2020, src.powr-eb-session]
+  ebRef: 'EB §Session › Warm-up (Rule 2, compounds with 6–15 reps); PRD WKT-06'
+  verified: true
+  userOverridable: false
+
+- id: session.warmup.isolation
+  value:
+    barReps: null
+    steps:
+      - { pct: 50, reps: 10 }
+    optional: []
+  unit: mixed
+  guard: { reps: { min: 8, max: 12 }, orSkip: true }
+  evidence: [INF]
+  sources: [src.powr-eb-session]
+  ebRef: 'EB §Session › Warm-up (Rule 3, isolation or already-warm muscle); PRD WKT-06'
+  verified: true
+  userOverridable: false
+
+- id: session.warmup.feeder
+  value:
+    barReps: null
+    steps:
+      - { pct: 70, reps: 4 }
+    optional: []
+  unit: mixed
+  guard: { reps: { min: 3, max: 5 } }
+  evidence: [INF]
+  sources: [src.powr-eb-session]
+  ebRef: 'EB §Session › Warm-up (Rule 3, later exercises on the same pattern: 1 feeder set); PRD WKT-06'
+  verified: true
+  userOverridable: false
+
+- id: session.warmup.pruning
+  value: { minStepGapPct: 5, repCapFromPct: 70, longRestFromPct: 75 }
+  unit: pct
+  evidence: [INF]
+  sources: [src.powr-eb-session]
+  ebRef: 'EB §Session › Warm-up (rounding and pruning; rest after ≥ 75% steps); PRD WKT-06'
+  verified: true
+  userOverridable: false
+
+- id: session.techniqueCredit.drop
+  value: { base: 1, perUnit: 0.5, cap: 2 }
+  unit: sets
+  evidence: [INF]
+  sources: [src.sodal2023, src.coleman2022, src.powr-eb-session]
+  ebRef: 'EB §Session › Techniques (drop set: main set 1.0 + 0.5 per drop, cap 2.0); PRD WKT-04'
+  verified: true
+  userOverridable: false
+  note: 'A labelled heuristic (E-4); no study validates converting techniques into sets.'
+
+- id: session.techniqueCredit.restPause
+  value: { base: 1, perUnit: 0.33, cap: 2 }
+  unit: sets
+  guard: { perUnit: { min: 0.33, max: 0.5 } }
+  evidence: [INF]
+  sources: [src.enes2021, src.prestes2019, src.powr-eb-session]
+  ebRef: 'EB §Session › Techniques (rest-pause: activation 1.0 + 0.33–0.5 per mini-set, cap 2.0)'
+  verified: true
+  userOverridable: false
+  note: "The low end of the EB's range, consistent with myo-reps."
+
+- id: session.techniqueCredit.myoReps
+  value: { base: 1, perUnit: 0.33, cap: 2.5 }
+  unit: sets
+  evidence: [INF, PRACT]
+  sources: [src.powr-eb-session]
+  ebRef: 'EB §Session › Techniques (myo-reps: activation 1.0 + 0.33 per mini-set, cap 2.5)'
+  verified: true
+  userOverridable: false
+  note: 'Practitioner protocol; the evidence is a thesis (n = 8) and an unpublished trial.'
+
+- id: session.techniqueCredit.cluster
+  value: { base: 1, perUnit: 0, cap: 1 }
+  unit: sets
+  evidence: [INF]
+  sources: [src.davies2021, src.powr-eb-session]
+  ebRef: 'EB §Session › Techniques (cluster set: 1.0 per block)'
+  verified: true
+  userOverridable: false
+
+- id: session.techniqueCredit.lengthenedPartials
+  value: { base: 1, perUnit: 0, cap: 1 }
+  unit: sets
+  evidence: [INF]
+  sources: [src.wolf2025b, src.powr-eb-session]
+  ebRef: 'EB §Session › Techniques (lengthened partials, standalone: 1.0 per set)'
+  verified: true
+  userOverridable: false
+
+- id: session.techniqueCredit.partialExtension
+  value: { base: 1, perUnit: 0.25, cap: 1.25 }
+  unit: sets
+  evidence: [INF]
+  sources: [src.powr-eb-session]
+  ebRef: 'EB §Session › Techniques (lengthened partials after failure: +0.25 to that set, cap 1.25)'
+  verified: true
+  userOverridable: false
+  note: 'Untested (EB).'

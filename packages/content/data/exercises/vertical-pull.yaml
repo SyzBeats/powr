@@ -1,0 +1,106 @@
+# Vertical pull. Credits: "Pulldown / pull-up / chin-up" row: lats (and teres major) 1.0 (C; the
+# MRI trial NCT07360236 has no results yet), elbow flexors 0.5 (H, Gentil 2015), posterior delt and
+# mid/lower traps 0.25 (C).
+
+- id: ex.lat-pulldown
+  name: { en: Lat pulldown }
+  synonyms: [pulldown, cable pulldown, wide-grip pulldown]
+  pattern: verticalPull
+  mechanics: compound
+  substitutionGroups: [sg.vertical-pull]
+  equipment:
+    allOf: []
+    anyOf: [[eq.lat-pulldown, eq.cable-station, eq.dual-cable-station]]
+  muscles:
+    - { muscle: mu.lats, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.elbow-flexors, credit: 0.5, evidence: H, source: src.gentil2015 }
+    - { muscle: mu.rear-delts, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.mid-back, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+  load: { type: machine, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [8, 15], strength: [6, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 3 }
+  cues:
+    - en: Lock your thighs under the pad and grip the bar a little wider than your shoulders.
+    - en: Let the bar pull your arms fully straight at the top so your lats stretch.
+    - en: Pull the bar to your upper chest by driving your elbows down and back.
+
+- id: ex.pull-up
+  name: { en: Pull-up }
+  synonyms: [pullup, overhand pull-up]
+  pattern: verticalPull
+  mechanics: compound
+  substitutionGroups: [sg.vertical-pull]
+  equipment: { allOf: [eq.pull-up-bar], anyOf: [] }
+  muscles:
+    - { muscle: mu.lats, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.elbow-flexors, credit: 0.5, evidence: H, source: src.gentil2015 }
+    - { muscle: mu.rear-delts, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.mid-back, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+  load: { type: bodyweightAdded, curveClass: pooled, unilateral: false, bodyweightLoaded: true }
+  defaults:
+    repRange: { hypertrophy: [5, 15], strength: [6, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 2 }
+  cues:
+    - en: Hang from the bar with an overhand grip slightly wider than your shoulders.
+    - en: Pull your elbows down toward your ribs until your chin clears the bar.
+    - en: Lower to a full hang on every rep; add weight with a dip belt when sets get easy.
+
+- id: ex.chin-up
+  name: { en: Chin-up }
+  synonyms: [chinup, underhand pull-up]
+  pattern: verticalPull
+  mechanics: compound
+  substitutionGroups: [sg.vertical-pull]
+  equipment: { allOf: [eq.pull-up-bar], anyOf: [] }
+  muscles:
+    - { muscle: mu.lats, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.elbow-flexors, credit: 0.5, evidence: H, source: src.gentil2015 }
+    - { muscle: mu.rear-delts, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.mid-back, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+  load: { type: bodyweightAdded, curveClass: pooled, unilateral: false, bodyweightLoaded: true }
+  defaults:
+    repRange: { hypertrophy: [5, 15], strength: [6, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 2 }
+  cues:
+    - en: Hang with an underhand grip about shoulder-width apart.
+    - en: Pull until your chin is over the bar, keeping your chest up.
+    - en: Lower all the way to straight arms before the next rep.
+
+- id: ex.band-assisted-pull-up
+  name: { en: Band-assisted pull-up }
+  synonyms: [assisted pull-up, banded pull-up]
+  pattern: verticalPull
+  mechanics: compound
+  substitutionGroups: [sg.vertical-pull]
+  equipment: { allOf: [eq.pull-up-bar, eq.resistance-bands], anyOf: [] }
+  muscles:
+    - { muscle: mu.lats, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.elbow-flexors, credit: 0.5, evidence: H, source: src.gentil2015 }
+    - { muscle: mu.rear-delts, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.mid-back, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+  # The band's nominal assistance is logged as a negative load (WKT-11).
+  load: { type: bodyweightAssisted, curveClass: pooled, unilateral: false, bodyweightLoaded: true }
+  defaults:
+    repRange: { hypertrophy: [5, 15], strength: [6, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 1 }
+  cues:
+    - en: Loop a band over the bar and place one foot or knee in it.
+    - en: Pull as in a normal pull-up, chin over the bar and a full hang at the bottom.
+    - en: Switch to a lighter band as you get stronger.

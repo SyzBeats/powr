@@ -8,12 +8,12 @@ same file (IMPLEMENTATION_NOTES.md, section 3).
 
 ## Files and owners
 
-| File                    | Contents                                                                                                                                               | Owner         |
-| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------- |
-| `excluded.yaml`         | Sources that nothing may cite: the retracted Barbalho volume trials and the Barbalho 2020 EJSS paper (EB §Gaps #23)                                    | Seeded, fixed |
-| `exercise-mapping.yaml` | Every source of the EB exercise-to-muscle mapping section, plus `src.powr-eb-mapping` for convention (C) credits                                       | Seeded        |
-| `<topic>.yaml`          | Sources of rules parameters, one file per topic: `load`, `volume`, `progression`, `deload`, `session`, `monitoring`, `scoring`, `nutrition`, `ranking` | Rules engine  |
-| `content-<topic>.yaml`  | Further sources of content (exercise mappings, templates, education texts)                                                                             | Content       |
+| File                    | Contents                                                                                                                                                                                                                                                                                                                  | Owner         |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------- |
+| `excluded.yaml`         | Sources that nothing may cite: the retracted Barbalho volume trials and the Barbalho 2020 EJSS paper (EB §Gaps #23)                                                                                                                                                                                                       | Seeded, fixed |
+| `exercise-mapping.yaml` | Every source of the EB exercise-to-muscle mapping section, plus `src.powr-eb-mapping` for convention (C) credits                                                                                                                                                                                                          | Seeded        |
+| `<topic>.yaml`          | Sources of rules parameters, one file per topic: `load`, `volume`, `progression`, `deload`, `session`, `monitoring`, `scoring`, `bodyweight` (M1); `nutrition`, `ranking` later. `load.yaml` also holds POWR's own design documents (`src.powr-technical-concept`); each topic file holds its `src.powr-eb-<topic>` entry | Rules engine  |
+| `content-<topic>.yaml`  | Further sources of content (exercise mappings, templates, education texts)                                                                                                                                                                                                                                                | Content       |
 
 Before adding a source, search all files for it: an ID may be defined only once in the whole
 directory, and a source that is already here (for example `src.pelland2026` or `src.kubo2019`) is

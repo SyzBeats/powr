@@ -1,0 +1,46 @@
+# Readiness and recovery spacing (EB §Defaults › Monitoring; EB §Monitoring). Data only in M1:
+# the readiness engine (RDY-02/03) and the planner's spacing check come later. No validated
+# readiness cut-offs exist (EB §Gaps #10), so these are labelled, adjustable heuristics. Not
+# shipped: ACWR risk zones, Banister constants and "monotony > 2" (EB §Gaps #10–11).
+
+- id: monitoring.readiness.baseline
+  value: { windowDays: 28, minEntries: 7 }
+  unit: mixed
+  guard: { minEntries: { min: 7, max: 14 } }
+  evidence: [PRACT, INF]
+  sources: [src.saw2016, src.powr-eb-monitoring]
+  ebRef: 'EB §Defaults › Monitoring (z-score vs 28-day baseline; needs ≥ 7–14 entries); PRD RDY-02'
+  verified: true
+  userOverridable: true
+
+- id: monitoring.readiness.thresholds
+  value: { lowZ: -1.0, modifyZ: -1.5, prsLow: 3, prsConsecutiveDays: 2 }
+  unit: mixed
+  guard: { never: cancel a session on HRV alone }
+  evidence: [PRACT, INF]
+  sources: [src.saw2016, src.powr-eb-monitoring]
+  ebRef: 'EB §Defaults › Monitoring (z ≤ −1.0 low; z ≤ −1.5 or PRS ≤ 3 twice → modify); PRD RDY-02'
+  verified: true
+  userOverridable: true
+
+- id: monitoring.readiness.adjustments
+  value: { topSetRirAdd: 1, dropBackoffSets: { min: 1, max: 2 } }
+  unit: mixed
+  evidence: [INF]
+  sources: [src.powr-eb-monitoring]
+  ebRef: 'EB §Monitoring › Readiness (cap the top-set RPE at −1; drop 1–2 back-off sets); PRD RDY-03'
+  verified: true
+  userOverridable: false
+
+- id: monitoring.spacing
+  value:
+    nonFailureHours: { min: 24, max: 48 }
+    failureHours: { min: 48, max: 72 }
+    unaccustomedDays: { min: 3, max: 5 }
+    highStressExtraHours: 24
+  unit: mixed
+  evidence: [RCT-T, INF]
+  sources: [src.morannavarro2017, src.refalo2023b, src.powr-eb-monitoring]
+  ebRef: 'EB §Defaults › Monitoring (spacing between hard sessions); §Monitoring › Recovery'
+  verified: true
+  userOverridable: false

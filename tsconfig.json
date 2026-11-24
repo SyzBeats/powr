@@ -32,6 +32,9 @@
       "path": "tools/icons"
     },
     {
+      "path": "tools/content-build"
+    },
+    {
       "path": "./tsconfig.root.json"
     }
   ]

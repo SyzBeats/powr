@@ -2,6 +2,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import { reconcileRuntimeFlags, requestPersistentStorage } from '@powr/application';
+import type { ContentCatalog } from '@powr/content';
 import { DATA_VERSION } from '@powr/formats';
 
 import { activateLocale } from '../i18n';
@@ -26,23 +27,24 @@ export async function boot(rootElement: HTMLElement): Promise<void> {
   const diagnostics = createAppDiagnostics();
   installErrorLogging(diagnostics);
 
-  // DB gate: open (and, from dataVersion 2 on, upgrade) before anything reads data.
+  // DB gate: open (and, from dataVersion 2 on, upgrade) before anything reads data. The built-in
+  // content is a lazy chunk (§8.19, TD-17) and loads in parallel.
   const db = new PowrDb();
   const openedAt = performance.now();
-  try {
-    await db.open();
-  } catch (error) {
-    diagnostics.log('error', 'db.error', { name: error instanceof Error ? error.name : 'unknown' });
+  const [opened, content] = await Promise.allSettled([
+    db.open().then(() => Math.round(performance.now() - openedAt)),
+    loadBuiltInContent(),
+  ]);
+  const failed = (code: 'db.error' | 'content.error', error: unknown) => {
+    diagnostics.log('error', code, { name: error instanceof Error ? error.name : 'unknown' });
     root.render(<StartupError />);
-    return;
-  }
-  diagnostics.log('info', 'db.open', {
-    ms: Math.round(performance.now() - openedAt),
-    dataVersion: DATA_VERSION,
-  });
+  };
+  if (opened.status === 'rejected') return failed('db.error', opened.reason);
+  if (content.status === 'rejected') return failed('content.error', content.reason);
+  diagnostics.log('info', 'db.open', { ms: opened.value, dataVersion: DATA_VERSION });
 
   const serviceWorker = lazyServiceWorker(diagnostics);
-  const container = createContainer(db, serviceWorker, diagnostics);
+  const container = createContainer(db, content.value, serviceWorker, diagnostics);
   await reconcileStartupState(container);
 
   root.render(
@@ -61,6 +63,16 @@ export async function boot(rootElement: HTMLElement): Promise<void> {
   addEventListener('appinstalled', () => {
     void requestPersistentStorage(container.deps, 'appinstalled');
   });
+}
+
+/**
+ * The content data (`@powr/content/built-in`, about 17 kB gzip) is not part of the entry chunk;
+ * the service worker precaches it with every other chunk, so it loads offline too.
+ */
+async function loadBuiltInContent(): Promise<ContentCatalog> {
+  // oxlint-disable-next-line no-restricted-imports -- the one sanctioned (lazy) load of the content
+  const { builtInContent } = await import('@powr/content/built-in');
+  return builtInContent();
 }
 
 async function reconcileStartupState(container: Container): Promise<void> {

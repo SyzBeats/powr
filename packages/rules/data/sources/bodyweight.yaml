@@ -1,0 +1,37 @@
+# Sources of the bodyweight trend parameters (data/bodyweight.yaml; EB "Bodyweight trend
+# smoothing" and "Consolidated default parameters › Nutrition and body composition › Weight
+# trend"). Citations as complete as the EB and its research note
+# (nutrition_body_composition.md) give them.
+
+- id: src.fourmilab-hackdiet
+  citation: >-
+    Walker. The Hacker's Diet, "Signal and Noise": an exponentially smoothed moving average with a
+    smoothing constant of 0.9, "roughly equivalent to a 20 day simple moving average" in lag.
+  url: https://www.fourmilab.ch/hackdiet/e4/signalnoise.html
+  tag: PRACT
+  status: active
+  note: No peer-reviewed study validates any smoothing parameter (EB §Gaps #20).
+
+- id: src.khosla1964
+  citation: >-
+    Khosla & Billewicz 1964. Measurement of change in body weight. Br J Nutr. [One-day changes
+    rarely exceeded about 1.5% of bodyweight.]
+  url: https://www.cambridge.org/core/services/aop-cambridge-core/content/view/4E78A0DB251133BEF39D73EB50C2F8A2/S0007114564000228a.pdf/div-class-title-measurement-of-change-in-body-weight-div.pdf
+  tag: OBS
+  status: active
+
+- id: src.orsama2014
+  citation: >-
+    Orsama et al. 2014. [Weekly rhythm of bodyweight: peaks on Sunday and Monday, about 0.35%
+    within-week swing.]
+  url: https://pubmed.ncbi.nlm.nih.gov/24504358/
+  tag: OBS
+  status: active
+
+- id: src.powr-eb-nutrition
+  citation: >-
+    POWR evidence base, "Bodyweight trend smoothing" and "Consolidated default parameters ›
+    Nutrition and body composition" (reports/Strength and hypertrophy evidence base.md).
+  tag: INF
+  status: active
+  note: The EB's inferred trend algorithm ([INF], equivalent to the Hacker's Diet at Δt = 1 day).

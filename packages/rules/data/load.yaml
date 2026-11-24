@@ -1,0 +1,337 @@
+# Load, e1RM and change detection (EB §Defaults › Load; EB §Load). Technical concept §8.7.4–8.7.7.
+# Not shipped: Lombardi, Lander and O'Conner (EB §Gaps #4), the Marzagao weight-dependent formula
+# (§Gaps #3: unverified, the 100 × 5 example does not reproduce), regression equations with
+# intercepts (Reynolds linear, Macht, Tucker…), velocity-based 1RM prediction (§Gaps #13; VBT is
+# out of scope, NG-06), the personal-curve fit and the correction factor (M1 remaining work).
+
+- id: load.e1rm.equation
+  value: wathan
+  unit: none
+  guard: { epleyBrzyckiReliableUpToReff: 6 }
+  evidence: [PRACT, OBS, INF]
+  sources: [src.mayhew2008, src.reynolds2006, src.powr-eb-load]
+  ebRef: 'EB §Defaults › Load (e1RM formula); §Load › Rep-max equations; §Gaps #4'
+  verified: true
+  userOverridable: true
+  note: >-
+    Applies to bench-like exercises (load.curve.classMap). "rts" selects the exact RTS lookup,
+    which the EB shows tracks Wathan within about 0.6 points for 2–10 effective reps.
+
+- id: load.curve.classMap
+  value: { benchLike: equation, legPressLike: nuzzoLegPress, pooled: nuzzoPooled }
+  unit: none
+  evidence: [MA, INF]
+  sources: [src.nuzzo2024, src.powr-eb-load]
+  ebRef: 'EB §Load › Reps at %1RM (load-for-target hierarchy); §Gaps #5; technical concept §8.7.4 (E-3)'
+  verified: true
+  userOverridable: false
+  note: "Replaced per exercise by the user's fitted curve once enough data exist (not in M1)."
+
+- id: load.curve.nuzzoPooled
+  value:
+    - { pct: 95, reps: 3.28 }
+    - { pct: 90, reps: 4.94 }
+    - { pct: 85, reps: 7.15 }
+    - { pct: 80, reps: 9.75 }
+    - { pct: 75, reps: 12.37 }
+    - { pct: 70, reps: 14.80 }
+    - { pct: 65, reps: 17.11 }
+    - { pct: 60, reps: 19.53 }
+    - { pct: 55, reps: 22.43 }
+    - { pct: 50, reps: 25.99 }
+    - { pct: 40, reps: 35.75 }
+    - { pct: 30, reps: 50.50 }
+    - { pct: 20, reps: 72.75 }
+  unit: table
+  evidence: [MA]
+  sources: [src.nuzzo2024]
+  ebRef: 'EB §Load › Reps at %1RM (Nuzzo 2024 table, pooled means)'
+  verified: true
+  userOverridable: false
+  note: 'Mean reps to failure at a %1RM; the engine inverts it, anchored at 1 rep = 100%.'
+
+- id: load.curve.nuzzoBench
+  value:
+    - { pct: 95, reps: 2.59 }
+    - { pct: 90, reps: 4.11 }
+    - { pct: 85, reps: 6.23 }
+    - { pct: 80, reps: 8.82 }
+    - { pct: 75, reps: 11.51 }
+    - { pct: 70, reps: 14.08 }
+    - { pct: 65, reps: 16.59 }
+    - { pct: 60, reps: 19.34 }
+    - { pct: 55, reps: 22.79 }
+    - { pct: 50, reps: 27.25 }
+    - { pct: 40, reps: 40.45 }
+    - { pct: 30, reps: 62.62 }
+    - { pct: 20, reps: 100.02 }
+  unit: table
+  evidence: [MA]
+  sources: [src.nuzzo2024]
+  ebRef: 'EB §Load › Reps at %1RM (Nuzzo 2024 table, bench means)'
+  verified: true
+  userOverridable: false
+
+- id: load.curve.nuzzoLegPress
+  value:
+    - { pct: 95, reps: 7.04 }
+    - { pct: 90, reps: 8.69 }
+    - { pct: 85, reps: 10.69 }
+    - { pct: 80, reps: 13.05 }
+    - { pct: 75, reps: 15.79 }
+    - { pct: 70, reps: 18.96 }
+    - { pct: 65, reps: 22.59 }
+    - { pct: 60, reps: 26.74 }
+    - { pct: 55, reps: 31.47 }
+    - { pct: 50, reps: 36.86 }
+    - { pct: 40, reps: 49.87 }
+    - { pct: 30, reps: 66.47 }
+    - { pct: 20, reps: 87.62 }
+  unit: table
+  evidence: [MA]
+  sources: [src.nuzzo2024]
+  ebRef: 'EB §Load › Reps at %1RM (Nuzzo 2024 table, leg-press means); §Defaults › Load (load for target)'
+  verified: true
+  userOverridable: false
+  note: 'The leg-press confidence intervals are very wide (e.g. 7.04 reps [1.67–29.75] at 95%).'
+
+- id: load.curve.rts
+  value:
+    - { reff: 1, pct: 100 }
+    - { reff: 1.5, pct: 97.8 }
+    - { reff: 2, pct: 95.5 }
+    - { reff: 2.5, pct: 93.9 }
+    - { reff: 3, pct: 92.2 }
+    - { reff: 3.5, pct: 90.7 }
+    - { reff: 4, pct: 89.2 }
+    - { reff: 4.5, pct: 87.8 }
+    - { reff: 5, pct: 86.3 }
+    - { reff: 5.5, pct: 85.0 }
+    - { reff: 6, pct: 83.7 }
+    - { reff: 6.5, pct: 82.4 }
+    - { reff: 7, pct: 81.1 }
+    - { reff: 7.5, pct: 79.9 }
+    - { reff: 8, pct: 78.6 }
+    - { reff: 8.5, pct: 77.4 }
+    - { reff: 9, pct: 76.2 }
+    - { reff: 9.5, pct: 75.1 }
+    - { reff: 10, pct: 73.9 }
+    - { reff: 10.5, pct: 72.3 }
+    - { reff: 11, pct: 70.7 }
+    - { reff: 11.5, pct: 69.4 }
+    - { reff: 12, pct: 68.0 }
+    - { reff: 12.5, pct: 66.7 }
+    - { reff: 13, pct: 65.3 }
+    - { reff: 13.5, pct: 64.0 }
+  unit: table
+  evidence: [PRACT]
+  sources: [src.fitnessvolt-rts-chart, src.zourdos2016]
+  ebRef: 'EB §Load › RTS chart (one-dimensional lookup)'
+  verified: false
+  userOverridable: false
+  note: >-
+    Transcribed from a secondary source. Beyond 13.5 effective reps the engine follows Wathan,
+    scaled to meet the chart there. The chart's source warns it is a guide, assumes a fresh set and
+    is less reliable above 10 reps and on isolation lifts.
+
+- id: load.e1rm.weightByRpe
+  value:
+    - { minRpe: 8, weight: 1.0 }
+    - { minRpe: 7, weight: 0.5 }
+    - { minRpe: 0, weight: 0.1 }
+  unit: table
+  evidence: [MA, INF]
+  sources: [src.halperin2022, src.powr-eb-load]
+  ebRef: 'EB §Defaults › Load (set weighting); §Load › e1RM algorithm'
+  verified: true
+  userOverridable: false
+  note: 'The set weight is the lower of its RPE weight and its r_eff weight.'
+
+- id: load.e1rm.weightByReff
+  value:
+    - { maxReff: 8, weight: 1.0 }
+    - { maxReff: 12, weight: 0.5 }
+    - { maxReff: 15, weight: 0.1 }
+  unit: table
+  guard: { excludedAboveReff: 15 }
+  evidence: [MA, INF]
+  sources: [src.halperin2022, src.reynolds2006, src.powr-eb-load]
+  ebRef: 'EB §Defaults › Load (set weighting; ≤ 0.1 or exclude above r_eff 12–15)'
+  verified: true
+  userOverridable: false
+
+- id: load.e1rm.setOrderDecay
+  value: 0.85
+  unit: fraction
+  evidence: [INF]
+  sources: [src.marzagao2026, src.powr-technical-concept]
+  ebRef: 'EB §Load › e1RM algorithm ("down-weight sets after the first working set"); technical concept §8.7.4'
+  verified: false
+  userOverridable: false
+  note: 'The EB gives the direction only; 0.85 per later working set is a POWR design value.'
+
+- id: load.rirBias
+  value:
+    - { minRir: 0, add: 0 }
+    - { minRir: 3, add: 0.5 }
+  unit: table
+  guard: { addForRir3AndAbove: { min: 0.5, max: 1 } }
+  evidence: [MA, RCT]
+  sources: [src.halperin2022, src.refalo2024a]
+  ebRef: 'EB §Defaults › Load (RIR bias correction); §Load › RIR accuracy; §Gaps #26'
+  verified: false
+  userOverridable: false
+  note: >-
+    Lifters under-call RIR by about one rep, more so far from failure. Preliminary until the
+    verification pass of EB §Gaps #26 (Russo 2025); learned per user from v1.3 (PRG-15).
+
+- id: load.unknownEffort.priorRirDefault
+  value: 2
+  unit: rir
+  range: { min: 2, max: 3 }
+  evidence: [OBS, INF]
+  sources: [src.zourdos2016, src.powr-technical-concept]
+  ebRef: 'EB §Defaults › Load (effective reps; unknown RIR → assume 2–3); technical concept §8.7.7 (E-1)'
+  verified: true
+  userOverridable: false
+  note: 'Used when the user has no entered RIR for the exercise at a similar rep count.'
+
+- id: load.unknownEffort.priorRirSd
+  value: 1.5
+  unit: reps
+  evidence: [INF]
+  sources: [src.powr-technical-concept]
+  ebRef: 'technical concept §8.7.7 (E-1); EB §Defaults › Load'
+  verified: true
+  userOverridable: false
+  note: "Widens the trend's measurement noise by about 4.5% in quadrature."
+
+- id: load.unknownEffort.weightMultiplier
+  value: 0.5
+  unit: fraction
+  evidence: [INF]
+  sources: [src.powr-technical-concept]
+  ebRef: 'technical concept §8.7.7 (E-1); EB §Defaults › Load'
+  verified: true
+  userOverridable: false
+
+- id: load.unknownEffort.personalPrior
+  value: { windowWeeks: 8, repTolerance: 3 }
+  unit: mixed
+  evidence: [INF]
+  sources: [src.powr-technical-concept]
+  ebRef: 'technical concept §8.7.7 (E-1)'
+  verified: true
+  userOverridable: false
+  note: 'Median entered RIR over the last 8 weeks at a rep count within ±3.'
+
+- id: load.unknownEffort.eligibleForE1rmPr
+  value: false
+  unit: none
+  evidence: [INF]
+  sources: [src.powr-technical-concept]
+  ebRef: 'technical concept §8.7.7 (E-1); PRD MOT-01'
+  verified: true
+  userOverridable: false
+  note: 'Sets without effort never create e1RM PRs; load and rep PRs are unaffected.'
+
+- id: load.trend.noiseHeavySd
+  value: 0.04
+  unit: fraction
+  range: { min: 0.03, max: 0.05 }
+  evidence: [SR]
+  sources: [src.grgic2020]
+  ebRef: 'EB §Defaults › Load (smoothing noise 3–5% for heavy, low-rep, RPE ≥ 9 sets); §Load › Real change'
+  verified: true
+  userOverridable: false
+
+- id: load.trend.noiseTypicalSd
+  value: 0.09
+  unit: fraction
+  range: { min: 0.08, max: 0.10 }
+  evidence: [PREPRINT]
+  sources: [src.marzagao2026]
+  ebRef: 'EB §Defaults › Load (smoothing noise 8–10% for typical logged sets); §Load › e1RM algorithm'
+  verified: false
+  userOverridable: false
+  note: 'The 8.5–10% within-person spread comes from preprint app data (verify before hard-coding).'
+
+- id: load.trend.heavySet
+  value: { maxReff: 5, minRpe: 9 }
+  unit: mixed
+  evidence: [INF]
+  sources: [src.powr-eb-load, src.powr-technical-concept]
+  ebRef: 'EB §Load › Real change ("heavy, low-rep, high-RPE sets"); technical concept §8.7.5'
+  verified: true
+  userOverridable: false
+
+- id: load.trend.strengthMaxReff
+  value: 8
+  unit: reps
+  range: { min: 6, max: 8 }
+  evidence: [INF]
+  sources: [src.mayhew2008, src.powr-eb-load]
+  ebRef: 'EB §Load › e1RM drift ("strength e1RM mainly from sets with r_eff ≤ 6–8"); PRD PRG-02'
+  verified: true
+  userOverridable: false
+
+- id: load.trend.processSdPerWeek
+  value: { novice: 0.02, intermediate: 0.01, advanced: 0.005 }
+  unit: fraction
+  evidence: [INF]
+  sources: [src.powr-technical-concept, src.powr-eb-progression]
+  ebRef: 'technical concept §8.7.5 (trend.processSdPctPerWeek by level); EB §Progression › Classification'
+  verified: false
+  userOverridable: false
+  note: >-
+    Weekly random-walk SD of ln(e1RM), scaled to the EB's slope bands (novice ≥ 1%/week,
+    intermediate 0.25–1%, advanced < 0.25%). A POWR design value; calibrate against real logs.
+
+- id: load.trend.noviceWidening
+  value: { weeks: 8, factor: 1.5 }
+  unit: mixed
+  evidence: [INF]
+  sources: [src.powr-eb-load]
+  ebRef: 'EB §Load › e1RM drift ("wider bands for beginners in their first 4–8 weeks"); PRD PRG-02'
+  verified: false
+  userOverridable: false
+  note: 'The EB gives the window; the factor 1.5 is a POWR design value.'
+
+- id: load.trend.typicalErrorCv
+  value: { novice: 0.055, intermediate: 0.033, advanced: 0.033 }
+  unit: fraction
+  evidence: [SR]
+  sources: [src.grgic2020, src.hopkins2000]
+  ebRef: 'EB §Load › Real change (trained median CV 3.3%, untrained 5.5%); technical concept §8.7.5'
+  verified: true
+  userOverridable: false
+
+- id: load.trend.changeThresholds
+  value: { likelyTe: 1, sustainSessions: 2, veryLikelyTe: 2.8 }
+  unit: mixed
+  guard: { sustainSessions: { min: 2, max: 3 } }
+  evidence: [SR, INF]
+  sources: [src.hopkins2000, src.grgic2020, src.powr-eb-load]
+  ebRef: 'EB §Defaults › Load ("likely real" > 1 TE for ≥ 2–3 sessions; "very likely" > 2.8 TE)'
+  verified: true
+  userOverridable: false
+
+- id: load.trend.reference
+  value: { weeks: 4, sessions: 3 }
+  unit: mixed
+  evidence: [INF]
+  sources: [src.powr-technical-concept]
+  ebRef: 'technical concept §8.7.5 (reference 4 weeks or 3 sessions earlier, whichever is older)'
+  verified: false
+  userOverridable: false
+  note: 'A POWR design value; the EB says only that a change must hold for 2–3 sessions.'
+
+- id: load.reanchor.trigger
+  value: { maxReps: 3, minRpe: 9 }
+  unit: mixed
+  evidence: [OBS, INF]
+  sources: [src.braith1993, src.powr-eb-load]
+  ebRef: 'EB §Defaults › Load (re-anchoring on any RPE ≥ 9 single or triple); §Load › e1RM drift'
+  verified: true
+  userOverridable: false
+  note: 'Data only in M1; the per-exercise correction factor it triggers is not implemented yet.'

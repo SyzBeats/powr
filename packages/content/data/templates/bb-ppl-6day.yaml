@@ -1,0 +1,213 @@
+# Bodybuilding, 6 days: push/pull/legs ×2 (PLN-02). See bb-full-body-3day.yaml for how slots
+# work. The A and B days use different targets, so the generator picks different exercises.
+
+id: tpl.bb-ppl-6day
+name: { en: Push/pull/legs ×2 }
+description:
+  en: Push, pull and legs twice a week. The second rotation shifts the emphasis to other angles and sub-regions.
+style: bodybuilding
+daysPerWeek: 6
+split: pushPullLegs
+levels: [intermediate, advanced]
+default: true
+periodization: linear
+progression: { main: doubleProgression, accessory: doubleProgression, novice: doubleProgression }
+mesocycle: { accumulationWeeks: 5, deloadWeeks: 1, deloadRule: deload.planned }
+days:
+  - key: push-a
+    name: { en: Push A }
+    slots:
+      - key: push-a.chest
+        pattern: horizontalPush
+        targets: [mu.chest]
+        priority: primary
+        goal: hypertrophy
+        mode: doubleProgression
+      - key: push-a.press
+        pattern: verticalPush
+        targets: [mu.front-delts]
+        priority: primary
+        goal: hypertrophy
+        mode: doubleProgression
+      - key: push-a.fly
+        pattern: shoulderHorizontalAdduction
+        targets: [mu.chest]
+        priority: secondary
+        goal: hypertrophy
+        mode: doubleProgression
+      - key: push-a.lateral-raise
+        pattern: shoulderAbduction
+        targets: [mu.side-delts]
+        priority: secondary
+        goal: hypertrophy
+        mode: doubleProgression
+      - key: push-a.triceps
+        pattern: elbowExtension
+        targets: [mu.triceps.long-head]
+        priority: secondary
+        goal: hypertrophy
+        mode: doubleProgression
+
+  - key: pull-a
+    name: { en: Pull A }
+    slots:
+      - key: pull-a.pulldown
+        pattern: verticalPull
+        targets: [mu.lats]
+        priority: primary
+        goal: hypertrophy
+        mode: doubleProgression
+      - key: pull-a.row
+        pattern: horizontalPull
+        targets: [mu.mid-back, mu.lats]
+        priority: primary
+        goal: hypertrophy
+        mode: doubleProgression
+      - key: pull-a.rear-delts
+        pattern: shoulderHorizontalAbduction
+        targets: [mu.rear-delts]
+        priority: secondary
+        goal: hypertrophy
+        mode: doubleProgression
+      - key: pull-a.curl
+        pattern: elbowFlexion
+        targets: [mu.elbow-flexors.biceps]
+        priority: secondary
+        goal: hypertrophy
+        mode: doubleProgression
+      - key: pull-a.shrug
+        pattern: shrug
+        targets: [mu.upper-traps]
+        priority: optional
+        goal: hypertrophy
+        mode: doubleProgression
+
+  - key: legs-a
+    name: { en: Legs A }
+    slots:
+      - key: legs-a.squat
+        pattern: squat
+        targets: [mu.quads, mu.glutes]
+        priority: primary
+        goal: hypertrophy
+        mode: doubleProgression
+      - key: legs-a.hinge
+        pattern: hinge
+        targets: [mu.hamstrings, mu.glutes]
+        priority: primary
+        goal: hypertrophy
+        mode: doubleProgression
+      - key: legs-a.leg-extension
+        pattern: kneeExtension
+        targets: [mu.quads]
+        priority: secondary
+        goal: hypertrophy
+        mode: doubleProgression
+      - key: legs-a.calf
+        pattern: calf
+        targets: [mu.calves.gastrocnemius]
+        priority: secondary
+        goal: hypertrophy
+        mode: doubleProgression
+      - key: legs-a.abs
+        pattern: core
+        targets: [mu.abs]
+        priority: optional
+        goal: hypertrophy
+        mode: doubleProgression
+
+  - key: push-b
+    name: { en: Push B }
+    slots:
+      - key: push-b.incline
+        pattern: horizontalPush
+        targets: [mu.chest.clavicular, mu.front-delts]
+        priority: primary
+        goal: hypertrophy
+        mode: doubleProgression
+      - key: push-b.dip
+        pattern: verticalPush
+        targets: [mu.chest, mu.triceps]
+        priority: secondary
+        goal: hypertrophy
+        mode: doubleProgression
+      - key: push-b.lateral-raise
+        pattern: shoulderAbduction
+        targets: [mu.side-delts]
+        priority: secondary
+        goal: hypertrophy
+        mode: doubleProgression
+      - key: push-b.triceps
+        pattern: elbowExtension
+        targets: [mu.triceps.lateral-medial]
+        priority: secondary
+        goal: hypertrophy
+        mode: doubleProgression
+
+  - key: pull-b
+    name: { en: Pull B }
+    slots:
+      - key: pull-b.row
+        pattern: horizontalPull
+        targets: [mu.lats, mu.mid-back]
+        priority: primary
+        goal: hypertrophy
+        mode: doubleProgression
+      - key: pull-b.pull-up
+        pattern: verticalPull
+        targets: [mu.lats]
+        priority: primary
+        goal: hypertrophy
+        mode: doubleProgression
+      - key: pull-b.rear-delts
+        pattern: shoulderHorizontalAbduction
+        targets: [mu.rear-delts]
+        priority: secondary
+        goal: hypertrophy
+        mode: doubleProgression
+      - key: pull-b.curl
+        pattern: elbowFlexion
+        targets: [mu.elbow-flexors.brachialis]
+        priority: secondary
+        goal: hypertrophy
+        mode: doubleProgression
+      - key: pull-b.forearms
+        pattern: wristFlexion
+        targets: [mu.forearms]
+        priority: optional
+        goal: hypertrophy
+        mode: doubleProgression
+
+  - key: legs-b
+    name: { en: Legs B }
+    slots:
+      - key: legs-b.hip-thrust
+        pattern: hipExtension
+        targets: [mu.glutes]
+        priority: primary
+        goal: hypertrophy
+        mode: doubleProgression
+      - key: legs-b.lunge
+        pattern: lunge
+        targets: [mu.quads, mu.adductors]
+        priority: primary
+        goal: hypertrophy
+        mode: doubleProgression
+      - key: legs-b.leg-curl
+        pattern: kneeFlexion
+        targets: [mu.hamstrings]
+        priority: secondary
+        goal: hypertrophy
+        mode: doubleProgression
+      - key: legs-b.calf
+        pattern: calf
+        targets: [mu.calves.soleus]
+        priority: secondary
+        goal: hypertrophy
+        mode: doubleProgression
+      - key: legs-b.abs
+        pattern: core
+        targets: [mu.obliques]
+        priority: optional
+        goal: hypertrophy
+        mode: doubleProgression

@@ -1,0 +1,100 @@
+# Deloads and returning from breaks (EB §Defaults › Deloads; EB §Progression › Deloads, › Breaks).
+# Data only in M1 (presets the planner and the session use from M2/M3). Magnitudes are synthesised
+# from surveys and Delphi direction-of-change data, not trials (EB §Gaps #9): editable presets.
+# Tapering, last heavy singles and attempt selection are v1.1 (PLN-16/17) and not shipped yet.
+
+- id: deload.planned.everyWeeks
+  value: 5
+  unit: weeks
+  range: { min: 3, max: 8 }
+  guard: { defaultBand: { min: 4, max: 6 } }
+  evidence: [DELPHI/SURVEY, INF]
+  sources: [src.rogerson2024, src.bell2023]
+  ebRef: 'EB §Defaults › Deloads (every 4–6 weeks, user 3–8); PRD PRG-11'
+  verified: true
+  userOverridable: true
+  note: 'Athletes deload every 5.6 ± 2.3 weeks (Rogerson 2024).'
+
+- id: deload.planned.durationDays
+  value: 7
+  unit: days
+  evidence: [DELPHI/SURVEY]
+  sources: [src.rogerson2024]
+  ebRef: 'EB §Defaults › Deloads (~1 week)'
+  verified: true
+  userOverridable: false
+
+- id: deload.content
+  value:
+    setsReductionPct: { min: 40, max: 60 }
+    rirIncrease: { min: 2, max: 3 }
+    loadPct: { min: 85, max: 100 }
+    higherRepLoadReductionPct: { min: 10, max: 20 }
+    keepExercises: true
+    keepFrequency: true
+    dropAccessories: optional
+  unit: mixed
+  guard: { completeRestForStrengthUsers: false }
+  evidence: [INF, DELPHI/SURVEY, RCT-T]
+  sources: [src.bell2023, src.rogerson2024, src.coleman2024, src.powr-eb-progression]
+  ebRef: 'EB §Defaults › Deloads (deload content); PRD PRG-11'
+  verified: true
+  userOverridable: false
+
+- id: deload.reactive
+  value: { signalsRequired: 2, declineSessions: 2, lowReadinessDays: 3 }
+  unit: mixed
+  evidence: [INF]
+  sources: [src.powr-eb-progression]
+  ebRef: 'EB §Progression › Deloads (reactive trigger: any 2 signals); PRD PRG-12'
+  verified: true
+  userOverridable: false
+  note: 'Pulls the scheduled deload forward; never adds an extra one.'
+
+- id: deload.returnFromBreak
+  value:
+    - { maxDays: 7, action: resume, loadPct: null, setsPct: null, rirAdd: 0, rampWeeks: null }
+    - maxDays: 14
+      action: reduce
+      loadPct: { min: 90, max: 95 }
+      setsPct: null
+      rirAdd: 1
+      rampWeeks: { min: 1, max: 2 }
+    - maxDays: 28
+      action: reduce
+      loadPct: { min: 85, max: 90 }
+      setsPct: { min: 60, max: 70 }
+      rirAdd: 0
+      rampWeeks: { min: 2, max: 2 }
+    - maxDays: 56
+      action: reentry
+      loadPct: { min: 75, max: 85 }
+      setsPct: { min: 50, max: 50 }
+      rirAdd: 0
+      rampWeeks: { min: 3, max: 4 }
+    - {
+        maxDays: null,
+        action: recalibrate,
+        loadPct: null,
+        setsPct: null,
+        rirAdd: 0,
+        rampWeeks: null,
+      }
+  unit: table
+  evidence: [INF]
+  sources: [src.mcmaster2013, src.hwang2017, src.powr-eb-progression]
+  ebRef: 'EB §Progression › Breaks (return-from-break algorithm); §Defaults › Deloads; PRD PRG-13'
+  verified: true
+  userOverridable: false
+  note: >-
+    Days since the lift was last trained. The EB's bands leave days 29–34 and 57–90 open; they fall
+    into the next row ("5–8 weeks" from day 29, "rebuild" after 8 weeks), the more cautious side.
+
+- id: deload.returnFromBreak.sorenessNoteAfterDays
+  value: 10
+  unit: days
+  evidence: [INF, RCT-T]
+  sources: [src.coleman2024, src.powr-eb-progression]
+  ebRef: 'EB §Progression › Breaks (expect extra soreness for 1–2 sessions after > 10 days)'
+  verified: true
+  userOverridable: false

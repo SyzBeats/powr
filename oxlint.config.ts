@@ -54,6 +54,20 @@ const LAZY_BACKUP: ImportPattern = {
 };
 
 /**
+ * The built-in content data is a lazy chunk too (TD-17): the single loader in src/app/boot.tsx
+ * carries the disable comment. The content schemas (Zod) are build-time only.
+ */
+const LAZY_CONTENT: ImportPattern = {
+  regex: '^@powr/content/built-in$',
+  allowTypeImports: true,
+  message: "The built-in content is lazy-loaded: use import('@powr/content/built-in').",
+};
+const CONTENT_SCHEMA: ImportPattern = {
+  regex: '^@powr/content/schema$',
+  message: 'Content schemas are build-time only (tools/content-build); the app gets content.json.',
+};
+
+/**
  * The design system's subpath-import alias (`#ui/*`, apps/web/package.json `imports`, ADR-0003).
  * A regex, because `#` starts a comment in the gitignore-style `group` patterns.
  */
@@ -181,7 +195,7 @@ const config: OxlintConfig = {
     {
       files: ['apps/web/src/**/*.{ts,tsx}'],
       rules: {
-        'no-restricted-imports': restrict(APP_ZOD, LAZY_BACKUP),
+        'no-restricted-imports': restrict(APP_ZOD, LAZY_BACKUP, LAZY_CONTENT, CONTENT_SCHEMA),
         // Blocking: literal text in JSX and on text attributes must go through Lingui (§8.15).
         'react/jsx-no-literals': [
           'error',
@@ -264,6 +278,8 @@ const config: OxlintConfig = {
           { group: ['workbox-*'], message: 'Service-worker code stays in src/sw.' },
           APP_ZOD,
           LAZY_BACKUP,
+          LAZY_CONTENT,
+          CONTENT_SCHEMA,
         ),
       },
     },
@@ -278,6 +294,8 @@ const config: OxlintConfig = {
             message: 'Routes never touch infrastructure.',
           },
           LAZY_BACKUP,
+          LAZY_CONTENT,
+          CONTENT_SCHEMA,
         ),
       },
     },
@@ -292,6 +310,8 @@ const config: OxlintConfig = {
           },
           APP_ZOD,
           LAZY_BACKUP,
+          LAZY_CONTENT,
+          CONTENT_SCHEMA,
         ),
       },
     },
@@ -306,6 +326,8 @@ const config: OxlintConfig = {
           { regex: UI_ALIAS, message: 'Adapters know nothing about the UI.' },
           APP_ZOD,
           LAZY_BACKUP,
+          LAZY_CONTENT,
+          CONTENT_SCHEMA,
         ),
       },
     },

@@ -1,0 +1,227 @@
+# Volume, frequency, load and effort (EB §Defaults › Volume; EB §Volume). The Pelland tiers, the
+# PUOS and the Remmert per-session caps come from preprints and ship with verified false (E-2,
+# EB §Gaps #1): recheck against Pelland Sports Med 2026 and the published Remmert paper. The RP
+# landmarks (MV/MEV/MAV/MRV) are a coaching overlay for M4 and are not registry defaults.
+
+- id: volume.hypertrophy.weeklyBands
+  value: { floor: 4, defaultLow: 10, defaultHigh: 20, highHigh: 30, hardWarnAbove: 40 }
+  unit: sets
+  guard: { softWarningAbove: 30, softText: no detectable superiority, hardText: no data }
+  evidence: [MA, PREPRINT]
+  sources: [src.pelland2026, src.pelland2024, src.bazvalle2022, src.acsm2026, src.powr-eb-volume]
+  ebRef: 'EB §Defaults › Volume (hypertrophy weekly sets per muscle, fractional); §Volume › About 4 sets'
+  verified: false
+  userOverridable: false
+  note: >-
+    Fractional sets per muscle per week: floor 4, default 10–20, high band 20–30 (an individual
+    experiment), soft warning above 30, hard warning above 40.
+
+- id: volume.hypertrophy.tiers
+  value:
+    - { minSets: 4, maxSets: 4, tier: minimumEffectiveDose, extraSetsPerDetectableGain: null }
+    - { minSets: 5, maxSets: 10, tier: higherEfficiency, extraSetsPerDetectableGain: 6 }
+    - { minSets: 11, maxSets: 18, tier: intermediateEfficiency, extraSetsPerDetectableGain: 8.5 }
+    - { minSets: 19, maxSets: 29, tier: lowerEfficiency, extraSetsPerDetectableGain: 10.75 }
+    - { minSets: 30, maxSets: 42, tier: lowestEfficiency, extraSetsPerDetectableGain: 12.5 }
+    - { minSets: 43, maxSets: null, tier: unclear, extraSetsPerDetectableGain: null }
+  unit: table
+  evidence: [PREPRINT]
+  sources: [src.pelland2024]
+  ebRef: 'EB §Volume › About 4 sets per week is detectable (hypertrophy efficiency tiers; SDES 2.05%)'
+  verified: false
+  userOverridable: false
+
+- id: volume.strength.tiers
+  value:
+    - { minSets: 1, maxSets: 1, tier: minimumEffectiveDose, extraSetsPerDetectableGain: null }
+    - { minSets: 2, maxSets: 2, tier: higherEfficiency, extraSetsPerDetectableGain: 0.75 }
+    - { minSets: 3, maxSets: 4, tier: intermediateEfficiency, extraSetsPerDetectableGain: 2.25 }
+    - { minSets: 5, maxSets: null, tier: notDetectable, extraSetsPerDetectableGain: null }
+  unit: table
+  evidence: [PREPRINT]
+  sources: [src.pelland2024]
+  ebRef: 'EB §Volume › About 4 sets per week is detectable (strength tiers; SDES 3.96%)'
+  verified: false
+  userOverridable: false
+
+- id: volume.puos
+  value: { hypertrophyFractionalSets: 31, strengthFractionalSets: 3, strengthSessionsPerWeek: 3 }
+  unit: mixed
+  evidence: [PREPRINT]
+  sources: [src.remmert2025, src.pelland2024]
+  ebRef: 'EB §Volume › About 4 sets per week (point of undetectable outcome superiority); §Volume › Frequency'
+  verified: false
+  userOverridable: false
+  note: 'The authors stress these are not upper limits; more sets still add gains, just not detectably.'
+
+- id: volume.counting.default
+  value: fractional
+  unit: none
+  evidence: [MA]
+  sources: [src.pelland2024, src.pelland2026]
+  ebRef: 'EB §Defaults › Volume (set counting: primary 1.0, synergist 0.5; show direct and fractional)'
+  verified: false
+  userOverridable: true
+  note: >-
+    Both counts are always computed; this picks the default display. Whether the published Pelland
+    version changed the fractional-counting conclusion is not verified (E-2).
+
+- id: volume.hardSet.maxRir
+  value: 4
+  unit: rir
+  evidence: [MA, INF]
+  sources: [src.robinson2024, src.powr-eb-volume]
+  ebRef: 'EB §Defaults › Volume (> 4 RIR = reduced stimulus); PRD EXL-05'
+  verified: true
+  userOverridable: true
+
+- id: volume.hardSet.highReps
+  value: { above: 20, maxRir: 2 }
+  unit: mixed
+  evidence: [MA, INF]
+  sources: [src.lopez2021, src.lasevicius2018, src.powr-eb-volume]
+  ebRef: 'EB §Defaults › Volume (> 20 reps counts as hard only at ≤ 2 RIR); §Volume › Any load'
+  verified: true
+  userOverridable: true
+
+- id: volume.hardSet.unknownRirCounts
+  value: true
+  unit: none
+  evidence: [INF]
+  sources: [src.powr-technical-concept]
+  ebRef: 'PRD EXL-05 (RIR unknown counts); technical concept §8.7.7 (E-1, volume)'
+  verified: true
+  userOverridable: false
+
+- id: volume.frequency.hypertrophyPerMuscle
+  value: 2
+  unit: sessions
+  evidence: [MA]
+  sources: [src.schoenfeld2019b]
+  ebRef: 'EB §Defaults › Volume (frequency, hypertrophy ≥ 2 sessions per muscle per week)'
+  verified: true
+  userOverridable: true
+  note: 'A way to distribute volume; at equal volume the frequency is personal preference.'
+
+- id: volume.frequency.strengthPerLift
+  value: { min: 2, max: 3 }
+  unit: sessions
+  evidence: [MA]
+  sources: [src.pelland2024]
+  ebRef: 'EB §Defaults › Volume (frequency, strength 2–3 sessions per lift per week)'
+  verified: false
+  userOverridable: true
+
+- id: volume.hypertrophy.perSessionSoftCap
+  value: { fractionalSets: 11, directSets: 8, nudge: { min: 10, max: 12 } }
+  unit: sets
+  evidence: [PREPRINT]
+  sources: [src.remmert2025]
+  ebRef: 'EB §Defaults › Volume (per-session cap, hypertrophy); §Volume › Per-session returns'
+  verified: false
+  userOverridable: true
+  note: 'Above the cap the planner suggests another session; never present "junk volume" as fact.'
+
+- id: volume.strength.perSessionHeavySets
+  value: { min: 2, max: 3 }
+  unit: sets
+  evidence: [PREPRINT]
+  sources: [src.remmert2025]
+  ebRef: 'EB §Defaults › Volume (per-session cap, strength ~2–3 direct heavy sets per lift)'
+  verified: false
+  userOverridable: true
+
+- id: volume.strength.weeklyHeavySetsPerLift
+  value: { min: 4, max: 10 }
+  unit: sets
+  guard: { minimumDose: { min: 3, max: 6 }, plateauAbove: 5 }
+  evidence: [MA, DELPHI/SURVEY]
+  sources: [src.androulakiskorakakis2021, src.pelland2024]
+  ebRef: 'EB §Defaults › Volume (strength sets per competition lift per week)'
+  verified: false
+  userOverridable: true
+  note: 'The plateau above about 5 sets comes from the Pelland preprint.'
+
+- id: volume.startingVolume.maxFactor
+  value: 1.2
+  unit: fraction
+  guard: { never: increases of 30–60% }
+  evidence: [RCT-T]
+  sources: [src.scarpelli2022, src.barsuhn2025]
+  ebRef: 'EB §Defaults › Volume (starting volume up to 1.2× the recent logged average)'
+  verified: true
+  userOverridable: false
+
+- id: volume.maintenance
+  value: { volumeFraction: 0.33, minSessionsPerWeek: 1 }
+  unit: mixed
+  evidence: [RCT, NARR]
+  sources: [src.bickel2011, src.spiering2021]
+  ebRef: 'EB §Defaults › Volume (maintenance about one-third of normal volume, keep load and effort)'
+  verified: true
+  userOverridable: true
+
+- id: volume.repRange.hypertrophy
+  value:
+    compound: { min: 6, max: 15 }
+    isolation: { min: 8, max: 20 }
+    allowed: { min: 5, max: 30 }
+  unit: reps
+  evidence: [MA, INF]
+  sources: [src.lopez2021, src.lasevicius2018, src.powr-eb-volume]
+  ebRef: 'EB §Defaults › Volume (hypertrophy rep range)'
+  verified: true
+  userOverridable: true
+
+- id: volume.load.hypertrophyMinPct1rm
+  value: 30
+  unit: pct
+  evidence: [RCT-U, INF]
+  sources: [src.lasevicius2018]
+  ebRef: 'EB §Defaults › Volume (flag loads below 30% 1RM)'
+  verified: true
+  userOverridable: false
+
+- id: volume.repRange.strength
+  value:
+    main: { min: 1, max: 6 }
+    accessory: { min: 6, max: 12 }
+    mainMinPct1rm: 80
+  unit: mixed
+  evidence: [MA, POS]
+  sources: [src.acsm2026, src.lopez2021]
+  ebRef: 'EB §Defaults › Volume (strength load ≥ 80% 1RM for main work; accessories 6–12)'
+  verified: true
+  userOverridable: true
+
+- id: volume.effort.hypertrophyRir
+  value: { min: 1, max: 2 }
+  unit: rir
+  guard: { lastIsolationSetMinRir: 0, reducedStimulusAboveRir: 4 }
+  evidence: [MA, RCT-T]
+  sources: [src.robinson2024, src.refalo2024b]
+  ebRef: 'EB §Defaults › Volume (hypertrophy RIR 1–2; 0 allowed on the last isolation or machine set)'
+  verified: true
+  userOverridable: true
+
+- id: volume.effort.strengthRpe
+  value:
+    work: { min: 6, max: 9 }
+    heavySingle: { min: 8, max: 9.5 }
+  unit: rpe
+  guard: { failureOnCompetitionLifts: false }
+  evidence: [MA]
+  sources: [src.robinson2024]
+  ebRef: 'EB §Defaults › Volume (strength RPE 6–9; heavy singles 8–9.5; no failure)'
+  verified: true
+  userOverridable: true
+
+- id: volume.effort.hypertrophySlopePerRir
+  value: -0.48
+  unit: pct
+  evidence: [MA, PREPRINT]
+  sources: [src.robinson2024]
+  ebRef: 'EB §Volume › Proximity to failure (−0.48% muscle size per extra RIR)'
+  verified: false
+  userOverridable: false
+  note: 'Preprint numbers (SportRxiv 295); verify against the final paper. For education texts only.'

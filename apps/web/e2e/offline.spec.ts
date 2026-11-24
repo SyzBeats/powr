@@ -24,8 +24,11 @@ test.describe('offline (WP0.4, PWA-03)', () => {
       .getByRole('navigation', { name: 'Main' })
       .getByRole('link', { name: 'Train' })
       .click();
+    // The exercise library is a lazy chunk (TD-17), precached like every other chunk.
+    await page.getByRole('radio', { name: 'Seated leg curl' }).check();
     await page.getByRole('button', { name: 'Confirm set' }).click();
     await expect(page.getByTestId('log-status')).toContainText('Saved');
+    await expect(page.getByTestId('session-sets')).toContainText('Seated leg curl');
   });
 
   test('serves a manifest that meets the installability basics (PWA-01)', async ({

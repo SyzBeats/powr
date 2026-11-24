@@ -1,7 +1,8 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { finishSession, logSet, type Deps } from '@powr/application';
-import { builtInContent } from '@powr/content';
+// oxlint-disable-next-line no-restricted-imports -- tests load the content eagerly
+import { builtInContent } from '@powr/content/built-in';
 import { makeInstantTz, type ExerciseId } from '@powr/domain';
 import { emptyRawTables, type MigrationChain } from '@powr/formats';
 

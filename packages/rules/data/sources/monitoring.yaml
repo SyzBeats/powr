@@ -1,0 +1,42 @@
+# Sources of the readiness and spacing parameters (data/monitoring.yaml; EB "Monitor load,
+# readiness and pain as trends…" and "Consolidated default parameters › Monitoring, readiness and
+# safety flags"). Citations as complete as the EB and its research note
+# (fatigue_monitoring_scoring.md) give them.
+
+- id: src.saw2016
+  citation: >-
+    Saw et al. 2016. [Subjective vs objective measures of athlete training response: systematic
+    review of 56 studies; subjective measures reflected acute and chronic load "with superior
+    sensitivity and consistency".] Br J Sports Med. DOI 10.1136/bjsports-2015-094758.
+  url: https://doi.org/10.1136/bjsports-2015-094758
+  tag: SR
+  status: active
+
+- id: src.morannavarro2017
+  citation: >-
+    Morán-Navarro et al. 2017. [Recovery after sets to failure vs not to failure in the bench press
+    and squat; trained men; failure slowed recovery by 24–48 h.] Eur J Appl Physiol.
+    DOI 10.1007/s00421-017-3725-7.
+  url: https://doi.org/10.1007/s00421-017-3725-7
+  seeAlso:
+    - https://pubmed.ncbi.nlm.nih.gov/28965198/
+  tag: RCT-T
+  status: active
+
+- id: src.refalo2023b
+  citation: >-
+    Refalo et al. 2023. [Recovery after 6 sets of bench press at 75% 1RM to failure, 1 RIR or 3 RIR:
+    equal by 48 h.] Sports Med Open. DOI 10.1186/s40798-023-00554-y.
+  url: https://doi.org/10.1186/s40798-023-00554-y
+  tag: RCT-T
+  status: active
+  note: The suffix b follows EB order; Refalo 2023 (PubMed 36334240) is mentioned first.
+
+- id: src.powr-eb-monitoring
+  citation: >-
+    POWR evidence base, "Monitor load, readiness and pain as trends; never present ACWR as an injury
+    predictor" and "Consolidated default parameters › Monitoring, readiness and safety flags"
+    (reports/Strength and hypertrophy evidence base.md).
+  tag: INF
+  status: active
+  note: No validated readiness cut-offs exist (EB §Gaps #10); the defaults are adjustable heuristics.

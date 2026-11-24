@@ -1,0 +1,106 @@
+# Vertical push. Credits:
+# - "Overhead press": anterior delt 1.0; lateral delt and triceps 0.5; upper traps 0.25 (all C).
+#   The dumbbell press and the pike push-up reuse the row as convention.
+# - "Dips (torso forward)": lower pec and triceps 1.0, anterior delt 0.5 (C). Dips are classified
+#   as a vertical push (pressing down along the body's long axis).
+
+- id: ex.barbell-overhead-press
+  name: { en: Barbell overhead press }
+  synonyms: [overhead press, ohp, military press, standing press]
+  pattern: verticalPush
+  mechanics: compound
+  substitutionGroups: [sg.overhead-press]
+  equipment:
+    allOf: [eq.plates]
+    anyOf: [[eq.barbell-olympic, eq.barbell-womens], [eq.power-rack, eq.squat-stand]]
+  muscles:
+    - { muscle: mu.front-delts, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.side-delts, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.triceps, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.upper-traps, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+  load: { type: barbell, curveClass: benchLike, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [6, 12], strength: [6, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 3 }
+  cues:
+    - en: Unrack the bar at collarbone height with forearms vertical and glutes squeezed.
+    - en: Press straight up, moving your head back just enough for the bar to pass.
+    - en: Finish with the bar over mid-foot and your head through, then lower to the collarbones.
+
+- id: ex.dumbbell-shoulder-press
+  name: { en: Dumbbell shoulder press }
+  synonyms: [seated dumbbell press, dumbbell overhead press, db shoulder press]
+  pattern: verticalPush
+  mechanics: compound
+  substitutionGroups: [sg.overhead-press]
+  equipment: { allOf: [eq.dumbbells], anyOf: [] }
+  muscles:
+    - { muscle: mu.front-delts, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.side-delts, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.triceps, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.upper-traps, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+  load: { type: dumbbell, curveClass: benchLike, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [6, 15], strength: [6, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 2 }
+  cues:
+    - en: Sit on an upright bench or stand, dumbbells at shoulder height and palms forward.
+    - en: Press up until your arms are straight, letting the dumbbells drift slightly together.
+    - en: Lower until the dumbbells are level with your ears or a little below.
+
+- id: ex.pike-push-up
+  name: { en: Pike push-up }
+  synonyms: [pike press, bodyweight shoulder press]
+  pattern: verticalPush
+  mechanics: compound
+  substitutionGroups: [sg.overhead-press]
+  equipment: { allOf: [], anyOf: [] }
+  muscles:
+    - { muscle: mu.front-delts, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.side-delts, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.triceps, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.upper-traps, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+  load: { type: bodyweightAdded, curveClass: benchLike, unilateral: false, bodyweightLoaded: true }
+  defaults:
+    repRange: { hypertrophy: [6, 20], strength: [6, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 1 }
+  cues:
+    - en: Start in a push-up position, then walk your feet in until your hips point up.
+    - en: Bend your elbows to lower the top of your head toward the floor in front of your hands.
+    - en: Press back up; raise your feet on a box to make it harder.
+
+- id: ex.dip
+  name: { en: Dip }
+  synonyms: [chest dip, parallel bar dip, bar dip]
+  pattern: verticalPush
+  mechanics: compound
+  substitutionGroups: [sg.dip, sg.triceps-press]
+  equipment: { allOf: [eq.dip-station], anyOf: [] }
+  muscles:
+    - { muscle: mu.chest.sternocostal, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.triceps, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.front-delts, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+  load: { type: bodyweightAdded, curveClass: pooled, unilateral: false, bodyweightLoaded: true }
+  defaults:
+    repRange: { hypertrophy: [6, 15], strength: [6, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 2, subRegions: [mu.chest.sternocostal] }
+  cues:
+    - en: Support yourself on straight arms and lean your torso slightly forward.
+    - en: Lower until your shoulders are just below your elbows, or as deep as your shoulders allow.
+    - en: Press back to straight arms; add weight with a dip belt when 15 reps are easy.

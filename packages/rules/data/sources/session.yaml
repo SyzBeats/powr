@@ -1,0 +1,139 @@
+# Sources of the session-design parameters: rest, tempo, warm-up ramps and technique credits
+# (data/session.yaml; EB "Session design…" and "Consolidated default parameters › Session
+# design"). Citations as complete as the EB and its research note (session_exercise_design.md)
+# give them.
+
+- id: src.grgic2018b
+  citation: >-
+    Grgic et al. 2018. [Rest interval duration and strength gains: systematic review; untrained
+    people maximise strength with 60–120 s, trained people need more than 2 min.]
+  url: https://www.pubmed.gov/28933024/
+  seeAlso:
+    - https://vuir.vu.edu.au/38537/
+  tag: SR
+  status: active
+  note: The suffix b follows EB order; Grgic 2018 on frequency (PubMed 29470825) is mentioned first.
+
+- id: src.singer2024
+  citation: >-
+    Singer et al. 2024. [Inter-set rest and hypertrophy: Bayesian meta-analysis of 9 studies; a small
+    benefit above 60 s, none detectable above 90 s.] Front Sports Act Living.
+  url: https://pubmed.ncbi.nlm.nih.gov/39205815/
+  seeAlso:
+    - https://www.frontiersin.org/articles/10.3389/fspor.2024.1429789/full
+  tag: MA
+  status: active
+
+- id: src.schoenfeld2016b
+  citation: >-
+    Schoenfeld et al. 2016. [3-min vs 1-min rest in trained men, volume load not equated.]
+  url: https://pubmed.ncbi.nlm.nih.gov/26605807/
+  tag: RCT-T
+  status: active
+  note: The suffix b follows EB order; Schoenfeld 2016 on frequency (PubMed 27102172) is first.
+
+- id: src.zhang2025
+  citation: >-
+    Zhang et al. 2025. [Supersets and paired sets: meta-analysis; shorter sessions without less
+    volume, agonist–antagonist pairs allow more reps.]
+  url: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC12011898/
+  tag: MA
+  status: active
+
+- id: src.schoenfeld2015c
+  citation: >-
+    Schoenfeld et al. 2015. [Repetition duration and hypertrophy: meta-analysis of 8 studies;
+    similar across 0.5–8 s, superslow reps above 10 s appear inferior.]
+  url: https://pubmed.ncbi.nlm.nih.gov/25601394/
+  seeAlso:
+    - https://pmc.ncbi.nlm.nih.gov/articles/PMC7061915
+  tag: MA
+  status: active
+  note: The suffix c follows EB order (PubMed 25932981 and 25853914 are mentioned first).
+
+- id: src.wilk2021
+  citation: >-
+    Wilk et al. 2021. [Movement tempo in resistance training: narrative review; slower eccentric
+    with faster concentric appears best.]
+  url: https://pmc.ncbi.nlm.nih.gov/articles/PMC8310485
+  tag: NARR
+  status: active
+
+- id: src.ribeiro2020
+  citation: >-
+    Ribeiro et al. 2020. [Specific warm-up ramps in trained men, crossover: 40% + 80% of the training
+    load beat 40% alone on squat velocity.]
+  url: https://pubmed.ncbi.nlm.nih.gov/32971729/
+  tag: RCT-T
+  status: active
+
+- id: src.mccrary2015
+  citation: >-
+    McCrary et al. 2015. [High-load dynamic warm-ups improve upper-body strength and power:
+    systematic review.]
+  url: https://pubmed.ncbi.nlm.nih.gov/25694615/
+  tag: SR
+  status: active
+
+- id: src.sodal2023
+  citation: >-
+    Sødal et al. 2023. [Drop sets vs traditional sets: meta-analysis; no hypertrophy difference in
+    one-half to one-third of the time.]
+  url: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10390395/
+  tag: MA
+  status: active
+
+- id: src.coleman2022
+  citation: >-
+    Coleman et al. 2022. [Drop sets vs traditional sets: similar strength and hypertrophy,
+    meta-analysis.]
+  url: https://vuir.vu.edu.au/46296/
+  tag: MA
+  status: active
+
+- id: src.enes2021
+  citation: >-
+    Enes et al. 2021. [Rest-pause and drop sets vs traditional sets in trained participants: similar
+    hypertrophy, slightly better strength with rest-pause.]
+  url: https://pubmed.ncbi.nlm.nih.gov/34260860/
+  tag: RCT-T
+  status: active
+
+- id: src.prestes2019
+  citation: >-
+    Prestes et al. 2019. [Rest-pause vs traditional training in trained participants: similar
+    strength, larger thigh gain.]
+  url: https://pubmed.ncbi.nlm.nih.gov/28617715/
+  tag: RCT-T
+  status: active
+
+- id: src.davies2021
+  citation: >-
+    Davies et al. 2021. [Cluster sets vs traditional sets: meta-analysis; hypertrophy ES −0.05,
+    strength ES −0.05.]
+  url: https://pubmed.ncbi.nlm.nih.gov/33475986/
+  seeAlso:
+    - https://cris.maastrichtuniversity.nl/en/publications/the-effects-of-set-structure-manipulation-on-chronic-adaptations-/
+  tag: MA
+  status: active
+  note: The seeAlso link is Jukic 2021, which the EB cites with Davies 2021 for the same finding.
+
+- id: src.wolf2025b
+  citation: >-
+    Wolf et al. 2025. [Lengthened partials vs full range of motion in trained lifters: similar
+    hypertrophy.] PeerJ.
+  url: https://peerj.com/articles/18904
+  tag: RCT-T
+  status: active
+  note: The suffix b follows EB order; Wolf 2025 in SMHS (PMC12869050) is mentioned first.
+
+- id: src.powr-eb-session
+  citation: >-
+    POWR evidence base, "Session design: long rests for strength, full stretch, mapped muscles,
+    counted techniques" and "Consolidated default parameters › Session design"
+    (reports/Strength and hypertrophy evidence base.md).
+  tag: INF
+  status: active
+  note: >-
+    The EB's own inferred rest-timer defaults, warm-up generator and technique credits ([INF]);
+    the EB states that no study validates converting techniques into sets.

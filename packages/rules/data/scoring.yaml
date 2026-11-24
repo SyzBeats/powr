@@ -1,0 +1,180 @@
+# Powerlifting scores (EB §Scoring; §Defaults › Monitoring › Scoring display; PRD ANL-07). The
+# formulas are implemented from the published definitions in @powr/domain/scoring; OPL source code
+# is cited for values and test vectors only (LEG-08). IPF Points coefficients were cross-checked
+# against the IPF formula document; Wilks, Wilks2020, DOTS and GL stay verified false until checked
+# against a primary document (technical concept §8.7.7). The bodyweight clamps are an app
+# implementation choice that follows OPL. Not shipped: OPL's single-lift IPF squat and deadlift
+# constants (unknown origin, EB §Gaps #17).
+
+- id: scoring.display
+  value: { primary: [ipfGl, dots], legacy: [wilks, wilks2020], decimals: 2 }
+  unit: none
+  guard: { informal: Wilks or DOTS applied to a single squat or deadlift }
+  evidence: [OFFICIAL, INF]
+  sources: [src.opl-goodlift, src.powr-eb-scoring]
+  ebRef: 'EB §Defaults › Monitoring (scoring display: IPF GL plus DOTS; Wilks/Wilks2020 legacy)'
+  verified: true
+  userOverridable: false
+
+- id: scoring.wilks.coefficients
+  value:
+    male: [-216.0475144, 16.2606339, -0.002388645, -0.00113732, 7.01863e-6, -1.291e-8]
+    female:
+      [
+        594.31747775582,
+        -27.23842536447,
+        0.82112226871,
+        -0.00930733913,
+        0.00004731582,
+        -0.00000009054,
+      ]
+  unit: coefficients
+  evidence: [OFFICIAL]
+  sources: [src.opl-wilks]
+  ebRef: 'EB §Scoring › Wilks (coef = 500 / (a + b·x + … + f·x⁵))'
+  verified: false
+  userOverridable: false
+  note: 'Ascending powers a…f; not yet checked against a primary Wilks publication.'
+
+- id: scoring.wilks.bodyweightClampKg
+  value: { male: { min: 40, max: 201.9 }, female: { min: 26.51, max: 154.53 } }
+  unit: kg
+  evidence: [INF]
+  sources: [src.opl-wilks, src.powr-eb-scoring]
+  ebRef: 'EB §Scoring › Wilks (clamp BW); §Scoring › Implementation (OPL clamps as an app choice)'
+  verified: true
+  userOverridable: false
+
+- id: scoring.wilks2020.coefficients
+  value:
+    male:
+      [
+        47.4617885411949,
+        8.47206137941125,
+        0.073694103462609,
+        -0.00139583381094385,
+        0.00000707665973070743,
+        -0.0000000120804336482315,
+      ]
+    female:
+      [
+        -125.425539779509,
+        13.7121941940668,
+        -0.0330725063103405,
+        -0.0010504000506583,
+        0.00000938773881462799,
+        -0.000000023334613884954,
+      ]
+  unit: coefficients
+  evidence: [OFFICIAL]
+  sources: [src.opl-wilks2020]
+  ebRef: 'EB §Scoring › Wilks2020 (coef = 600 / polynomial)'
+  verified: false
+  userOverridable: false
+  note: 'The numerator is 600, not 500.'
+
+- id: scoring.wilks2020.bodyweightClampKg
+  value: { male: { min: 40, max: 200.95 }, female: { min: 40, max: 150.95 } }
+  unit: kg
+  evidence: [INF]
+  sources: [src.opl-wilks2020, src.powr-eb-scoring]
+  ebRef: 'EB §Scoring › Wilks2020 (clamp BW)'
+  verified: true
+  userOverridable: false
+
+- id: scoring.dots.coefficients
+  value:
+    male: [-307.75076, 24.0900756, -0.1918759221, 0.0007391293, -0.000001093]
+    female: [-57.96288, 13.6175032, -0.1126655495, 0.0005158568, -0.0000010706]
+  unit: coefficients
+  evidence: [OFFICIAL]
+  sources: [src.opl-dots]
+  ebRef: 'EB §Scoring › DOTS (coef = 500 / (A·x⁴ + B·x³ + C·x² + D·x + E))'
+  verified: false
+  userOverridable: false
+  note: 'Stored in ascending powers (E, D, C, B, A). No official derivation of DOTS exists.'
+
+- id: scoring.dots.bodyweightClampKg
+  value: { male: { min: 40, max: 210 }, female: { min: 40, max: 150 } }
+  unit: kg
+  evidence: [INF]
+  sources: [src.opl-dots, src.powr-eb-scoring]
+  ebRef: 'EB §Scoring › DOTS (clamp BW)'
+  verified: true
+  userOverridable: false
+
+- id: scoring.ipfPoints.coefficients
+  value:
+    male:
+      classic:
+        total: { c1: 310.67, c2: 857.785, c3: 53.216, c4: 147.0835 }
+        bench: { c1: 86.4745, c2: 259.155, c3: 17.57845, c4: 53.122 }
+      equipped:
+        total: { c1: 387.265, c2: 1121.28, c3: 80.6324, c4: 222.4896 }
+        bench: { c1: 133.94, c2: 441.465, c3: 35.3938, c4: 113.0057 }
+    female:
+      classic:
+        total: { c1: 125.1435, c2: 228.03, c3: 34.5246, c4: 86.8301 }
+        bench: { c1: 25.0485, c2: 43.848, c3: 6.7172, c4: 13.952 }
+      equipped:
+        total: { c1: 176.58, c2: 373.315, c3: 48.4534, c4: 110.0103 }
+        bench: { c1: 49.106, c2: 124.209, c3: 23.199, c4: 67.4926 }
+  unit: coefficients
+  evidence: [OFFICIAL]
+  sources: [src.marksteiner2019, src.opl-ipf]
+  ebRef: 'EB §Scoring › IPF Points (2019); §Gaps #17 (Women Equipped Bench C4 = 67.4926)'
+  verified: true
+  userOverridable: false
+  note: 'The EB research note cross-checked these against the IPF formula document.'
+
+- id: scoring.ipfPoints.minBodyweightKg
+  value: 40
+  unit: kg
+  evidence: [INF]
+  sources: [src.opl-ipf, src.powr-eb-scoring]
+  ebRef: 'EB §Scoring › IPF Points (0 for BW < 40 kg; floored at 0)'
+  verified: true
+  userOverridable: false
+
+- id: scoring.ipfGl.coefficients
+  value:
+    male:
+      classic:
+        total: { a: 1199.72839, b: 1025.18162, c: 0.009210 }
+        bench: { a: 320.98041, b: 281.40258, c: 0.01008 }
+      equipped:
+        total: { a: 1236.25115, b: 1449.21864, c: 0.01644 }
+        bench: { a: 381.22073, b: 733.79378, c: 0.02398 }
+    female:
+      classic:
+        total: { a: 610.32796, b: 1045.59282, c: 0.03048 }
+        bench: { a: 142.40398, b: 442.52671, c: 0.04724 }
+      equipped:
+        total: { a: 758.63878, b: 949.31382, c: 0.02435 }
+        bench: { a: 221.82209, b: 357.00377, c: 0.02937 }
+  unit: coefficients
+  evidence: [OFFICIAL]
+  sources: [src.opl-goodlift, src.vcalc-ipf-gl]
+  ebRef: 'EB §Scoring › IPF GL (GL = Total × 100 / (A − B·e^(−C·BW)))'
+  verified: false
+  userOverridable: false
+  note: "The official GL model document could not be opened; only men's classic is independently confirmed."
+
+- id: scoring.ipfGl.minBodyweightKg
+  value: 35
+  unit: kg
+  evidence: [INF]
+  sources: [src.opl-goodlift, src.powr-eb-scoring]
+  ebRef: 'EB §Scoring › IPF GL (0 for BW < 35 kg; floored at 0)'
+  verified: true
+  userOverridable: false
+
+- id: scoring.allometric.exponent
+  value: 0.67
+  unit: none
+  guard: { empiricalExponents: { male: 0.55, female: 0.50 } }
+  evidence: [NARR, OBS]
+  sources: [src.jaric2002, src.montenegro2026]
+  ebRef: 'EB §Scoring › Allometric alternatives (kg / BW^0.67)'
+  verified: true
+  userOverridable: false

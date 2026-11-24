@@ -1,0 +1,196 @@
+# Horizontal push. Credits:
+# - "Flat bench (barbell/DB)": sternocostal pec 1.0 and triceps 0.5 (H, PubMed 24265879), anterior
+#   delt 0.5 (C). Machine chest press reuses the row as convention.
+# - "Incline press (30–45°)": clavicular pec 1.0 (regional EMG, PubMed 34644424; the one training
+#   study, PubMed 36334406, is unverified and not cited), anterior delt 1.0 and triceps 0.5 (C).
+# - "Close-grip bench": triceps and pec 1.0, anterior delt 0.5 (C).
+# - "Push-up": pec 1.0, triceps and anterior delt 0.5 (C).
+
+- id: ex.barbell-bench-press
+  name: { en: Barbell bench press }
+  synonyms: [bench press, flat bench press, bench]
+  pattern: horizontalPush
+  mechanics: compound
+  competitionLift: bench
+  substitutionGroups: [sg.chest-press]
+  equipment:
+    allOf: [eq.plates]
+    anyOf:
+      - [eq.barbell-olympic, eq.barbell-womens]
+      - [eq.flat-bench, eq.adjustable-bench]
+      - [eq.power-rack, eq.squat-stand]
+  muscles:
+    - { muscle: mu.chest.sternocostal, credit: 1, evidence: H, source: src.pmid24265879 }
+    - { muscle: mu.triceps, credit: 0.5, evidence: H, source: src.pmid24265879 }
+    - { muscle: mu.front-delts, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+  load: { type: barbell, curveClass: benchLike, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [6, 12], strength: [1, 6] }
+    restClass: strength
+    tempo: 2-0-X-0
+    fixedRom: true
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 3, subRegions: [mu.chest.sternocostal] }
+  cues:
+    - en: Pull your shoulder blades back and down and keep your feet planted.
+    - en: Lower the bar under control to your lower chest, elbows slightly tucked.
+    - en: Touch the chest every rep; for competition practice, hold it still before you press.
+    - en: Press the bar up and slightly back until your elbows lock out.
+
+- id: ex.paused-bench-press
+  name: { en: Long-pause bench press }
+  synonyms: [paused bench press, pause bench]
+  pattern: horizontalPush
+  mechanics: compound
+  variantOf: ex.barbell-bench-press
+  substitutionGroups: [sg.chest-press]
+  equipment:
+    allOf: [eq.plates]
+    anyOf:
+      - [eq.barbell-olympic, eq.barbell-womens]
+      - [eq.flat-bench, eq.adjustable-bench]
+      - [eq.power-rack, eq.squat-stand]
+  muscles:
+    - { muscle: mu.chest.sternocostal, credit: 1, evidence: H, source: src.pmid24265879 }
+    - { muscle: mu.triceps, credit: 0.5, evidence: H, source: src.pmid24265879 }
+    - { muscle: mu.front-delts, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+  load: { type: barbell, curveClass: benchLike, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [6, 12], strength: [1, 6] }
+    restClass: strength
+    tempo: 2-3-X-0
+    fixedRom: true
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 3, subRegions: [mu.chest.sternocostal] }
+  cues:
+    - en: Set up exactly as for your competition bench.
+    - en: Hold the bar motionless on your chest for two to three seconds without sinking.
+    - en: Keep your upper back tight through the pause, then press with full intent.
+
+- id: ex.close-grip-bench-press
+  name: { en: Close-grip bench press }
+  synonyms: [close grip bench, cgbp]
+  pattern: horizontalPush
+  mechanics: compound
+  variantOf: ex.barbell-bench-press
+  substitutionGroups: [sg.chest-press, sg.triceps-press]
+  equipment:
+    allOf: [eq.plates]
+    anyOf:
+      - [eq.barbell-olympic, eq.barbell-womens]
+      - [eq.flat-bench, eq.adjustable-bench]
+      - [eq.power-rack, eq.squat-stand]
+  muscles:
+    - { muscle: mu.triceps, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.chest, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.front-delts, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+  load: { type: barbell, curveClass: benchLike, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [6, 12], strength: [1, 6] }
+    restClass: strength
+    tempo: 2-0-X-0
+    fixedRom: true
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 3 }
+  cues:
+    - en: Grip the bar about shoulder-width, a hand or so narrower than your bench grip.
+    - en: Keep your elbows closer to your sides as the bar comes down to the lower chest.
+    - en: Press to full lockout, finishing the rep with your triceps.
+
+- id: ex.dumbbell-bench-press
+  name: { en: Dumbbell bench press }
+  synonyms: [dumbbell press, flat dumbbell press, db bench]
+  pattern: horizontalPush
+  mechanics: compound
+  substitutionGroups: [sg.chest-press]
+  equipment:
+    allOf: [eq.dumbbells]
+    anyOf: [[eq.flat-bench, eq.adjustable-bench]]
+  muscles:
+    - { muscle: mu.chest.sternocostal, credit: 1, evidence: H, source: src.pmid24265879 }
+    - { muscle: mu.triceps, credit: 0.5, evidence: H, source: src.pmid24265879 }
+    - { muscle: mu.front-delts, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+  load: { type: dumbbell, curveClass: benchLike, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [6, 15], strength: [6, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 2, subRegions: [mu.chest.sternocostal] }
+  cues:
+    - en: Kick the dumbbells up from your knees as you lie back, then set your shoulder blades.
+    - en: Lower the dumbbells beside your chest until you feel a stretch across the pecs.
+    - en: Press up and slightly together without clanking the dumbbells at the top.
+
+- id: ex.incline-dumbbell-press
+  name: { en: Incline dumbbell press }
+  synonyms: [incline dumbbell bench press, incline db press]
+  pattern: horizontalPush
+  mechanics: compound
+  substitutionGroups: [sg.incline-press, sg.chest-press]
+  equipment: { allOf: [eq.dumbbells, eq.adjustable-bench], anyOf: [] }
+  muscles:
+    - { muscle: mu.chest.clavicular, credit: 1, evidence: EMG, source: src.pmid34644424 }
+    - { muscle: mu.front-delts, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.triceps, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+  load: { type: dumbbell, curveClass: benchLike, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [6, 15], strength: [6, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 2, subRegions: [mu.chest.clavicular] }
+  cues:
+    - en: Set the bench to about 30–45 degrees.
+    - en: Lower the dumbbells to the sides of your upper chest with elbows slightly in front of the torso.
+    - en: Press up over your upper chest, keeping your shoulder blades on the bench.
+
+- id: ex.machine-chest-press
+  name: { en: Machine chest press }
+  synonyms: [seated machine press, chest press]
+  pattern: horizontalPush
+  mechanics: compound
+  substitutionGroups: [sg.chest-press]
+  equipment: { allOf: [eq.chest-press-machine], anyOf: [] }
+  muscles:
+    - { muscle: mu.chest, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.triceps, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.front-delts, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+  load: { type: machine, curveClass: benchLike, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [8, 15], strength: [6, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 3 }
+  cues:
+    - en: Set the seat so the handles line up with the middle of your chest.
+    - en: Let the handles come back until you feel a stretch, shoulders staying down.
+    - en: Press out smoothly and stop just short of slamming the stack at lockout.
+
+- id: ex.push-up
+  name: { en: Push-up }
+  synonyms: [press-up, pushup]
+  pattern: horizontalPush
+  mechanics: compound
+  substitutionGroups: [sg.chest-press]
+  equipment: { allOf: [], anyOf: [] }
+  muscles:
+    - { muscle: mu.chest, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.triceps, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.front-delts, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+  load: { type: bodyweightAdded, curveClass: benchLike, unilateral: false, bodyweightLoaded: true }
+  defaults:
+    repRange: { hypertrophy: [8, 30], strength: [6, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 1 }
+  cues:
+    - en: Place your hands slightly wider than your shoulders and hold a straight line from head to heels.
+    - en: Lower your chest to a fist's height above the floor with elbows angled back.
+    - en: Push the floor away until your arms are straight; raise your feet to make it harder.

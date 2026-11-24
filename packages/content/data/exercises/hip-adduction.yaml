@@ -1,0 +1,23 @@
+# Hip adduction. The EB has no row for it: convention (C).
+
+- id: ex.machine-hip-adduction
+  name: { en: Machine hip adduction }
+  synonyms: [hip adduction, seated hip adduction, adductor machine squeeze]
+  pattern: hipAdduction
+  mechanics: isolation
+  substitutionGroups: [sg.hip-adduction]
+  equipment: { allOf: [eq.hip-adduction-machine], anyOf: [] }
+  muscles:
+    - { muscle: mu.adductors, credit: 1, evidence: C, source: src.powr-eb-mapping }
+  load: { type: machine, curveClass: legPressLike, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [10, 20], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-1
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 3 }
+  cues:
+    - en: Sit with the pads on the inside of your knees, opened as wide as is comfortable.
+    - en: Squeeze your knees together until the pads meet.
+    - en: Return slowly into the stretch on every rep.

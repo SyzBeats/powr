@@ -1,0 +1,14 @@
+{
+  "name": "@powr/tools-content-build",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Content pipeline: YAML → validated, linted and hashed content.json (§8.12).",
+  "type": "module",
+  "dependencies": {
+    "@powr/content": "workspace:*",
+    "@powr/domain": "workspace:*",
+    "@powr/rules": "workspace:*",
+    "vite": "8.3.8",
+    "yaml": "2.9.1"
+  }
+}

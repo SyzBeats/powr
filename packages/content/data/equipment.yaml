@@ -1,0 +1,339 @@
+# Equipment catalog (EQP-01), in the EQP-01 order: bars, racks and benches, free weights, cables
+# and machines, bodyweight stations and accessories, cardio.
+#
+# - loading: which load details the equipment editor asks for (EQP-03). Bars carry a default
+#   weight per unit system (kg and lb gyms differ); stacks a default increment. Plate, dumbbell
+#   and kettlebell inventories belong to the equipment profile; presets.yaml gives defaults.
+# - variesByModel: the default is a typical value only; the editor asks the user to check it.
+#   EQP-03 fixes the Olympic (20 kg / 45 lb) and women's (15 kg / 35 lb) bars; the other bar
+#   weights are common manufacturer values.
+# - Icons: the app maps `category` to an icon (EQP-01), so items carry no icon of their own.
+
+# Bars
+- id: eq.barbell-olympic
+  name: { en: Olympic barbell }
+  synonyms: [barbell, men's bar, power bar, 20 kg bar, 45 lb bar]
+  category: bar
+  loading:
+    kind: bar
+    defaultWeight: [{ value: 20, unit: kg }, { value: 45, unit: lb }]
+    variesByModel: false
+
+- id: eq.barbell-womens
+  name: { en: Women's barbell }
+  synonyms: [women's bar, 15 kg bar, 35 lb bar]
+  category: bar
+  loading:
+    kind: bar
+    defaultWeight: [{ value: 15, unit: kg }, { value: 35, unit: lb }]
+    variesByModel: false
+
+- id: eq.technique-bar
+  name: { en: Technique bar }
+  synonyms: [training bar, aluminium bar]
+  category: bar
+  loading:
+    kind: bar
+    defaultWeight: [{ value: 5, unit: kg }, { value: 15, unit: lb }]
+    variesByModel: true
+
+- id: eq.ez-bar
+  name: { en: EZ bar }
+  synonyms: [ez curl bar, curl bar, cambered bar]
+  category: bar
+  loading:
+    kind: bar
+    defaultWeight: [{ value: 10, unit: kg }, { value: 25, unit: lb }]
+    variesByModel: true
+
+- id: eq.trap-bar
+  name: { en: Trap bar }
+  synonyms: [hex bar, hexagonal bar, shrug bar]
+  category: bar
+  loading:
+    kind: bar
+    defaultWeight: [{ value: 25, unit: kg }, { value: 55, unit: lb }]
+    variesByModel: true
+
+- id: eq.safety-squat-bar
+  name: { en: Safety squat bar }
+  synonyms: [ssb, yoke bar]
+  category: bar
+  loading:
+    kind: bar
+    defaultWeight: [{ value: 30, unit: kg }, { value: 65, unit: lb }]
+    variesByModel: true
+
+- id: eq.swiss-bar
+  name: { en: Swiss bar }
+  synonyms: [multi-grip bar, football bar, neutral-grip bar]
+  category: bar
+  loading:
+    kind: bar
+    defaultWeight: [{ value: 20, unit: kg }, { value: 45, unit: lb }]
+    variesByModel: true
+
+# Racks and benches
+- id: eq.power-rack
+  name: { en: Power rack }
+  synonyms: [squat rack, power cage, rack]
+  category: rack
+
+- id: eq.squat-stand
+  name: { en: Squat stand }
+  synonyms: [squat stands, half rack]
+  category: rack
+
+- id: eq.flat-bench
+  name: { en: Flat bench }
+  synonyms: [bench, weight bench]
+  category: bench
+
+- id: eq.adjustable-bench
+  name: { en: Adjustable bench }
+  synonyms: [incline bench, adjustable incline bench, fid bench]
+  category: bench
+
+- id: eq.decline-bench
+  name: { en: Decline bench }
+  synonyms: []
+  category: bench
+
+- id: eq.preacher-bench
+  name: { en: Preacher bench }
+  synonyms: [preacher curl bench, scott bench]
+  category: bench
+
+# Free weights
+- id: eq.plates
+  name: { en: Weight plates }
+  synonyms: [plates, bumper plates, iron plates]
+  category: freeWeight
+  loading: { kind: plates }
+
+- id: eq.microplates
+  name: { en: Microplates }
+  synonyms: [fractional plates, change plates, micro plates]
+  category: freeWeight
+  loading: { kind: microplates }
+
+- id: eq.dumbbells
+  name: { en: Dumbbells }
+  synonyms: [dumbbell, adjustable dumbbells, db]
+  category: freeWeight
+  loading: { kind: dumbbells }
+
+- id: eq.kettlebells
+  name: { en: Kettlebells }
+  synonyms: [kettlebell, kb]
+  category: freeWeight
+  loading: { kind: kettlebells }
+
+# Cables and machines
+- id: eq.cable-station
+  name: { en: Cable station }
+  synonyms: [cable machine, single cable, pulley]
+  category: cable
+  loading:
+    kind: stack
+    defaultIncrement: [{ value: 5, unit: kg }, { value: 10, unit: lb }]
+
+- id: eq.dual-cable-station
+  name: { en: Dual cable station }
+  synonyms: [cable crossover, dual pulley, functional trainer]
+  category: cable
+  loading:
+    kind: stack
+    defaultIncrement: [{ value: 5, unit: kg }, { value: 10, unit: lb }]
+
+- id: eq.lat-pulldown
+  name: { en: Lat pulldown machine }
+  synonyms: [lat pulldown, pulldown station]
+  category: cable
+  loading:
+    kind: stack
+    defaultIncrement: [{ value: 5, unit: kg }, { value: 10, unit: lb }]
+
+- id: eq.seated-row
+  name: { en: Seated cable row }
+  synonyms: [low row, cable row station]
+  category: cable
+  loading:
+    kind: stack
+    defaultIncrement: [{ value: 5, unit: kg }, { value: 10, unit: lb }]
+
+- id: eq.leg-press
+  name: { en: Leg press }
+  synonyms: [leg press machine, 45 degree leg press, sled press]
+  category: machine
+  loading: { kind: plateLoaded }
+
+- id: eq.hack-squat
+  name: { en: Hack squat machine }
+  synonyms: [hack squat]
+  category: machine
+  loading: { kind: plateLoaded }
+
+- id: eq.smith-machine
+  name: { en: Smith machine }
+  synonyms: [smith]
+  category: machine
+  loading: { kind: plateLoaded }
+
+- id: eq.leg-extension
+  name: { en: Leg extension machine }
+  synonyms: [knee extension machine]
+  category: machine
+  loading:
+    kind: stack
+    defaultIncrement: [{ value: 5, unit: kg }, { value: 10, unit: lb }]
+
+- id: eq.seated-leg-curl
+  name: { en: Seated leg curl machine }
+  synonyms: [seated hamstring curl]
+  category: machine
+  loading:
+    kind: stack
+    defaultIncrement: [{ value: 5, unit: kg }, { value: 10, unit: lb }]
+
+- id: eq.lying-leg-curl
+  name: { en: Lying leg curl machine }
+  synonyms: [prone leg curl, lying hamstring curl]
+  category: machine
+  loading:
+    kind: stack
+    defaultIncrement: [{ value: 5, unit: kg }, { value: 10, unit: lb }]
+
+- id: eq.chest-press-machine
+  name: { en: Chest press machine }
+  synonyms: [machine chest press, seated chest press]
+  category: machine
+  loading:
+    kind: stack
+    defaultIncrement: [{ value: 5, unit: kg }, { value: 10, unit: lb }]
+
+- id: eq.pec-deck
+  name: { en: Pec deck }
+  synonyms: [fly machine, butterfly machine, rear delt machine]
+  category: machine
+  loading:
+    kind: stack
+    defaultIncrement: [{ value: 5, unit: kg }, { value: 10, unit: lb }]
+
+- id: eq.shoulder-press-machine
+  name: { en: Shoulder press machine }
+  synonyms: [machine shoulder press, overhead press machine]
+  category: machine
+  loading:
+    kind: stack
+    defaultIncrement: [{ value: 5, unit: kg }, { value: 10, unit: lb }]
+
+- id: eq.hip-thrust-machine
+  name: { en: Hip thrust machine }
+  synonyms: [glute drive, glute bridge machine]
+  category: machine
+  loading: { kind: plateLoaded }
+
+- id: eq.standing-calf-raise-machine
+  name: { en: Standing calf raise machine }
+  synonyms: [standing calf machine]
+  category: machine
+  loading:
+    kind: stack
+    defaultIncrement: [{ value: 5, unit: kg }, { value: 10, unit: lb }]
+
+- id: eq.seated-calf-raise-machine
+  name: { en: Seated calf raise machine }
+  synonyms: [seated calf machine]
+  category: machine
+  loading: { kind: plateLoaded }
+
+- id: eq.hip-abduction-machine
+  name: { en: Hip abduction machine }
+  synonyms: [abductor machine, outer thigh machine]
+  category: machine
+  loading:
+    kind: stack
+    defaultIncrement: [{ value: 5, unit: kg }, { value: 10, unit: lb }]
+
+- id: eq.hip-adduction-machine
+  name: { en: Hip adduction machine }
+  synonyms: [adductor machine, inner thigh machine]
+  category: machine
+  loading:
+    kind: stack
+    defaultIncrement: [{ value: 5, unit: kg }, { value: 10, unit: lb }]
+
+- id: eq.back-extension-bench
+  name: { en: 45° back extension bench }
+  synonyms: [hyperextension bench, roman chair, 45 degree hyperextension]
+  category: machine
+
+- id: eq.glute-ham-developer
+  name: { en: Glute-ham developer }
+  synonyms: [ghd, glute-ham raise bench]
+  category: machine
+
+- id: eq.reverse-hyper
+  name: { en: Reverse hyper }
+  synonyms: [reverse hyperextension machine]
+  category: machine
+  loading: { kind: plateLoaded }
+
+# Bodyweight stations and accessories
+- id: eq.pull-up-bar
+  name: { en: Pull-up bar }
+  synonyms: [chin-up bar, doorway bar]
+  category: bodyweight
+
+- id: eq.dip-station
+  name: { en: Dip station }
+  synonyms: [dip bars, parallel bars]
+  category: bodyweight
+
+- id: eq.rings
+  name: { en: Gymnastic rings }
+  synonyms: [rings, suspension trainer]
+  category: bodyweight
+
+- id: eq.landmine
+  name: { en: Landmine }
+  synonyms: [landmine attachment, t-bar row attachment]
+  category: accessory
+
+- id: eq.resistance-bands
+  name: { en: Resistance bands }
+  synonyms: [bands, loop bands, mini bands]
+  category: accessory
+  loading: { kind: bands }
+
+- id: eq.dip-belt
+  name: { en: Dip belt }
+  synonyms: [weight belt for dips, chin-up belt, weighted belt]
+  category: accessory
+
+- id: eq.sled
+  name: { en: Sled }
+  synonyms: [prowler, push sled]
+  category: accessory
+
+# Cardio (for later cardio features, PLN-19)
+- id: eq.treadmill
+  name: { en: Treadmill }
+  synonyms: [running machine]
+  category: cardio
+
+- id: eq.bike
+  name: { en: Exercise bike }
+  synonyms: [stationary bike, spin bike, bike]
+  category: cardio
+
+- id: eq.rower
+  name: { en: Rowing machine }
+  synonyms: [rower, erg]
+  category: cardio
+
+- id: eq.elliptical
+  name: { en: Elliptical trainer }
+  synonyms: [elliptical, cross trainer]
+  category: cardio

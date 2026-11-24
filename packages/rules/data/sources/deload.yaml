@@ -1,0 +1,41 @@
+# Sources of the deload and return-from-break presets (data/deload.yaml; EB "Deloads every ~5–6
+# weeks are common practice…", "Strength survives about three weeks off…"). McMaster 2013 is in
+# progression.yaml. Citations as complete as the EB and its research note give them.
+
+- id: src.bell2023
+  citation: >-
+    Bell et al. 2023. [Deloading in strength and physique sports: Delphi consensus, 34 → 21 coaches,
+    about 81% powerlifting, ≥ 70% agreement threshold.]
+  url: https://pmc.ncbi.nlm.nih.gov/articles/PMC10511399/
+  seeAlso:
+    - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10511399/fullTextXML
+  tag: DELPHI/SURVEY
+  status: active
+
+- id: src.rogerson2024
+  citation: >-
+    Rogerson et al. 2024. [Deloading practices: survey of 246 strength and physique athletes, 63%
+    powerlifters; deloads every 5.6 ± 2.3 weeks for 6.4 ± 1.7 days.]
+  url: https://www.pubmed.gov/38499934/
+  seeAlso:
+    - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10948666/fullTextXML
+  tag: DELPHI/SURVEY
+  status: active
+
+- id: src.coleman2024
+  citation: >-
+    Coleman et al. 2024. [One week of complete training cessation vs continuous training in a
+    high-volume program; trained participants; funded by Renaissance Periodization.]
+  url: https://pubmed.ncbi.nlm.nih.gov/38274324/
+  seeAlso:
+    - https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10809978/fullTextXML
+  tag: RCT-T
+  status: active
+
+- id: src.hwang2017
+  citation: >-
+    Hwang et al. 2017. [Two weeks of detraining in trained men: no loss of leg-press strength or
+    lean mass.]
+  url: https://pubmed.ncbi.nlm.nih.gov/28328712/
+  tag: RCT-T
+  status: active

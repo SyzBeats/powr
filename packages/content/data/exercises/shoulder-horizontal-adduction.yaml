@@ -1,0 +1,51 @@
+# Fly movements. Credits: "Fly / pec deck" row (C): pec 1.0, anterior delt 0.25, triceps 0.
+
+- id: ex.cable-fly
+  name: { en: Cable fly }
+  synonyms: [cable crossover, standing cable fly]
+  pattern: shoulderHorizontalAdduction
+  mechanics: isolation
+  substitutionGroups: [sg.chest-fly]
+  equipment:
+    allOf: []
+    anyOf: [[eq.cable-station, eq.dual-cable-station]]
+  muscles:
+    - { muscle: mu.chest, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.front-delts, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.triceps, credit: 0, evidence: C, source: src.powr-eb-mapping }
+  load: { type: machine, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [10, 20], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-1
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 2 }
+  cues:
+    - en: Set the pulleys at shoulder height; with one cable, train one arm at a time.
+    - en: Keep a soft, fixed bend in your elbows and open your arms until your chest is stretched.
+    - en: Bring your hands together in front of your chest in a wide arc.
+
+- id: ex.pec-deck
+  name: { en: Pec deck fly }
+  synonyms: [machine fly, butterfly]
+  pattern: shoulderHorizontalAdduction
+  mechanics: isolation
+  substitutionGroups: [sg.chest-fly]
+  equipment: { allOf: [eq.pec-deck], anyOf: [] }
+  muscles:
+    - { muscle: mu.chest, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.front-delts, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.triceps, credit: 0, evidence: C, source: src.powr-eb-mapping }
+  load: { type: machine, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [10, 20], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-1
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 3 }
+  cues:
+    - en: Adjust the seat so the handles are at chest height.
+    - en: Let the handles travel back until you feel a stretch, shoulders down and chest up.
+    - en: Squeeze the handles together in front of you and return slowly.

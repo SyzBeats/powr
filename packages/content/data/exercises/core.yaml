@@ -1,0 +1,118 @@
+# Core. The EB has no rows for direct ab work: convention (C). Trunk-flexion exercises credit the
+# obliques 0.5 as synergists, as the EB's general scheme counts synergist sets as half.
+
+- id: ex.cable-crunch
+  name: { en: Cable crunch }
+  synonyms: [kneeling cable crunch, rope crunch]
+  pattern: core
+  mechanics: isolation
+  substitutionGroups: [sg.ab-flexion]
+  equipment:
+    allOf: []
+    anyOf: [[eq.cable-station, eq.dual-cable-station, eq.lat-pulldown]]
+  muscles:
+    - { muscle: mu.abs, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.obliques, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+  load: { type: machine, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [8, 20], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-1
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 3 }
+  cues:
+    - en: Kneel facing a high pulley and hold the rope beside your head.
+    - en: Curl your ribcage toward your pelvis by rounding your spine, not by bending at the hips.
+    - en: Let your torso lengthen fully at the top before the next rep.
+
+- id: ex.hanging-leg-raise
+  name: { en: Hanging leg raise }
+  synonyms: [hanging knee raise, toes to bar]
+  pattern: core
+  mechanics: isolation
+  substitutionGroups: [sg.ab-flexion]
+  equipment: { allOf: [eq.pull-up-bar], anyOf: [] }
+  muscles:
+    - { muscle: mu.abs, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.obliques, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+  load: { type: bodyweightAdded, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [8, 20], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 1 }
+  cues:
+    - en: Hang from the bar with straight arms and stop any swing before you start.
+    - en: Raise your knees or straight legs and curl your pelvis up toward your chest.
+    - en: Lower slowly; start with bent knees and straighten them as you get stronger.
+
+- id: ex.crunch
+  name: { en: Crunch }
+  synonyms: [floor crunch, ab crunch]
+  pattern: core
+  mechanics: isolation
+  substitutionGroups: [sg.ab-flexion]
+  equipment: { allOf: [], anyOf: [] }
+  muscles:
+    - { muscle: mu.abs, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.obliques, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+  load: { type: bodyweightAdded, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [10, 30], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-1
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 1 }
+  cues:
+    - en: Lie on your back with knees bent and hands lightly at your temples or crossed on your chest.
+    - en: Curl your shoulders off the floor by shortening the distance between ribs and pelvis.
+    - en: Lower slowly; hold a plate on your chest to add load.
+
+- id: ex.reverse-crunch
+  name: { en: Reverse crunch }
+  synonyms: [lying reverse crunch]
+  pattern: core
+  mechanics: isolation
+  substitutionGroups: [sg.ab-flexion]
+  equipment: { allOf: [], anyOf: [] }
+  muscles:
+    - { muscle: mu.abs, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.obliques, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+  load: { type: bodyweightAdded, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [10, 30], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-1
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 1 }
+  cues:
+    - en: Lie on your back with hips and knees bent to 90 degrees and arms on the floor.
+    - en: Roll your hips up and toward your chest until your lower back leaves the floor.
+    - en: Lower your hips slowly without letting your feet drop to the floor.
+
+- id: ex.dumbbell-side-bend
+  name: { en: Dumbbell side bend }
+  synonyms: [side bend, oblique side bend]
+  pattern: core
+  mechanics: isolation
+  substitutionGroups: [sg.lateral-flexion]
+  equipment: { allOf: [eq.dumbbells], anyOf: [] }
+  muscles:
+    - { muscle: mu.obliques, credit: 1, evidence: C, source: src.powr-eb-mapping }
+  load: { type: dumbbell, curveClass: pooled, unilateral: true, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [10, 20], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 2 }
+  cues:
+    - en: Stand tall with one dumbbell at your side and the other hand on your hip.
+    - en: Lean toward the dumbbell side until you feel a stretch along the opposite side.
+    - en: Pull yourself back upright with your obliques, then switch sides after the set.

@@ -1,0 +1,45 @@
+# Bodyweight trend (EB §Nutrition › Trend smoothing; §Defaults › Nutrition › Weight trend; PRD
+# BOD-02). The rest of the nutrition parameters (protein, rates, RMR equations, guardrails) are v1.2
+# and will get their own table; the E-5 equations will ship blockedUntilVerified there.
+
+- id: bodyweight.trend.alphaPerDay
+  value: 0.1
+  unit: fraction
+  range: { min: 0.05, max: 0.15 }
+  guard: { cutting: { min: 0.1, max: 0.15 }, slowBulk: { min: 0.05, max: 0.1 } }
+  evidence: [PRACT, OBS]
+  sources: [src.fourmilab-hackdiet, src.khosla1964, src.powr-eb-nutrition]
+  ebRef: 'EB §Defaults › Nutrition (weight trend: daily EMA α 0.1); §Nutrition › Trend smoothing'
+  verified: true
+  userOverridable: true
+  note: 'Missed days use α_eff = 1 − (1 − α)^Δdays. No smoothing parameter is validated (§Gaps #20).'
+
+- id: bodyweight.trend.initialWeighIns
+  value: { min: 3, max: 7 }
+  unit: mixed
+  evidence: [INF]
+  sources: [src.powr-eb-nutrition]
+  ebRef: 'EB §Nutrition › Trend smoothing (init = mean of the first 3–7 weigh-ins)'
+  verified: true
+  userOverridable: false
+  note: 'The trend appears after 3 weigh-ins as their running mean and becomes an EMA after 7.'
+
+- id: bodyweight.trend.winsorizePct
+  value: 2.5
+  unit: pct
+  range: { min: 2, max: 2.5 }
+  evidence: [OBS, INF]
+  sources: [src.khosla1964, src.orsama2014, src.powr-eb-nutrition]
+  ebRef: 'EB §Nutrition › Trend smoothing (winsorise readings > ~2–2.5% from trend)'
+  verified: true
+  userOverridable: false
+
+- id: bodyweight.rate.windowDays
+  value: { min: 14, max: 28 }
+  unit: days
+  evidence: [INF]
+  sources: [src.powr-eb-nutrition]
+  ebRef: 'EB §Nutrition › Trend smoothing (rate = regression slope over the last 14–28 days); PRD BOD-02'
+  verified: true
+  userOverridable: false
+  note: 'The slope uses the readings of the last 28 days and needs them to span at least 14 days.'

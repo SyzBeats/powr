@@ -33,6 +33,7 @@
     "apps/web/src/i18n/locales/**",
     "apps/web/public/**",
     "tools/licence/fixtures/**",
+    "packages/content/generated/**",
     "**/dist/**",
     ".tsbuild/**"
   ]

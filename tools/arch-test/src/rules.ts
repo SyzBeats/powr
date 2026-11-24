@@ -21,6 +21,8 @@ export const ALLOWED_DEPENDENCIES: Readonly<Record<string, readonly string[]>> =
   '@powr/tools-licence': [],
   '@powr/tools-arch-test': [],
   '@powr/tools-icons': [],
+  // Content build: validates content against the rules package's source registry (§8.12).
+  '@powr/tools-content-build': ['@powr/domain', '@powr/rules', '@powr/content'],
 };
 
 export interface Violation {

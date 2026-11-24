@@ -1,0 +1,96 @@
+# Rear-delt work. Credits: "Rear-delt fly / face pull" row (C): posterior delt 1.0, mid traps and
+# rhomboids 0.5.
+
+- id: ex.reverse-pec-deck
+  name: { en: Reverse pec deck }
+  synonyms: [reverse machine fly, rear delt machine fly]
+  pattern: shoulderHorizontalAbduction
+  mechanics: isolation
+  substitutionGroups: [sg.rear-delt]
+  equipment: { allOf: [eq.pec-deck], anyOf: [] }
+  muscles:
+    - { muscle: mu.rear-delts, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.mid-back, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+  load: { type: machine, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [10, 20], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-1
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 3 }
+  cues:
+    - en: Face the pad and set the handles so your arms start straight out in front.
+    - en: Sweep your arms back in a wide arc until they are in line with your body.
+    - en: Keep your chest on the pad and avoid shrugging as you pull.
+
+- id: ex.cable-face-pull
+  name: { en: Cable face pull }
+  synonyms: [face pull, rope face pull]
+  pattern: shoulderHorizontalAbduction
+  mechanics: isolation
+  substitutionGroups: [sg.rear-delt]
+  equipment:
+    allOf: []
+    anyOf: [[eq.cable-station, eq.dual-cable-station]]
+  muscles:
+    - { muscle: mu.rear-delts, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.mid-back, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+  load: { type: machine, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [10, 20], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-1
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 2 }
+  cues:
+    - en: Set a rope at upper-chest height or higher and hold it with thumbs pointing back.
+    - en: Pull the rope toward your face, spreading the ends apart as your elbows go wide.
+    - en: Finish with your hands beside your ears, then let the arms extend fully.
+
+- id: ex.dumbbell-rear-delt-fly
+  name: { en: Dumbbell rear-delt fly }
+  synonyms: [bent-over reverse fly, rear delt raise, dumbbell reverse fly]
+  pattern: shoulderHorizontalAbduction
+  mechanics: isolation
+  substitutionGroups: [sg.rear-delt]
+  equipment: { allOf: [eq.dumbbells], anyOf: [] }
+  muscles:
+    - { muscle: mu.rear-delts, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.mid-back, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+  load: { type: dumbbell, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [10, 20], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-1
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 2 }
+  cues:
+    - en: Hinge forward until your torso is nearly flat, or lie chest-down on an incline bench.
+    - en: Raise the dumbbells out to the sides with slightly bent elbows.
+    - en: Stop when your arms are level with your back and lower under control.
+
+- id: ex.band-pull-apart
+  name: { en: Band pull-apart }
+  synonyms: [resistance band pull-apart]
+  pattern: shoulderHorizontalAbduction
+  mechanics: isolation
+  substitutionGroups: [sg.rear-delt]
+  equipment: { allOf: [eq.resistance-bands], anyOf: [] }
+  muscles:
+    - { muscle: mu.rear-delts, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.mid-back, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+  load: { type: band, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [12, 30], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-1
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 0 }
+  cues:
+    - en: Hold a band at shoulder height with straight arms and hands shoulder-width apart.
+    - en: Pull the band apart until it touches your chest, squeezing your shoulder blades together.
+    - en: Return slowly; move your hands closer together on the band to make it harder.

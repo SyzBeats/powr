@@ -1,0 +1,47 @@
+# Knee extension. Credits: "Leg extension" row, quadriceps including rectus femoris 1.0 (H,
+# PubMed 39699974: more rectus femoris growth with the hip at 40° than at 90° flexion). The reverse
+# Nordic is not in the EB table; it reuses the row as convention.
+
+- id: ex.leg-extension
+  name: { en: Leg extension }
+  synonyms: [knee extension, machine leg extension]
+  pattern: kneeExtension
+  mechanics: isolation
+  substitutionGroups: [sg.knee-extension]
+  equipment: { allOf: [eq.leg-extension], anyOf: [] }
+  muscles:
+    - { muscle: mu.quads, credit: 1, evidence: H, source: src.pmid39699974 }
+  load: { type: machine, curveClass: legPressLike, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [8, 20], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-1
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 3, subRegions: [mu.quads.rectus-femoris] }
+  cues:
+    - en: Line up your knees with the pivot and set the pad just above your ankles.
+    - en: Recline the backrest if you can; a more open hip trains the rectus femoris harder.
+    - en: Start each rep from a deep knee bend and extend until your legs are straight.
+
+- id: ex.reverse-nordic
+  name: { en: Reverse Nordic }
+  synonyms: [reverse nordic curl, kneeling quad lean]
+  pattern: kneeExtension
+  mechanics: isolation
+  substitutionGroups: [sg.knee-extension]
+  equipment: { allOf: [], anyOf: [] }
+  muscles:
+    - { muscle: mu.quads, credit: 1, evidence: C, source: src.powr-eb-mapping }
+  load: { type: bodyweightAdded, curveClass: pooled, unilateral: false, bodyweightLoaded: true }
+  defaults:
+    repRange: { hypertrophy: [8, 20], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 3-0-X-0
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 1, subRegions: [mu.quads.rectus-femoris] }
+  cues:
+    - en: Kneel on a soft surface with your knees hip-width apart and your hips straight.
+    - en: Lean back as one piece from knees to head, only as far as you can return under control.
+    - en: Pull yourself back up with your thighs without bending at the hips.

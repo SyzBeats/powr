@@ -4,10 +4,17 @@
   "private": true,
   "description": "Rules registry: parameter schema, data, source registry and resolver.",
   "type": "module",
+  "sideEffects": [
+    "./src/zod.ts"
+  ],
   "exports": {
     ".": "./src/index.ts",
     "./sources": "./src/sources/index.ts",
-    "./sources/node": "./scripts/sources.ts"
+    "./sources/node": "./scripts/sources.ts",
+    "./build/node": "./scripts/build.ts"
+  },
+  "scripts": {
+    "build": "node --import ./scripts/ts-resolve.ts scripts/build.ts"
   },
   "dependencies": {
     "@powr/domain": "workspace:*",

@@ -1,0 +1,122 @@
+# Curls. Credits: "Biceps curl" row: elbow flexors 1.0 (H: curls grew the elbow flexors +11.06% vs
+# +5.16% for rows, Mannarino 2021), forearm flexors 0.25 (C). Curls with external load (barbell,
+# dumbbells, incline) keep the H tag. The hammer curl (neutral grip) and the band curl (a different
+# resistance profile) are extrapolations and tagged C.
+
+- id: ex.barbell-curl
+  name: { en: Barbell curl }
+  synonyms: [standing barbell curl, ez-bar curl, straight-bar curl]
+  pattern: elbowFlexion
+  mechanics: isolation
+  substitutionGroups: [sg.curl]
+  equipment:
+    allOf: [eq.plates]
+    anyOf: [[eq.barbell-olympic, eq.barbell-womens, eq.ez-bar]]
+  muscles:
+    - { muscle: mu.elbow-flexors, credit: 1, evidence: H, source: src.mannarino2021 }
+    - { muscle: mu.forearms.flexors, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+  load: { type: barbell, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [8, 15], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 3, subRegions: [mu.elbow-flexors.biceps] }
+  cues:
+    - en: Hold the bar with an underhand grip at about shoulder-width, elbows at your sides.
+    - en: Curl the bar up without swinging your torso or moving your elbows forward much.
+    - en: Lower until your arms are fully straight before the next rep.
+
+- id: ex.dumbbell-curl
+  name: { en: Dumbbell curl }
+  synonyms: [standing dumbbell curl, alternating dumbbell curl, db curl]
+  pattern: elbowFlexion
+  mechanics: isolation
+  substitutionGroups: [sg.curl]
+  equipment: { allOf: [eq.dumbbells], anyOf: [] }
+  muscles:
+    - { muscle: mu.elbow-flexors, credit: 1, evidence: H, source: src.mannarino2021 }
+    - { muscle: mu.forearms.flexors, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+  load: { type: dumbbell, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [8, 15], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 2, subRegions: [mu.elbow-flexors.biceps] }
+  cues:
+    - en: Stand with the dumbbells at your sides, palms facing forward.
+    - en: Curl both dumbbells or one at a time, keeping your upper arms still.
+    - en: Lower all the way down under control.
+
+- id: ex.hammer-curl
+  name: { en: Hammer curl }
+  synonyms: [neutral-grip curl, dumbbell hammer curl]
+  pattern: elbowFlexion
+  mechanics: isolation
+  substitutionGroups: [sg.curl]
+  equipment: { allOf: [eq.dumbbells], anyOf: [] }
+  muscles:
+    - { muscle: mu.elbow-flexors, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    # The brachioradialis sits in the forearm and works hard with a neutral grip.
+    - { muscle: mu.forearms, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+  load: { type: dumbbell, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [8, 15], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 2, subRegions: [mu.elbow-flexors.brachialis] }
+  cues:
+    - en: Hold the dumbbells with your palms facing each other.
+    - en: Curl up with the thumbs leading and the elbows staying at your sides.
+    - en: Lower to straight arms without swinging.
+
+- id: ex.incline-dumbbell-curl
+  name: { en: Incline dumbbell curl }
+  synonyms: [incline curl, seated incline curl]
+  pattern: elbowFlexion
+  mechanics: isolation
+  substitutionGroups: [sg.curl]
+  equipment: { allOf: [eq.dumbbells, eq.adjustable-bench], anyOf: [] }
+  muscles:
+    - { muscle: mu.elbow-flexors, credit: 1, evidence: H, source: src.mannarino2021 }
+    - { muscle: mu.forearms.flexors, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+  load: { type: dumbbell, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [8, 15], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 2, subRegions: [mu.elbow-flexors.biceps] }
+  cues:
+    - en: Sit back on a bench set to about 45–60 degrees and let your arms hang behind your torso.
+    - en: Curl the dumbbells up without bringing your elbows forward.
+    - en: Lower slowly into the full stretch at the bottom.
+
+- id: ex.band-curl
+  name: { en: Band curl }
+  synonyms: [resistance band curl]
+  pattern: elbowFlexion
+  mechanics: isolation
+  substitutionGroups: [sg.curl]
+  equipment: { allOf: [eq.resistance-bands], anyOf: [] }
+  muscles:
+    - { muscle: mu.elbow-flexors, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.forearms.flexors, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+  load: { type: band, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [12, 30], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 0 }
+  cues:
+    - en: Stand on the band and hold the ends with palms facing forward.
+    - en: Curl up to full elbow bend while your elbows stay at your sides.
+    - en: Use a stronger band or stand on it wider when 30 reps become easy.

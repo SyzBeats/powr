@@ -1,18 +1,13 @@
-import { createContentCatalog, type ContentCatalog } from './catalog';
-import { STUB_EXERCISES } from './stub';
-
-export { createContentCatalog, type ContentCatalog } from './catalog';
-export { exerciseDefSchema, parseExerciseDef } from './schema';
-
-export const CONTENT_VERSION = '0.0.0+m0';
-
-let catalog: ContentCatalog | undefined;
-
 /**
- * The built-in catalog shipped with this build. Built on first use, not at import time, so the
- * app can configure Zod (JIT-less, for the CSP) before anything is parsed.
+ * `@powr/content`: the content types and the catalog over a compiled bundle. Free of Zod and of
+ * the data itself, so the app may import it anywhere. The shipped data is the separate entry
+ * `@powr/content/built-in` (loaded lazily); the Zod schemas of the YAML sources are
+ * `@powr/content/schema` (build time and tests only).
  */
-export function builtInContent(): ContentCatalog {
-  catalog ??= createContentCatalog(CONTENT_VERSION, STUB_EXERCISES);
-  return catalog;
-}
+export {
+  createContentCatalog,
+  type ContentCatalog,
+  type EquipmentCatalog,
+  type MuscleTaxonomy,
+} from './catalog';
+export * from './types';

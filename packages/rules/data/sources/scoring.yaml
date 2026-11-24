@@ -1,0 +1,95 @@
+# Sources of the scoring parameters (data/scoring.yaml; EB "Scoring formulas reproduce their
+# official test values exactly"). Citations as complete as the EB and its research note
+# (fatigue_monitoring_scoring.md §5) give them. The OpenPowerlifting files are cited for
+# coefficient values, bodyweight clamps and unit-test vectors only: POWR ports no OPL code (AGPL;
+# PRD ANL-07, LEG-08).
+
+- id: src.marksteiner2019
+  citation: >-
+    Marksteiner 2019. The IPF Formula. International Powerlifting Federation announcement (PDF
+    created 2019-01-04), reviewed by C. Maiwald (TU Chemnitz) and T. Mayer (TecStat); based on
+    about 20,000 best performances; replaced Wilks from 1 January 2019.
+  url: https://www.britishpowerlifting.org/wp-content/uploads/2025/03/ipf_formula.pdf
+  seeAlso:
+    - https://www.powerlifting.sport/fileadmin/ipf/data/ipf-formula/IPF_Points_Proposal.pdf
+  tag: OFFICIAL
+  status: active
+  note: >-
+    Women Equipped Bench C4 is 67.4926 in this document (OPL uses 67.492); POWR uses the document
+    value (EB §Gaps #17).
+
+- id: src.opl-wilks
+  citation: OpenPowerlifting opl-data, crates/coefficients/src/wilks.rs (original Wilks).
+  url: https://gitlab.com/openpowerlifting/opl-data/-/blob/main/crates/coefficients/src/wilks.rs
+  tag: OFFICIAL
+  status: active
+  note: Reference source code; cited for values and test vectors only, no code is ported.
+
+- id: src.opl-wilks2020
+  citation: OpenPowerlifting opl-data, crates/coefficients/src/wilks2020.rs (Wilks2020).
+  url: https://gitlab.com/openpowerlifting/opl-data/-/blob/main/crates/coefficients/src/wilks2020.rs
+  tag: OFFICIAL
+  status: active
+  note: >-
+    Reference source code; cited for values and test vectors only. The attribution of Wilks2020 to
+    Robert Wilks is secondary (EB §Scoring).
+
+- id: src.opl-dots
+  citation: OpenPowerlifting opl-data, crates/coefficients/src/dots.rs (DOTS).
+  url: https://gitlab.com/openpowerlifting/opl-data/-/blob/main/crates/coefficients/src/dots.rs
+  tag: OFFICIAL
+  status: active
+  note: Reference source code; no official derivation of DOTS exists (EB §Scoring).
+
+- id: src.opl-ipf
+  citation: OpenPowerlifting opl-data, crates/coefficients/src/ipf.rs (IPF Points).
+  url: https://gitlab.com/openpowerlifting/opl-data/-/blob/main/crates/coefficients/src/ipf.rs
+  tag: OFFICIAL
+  status: active
+  note: >-
+    Reference source code; cited for the bodyweight floor of 40 kg and the test vectors. Its
+    single-lift squat and deadlift constants are of unverified origin and are not shipped.
+
+- id: src.opl-goodlift
+  citation: OpenPowerlifting opl-data, crates/coefficients/src/goodlift.rs (IPF GL Points).
+  url: https://gitlab.com/openpowerlifting/opl-data/-/blob/main/crates/coefficients/src/goodlift.rs
+  tag: OFFICIAL
+  status: active
+  note: >-
+    Reference source code; the official IPF GL model document could not be opened, so the GL
+    coefficients are not yet checked against a federation document.
+
+- id: src.vcalc-ipf-gl
+  citation: vCalc. IPF GL formula points calculator.
+  url: https://www.vcalc.com/wiki/ipf-gl-formula-points-calculator
+  tag: PRACT
+  status: active
+  note: Independently confirms the men's classic GL coefficients (EB §Scoring).
+
+- id: src.jaric2002
+  citation: >-
+    Jaric 2002. [Force normalisation for body size: S / m^b with b = 0.67 for muscle force.] Sports
+    Med 32(10):615–631. DOI 10.2165/00007256-200232100-00002.
+  url: https://doi.org/10.2165/00007256-200232100-00002
+  tag: NARR
+  status: active
+
+- id: src.montenegro2026
+  citation: >-
+    Montenegro, Wicker & Donath 2026. [Allometric scaling in 457,471 drug-tested powerlifters:
+    empirical exponents 0.55 (men) and 0.50 (women).] Front Physiol 17:1847605.
+    DOI 10.3389/fphys.2026.1847605.
+  url: https://doi.org/10.3389/fphys.2026.1847605
+  tag: OBS
+  status: active
+
+- id: src.powr-eb-scoring
+  citation: >-
+    POWR evidence base, "Scoring formulas reproduce their official test values exactly" and
+    "Consolidated default parameters › Monitoring › Scoring display"
+    (reports/Strength and hypertrophy evidence base.md).
+  tag: INF
+  status: active
+  note: >-
+    Display choices and the decision to apply OPL-style bodyweight clamps as an app implementation
+    choice.

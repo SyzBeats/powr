@@ -1,0 +1,100 @@
+# Triceps extensions. Credits (H, Maeo 2023: overhead extensions grew the triceps 1.4–1.5× more
+# than the neutral arm position):
+# - "Overhead triceps extension": triceps 1.0, long-head emphasis.
+# - "Pressdown / skull crusher": triceps 1.0, lateral/medial emphasis.
+
+- id: ex.cable-triceps-pressdown
+  name: { en: Cable triceps pressdown }
+  synonyms: [triceps pushdown, rope pushdown, pressdown]
+  pattern: elbowExtension
+  mechanics: isolation
+  substitutionGroups: [sg.triceps-pressdown]
+  equipment:
+    allOf: []
+    anyOf: [[eq.cable-station, eq.dual-cable-station, eq.lat-pulldown]]
+  muscles:
+    - { muscle: mu.triceps, credit: 1, evidence: H, source: src.maeo2023 }
+  load: { type: machine, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [8, 20], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 3, subRegions: [mu.triceps.lateral-medial] }
+  cues:
+    - en: Set the pulley high and hold a rope or bar with your elbows pinned to your sides.
+    - en: Push down until your arms are straight, spreading the rope ends at the bottom.
+    - en: Let your forearms rise until they pass horizontal before the next rep.
+
+- id: ex.overhead-cable-triceps-extension
+  name: { en: Overhead cable triceps extension }
+  synonyms: [cable overhead extension, overhead rope extension]
+  pattern: elbowExtension
+  mechanics: isolation
+  substitutionGroups: [sg.overhead-triceps-extension]
+  equipment:
+    allOf: []
+    anyOf: [[eq.cable-station, eq.dual-cable-station]]
+  muscles:
+    - { muscle: mu.triceps, credit: 1, evidence: H, source: src.maeo2023 }
+  load: { type: machine, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [8, 20], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 3, subRegions: [mu.triceps.long-head] }
+  cues:
+    - en: Face away from a low or mid pulley with the rope behind your head and elbows pointing up.
+    - en: Let your hands sink behind your head until your triceps are fully stretched.
+    - en: Extend your elbows until your arms are straight, keeping your upper arms still.
+
+- id: ex.dumbbell-overhead-triceps-extension
+  name: { en: Dumbbell overhead triceps extension }
+  synonyms: [overhead dumbbell extension, french press, seated dumbbell extension]
+  pattern: elbowExtension
+  mechanics: isolation
+  substitutionGroups: [sg.overhead-triceps-extension]
+  equipment: { allOf: [eq.dumbbells], anyOf: [] }
+  muscles:
+    - { muscle: mu.triceps, credit: 1, evidence: H, source: src.maeo2023 }
+  load: { type: dumbbell, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [8, 20], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 2, subRegions: [mu.triceps.long-head] }
+  cues:
+    - en: Hold one dumbbell with both hands under the top plate, arms straight overhead.
+    - en: Lower it behind your head until your elbows are fully bent, elbows pointing forward.
+    - en: Press back to straight arms; sit with back support if your lower back arches.
+
+- id: ex.ez-bar-skull-crusher
+  name: { en: EZ-bar skull crusher }
+  synonyms: [skull crusher, lying triceps extension]
+  pattern: elbowExtension
+  mechanics: isolation
+  substitutionGroups: [sg.triceps-pressdown]
+  equipment:
+    allOf: [eq.plates]
+    anyOf:
+      - [eq.ez-bar, eq.barbell-olympic, eq.barbell-womens]
+      - [eq.flat-bench, eq.adjustable-bench]
+  muscles:
+    - { muscle: mu.triceps, credit: 1, evidence: H, source: src.maeo2023 }
+  load: { type: barbell, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [8, 15], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 3, subRegions: [mu.triceps.lateral-medial] }
+  cues:
+    - en: Lie on a bench and hold the bar over your shoulders with a narrow grip.
+    - en: Bend only at the elbows to lower the bar toward your forehead or just behind it.
+    - en: Extend your arms fully without letting your elbows flare out.

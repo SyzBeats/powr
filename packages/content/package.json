@@ -1,11 +1,13 @@
 {
   "name": "@powr/content",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
-  "description": "Exercise library, taxonomy, equipment and templates (M0: 3-exercise stub).",
+  "description": "Exercise library, muscle taxonomy, equipment catalog and presets, templates.",
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./built-in": "./src/built-in.ts",
+    "./schema": "./src/schema/index.ts"
   },
   "dependencies": {
     "@powr/domain": "workspace:*",

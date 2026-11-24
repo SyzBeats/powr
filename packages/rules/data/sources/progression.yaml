@@ -1,0 +1,80 @@
+# Sources of the progression parameters (data/progression.yaml; EB "How the app progresses load
+# matters more…" and "Consolidated default parameters › Progression, autoregulation and VBT").
+# Citations as complete as the EB and its research note
+# (progression_periodization_autoregulation.md) give them.
+
+- id: src.plotkin2022
+  citation: >-
+    Plotkin et al. 2022. [Progression by adding repetitions vs adding load; 43 trained
+    participants.]
+  url: https://pubmed.ncbi.nlm.nih.gov/36199287/
+  tag: RCT-T
+  status: active
+
+- id: src.acsm2009
+  citation: >-
+    American College of Sports Medicine 2009. [Position stand on progression models in resistance
+    training: increase load 2–10% when the current load is completed for 1–2 reps above target.]
+  url: https://pubmed.ncbi.nlm.nih.gov/19204579/
+  seeAlso:
+    - https://pubmed.ncbi.nlm.nih.gov/11828249/
+  tag: POS
+  status: active
+  note: The seeAlso link is the 2002 stand with the same 2–10% rule.
+
+- id: src.helms2018
+  citation: >-
+    Helms et al. 2018. [RPE-based vs percentage-based loading over 8 weeks in trained men: squat
+    +17.1 vs +13.9 kg, bench +10.7 vs +9.6 kg.]
+  url: https://pubmed.ncbi.nlm.nih.gov/29628895/
+  seeAlso:
+    - https://pmc.ncbi.nlm.nih.gov/articles/PMC5877330
+  tag: RCT-T
+  status: active
+
+- id: src.zhang2021
+  citation: >-
+    Zhang et al. 2021. [Autoregulated vs fixed loading in athletes: meta-analysis of 8 studies,
+    ES 0.64; APRE ES 0.78.]
+  url: https://pubmed.ncbi.nlm.nih.gov/33776802/
+  tag: MA
+  status: active
+
+- id: src.mann2010
+  citation: >-
+    Mann et al. 2010. [APRE vs linear periodization over 6 weeks in college football players.]
+  url: https://pubmed.ncbi.nlm.nih.gov/20543732/
+  tag: RCT-T
+  status: active
+  note: Small trial; the abstract gives the units garbled as N.
+
+- id: src.huang2023
+  citation: >-
+    Huang et al. 2023. [Tabulates the APRE 6RM protocol: 10 × 50%, 6 × 75%, AMRAP at the 6RM and the
+    load adjustment by AMRAP reps.]
+  url: https://pmc.ncbi.nlm.nih.gov/articles/PMC10414022/table/table-2
+  seeAlso:
+    - https://training-conditioning.com/article/understanding-apre-part-1/
+  tag: PRACT
+  status: active
+  note: >-
+    Cited for the protocol table only; secondary sources differ slightly and the original APRE
+    tables were not retrieved (EB §Progression › Progression rules).
+
+- id: src.mcmaster2013
+  citation: >-
+    McMaster et al. 2013. [Strength development and detraining in elite football-code athletes:
+    systematic review; elite strength rises about 0.42% per session; strength kept for up to 3
+    weeks off.]
+  url: https://pubmed.ncbi.nlm.nih.gov/23529287/
+  tag: SR
+  status: active
+
+- id: src.powr-eb-progression
+  citation: >-
+    POWR evidence base, "How the app progresses load matters more than which periodization label it
+    uses" and "Consolidated default parameters › Progression" and "› Deloads, tapering, attempts and
+    returning from breaks" (reports/Strength and hypertrophy evidence base.md).
+  tag: INF
+  status: active
+  note: The EB's own inferred progression, deload and return-from-break rules ([INF]).

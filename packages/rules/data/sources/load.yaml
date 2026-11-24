@@ -1,0 +1,126 @@
+# Sources of the load, e1RM and change-detection parameters (data/load.yaml; EB "Effective reps
+# turn any logged set into an e1RM" and "Consolidated default parameters › Load, e1RM and change
+# detection"). Citations as complete as the EB report and its research note
+# (load_intensity_1rm_rpe.md) give them; [bracketed] text describes a work whose title the EB does
+# not give. Also holds POWR's own design documents cited across topics.
+
+- id: src.mayhew2008
+  citation: >-
+    Mayhew et al. 2008. [Accuracy of 14 rep-max prediction equations: 103 college women, bench
+    press, reps to fatigue at 60–90% 1RM, before and after 12 weeks of training.]
+  url: https://pubmed.ncbi.nlm.nih.gov/18714230/
+  seeAlso:
+    - https://www.unm.edu/~rrobergs/478PredictionAccuracy.pdf
+  tag: OBS
+  status: active
+
+- id: src.reynolds2006
+  citation: >-
+    Reynolds et al. 2006. [Prediction of 1RM from 5RM, 10RM and 20RM chest-press and leg-press
+    tests in 70 adults aged 18–69; non-linear load–RM curve; "no more than 10 repetitions should be
+    used".]
+  url: https://www.unm.edu/~rrobergs/478RMStrengthPrediction.pdf
+  tag: OBS
+  status: active
+
+- id: src.zourdos2016
+  citation: >-
+    Zourdos et al. 2016. [The RIR-based RPE scale: "RPE-10 = 0-RIR, RPE-9 = 1-RIR"; 29 squatters.]
+    J Strength Cond Res 30(1):267–275. DOI 10.1519/JSC.0000000000001049.
+  url: https://pubmed.ncbi.nlm.nih.gov/26049792/
+  tag: OBS
+  status: active
+
+- id: src.halperin2022
+  citation: >-
+    Halperin et al. 2022. [Accuracy of predicting repetitions to failure: scoping review with
+    exploratory meta-analysis, 12 studies, 414 participants.] Sports Med 52:377–390.
+    DOI 10.1007/s40279-021-01559-x.
+  url: https://pubmed.ncbi.nlm.nih.gov/34542869/
+  tag: MA
+  status: active
+
+- id: src.refalo2024a
+  citation: >-
+    Refalo et al. 2024. [RIR calls in the bench press at 75% 1RM, 24 trained participants: absolute
+    error 0.65 ± 0.78 reps.] J Strength Cond Res 38(3):e78–e85.
+  url: https://pubmed.ncbi.nlm.nih.gov/37967832/
+  tag: OBS
+  status: active
+
+- id: src.nuzzo2024
+  citation: >-
+    Nuzzo, Pinto, Nosaka & Steele 2024. [Maximal repetitions at percentages of 1RM: meta-analysis
+    of 269 studies, 952 tests, 7,289 people.] Sports Med 54:303–321. DOI 10.1007/s40279-023-01937-7.
+  url: https://pmc.ncbi.nlm.nih.gov/articles/PMC10933212
+  tag: MA
+  status: active
+  note: >-
+    The search was not systematic, 77 studies were digitised from figures, two authors formerly
+    worked for an equipment company, and the leg-press confidence intervals are very wide.
+
+- id: src.fitnessvolt-rts-chart
+  citation: >-
+    [The Tuchscherer/RTS RPE chart, %1RM by reps and RPE, with the author's caveats; secondary
+    source.] FitnessVolt, "Tuchscherer chart explained".
+  url: https://fitnessvolt.com/rpe-training/guides/tuchscherer-chart-explained
+  tag: PRACT
+  status: active
+  note: >-
+    Secondary transcription of the chart; verify against an RTS original before the RTS table is
+    marked verified.
+
+- id: src.marzagao2026
+  citation: >-
+    Marzagao 2026. [Weight-dependent 1RM formula fitted to 303,494 near-failure sets of app data
+    (Fitbod), with a review of e1RM validation studies.] arXiv 2603.17495 (preprint).
+  url: https://arxiv.org/pdf/2603.17495
+  tag: PREPRINT
+  status: active
+  note: >-
+    Industry author. The weight-dependent formula is not validated against measured 1RM and is not
+    shipped (EB §Gaps #3); cited for within-person noise and set-order effects only.
+
+- id: src.grgic2020
+  citation: >-
+    Grgic, Lazinica, Schoenfeld & Pedisic 2020. [Test–retest reliability of the 1RM test:
+    systematic review of 32 studies, n = 1,595; median CV 4.2%, trained 3.3%, untrained 5.5%.]
+    Sports Med Open 6:31.
+  url: https://pmc.ncbi.nlm.nih.gov/articles/PMC7367986
+  tag: SR
+  status: active
+
+- id: src.hopkins2000
+  citation: >-
+    Hopkins 2000. [Measures of reliability in sports medicine and science: the typical error,
+    expressed as a CV, for monitoring individuals.]
+  url: https://pubmed.ncbi.nlm.nih.gov/10907753/
+  tag: NARR
+  status: active
+
+- id: src.braith1993
+  citation: >-
+    Braith et al. 1993. [Knee-extension 7–10RM as a predictor of 1RM before and after 18 weeks of
+    training; 58 young adults.]
+  url: https://pubmed.ncbi.nlm.nih.gov/8423746/
+  tag: OBS
+  status: active
+
+- id: src.powr-eb-load
+  citation: >-
+    POWR evidence base, "Effective reps turn any logged set into an e1RM, good to about ±5%" and
+    "Consolidated default parameters › Load, e1RM and change detection"
+    (reports/Strength and hypertrophy evidence base.md).
+  tag: INF
+  status: active
+  note: The EB's own inferred design rules ([INF]) for e1RM, weighting and change labels.
+
+- id: src.powr-technical-concept
+  citation: >-
+    POWR technical concept v0.3 (docs/technical-concept.md), §8.7 "Calculation engine design":
+    the e1RM pipeline, the E-1 resolution for sets without effort and the trend model.
+  tag: INF
+  status: active
+  note: >-
+    Design values chosen by POWR where the EB gives only a direction (e.g. the set-order decay
+    0.85); they ship with verified false.

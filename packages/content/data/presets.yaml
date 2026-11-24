@@ -1,0 +1,167 @@
+# Gym presets (EQP-02): typical equipment, refined by the user afterwards. The inventory gives
+# EQP-03 defaults per unit system as plain numbers in that unit (plates: denomination and pairs;
+# dumbbells: a list or a range with a step; kettlebells: a list). Bar weights come from the
+# catalog (equipment.yaml). The domain maps these onto its loading types (PlateInventory,
+# BarSpec) when an equipment profile is created from a preset.
+
+- id: preset.commercial-gym
+  name: { en: Commercial gym (full) }
+  description:
+    en: Barbells and racks, a full dumbbell rack, cables and the usual machines.
+  items:
+    - eq.barbell-olympic
+    - eq.barbell-womens
+    - eq.technique-bar
+    - eq.ez-bar
+    - eq.trap-bar
+    - eq.safety-squat-bar
+    - eq.swiss-bar
+    - eq.power-rack
+    - eq.squat-stand
+    - eq.flat-bench
+    - eq.adjustable-bench
+    - eq.decline-bench
+    - eq.preacher-bench
+    - eq.plates
+    - eq.microplates
+    - eq.dumbbells
+    - eq.kettlebells
+    - eq.cable-station
+    - eq.dual-cable-station
+    - eq.lat-pulldown
+    - eq.seated-row
+    - eq.leg-press
+    - eq.hack-squat
+    - eq.smith-machine
+    - eq.leg-extension
+    - eq.seated-leg-curl
+    - eq.lying-leg-curl
+    - eq.chest-press-machine
+    - eq.pec-deck
+    - eq.shoulder-press-machine
+    - eq.hip-thrust-machine
+    - eq.standing-calf-raise-machine
+    - eq.seated-calf-raise-machine
+    - eq.hip-abduction-machine
+    - eq.hip-adduction-machine
+    - eq.back-extension-bench
+    - eq.glute-ham-developer
+    - eq.reverse-hyper
+    - eq.pull-up-bar
+    - eq.dip-station
+    - eq.rings
+    - eq.landmine
+    - eq.resistance-bands
+    - eq.dip-belt
+    - eq.sled
+    - eq.treadmill
+    - eq.bike
+    - eq.rower
+    - eq.elliptical
+  inventory:
+    kg:
+      plates:
+        - { weight: 25, pairs: 4 }
+        - { weight: 20, pairs: 4 }
+        - { weight: 15, pairs: 2 }
+        - { weight: 10, pairs: 4 }
+        - { weight: 5, pairs: 4 }
+        - { weight: 2.5, pairs: 4 }
+        - { weight: 1.25, pairs: 2 }
+      microplates: [{ weight: 0.5, pairs: 1 }, { weight: 0.25, pairs: 1 }]
+      dumbbells: { from: 2.5, to: 50, step: 2.5 }
+      kettlebells: [8, 12, 16, 20, 24, 28, 32]
+    lb:
+      plates:
+        - { weight: 45, pairs: 6 }
+        - { weight: 35, pairs: 2 }
+        - { weight: 25, pairs: 4 }
+        - { weight: 10, pairs: 4 }
+        - { weight: 5, pairs: 4 }
+        - { weight: 2.5, pairs: 2 }
+      microplates: [{ weight: 1, pairs: 1 }, { weight: 0.5, pairs: 1 }, { weight: 0.25, pairs: 1 }]
+      dumbbells: { from: 5, to: 100, step: 5 }
+      kettlebells: [18, 26, 35, 44, 53, 62, 70]
+
+- id: preset.home-barbell-gym
+  name: { en: Home or garage gym (barbell) }
+  description:
+    {
+      en: 'A barbell with plates, a power rack with a pull-up bar, an adjustable bench and adjustable dumbbells.',
+    }
+  items:
+    - eq.barbell-olympic
+    - eq.power-rack
+    - eq.adjustable-bench
+    - eq.plates
+    - eq.microplates
+    - eq.dumbbells
+    - eq.pull-up-bar
+    - eq.dip-station
+    - eq.resistance-bands
+  inventory:
+    kg:
+      plates:
+        - { weight: 20, pairs: 4 }
+        - { weight: 10, pairs: 2 }
+        - { weight: 5, pairs: 2 }
+        - { weight: 2.5, pairs: 2 }
+        - { weight: 1.25, pairs: 1 }
+      microplates: [{ weight: 0.5, pairs: 1 }, { weight: 0.25, pairs: 1 }]
+      dumbbells: { from: 2.5, to: 25, step: 2.5 }
+    lb:
+      plates:
+        - { weight: 45, pairs: 4 }
+        - { weight: 25, pairs: 2 }
+        - { weight: 10, pairs: 2 }
+        - { weight: 5, pairs: 2 }
+        - { weight: 2.5, pairs: 1 }
+      microplates: [{ weight: 1, pairs: 1 }, { weight: 0.5, pairs: 1 }, { weight: 0.25, pairs: 1 }]
+      dumbbells: { from: 5, to: 50, step: 5 }
+
+- id: preset.dumbbells-bench
+  name: { en: Dumbbells and bench }
+  description:
+    en: Adjustable dumbbells and an adjustable bench.
+  items:
+    - eq.dumbbells
+    - eq.adjustable-bench
+  inventory:
+    kg:
+      dumbbells: { from: 2.5, to: 25, step: 2.5 }
+    lb:
+      dumbbells: { from: 5, to: 50, step: 5 }
+
+- id: preset.bodyweight-bands
+  name: { en: Bodyweight and bands }
+  description:
+    en: A pull-up bar, dip bars, rings and resistance bands.
+  items:
+    - eq.pull-up-bar
+    - eq.dip-station
+    - eq.rings
+    - eq.resistance-bands
+  inventory: {}
+
+- id: preset.hotel-gym
+  name: { en: Hotel gym }
+  description:
+    en: Light to medium dumbbells, an adjustable bench, a cable station and cardio machines.
+  items:
+    - eq.dumbbells
+    - eq.adjustable-bench
+    - eq.cable-station
+    - eq.treadmill
+    - eq.bike
+  inventory:
+    kg:
+      dumbbells: { from: 2.5, to: 25, step: 2.5 }
+    lb:
+      dumbbells: { from: 5, to: 50, step: 5 }
+
+- id: preset.custom
+  name: { en: Custom (empty) }
+  description:
+    en: Start with nothing selected and add your own equipment.
+  items: []
+  inventory: {}

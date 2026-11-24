@@ -1,0 +1,262 @@
+# Muscle taxonomy (PRD §7.2): the display groups of the body map, in PRD order, with the
+# sub-regions the evidence base distinguishes (EB §Session › Mapping, "Implementation").
+#
+# - IDs: mu.<group> and mu.<group>.<sub-region>. A sub-region rolls up to its group by ID
+#   convention (drop the last segment); exercise credits and the engine rely on it (EXL-05).
+# - bodyMap: one region per view where the muscle is visible (MAP-01). The original artwork
+#   (§8.11, OQ-08) carries these region IDs; sub-region paths nest inside the group's region.
+# - area: grouping for the list view, filters and the heat-map legend (MAP-06).
+# - ebHypertrophyData: the EB mapping table cites longitudinal hypertrophy data (H) for an exercise
+#   that trains this muscle. false means the EB's credits for it are EMG or convention only.
+# - optional: PRD §7.2 marks the group "optional, Could" (tibialis).
+
+- id: mu.chest
+  name: { en: Chest }
+  synonyms: [pecs, pectorals, pectoralis major]
+  area: chest
+  bodyMap: { front: front.chest }
+  ebHypertrophyData: true # bench press time course (PubMed 24265879)
+  optional: false
+  subRegions:
+    - id: mu.chest.clavicular
+      name: { en: Upper chest }
+      synonyms: [clavicular head, upper pecs]
+      bodyMap: { front: front.chest.clavicular }
+      ebHypertrophyData: false # EMG plus one unverified training study (PubMed 36334406)
+    - id: mu.chest.sternocostal
+      name: { en: Mid and lower chest }
+      synonyms: [sternocostal head, lower pecs]
+      bodyMap: { front: front.chest.sternocostal }
+      ebHypertrophyData: true
+
+- id: mu.front-delts
+  name: { en: Front delts }
+  synonyms: [anterior deltoid, front shoulders]
+  area: shoulders
+  bodyMap: { front: front.front-delts }
+  ebHypertrophyData: false
+  optional: false
+  subRegions: []
+
+- id: mu.side-delts
+  name: { en: Side delts }
+  synonyms: [lateral deltoid, middle deltoid, side shoulders]
+  area: shoulders
+  bodyMap: { front: front.side-delts, back: back.side-delts }
+  ebHypertrophyData: false
+  optional: false
+  subRegions: []
+
+- id: mu.elbow-flexors
+  name: { en: Biceps }
+  synonyms: [elbow flexors, biceps and brachialis]
+  area: arms
+  bodyMap: { front: front.elbow-flexors }
+  ebHypertrophyData: true # curls vs rows and pulldowns (Gentil 2015, Mannarino 2021)
+  optional: false
+  subRegions:
+    - id: mu.elbow-flexors.biceps
+      name: { en: Biceps brachii }
+      synonyms: [biceps long head, biceps short head]
+      bodyMap: { front: front.elbow-flexors.biceps }
+      ebHypertrophyData: false # the studies measured the elbow flexors as a whole
+    - id: mu.elbow-flexors.brachialis
+      name: { en: Brachialis }
+      synonyms: []
+      bodyMap: { front: front.elbow-flexors.brachialis }
+      ebHypertrophyData: false
+
+- id: mu.forearms
+  name: { en: Forearms }
+  synonyms: [grip, forearm muscles]
+  area: arms
+  bodyMap: { front: front.forearms, back: back.forearms }
+  ebHypertrophyData: false
+  optional: false
+  subRegions:
+    - id: mu.forearms.flexors
+      name: { en: Forearm flexors }
+      synonyms: [wrist flexors]
+      bodyMap: { front: front.forearms.flexors }
+      ebHypertrophyData: false
+    - id: mu.forearms.extensors
+      name: { en: Forearm extensors }
+      synonyms: [wrist extensors]
+      bodyMap: { back: back.forearms.extensors }
+      ebHypertrophyData: false
+
+- id: mu.abs
+  name: { en: Abs }
+  synonyms: [abdominals, rectus abdominis, six-pack]
+  area: core
+  bodyMap: { front: front.abs }
+  ebHypertrophyData: false
+  optional: false
+  subRegions: []
+
+- id: mu.obliques
+  name: { en: Obliques }
+  synonyms: [side abs, internal obliques, external obliques]
+  area: core
+  bodyMap: { front: front.obliques }
+  ebHypertrophyData: false
+  optional: false
+  subRegions: []
+
+- id: mu.quads
+  name: { en: Quadriceps }
+  synonyms: [quads, front of the thighs]
+  area: legs
+  bodyMap: { front: front.quads }
+  ebHypertrophyData: true # squat depth (Kubo 2019), leg-extension hip angle (PubMed 39699974)
+  optional: false
+  subRegions:
+    - id: mu.quads.vasti
+      name: { en: Vasti }
+      synonyms: [vastus lateralis, vastus medialis, vastus intermedius]
+      bodyMap: { front: front.quads.vasti }
+      ebHypertrophyData: true
+    - id: mu.quads.rectus-femoris
+      name: { en: Rectus femoris }
+      synonyms: [rf]
+      bodyMap: { front: front.quads.rectus-femoris }
+      ebHypertrophyData: true
+
+- id: mu.adductors
+  name: { en: Adductors }
+  synonyms: [inner thighs, adductor magnus, groin]
+  area: legs
+  bodyMap: { front: front.adductors }
+  ebHypertrophyData: true # full vs half squats (Kubo 2019)
+  optional: false
+  subRegions: []
+
+- id: mu.tibialis
+  name: { en: Tibialis }
+  synonyms: [tibialis anterior, shins]
+  area: legs
+  bodyMap: { front: front.tibialis }
+  ebHypertrophyData: false
+  optional: true # PRD §7.2: optional, Could
+  subRegions: []
+
+- id: mu.upper-traps
+  name: { en: Upper traps }
+  synonyms: [trapezius, traps]
+  area: back
+  bodyMap: { back: back.upper-traps }
+  ebHypertrophyData: false
+  optional: false
+  subRegions: []
+
+- id: mu.mid-back
+  name: { en: Mid back }
+  synonyms: [rhomboids, mid traps, lower traps, middle trapezius]
+  area: back
+  bodyMap: { back: back.mid-back }
+  ebHypertrophyData: false
+  optional: false
+  subRegions: []
+
+- id: mu.lats
+  name: { en: Lats }
+  synonyms: [latissimus dorsi, teres major, wings]
+  area: back
+  bodyMap: { back: back.lats }
+  ebHypertrophyData: false # MRI trial pending (NCT07360236)
+  optional: false
+  subRegions: []
+
+- id: mu.rear-delts
+  name: { en: Rear delts }
+  synonyms: [posterior deltoid, rear shoulders]
+  area: shoulders
+  bodyMap: { back: back.rear-delts }
+  ebHypertrophyData: false
+  optional: false
+  subRegions: []
+
+- id: mu.triceps
+  name: { en: Triceps }
+  synonyms: [triceps brachii, elbow extensors]
+  area: arms
+  bodyMap: { back: back.triceps }
+  ebHypertrophyData: true # overhead vs neutral arm position (Maeo 2023)
+  optional: false
+  subRegions:
+    - id: mu.triceps.long-head
+      name: { en: Triceps long head }
+      synonyms: [long head]
+      bodyMap: { back: back.triceps.long-head }
+      ebHypertrophyData: true
+    - id: mu.triceps.lateral-medial
+      name: { en: Triceps lateral and medial heads }
+      synonyms: [lateral head, medial head]
+      bodyMap: { back: back.triceps.lateral-medial }
+      ebHypertrophyData: true
+
+- id: mu.lower-back
+  name: { en: Lower back }
+  synonyms: [spinal erectors, erector spinae, low back]
+  area: back
+  bodyMap: { back: back.lower-back }
+  ebHypertrophyData: false
+  optional: false
+  subRegions: []
+
+- id: mu.glutes
+  name: { en: Glutes }
+  synonyms: [buttocks, gluteals]
+  area: legs
+  bodyMap: { back: back.glutes }
+  ebHypertrophyData: true # hip thrust vs squat (Plotkin 2023), squat depth (Kubo 2019)
+  optional: false
+  subRegions:
+    - id: mu.glutes.max
+      name: { en: Glute max }
+      synonyms: [gluteus maximus]
+      bodyMap: { back: back.glutes.max }
+      ebHypertrophyData: true
+    - id: mu.glutes.med-min
+      name: { en: Glute med and min }
+      synonyms: [gluteus medius, gluteus minimus, hip abductors]
+      bodyMap: { back: back.glutes.med-min }
+      ebHypertrophyData: false
+
+- id: mu.hamstrings
+  name: { en: Hamstrings }
+  synonyms: [hams, back of the thighs]
+  area: legs
+  bodyMap: { back: back.hamstrings }
+  ebHypertrophyData: true # seated vs lying curl (Maeo 2021), Nordic vs hip extension (Bourne 2017)
+  optional: false
+  subRegions:
+    - id: mu.hamstrings.biarticular
+      name: { en: Biarticular hamstrings }
+      synonyms: [biceps femoris long head, semitendinosus, semimembranosus]
+      bodyMap: { back: back.hamstrings.biarticular }
+      ebHypertrophyData: true
+    - id: mu.hamstrings.short-head
+      name: { en: Biceps femoris short head }
+      synonyms: [short head]
+      bodyMap: { back: back.hamstrings.short-head }
+      ebHypertrophyData: true # measured by Maeo 2021 (no difference between curls)
+
+- id: mu.calves
+  name: { en: Calves }
+  synonyms: [calf muscles, triceps surae]
+  area: legs
+  bodyMap: { back: back.calves }
+  ebHypertrophyData: true # lengthened partials (Kassiano 2023)
+  optional: false
+  subRegions:
+    - id: mu.calves.gastrocnemius
+      name: { en: Gastrocnemius }
+      synonyms: [gastrocs]
+      bodyMap: { back: back.calves.gastrocnemius }
+      ebHypertrophyData: true
+    - id: mu.calves.soleus
+      name: { en: Soleus }
+      synonyms: []
+      bodyMap: { back: back.calves.soleus }
+      ebHypertrophyData: false
