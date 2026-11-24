@@ -1,7 +1,7 @@
 import { Plural, Trans, useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 
-import type { BackupError, DecodedBackup } from '@powr/formats';
+import type { BackupError, DecodedBackup } from '@powr/application/backup';
 
 import { useExportBackup, useImportBackup, useMeta, useStorageStatus } from '../../hooks/use-data';
 import { formatBytes, formatDateTime } from '../../i18n/format';

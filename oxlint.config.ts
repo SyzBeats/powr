@@ -23,9 +23,26 @@ const BROWSER_GLOBALS = [
 
 type RuleSetting<K extends keyof DummyRuleMap> = Exclude<DummyRuleMap[K], undefined>;
 
-const restrict = (
-  ...patterns: ({ group: string[]; message: string } | { regex: string; message: string })[]
-): RuleSetting<'no-restricted-imports'> => ['error', { patterns }];
+type ImportPattern = ({ group: string[] } | { regex: string }) & {
+  message: string;
+  allowTypeImports?: boolean;
+};
+
+const restrict = (...patterns: ImportPattern[]): RuleSetting<'no-restricted-imports'> => [
+  'error',
+  { patterns },
+];
+
+/**
+ * The backup code path (Zod record schemas, fflate) is a lazy chunk (§8.19). oxlint also checks
+ * `import()`, so the single loader in src/hooks/use-data.ts carries the one disable comment; type
+ * imports are erased and allowed. Part of every app override below.
+ */
+const LAZY_BACKUP: ImportPattern = {
+  regex: '^@powr/(application|formats)/backup$',
+  allowTypeImports: true,
+  message: "The backup code path is lazy-loaded: use import('@powr/application/backup').",
+};
 
 /** The bare package only; gitignore-style groups would also match a local `./zod` module. */
 const ZOD_PACKAGE = '^zod(/.*)?$';
@@ -149,6 +166,7 @@ const config: OxlintConfig = {
     {
       files: ['apps/web/src/**/*.{ts,tsx}'],
       rules: {
+        'no-restricted-imports': restrict(LAZY_BACKUP),
         // Blocking: literal text in JSX and on text attributes must go through Lingui (§8.15).
         'react/jsx-no-literals': [
           'error',
@@ -229,6 +247,7 @@ const config: OxlintConfig = {
             message: 'Features never touch infrastructure.',
           },
           { group: ['workbox-*'], message: 'Service-worker code stays in src/sw.' },
+          LAZY_BACKUP,
         ),
       },
     },
@@ -242,6 +261,7 @@ const config: OxlintConfig = {
             group: ['**/infrastructure/**', '**/sw/**'],
             message: 'Routes never touch infrastructure.',
           },
+          LAZY_BACKUP,
         ),
       },
     },
@@ -254,16 +274,20 @@ const config: OxlintConfig = {
             group: ['**/infrastructure/**', '**/features/**'],
             message: 'Hooks use the container.',
           },
+          LAZY_BACKUP,
         ),
       },
     },
     {
       files: ['apps/web/src/infrastructure/**'],
       rules: {
-        'no-restricted-imports': restrict({
-          group: ['**/features/**', '**/ui/**', '**/hooks/**', '**/routes/**'],
-          message: 'Adapters know nothing about the UI.',
-        }),
+        'no-restricted-imports': restrict(
+          {
+            group: ['**/features/**', '**/ui/**', '**/hooks/**', '**/routes/**'],
+            message: 'Adapters know nothing about the UI.',
+          },
+          LAZY_BACKUP,
+        ),
       },
     },
     {

@@ -1,13 +1,8 @@
 export type { Deps } from './deps';
 export type * from './ports';
 export { err, ok, type Result } from './result';
-export {
-  applyImport,
-  exportBackup,
-  previewImport,
-  type ExportResult,
-  type ImportResult,
-} from './usecases/backup';
+// Backup use cases are a separate entry, `@powr/application/backup`, loaded lazily by the app
+// so Zod record schemas and fflate stay out of the startup bundle (technical concept §8.19).
 export {
   finishSession,
   logSet,

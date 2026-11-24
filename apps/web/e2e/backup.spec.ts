@@ -1,8 +1,19 @@
 import { readFileSync } from 'node:fs';
 
+import type { Page } from '@playwright/test';
 import { strFromU8, strToU8, unzipSync, zipSync } from 'fflate';
 
-import { expect, test } from './fixtures';
+import { expect, test, waitForOfflineReady } from './fixtures';
+
+/** Requests of this page for the lazy backup chunk (`@powr/application/backup`, §8.19). */
+async function backupChunkLoads(page: Page): Promise<string[]> {
+  return page.evaluate(() =>
+    performance
+      .getEntriesByType('resource')
+      .map((entry) => entry.name)
+      .filter((name) => /\/assets\/backup-[\w-]+\.js$/.test(name)),
+  );
+}
 
 test.describe('backup (WP0.6, DAT-05/06)', () => {
   test('exports a ZIP download and restores it into an empty app', async ({
@@ -87,5 +98,37 @@ test.describe('backup (WP0.6, DAT-05/06)', () => {
 
     await page.goto('/session');
     await expect(page.getByTestId('session-sets').getByRole('listitem')).toHaveCount(1);
+  });
+
+  test('the first export and restore work offline: the lazy backup chunk is precached', async ({
+    page,
+    context,
+    server,
+  }) => {
+    // Install first: an active session defers the service-worker install (§6.3).
+    await page.goto('/');
+    await waitForOfflineReady(page);
+
+    // Airplane mode and a dead server: the backup chunk can only come from the precache.
+    await context.setOffline(true);
+    await server?.close();
+    await page.goto('/session');
+    await page.getByRole('button', { name: 'Confirm set' }).click();
+    await expect(page.getByTestId('session-sets').getByRole('listitem')).toHaveCount(1);
+    await page.goto('/data');
+    await expect(page.getByRole('heading', { level: 1, name: 'Data and backups' })).toBeVisible();
+    expect(await backupChunkLoads(page), 'not part of the startup bundle').toEqual([]);
+
+    const [download] = await Promise.all([
+      page.waitForEvent('download'),
+      page.getByRole('button', { name: 'Export backup' }).click(),
+    ]);
+    await expect(page.getByTestId('export-status')).toContainText(download.suggestedFilename());
+    expect(await backupChunkLoads(page), 'loaded on first use').toHaveLength(1);
+
+    await page.getByTestId('restore-file').setInputFiles(await download.path());
+    await page.getByTestId('restore-confirm').fill('REPLACE');
+    await page.getByRole('button', { name: 'Replace all data' }).click();
+    await expect(page.getByTestId('restore-status')).toHaveText('Restored. 1 sets imported.');
   });
 });

@@ -5,7 +5,8 @@
   "description": "Persisted record schemas, the record migration chain and the backup codec.",
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./backup": "./src/backup/index.ts"
   },
   "dependencies": {
     "@powr/domain": "workspace:*",

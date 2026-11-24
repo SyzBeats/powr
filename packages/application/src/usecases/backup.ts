@@ -1,16 +1,17 @@
 import type { ExerciseId } from '@powr/domain';
+import { RAW_TABLE_NAMES, type RawTableName } from '@powr/formats';
 import {
-  RAW_TABLE_NAMES,
   decodeBackup,
   encodeBackup,
   type BackupError,
   type DecodedBackup,
   type EncodedBackup,
-  type RawTableName,
-} from '@powr/formats';
+} from '@powr/formats/backup';
 
 import type { Deps } from '../deps';
 import { err, ok, type Result } from '../result';
+
+export type { BackupError, DecodedBackup, ImportPreview } from '@powr/formats/backup';
 
 export interface ExportResult {
   readonly fileName: string;

@@ -3,7 +3,7 @@ import { strToU8, zipSync, type Zippable } from 'fflate';
 import { toIsoWithOffset, type InstantTz } from '@powr/domain';
 
 import { compareStrings } from '../compare';
-import { RAW_TABLES, RAW_TABLE_NAMES, type RawTables } from '../records';
+import { RAW_TABLE_KEYS, RAW_TABLE_NAMES, type RawTables } from '../records/tables';
 import { DATA_VERSION } from '../version';
 import { contentDigest, sha256Hex } from './hash';
 import { BACKUP_FORMAT, BACKUP_FORMAT_VERSION, type BackupManifest } from './manifest';
@@ -36,7 +36,7 @@ export async function encodeBackup(
   const counts = {} as BackupManifest['counts'];
 
   for (const table of RAW_TABLE_NAMES) {
-    const records = sortByKey(tables[table], RAW_TABLES[table].primaryKey);
+    const records = sortByKey(tables[table], RAW_TABLE_KEYS[table]);
     const bytes = strToU8(canonicalJson(records));
     const path = `data/${table}.json`;
     dataFiles[path] = bytes;

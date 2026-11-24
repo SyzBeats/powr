@@ -1,7 +1,8 @@
 import { strFromU8, unzipSync } from 'fflate';
 
 import { MIGRATIONS, migrateTables, type MigrationChain } from '../migrations';
-import { RAW_TABLE_NAMES, validateRawTables, type RawTableName, type RawTables } from '../records';
+import { RAW_TABLE_NAMES, type RawTableName, type RawTables } from '../records/tables';
+import { validateRawTables } from '../records/validate';
 import { DATA_VERSION } from '../version';
 import { contentDigest, sha256Hex } from './hash';
 import { DEFAULT_ARCHIVE_LIMITS, type ArchiveLimits } from './limits';

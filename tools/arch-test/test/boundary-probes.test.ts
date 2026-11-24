@@ -80,6 +80,21 @@ describe('layer rules (oxlint overrides)', () => {
     expect(output.match(/may only import/g)).toHaveLength(1);
   });
 
+  it('keeps the backup code path lazy: only type imports and the one loader (§8.19)', () => {
+    const file = probe(
+      'apps/web/src/features/__probe__/probe.ts',
+      [
+        "import { exportBackup } from '@powr/application/backup';",
+        "import type { DecodedBackup } from '@powr/application/backup';",
+        'export const probe: [typeof exportBackup, DecodedBackup | null] = [exportBackup, null];',
+        '',
+      ].join('\n'),
+    );
+    const { status, output } = lint(file);
+    expect(status).not.toBe(0);
+    expect(output.match(/The backup code path is lazy-loaded/g)).toHaveLength(1);
+  });
+
   it('keeps the domain free of frameworks, time and randomness', () => {
     const file = probe(
       'packages/domain/src/__probe__/probe.ts',

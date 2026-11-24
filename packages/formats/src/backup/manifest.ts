@@ -1,4 +1,4 @@
-import { RAW_TABLE_NAMES } from '../records';
+import { RAW_TABLE_NAMES } from '../records/tables';
 import { z } from '../zod';
 
 export const BACKUP_FORMAT = 'powr-backup';

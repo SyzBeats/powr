@@ -3,14 +3,8 @@ import { describe, expect, it } from 'vitest';
 import type { ExerciseId } from '@powr/domain';
 import { emptyRawTables } from '@powr/formats';
 
-import {
-  applyImport,
-  exportBackup,
-  logSet,
-  previewImport,
-  requestPersistentStorage,
-  setTheme,
-} from '../src';
+import { logSet, requestPersistentStorage, setTheme } from '../src';
+import { applyImport, exportBackup, previewImport } from '../src/usecases/backup';
 import { createTestDeps } from './fakes';
 
 const squat = 'ex.barbell-back-squat' as ExerciseId;

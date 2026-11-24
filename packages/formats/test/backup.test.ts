@@ -2,14 +2,13 @@ import * as fc from 'fast-check';
 import { strFromU8, strToU8, unzipSync, zipSync } from 'fflate';
 import { describe, expect, it } from 'vitest';
 
+import { emptyRawTables, type RawTables } from '../src';
 import {
   DEFAULT_ARCHIVE_LIMITS,
   decodeBackup,
-  emptyRawTables,
   encodeBackup,
   type BackupSource,
-  type RawTables,
-} from '../src';
+} from '../src/backup';
 import { rawTables } from './arbitraries';
 
 const source: BackupSource = {
