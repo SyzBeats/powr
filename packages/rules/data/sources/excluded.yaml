@@ -1,0 +1,48 @@
+# Sources that must not inform any parameter or muscle credit (technical concept §8.6.5 check 2;
+# PRD §7.3 "Excluded sources"; EB "How to read the evidence tags" and §Gaps #23).
+# Citations and links as the evidence base gives them (report and research notes VF, SE).
+
+- id: src.barbalho2019
+  citation: >-
+    Barbalho et al. 2019. Evidence for an Upper Threshold for Resistance Training Volume in Trained
+    Women. Med Sci Sports Exerc (MSSE).
+  url: https://pubmed.ncbi.nlm.nih.gov/33986236/
+  seeAlso:
+    - https://retractionwatch.com/2021/12/17/exercise-researcher-earns-more-retractions-as-investigations-mount/
+  tag: RCT-T
+  status: excluded
+  reason: >-
+    Received an expression of concern and was then retracted (MSSE 2021;53(6):1318, PubMed
+    33986236); Retraction Watch reported data-integrity concerns across this group's papers.
+    Together with src.barbalho2020a it was the main empirical support for an "inverted U" above
+    roughly 10–20 weekly sets and the source of the claims that extra sets cause harm.
+
+- id: src.barbalho2020a
+  citation: >-
+    Barbalho et al. 2020. Evidence of a ceiling effect for training volume… less is more? Int J
+    Sports Physiol Perform (IJSPP).
+  url: https://pubmed.ncbi.nlm.nih.gov/32804467/
+  seeAlso:
+    - https://retractionwatch.com/2021/12/17/exercise-researcher-earns-more-retractions-as-investigations-mount/
+  tag: RCT
+  status: excluded
+  reason: >-
+    Retracted in April 2020 (PubMed 32804467); Retraction Watch reported data-integrity concerns
+    across this group's papers. Together with src.barbalho2019 it was the main empirical support
+    for an "inverted U" above roughly 10–20 weekly sets and the source of the claims that extra
+    sets cause harm.
+  note: The EB does not state the participants' training status, hence RCT rather than RCT-T.
+
+- id: src.barbalho2020b
+  citation: >-
+    Barbalho et al. 2020. Single joint exercises do not provide benefits in performance and
+    anthropometric changes in recreational bodybuilders. Eur J Sport Sci 20(1):72–79.
+  url: https://pure.solent.ac.uk/en/publications/single-joint-exercises-do-not-provide-benefits-in-performance-and/
+  seeAlso:
+    - https://retractionwatch.com/2021/12/17/exercise-researcher-earns-more-retractions-as-investigations-mount/
+  tag: RCT-T
+  status: excluded
+  reason: >-
+    Not listed as retracted, but the EB does not rely on it given the data-integrity concerns
+    across this group's papers (EB §Gaps #23). Its conclusion is independently supported by
+    de França 2015 (PubMed 26244600); cite that instead.

@@ -1,24 +1,13 @@
+import { EVIDENCE_TAGS, isSourceId } from '@powr/domain';
+
 import { z } from './zod';
 
-export const EVIDENCE_TAGS = [
-  'MA',
-  'SR',
-  'RCT-T',
-  'RCT-U',
-  'RCT',
-  'POS',
-  'OBS',
-  'DELPHI/SURVEY',
-  'NARR',
-  'PREPRINT',
-  'PRACT',
-  'OFFICIAL',
-  'MODEL',
-  'INF',
-] as const;
-
 export const evidenceTagSchema = z.enum(EVIDENCE_TAGS);
-export type EvidenceTag = z.infer<typeof evidenceTagSchema>;
+
+/** A source registry ID such as `src.kubo2019` (convention: data/sources/README.md). */
+export const sourceIdSchema = z
+  .string()
+  .refine(isSourceId, 'Source IDs look like src.kubo2019 (see data/sources/README.md)');
 
 /**
  * One registry row (§8.6.1). The value schema is per parameter; M0 accepts any JSON value
@@ -28,7 +17,7 @@ export const paramDefSchema = z.strictObject({
   id: z.string().regex(/^[a-z][a-zA-Z0-9]*(\.[a-zA-Z0-9]+)+$/),
   value: z.json(),
   evidence: z.array(evidenceTagSchema).min(1),
-  sources: z.array(z.string().min(1)),
+  sources: z.array(sourceIdSchema),
   ebRef: z.string().min(1),
   verified: z.boolean(),
   blockedUntilVerified: z.boolean().optional(),

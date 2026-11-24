@@ -2,12 +2,18 @@
   "name": "@powr/rules",
   "version": "0.0.0",
   "private": true,
-  "description": "Rules registry: parameter schema, data and resolver.",
+  "description": "Rules registry: parameter schema, data, source registry and resolver.",
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./sources": "./src/sources/index.ts",
+    "./sources/node": "./scripts/sources.ts"
   },
   "dependencies": {
+    "@powr/domain": "workspace:*",
     "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "yaml": "2.9.1"
   }
 }

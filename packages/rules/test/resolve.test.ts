@@ -6,7 +6,7 @@ const restDefault: ParamDef = paramDefSchema.parse({
   id: 'rest.strength.default',
   value: { seconds: 180 },
   evidence: ['SR'],
-  sources: ['grgic-2018-rest'],
+  sources: ['src.grgic2018'],
   ebRef: 'EB §Defaults › Session',
   verified: true,
   userOverridable: true,
@@ -15,9 +15,12 @@ const restDefault: ParamDef = paramDefSchema.parse({
 });
 
 describe('rules registry', () => {
-  it('rejects rows without evidence or with unknown keys', () => {
+  it('rejects rows without evidence, with unknown keys or with malformed source IDs', () => {
     expect(paramDefSchema.safeParse({ ...restDefault, evidence: [] }).success).toBe(false);
     expect(paramDefSchema.safeParse({ ...restDefault, extra: 1 }).success).toBe(false);
+    expect(paramDefSchema.safeParse({ ...restDefault, sources: ['grgic-2018-rest'] }).success).toBe(
+      false,
+    );
   });
 
   it('resolves the default and records its origin', () => {

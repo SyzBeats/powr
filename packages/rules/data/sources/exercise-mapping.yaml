@@ -1,0 +1,190 @@
+# Every source the evidence base cites in "Session design › Exercise-to-muscle mapping for volume
+# attribution" (EB §Session › Mapping), in order of first citation, plus src.powr-eb-mapping for the
+# convention (C) rows. Citations are as complete as the EB report and its research note
+# (session_exercise_design.md §5) give them; [bracketed] text describes a work whose title the EB
+# does not give. Links exactly as the EB gives them. Muscle credits cite these IDs (EXL-05).
+
+- id: src.pelland2024
+  citation: >-
+    Pelland, Remmert, Robinson, Hinson & Zourdos. The resistance training dose-response:
+    meta-regressions exploring the effects of weekly volume and frequency on muscle hypertrophy
+    and strength gain. SportRxiv preprint (v2, 2024).
+  url: https://sportrxiv.org/index.php/server/preprint/view/460
+  tag: PREPRINT
+  status: active
+  note: >-
+    Basis of fractional set counting (direct 1.0, indirect 0.5). Published as src.pelland2026;
+    preprint numbers must be verified before hard-coding (E-2).
+
+- id: src.pelland2026
+  citation: >-
+    Pelland, Remmert, Robinson, Hinson & Zourdos. Sports Med 2026;56(2):481–505. 67 studies,
+    2,058 participants; Bayesian multilevel meta-regressions adjusted for duration and training
+    status.
+  url: https://pubmed.ncbi.nlm.nih.gov/41343037/
+  seeAlso:
+    - https://sponet.de/sponet/Record/4097139?lng=en
+  tag: MA
+  status: active
+  note: >-
+    The mapping section cites the sponet catalogue record (seeAlso); the EB volume section gives
+    this PubMed record. Whether the published version changed the fractional-counting conclusion
+    is not verified (research note SE §5, E-2).
+
+- id: src.remmert2025
+  citation: >-
+    Remmert, Robinson, Pelland et al. 2025. [Per-session volume dose–response analysis comparing
+    fractional and direct set counting.] SportRxiv preprint.
+  url: https://sportrxiv.org/index.php/server/preprint/view/537
+  tag: PREPRINT
+  status: active
+  note: >-
+    No peer-reviewed version as of November 2026 (EB §Volume › Per-session returns); verify
+    against the published paper before hard-coding (E-2).
+
+- id: src.kubo2019
+  citation: >-
+    Kubo, Ikebukuro & Yata 2019. Effects of squat training with different depths on lower limb
+    muscle volumes. Eur J Appl Physiol. DOI 10.1007/s00421-019-04181-y.
+  url: https://link.springer.com/doi/10.1007/s00421-019-04181-y
+  tag: RCT-U
+  status: active
+
+- id: src.plotkin2023
+  citation: >-
+    Plotkin et al. 2023. [Hip thrust vs back squat, 9 weeks, set-volume equated, MRI.] Front
+    Physiol. DOI 10.3389/fphys.2023.1279170.
+  url: https://www.frontiersin.org/journals/physiology/articles/10.3389/fphys.2023.1279170/full
+  tag: RCT-U
+  status: active
+
+- id: src.ema2016
+  citation: >-
+    Ema et al. 2016. Unique activation of the quadriceps femoris during single- and multi-joint
+    exercises. Eur J Appl Physiol. DOI 10.1007/s00421-016-3363-5.
+  url: https://www.springermedicine.com/unique-activation-of-the-quadriceps-femoris-during-single-and-mu/21072252
+  tag: OBS
+  status: active
+  note: >-
+    Acute EMG study. The EB marks the finding [EMG], which is a muscle-credit evidence code
+    (MAPPING_EVIDENCE), not a registry tag; acute activation studies are tagged OBS.
+
+- id: src.pmid39699974
+  citation: >-
+    [Hip angle in leg extension: 22 untrained men, one leg at 40° and the other at 90° hip
+    flexion for 10 weeks; greater rectus femoris growth at 40°.] J Sports Sci 2025. PMID 39699974;
+    preprint DOI 10.51224/SRXIV.407.
+  url: https://pubmed.ncbi.nlm.nih.gov/39699974/
+  tag: RCT-U
+  status: active
+
+- id: src.researchsquare2882506
+  citation: >-
+    [Adding hip thrust to leg press and stiff-leg deadlift: gluteus maximus growth +9.3% vs
+    +6.0% in 33 untrained women.] Research Square preprint rs-2882506/v1.
+  url: https://researchsquare.com/article/rs-2882506/v1
+  tag: PREPRINT
+  status: active
+
+- id: src.bourne2017
+  citation: >-
+    Bourne et al. 2017. Impact of the Nordic hamstring and hip extension exercises on hamstring
+    architecture and morphology. Br J Sports Med 51:469–477.
+  url: https://pubmed.ncbi.nlm.nih.gov/27660368/
+  tag: RCT
+  status: active
+
+- id: src.maeo2021
+  citation: >-
+    Maeo et al. 2021. Greater hamstrings muscle hypertrophy but similar damage protection after
+    training at long versus short muscle lengths. Med Sci Sports Exerc 53(4):825–837.
+  url: https://pubmed.ncbi.nlm.nih.gov/33009197/
+  tag: RCT-U
+  status: active
+
+- id: src.kassiano2023
+  citation: >-
+    Kassiano et al. 2023. Greater gastrocnemius muscle hypertrophy after partial range of motion
+    training performed at long muscle lengths. J Strength Cond Res 37(9):1746–1753.
+  url: https://pubmed.ncbi.nlm.nih.gov/37015016/
+  tag: RCT-U
+  status: active
+
+- id: src.pmid24265879
+  citation: >-
+    [Bench-press time course over 24 weeks in 7 previously untrained men: pectoralis major
+    thickness rose from week 1, triceps only after week 5.] PubMed 24265879.
+  url: https://pubmed.ncbi.nlm.nih.gov/24265879/
+  tag: OBS
+  status: active
+  note: >-
+    Single-group training study without a control group; the EB gives no design tag, so it is
+    tagged OBS. Known from a search summary of the abstract only.
+
+- id: src.pmid34644424
+  citation: >-
+    [High-density EMG of the pectoralis major: highest sternocostal amplitude in the flat bench
+    press, highest clavicular amplitude in the 45° incline press.] PubMed 34644424.
+  url: https://pubmed.ncbi.nlm.nih.gov/34644424/
+  tag: OBS
+  status: active
+  note: Acute EMG study (credit evidence EMG); tagged OBS as for src.ema2016.
+
+- id: src.pmid36334406
+  citation: >-
+    [Training study, 47 untrained men, horizontal vs incline vs combined bench press: largest
+    upper-pectoral thickness gain with incline.] PubMed 36334406.
+  url: https://pubmed.ncbi.nlm.nih.gov/36334406/
+  tag: RCT-U
+  status: active
+  note: >-
+    Seen only via a search summary; the EB calls it "one unverified training study" and the PubMed
+    ID a possible match. Verify before it backs any credit.
+
+- id: src.gentil2015
+  citation: >-
+    Gentil et al. 2015. Single vs. multi-joint resistance exercises: effects on muscle strength
+    and hypertrophy. Asian J Sports Med 6(2):e24057.
+  url: https://pmc.ncbi.nlm.nih.gov/articles/PMC4592763
+  tag: RCT-U
+  status: active
+
+- id: src.nct07360236
+  citation: >-
+    [Registered trial: unilateral lat pulldown vs row, about 20 participants, MRI of the lats,
+    biceps, brachialis, posterior deltoid and teres major; start 2026-01.] ClinicalTrials.gov
+    NCT07360236.
+  url: https://clinicaltrials.gov/study/NCT07360236
+  tag: RCT
+  status: active
+  note: >-
+    No results yet ("MRI trial pending"). The lat credits stay convention (C) until results are
+    published; do not cite it as hypertrophy evidence.
+
+- id: src.mannarino2021
+  citation: >-
+    Mannarino et al. 2021. Single-joint exercise results in higher hypertrophy of elbow flexors
+    than multijoint exercise. J Strength Cond Res 35(10).
+  url: https://paulogentil.com/pdf/Single-Joint%20Exercise%20Results%20in%20Higher%20Hypertrophy%20of%20Elbow%20Flexors%20Than%20Multijoint%20Exercise.pdf
+  tag: RCT-U
+  status: active
+
+- id: src.maeo2023
+  citation: >-
+    Maeo et al. 2023. Triceps brachii hypertrophy is substantially greater after elbow extension
+    training performed in the overhead versus neutral arm position. Eur J Sport Sci 23(7) (epub
+    2022). DOI 10.1080/17461391.2022.2100279.
+  url: https://pubmed.ncbi.nlm.nih.gov/35819335/
+  tag: RCT-U
+  status: active
+
+- id: src.powr-eb-mapping
+  citation: >-
+    POWR evidence base, "Session design › Exercise-to-muscle mapping for volume attribution"
+    (reports/Strength and hypertrophy evidence base.md; research note session_exercise_design.md
+    §5).
+  tag: INF
+  status: active
+  note: >-
+    Not an external study: the source for credits the EB rates C (convention or biomechanics, no
+    direct hypertrophy data), e.g. every deadlift credit and the optional 0.25 credits.

@@ -10,8 +10,8 @@ const config: KnipConfig = {
       project: ['src/**/*.{ts,tsx,css}', 'e2e/**/*.ts', 'scripts/**/*.ts'],
     },
     'packages/*': {
-      entry: ['test/**/*.test.ts'],
-      project: ['src/**/*.ts', 'test/**/*.ts'],
+      entry: ['test/**/*.test.ts', 'scripts/**/*.test.ts'],
+      project: ['src/**/*.ts', 'test/**/*.ts', 'scripts/**/*.ts'],
     },
     'tools/*': {
       entry: [

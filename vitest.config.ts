@@ -13,7 +13,8 @@ export default defineConfig({
         test: {
           name,
           root: `packages/${name}`,
-          include: ['test/**/*.test.ts'],
+          // scripts/: Node-side build code (rules: the source registry loader).
+          include: ['test/**/*.test.ts', 'scripts/**/*.test.ts'],
           setupFiles: [setup],
         },
       })),

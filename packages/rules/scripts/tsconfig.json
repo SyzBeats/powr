@@ -1,0 +1,14 @@
+{
+  "extends": "../../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "../../../.tsbuild/rules-scripts",
+    "rootDir": ".",
+    "types": ["node"]
+  },
+  "include": ["."],
+  "references": [
+    {
+      "path": ".."
+    }
+  ]
+}
