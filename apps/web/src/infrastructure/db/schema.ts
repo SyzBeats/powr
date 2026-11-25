@@ -1,9 +1,13 @@
 import { Dexie, type DexieOptions, type Table } from 'dexie';
 
+import type { StreakRecord } from '@powr/application';
 import type {
   BodyweightEntry,
+  CustomExercise,
   EquipmentProfile,
+  ExerciseUserData,
   LoggedSet,
+  MeasurementEntry,
   MeetInfo,
   Plan,
   PlannedSession,
@@ -12,6 +16,7 @@ import type {
   Session,
   TrainingBreak,
 } from '@powr/domain';
+import type { WeeklyRecord } from '@powr/domain/analytics';
 import type { ExerciseState, PrRecord, SessionE1rmPoint } from '@powr/domain/session';
 import {
   MIGRATIONS,
@@ -38,7 +43,11 @@ export interface SchemaVersion {
  * M3a amended version 2 while it was unreleased: `sessions.plannedSessionId`, the raw table
  * `readiness` (check-ins by day and session) and the derived tables `dExerciseState`,
  * `dSessionE1rm` (one point per exercise and session, charts read it by exercise and day) and
- * `dPrs` (by exercise, set, session, day and type), §8.2.2.
+ * `dPrs` (by exercise, set, session, day and type), §8.2.2. M4a amended it again (still
+ * unreleased): the raw tables `customExercises` (EXL-04, by status), `exerciseUserData` (EXL-09
+ * setup memory, by exercise) and `measurements` (BOD-03, by site and day), the `localDate` index
+ * of `dSessionE1rm` (Home's recent trend changes) and the derived tables `dWeekly` (one record per
+ * user week) and `dStreak` (one record).
  */
 export const SCHEMA_HISTORY: readonly SchemaVersion[] = [
   {
@@ -66,8 +75,13 @@ export const SCHEMA_HISTORY: readonly SchemaVersion[] = [
       bodyweights: 'id, localDate, measuredAt.epochMs',
       readiness: 'id, localDate, sessionId',
       dExerciseState: 'exerciseId',
-      dSessionE1rm: '[exerciseId+sessionId], [exerciseId+localDate], sessionId',
+      dSessionE1rm: '[exerciseId+sessionId], [exerciseId+localDate], sessionId, localDate',
       dPrs: 'id, exerciseId, setId, sessionId, localDate, type',
+      customExercises: 'id, status',
+      exerciseUserData: 'exerciseId',
+      measurements: 'id, [site+localDate], localDate, measuredAt.epochMs',
+      dWeekly: 'weekStart',
+      dStreak: 'id',
     },
   },
 ];
@@ -97,6 +111,11 @@ export class PowrDb extends Dexie {
   declare dExerciseState: Table<ExerciseState, string>;
   declare dSessionE1rm: Table<SessionE1rmPoint, [string, string]>;
   declare dPrs: Table<PrRecord, string>;
+  declare customExercises: Table<CustomExercise, string>;
+  declare exerciseUserData: Table<ExerciseUserData, string>;
+  declare measurements: Table<MeasurementEntry, string>;
+  declare dWeekly: Table<WeeklyRecord, string>;
+  declare dStreak: Table<StreakRecord, string>;
 
   constructor(options: PowrDbOptions = {}) {
     super(options.name ?? 'powr', {

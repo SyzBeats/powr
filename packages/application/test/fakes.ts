@@ -1,5 +1,7 @@
+import { customizableCatalog } from '@powr/content';
 import { builtInContent } from '@powr/content/built-in';
 import { makeInstantTz, type SessionId } from '@powr/domain';
+import type { WeeklyRecord } from '@powr/domain/analytics';
 import type { ExerciseState, PrRecord, SessionE1rmPoint } from '@powr/domain/session';
 import { RAW_TABLE_NAMES, emptyRawTables, type RawTableName, type RawTables } from '@powr/formats';
 import { rulesStamp, type ParamOverride, type ResolveContext } from '@powr/rules';
@@ -13,6 +15,7 @@ import {
   type Observable,
   type Repositories,
   type RulesProvider,
+  type StreakRecord,
   type UnitOfWork,
 } from '../src';
 
@@ -21,6 +24,8 @@ export type MemoryTables = RawTables & {
   dExerciseState: ExerciseState[];
   dSessionE1rm: SessionE1rmPoint[];
   dPrs: PrRecord[];
+  dWeekly: WeeklyRecord[];
+  dStreak: StreakRecord[];
 };
 
 /** A memory database from raw tables, or a copy of another one with its derived tables. */
@@ -31,6 +36,12 @@ function emptyMemory(raw: RawTables | MemoryTables = emptyRawTables()): MemoryTa
     dExerciseState: copy.dExerciseState ?? [],
     dSessionE1rm: copy.dSessionE1rm ?? [],
     dPrs: copy.dPrs ?? [],
+    dWeekly: copy.dWeekly ?? [],
+    dStreak: copy.dStreak ?? [],
+    // Raw tables added after a fixture was made (M4a) start empty.
+    customExercises: copy.customExercises ?? [],
+    exerciseUserData: copy.exerciseUserData ?? [],
+    measurements: copy.measurements ?? [],
   };
 }
 
@@ -114,6 +125,7 @@ function repositories(tables: MemoryTables): Repositories {
     },
     plans: {
       get: async (id) => tables.plans.find((plan) => plan.id === id),
+      list: async () => [...tables.plans],
       getActive: async () => tables.plans.find((plan) => plan.status === 'active'),
       put: async (plan) => upsert('plans', 'id', plan),
     },
@@ -149,6 +161,57 @@ function repositories(tables: MemoryTables): Repositories {
       put: async (entry) => upsert('bodyweights', 'id', entry),
       list: async () =>
         tables.bodyweights.toSorted((a, b) => a.measuredAt.epochMs - b.measuredAt.epochMs),
+      get: async (id) => tables.bodyweights.find((entry) => entry.id === id),
+      delete: async (id) => {
+        tables.bodyweights = tables.bodyweights.filter((entry) => entry.id !== id);
+      },
+    },
+    customExercises: {
+      get: async (id) => tables.customExercises.find((entry) => entry.id === id),
+      list: async () => tables.customExercises.toSorted((a, b) => (a.id < b.id ? -1 : 1)),
+      put: async (entry) => upsert('customExercises', 'id', entry),
+      delete: async (id) => {
+        tables.customExercises = tables.customExercises.filter((entry) => entry.id !== id);
+      },
+    },
+    exerciseUserData: {
+      get: async (id) => tables.exerciseUserData.find((entry) => entry.exerciseId === id),
+      list: async () => [...tables.exerciseUserData],
+      put: async (entry) => upsert('exerciseUserData', 'exerciseId', entry),
+      delete: async (id) => {
+        tables.exerciseUserData = tables.exerciseUserData.filter(
+          (entry) => entry.exerciseId !== id,
+        );
+      },
+    },
+    measurements: {
+      get: async (id) => tables.measurements.find((entry) => entry.id === id),
+      list: async () =>
+        tables.measurements.toSorted((a, b) => a.measuredAt.epochMs - b.measuredAt.epochMs),
+      put: async (entry) => upsert('measurements', 'id', entry),
+      delete: async (id) => {
+        tables.measurements = tables.measurements.filter((entry) => entry.id !== id);
+      },
+    },
+    insights: {
+      weeks: async (from, to) =>
+        tables.dWeekly
+          .filter((record) => record.weekStart >= from && record.weekStart <= to)
+          .toSorted((a, b) => (a.weekStart < b.weekStart ? -1 : 1)),
+      putWeeks: async (records) => {
+        const keys = new Set(records.map((record) => record.weekStart));
+        tables.dWeekly = [
+          ...tables.dWeekly.filter((record) => !keys.has(record.weekStart)),
+          ...records,
+        ];
+      },
+      deleteWeeks: async (weekStarts) => {
+        tables.dWeekly = tables.dWeekly.filter((record) => !weekStarts.includes(record.weekStart));
+      },
+      streak: async () => tables.dStreak[0],
+      putStreak: async (record) => {
+        tables.dStreak = [record];
+      },
     },
     readiness: {
       put: async (entry) => upsert('readiness', 'id', entry),
@@ -174,6 +237,10 @@ function repositories(tables: MemoryTables): Repositories {
       prsByExercise: async (id) => tables.dPrs.filter((pr) => pr.exerciseId === id),
       pointsByExercise: async (id) =>
         tables.dSessionE1rm.filter((point) => point.exerciseId === id),
+      prsInRange: async (from, to) =>
+        tables.dPrs.filter((pr) => pr.localDate >= from && pr.localDate <= to),
+      pointsInRange: async (from, to) =>
+        tables.dSessionE1rm.filter((point) => point.localDate >= from && point.localDate <= to),
       invalidate: async (ids) => {
         tables.dExerciseState = tables.dExerciseState.filter(
           (state) => !ids.includes(state.exerciseId),
@@ -183,6 +250,8 @@ function repositories(tables: MemoryTables): Repositories {
         tables.dExerciseState = [];
         tables.dSessionE1rm = [];
         tables.dPrs = [];
+        tables.dWeekly = [];
+        tables.dStreak = [];
       },
     },
     raw: {
@@ -195,6 +264,8 @@ function repositories(tables: MemoryTables): Repositories {
           dExerciseState: [],
           dSessionE1rm: [],
           dPrs: [],
+          dWeekly: [],
+          dStreak: [],
         });
       },
     },
@@ -205,14 +276,26 @@ function repositories(tables: MemoryTables): Repositories {
 function createMemoryUow(initial?: RawTables | MemoryTables) {
   let state = emptyMemory(initial);
   const listeners = new Set<() => void>();
+  let writing: Promise<void> = Promise.resolve();
 
   const uow: UnitOfWork = {
-    async write(_tables, fn) {
-      const draft = structuredClone(state);
-      const result = await fn(repositories(draft));
-      state = draft;
-      for (const listener of listeners) listener();
-      return result;
+    // Writes run one after another, each on the state the previous one committed, as IndexedDB
+    // queues read-write transactions over the same stores (M4a: the insight rebuild that a finish
+    // schedules runs concurrently with the next use case).
+    write(_tables, fn) {
+      const run = async () => {
+        const draft = structuredClone(state);
+        const result = await fn(repositories(draft));
+        state = draft;
+        for (const listener of listeners) listener();
+        return result;
+      };
+      const next = writing.then(run, run);
+      writing = next.then(
+        () => undefined,
+        () => undefined,
+      );
+      return next;
     },
     async read(_tables, fn) {
       return fn(repositories(structuredClone(state)));
@@ -231,7 +314,36 @@ function createMemoryUow(initial?: RawTables | MemoryTables) {
     };
   }
 
-  return { uow, live, snapshot: () => structuredClone(state) };
+  /** A live read over the repositories: emits now and after every committed write (in order). */
+  function observe<T>(read: (repos: Repositories) => Promise<T>): Observable<T> {
+    return {
+      subscribe(observer) {
+        let closed = false;
+        let chain = Promise.resolve();
+        const emit = () => {
+          chain = chain.then(async () => {
+            if (closed) return;
+            try {
+              const value = await read(repositories(structuredClone(state)));
+              if (!closed) observer.next(value);
+            } catch (error) {
+              observer.error?.(error);
+            }
+          });
+        };
+        listeners.add(emit);
+        emit();
+        return {
+          unsubscribe: () => {
+            closed = true;
+            listeners.delete(emit);
+          },
+        };
+      },
+    };
+  }
+
+  return { uow, live, observe, snapshot: () => structuredClone(state) };
 }
 
 /** The shipped registry, resolved like the app's lazy provider does. */
@@ -281,6 +393,7 @@ export function createTestDeps(
           };
         }),
       sessionPrs: (id) => memory.live((tables) => tables.dPrs.filter((pr) => pr.sessionId === id)),
+      observe: (_tables, read) => memory.observe(read),
     },
     clock: {
       now: () => {
@@ -289,7 +402,7 @@ export function createTestDeps(
       },
     },
     ids: { next: () => `id-${String(++idCounter).padStart(4, '0')}` },
-    content: builtInContent(),
+    content: customizableCatalog(builtInContent()),
     rules: testRules,
     app: { version: '0.0.0', build: 'test' },
     runtime: {

@@ -4,6 +4,7 @@ import {
   addDays,
   toLocalDate,
   type Baseline,
+  type BodyweightEntry,
   type EquipmentProfile,
   type ExerciseDef,
   type ExerciseId,
@@ -13,7 +14,7 @@ import {
   type Profile,
   type ReadinessEntry,
 } from '@powr/domain';
-import { bodyweightTrend } from '@powr/domain/bodyweight';
+import { bodyweightTrend, firstReadingPerDay } from '@powr/domain/bodyweight';
 import { implementFor } from '@powr/domain/equipment';
 import { classifyTrainee } from '@powr/domain/progression';
 import type { RuleSet, TraineeLevel } from '@powr/domain/rules';
@@ -29,6 +30,7 @@ import type { SettingsRecord } from '@powr/formats';
 import type { ParamOverride, ResolveContext } from '@powr/rules';
 
 import type { Deps } from '../deps';
+import type { Repositories } from '../ports';
 
 /*
  * What every session use case needs besides the session itself, prepared before any transaction
@@ -140,17 +142,39 @@ export interface Prepared {
   readonly keyOf: (id: ExerciseId) => string;
 }
 
+/** The records `prepare` reads (M4a: the Home query reads them in its own live query). */
+export interface PrepareInputs {
+  readonly settings: SettingsRecord | undefined;
+  readonly profile: Profile | undefined;
+  readonly plan: Plan | undefined;
+  readonly equipmentProfiles: readonly EquipmentProfile[];
+  readonly bodyweights: readonly BodyweightEntry[];
+}
+
+export const PREPARE_TABLES = [
+  'settings',
+  'profile',
+  'plans',
+  'equipmentProfiles',
+  'bodyweights',
+] as const;
+
+export async function loadPrepareInputs(repos: Repositories): Promise<PrepareInputs> {
+  return {
+    settings: await repos.settings.get(),
+    profile: await repos.profile.get(),
+    plan: await repos.plans.getActive(),
+    equipmentProfiles: await repos.equipment.list(),
+    bodyweights: await repos.bodyweights.list(),
+  };
+}
+
 export async function prepare(deps: Deps): Promise<Prepared> {
-  const loaded = await deps.uow.read(
-    ['settings', 'profile', 'plans', 'equipmentProfiles', 'bodyweights'],
-    async (repos) => ({
-      settings: await repos.settings.get(),
-      profile: await repos.profile.get(),
-      plan: await repos.plans.getActive(),
-      equipmentProfiles: await repos.equipment.list(),
-      bodyweights: await repos.bodyweights.list(),
-    }),
-  );
+  return prepareFrom(deps, await deps.uow.read(PREPARE_TABLES, loadPrepareInputs));
+}
+
+/** `prepare` over records already read. */
+export async function prepareFrom(deps: Deps, loaded: PrepareInputs): Promise<Prepared> {
   const { settings, profile, plan } = loaded;
   const style = profile?.style ?? plan?.style;
   const overrides = settings?.overrides ?? [];
@@ -178,8 +202,12 @@ export async function prepare(deps: Deps): Promise<Prepared> {
     return cache.byKey.get(contextKey(exercise, named.has(exercise.id))) ?? cache.session;
   };
 
+  // BOD-01 (M4a): the trend uses each day's first reading.
   const trend = bodyweightTrend(
-    loaded.bodyweights.map((entry) => ({ localDate: entry.localDate, mass: entry.mass })),
+    firstReadingPerDay(loaded.bodyweights).map((entry) => ({
+      localDate: entry.localDate,
+      mass: entry.mass,
+    })),
     cache.session,
   ).value;
   const bodyweightAt = (date: LocalDate): number | null => {
@@ -190,10 +218,16 @@ export async function prepare(deps: Deps): Promise<Prepared> {
     }
     return value;
   };
-  const bodyweightDigest = `${loaded.bodyweights.length}:${loaded.bodyweights.reduce(
-    (latest, entry) => Math.max(latest, entry.measuredAt.epochMs),
-    0,
-  )}`;
+  // Every entry counts (M4a: past entries can be edited and deleted, BOD-01).
+  const bodyweightDigest = derivationKey({
+    weights: loaded.bodyweights.map((entry) => [
+      entry.id,
+      entry.localDate,
+      entry.measuredAt.epochMs,
+      entry.mass.value,
+      entry.mass.unit,
+    ]),
+  });
   const baselines = new Map((profile?.baselines ?? []).map((entry) => [entry.exerciseId, entry]));
   const base = {
     engine: ENGINE_VERSION,

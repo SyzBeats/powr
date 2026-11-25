@@ -7,6 +7,15 @@
 import {
   ADJUSTMENT_KINDS,
   ADJUSTMENT_NOTES,
+  CREDIT_VALUES,
+  CURVE_CLASSES,
+  EXERCISE_STATUSES,
+  LOAD_TYPES,
+  MAPPING_EVIDENCE,
+  MEASUREMENT_SITES,
+  MECHANICS,
+  REST_CLASSES,
+  SETUP_FIELDS,
   SESSION_CHANGE_KINDS,
   SESSION_STATUSES,
   SET_LIMITS,
@@ -301,6 +310,8 @@ export const profileRecordSchema = z.strictObject({
     patterns: z.array(z.enum(MOVEMENT_PATTERNS)).max(MOVEMENT_PATTERNS.length),
   }),
   preferredExercises: z.array(exerciseIdSchema).max(500),
+  /** EXL-08 (M4a): hidden exercises; absent in profiles written before M4a. */
+  hiddenExercises: z.array(exerciseIdSchema).max(500).exactOptional(),
   baselines: z
     .array(
       z.strictObject({
@@ -451,8 +462,26 @@ export const settingsRecordSchema = z.strictObject({
    * Alerts and workout display (M3t; SET-03 pre-alert, its timing and 3-2-1, SET-04 sound,
    * volume and vibration, SET-10 keep screen on, §8.8.4 the "Resting – ends at …" notification).
    * Absent = the app's defaults; the app writes the whole object on every change. M3b added
-   * `preAlertSeconds` (product-owner decision 2026-11-24: 5, 10 or 15 s; unreleased v2 amended).
+   * `preAlertSeconds` (product-owner decision 2026-11-24: 5, 10 or 15 s; unreleased v2 amended);
+   * M4v added the optional timed-set and tempo switches below (unreleased v2 amended again).
    */
+  /**
+   * M4a insight preferences: the streak grace (MOT-03, A-07), the freestyle weekly session target
+   * (MOT-03), the measurement sites shown (BOD-03), the score source and division (ANL-07).
+   * Absent = the defaults.
+   */
+  insights: z
+    .strictObject({
+      streakGrace: z.boolean().exactOptional(),
+      weeklySessionTarget: z.number().int().min(1).max(14).nullable().exactOptional(),
+      measurementSites: z
+        .array(z.enum(MEASUREMENT_SITES))
+        .max(MEASUREMENT_SITES.length)
+        .exactOptional(),
+      scoreSource: z.enum(['e1rm', 'tested']).exactOptional(),
+      division: z.enum(MEET_DIVISIONS).exactOptional(),
+    })
+    .exactOptional(),
   alerts: z
     .strictObject({
       sound: z.boolean(),
@@ -465,6 +494,14 @@ export const settingsRecordSchema = z.strictObject({
       countdown: z.boolean(),
       restingNotice: z.boolean(),
       keepScreenOn: z.boolean(),
+      /*
+       * M4v (TMR-09, TMR-10; TD-48, TD-39), optional so that stored records stay valid; absent
+       * means off. A 3-2-1 lead-in before a timed set, the set timer stopping itself at the
+       * target, and the tempo metronome's control on the session screen.
+       */
+      setTimerLeadIn: z.boolean().exactOptional(),
+      setTimerAutoStop: z.boolean().exactOptional(),
+      tempoCues: z.boolean().exactOptional(),
     })
     .exactOptional(),
 });
@@ -659,3 +696,103 @@ export const readinessRecordSchema = z.strictObject({
     .max(40)
     .exactOptional(),
 });
+
+// --- M4a: custom exercises (EXL-04), exercise user data (EXL-09), measurements (BOD-03) -----
+
+const customExerciseIdSchema = z.string().regex(/^cx\.[a-z0-9-]{1,80}$/);
+const itemIdSchema = z.union([equipmentIdSchema, customEquipmentIdSchema]);
+const sourceIdSchema = z
+  .string()
+  .regex(/^src\.[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/)
+  .max(80);
+const textSchema = (max: number) => z.string().min(1).max(max);
+const goalRangeSchema = z
+  .tuple([z.number().int().min(1).max(100), z.number().int().min(1).max(100)])
+  .refine(([low, high]) => low <= high, 'A range is [min, max]');
+
+/** A user-defined exercise: an `ExerciseDef` with `custom: true` (EXL-04, §8.2.2). */
+export const customExerciseRecordSchema = z.strictObject({
+  id: customExerciseIdSchema,
+  name: localizedTextSchema,
+  synonyms: z.array(textSchema(NAME_MAX)).max(10),
+  pattern: z.enum(MOVEMENT_PATTERNS),
+  mechanics: z.enum(MECHANICS),
+  variantOf: exerciseIdSchema.exactOptional(),
+  substitutionGroups: z.array(z.string().regex(/^sg\.[a-z0-9-]{1,60}$/)).max(10),
+  equipment: z.strictObject({
+    allOf: z.array(itemIdSchema).max(30),
+    anyOf: z.array(z.array(itemIdSchema).min(1).max(30)).max(10),
+  }),
+  muscles: z
+    .array(
+      z.strictObject({
+        muscle: muscleIdSchema,
+        credit: z.union(CREDIT_VALUES.map((value) => z.literal(value))),
+        evidence: z.enum(MAPPING_EVIDENCE),
+        source: sourceIdSchema,
+      }),
+    )
+    .min(1)
+    .max(20),
+  load: z.strictObject({
+    type: z.enum(LOAD_TYPES),
+    curveClass: z.enum(CURVE_CLASSES),
+    unilateral: z.boolean(),
+    bodyweightLoaded: z.boolean(),
+    increment: massSchema.exactOptional(),
+  }),
+  defaults: z.strictObject({
+    repRange: z.strictObject({ hypertrophy: goalRangeSchema, strength: goalRangeSchema }),
+    restClass: z.enum(REST_CLASSES),
+    tempo: z.string().regex(/^\d{1,2}-\d{1,2}-(?:X|\d{1,2})-\d{1,2}$/),
+    fixedRom: z.boolean(),
+    stretchEmphasis: z.boolean(),
+  }),
+  ranking: z.strictObject({
+    overloadSuitability: z.union([z.literal(0), z.literal(1), z.literal(2), z.literal(3)]),
+    subRegions: z.array(muscleIdSchema).max(10).exactOptional(),
+  }),
+  cues: z.array(z.strictObject({ en: textSchema(140) })).max(6),
+  custom: z.literal(true),
+  userRated: z.boolean().exactOptional(),
+  status: z.enum(EXERCISE_STATUSES),
+  replacedBy: exerciseIdSchema.exactOptional(),
+  createdAt: instantTzSchema,
+  updatedAt: instantTzSchema,
+  copiedFrom: exerciseIdSchema.exactOptional(),
+});
+
+/** Per-exercise user data (EXL-09 setup memory, ANL-04 training max), keyed by exercise. */
+export const exerciseUserDataRecordSchema = z.strictObject({
+  exerciseId: exerciseIdSchema,
+  setup: z
+    .array(
+      z.strictObject({
+        field: z.enum(SETUP_FIELDS),
+        label: textSchema(40).exactOptional(),
+        value: textSchema(60),
+      }),
+    )
+    .max(12),
+  note: z.string().max(NOTE_MAX).exactOptional(),
+  trainingMax: massSchema
+    .refine((mass) => mass.value > 0, 'A training max is positive')
+    .exactOptional(),
+  updatedAt: instantTzSchema,
+});
+
+/** A body measurement (BOD-03): circumferences in cm or in, skinfolds in mm. */
+export const measurementRecordSchema = z
+  .strictObject({
+    id: idSchema,
+    site: z.enum(MEASUREMENT_SITES),
+    localDate: localDateSchema,
+    measuredAt: instantTzSchema,
+    value: z.number().positive().max(500),
+    unit: z.enum(['cm', 'in', 'mm']),
+    note: z.string().max(NOTE_MAX).exactOptional(),
+  })
+  .refine(
+    (entry) => entry.site.startsWith('skinfold') === (entry.unit === 'mm'),
+    'Skinfolds are in mm, circumferences in cm or in',
+  );

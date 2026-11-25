@@ -30,7 +30,9 @@ export {
   type FoldInput,
   type FoldResult,
   type PerformedSetSummary,
+  type PointChange,
   type RebuildResult,
+  type RecentExposure,
   type SessionE1rmPoint,
   type TrendBand,
 } from './history';

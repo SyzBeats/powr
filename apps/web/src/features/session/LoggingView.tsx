@@ -1,6 +1,6 @@
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useNavigate } from '@tanstack/react-router';
-import { Check, CircleAlert, Flag, Layers, Trophy, X } from 'lucide-react';
+import { Check, CircleAlert, Layers, Trophy, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 import type { ExerciseId, Mass } from '@powr/domain';
@@ -39,6 +39,7 @@ import { RestPanel } from './RestPanel';
 import { useSessionUi } from './session-ui';
 import { sessionClock } from './SessionRuntime';
 import { SetDetailsSheet, type SetExtras } from './SetDetailsSheet';
+import { SetTimerButton, TempoCues } from './timed-set';
 import { massText, rirText, useSessionWords } from './words';
 
 /**
@@ -464,6 +465,7 @@ function CurrentSet({
             : ` · ${words.setType(planned.set.type)}`}
         </p>
         {target ? <p data-testid="prescription">{target}</p> : null}
+        {definition && !timed ? <TempoCues tempo={definition.defaults.tempo} /> : null}
         <div className="flex flex-wrap items-center gap-1">
           <WhyButton why={suggestion.why} subject={name} />
           {implement?.implement.kind === 'barbell' && entry.load !== null ? (
@@ -813,37 +815,6 @@ function UndoBar({ view }: { view: SessionView }) {
       </span>
       <UndoButton view={view} />
     </div>
-  );
-}
-
-/** TMR-09: a timed set starts its own countdown (large control); the rest panel stops it. */
-function SetTimerButton({
-  view,
-  slotKey,
-  targetS,
-}: {
-  view: SessionView;
-  slotKey: string;
-  targetS: number | null;
-}) {
-  const { dispatch } = useSessionCommands();
-  if (view.session.timer?.kind === 'set') return null;
-  return (
-    <Button
-      size="lg"
-      onClick={() =>
-        void dispatch({
-          type: 'TIMER_START',
-          kind: 'set',
-          mode: targetS ? 'countdown' : 'countup',
-          ...(targetS ? { targetMs: targetS * 1000 } : {}),
-          slotKey,
-        })
-      }
-    >
-      <Flag aria-hidden="true" />
-      <Trans>Start set timer</Trans>
-    </Button>
   );
 }
 

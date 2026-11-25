@@ -123,6 +123,9 @@
   --color-heat-3: var(--heat-3);
   --color-heat-4: var(--heat-4);
   --color-heat-5: var(--heat-5);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
   --spacing-target: var(--target-primary);
   --spacing-target-lg: var(--target-large);
   --spacing-target-min: var(--target-min);

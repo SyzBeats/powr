@@ -84,6 +84,24 @@ describe('the gate fails', () => {
     expect(checkTokens(red).problems.join('\n')).toMatch(/heat-4 → heat-5/);
   });
 
+  it('on chart series that collapse for a colour-vision deficiency, also when not neighbours', () => {
+    expect(checkTokens(shipped.tokens).scale.some((step) => step.kind === 'series')).toBe(true);
+    // Series 1 and 3 (not adjacent) become a red/green pair that deuteranopes cannot tell apart.
+    const tokens = new Map([
+      ...shipped.tokens,
+      ['chart-1', { light: parseHex('#b8460f'), dark: parseHex('#dd6e32') }],
+      ['chart-3', { light: parseHex('#2f7d1f'), dark: parseHex('#6aa84f') }],
+    ]);
+    expect(checkTokens(tokens).problems.join('\n')).toMatch(
+      /chart-1 ↔ chart-3 \(\w+, deuteranopia\)/,
+    );
+  });
+
+  it('on a chart series below 3:1 on a surface', () => {
+    const tokens = swap('chart-2', '#f4a582', '#dd6e32');
+    expect(checkTokens(tokens).problems.join('\n')).toMatch(/chart-2 on surface \(light\)/);
+  });
+
   it('on a token without a role, and on raw or arbitrary colours in the app', () => {
     const tokens = swap('mystery', '#000000', '#ffffff');
     expect(checkTokens(tokens).problems.join('\n')).toMatch(/--mystery has no role/);

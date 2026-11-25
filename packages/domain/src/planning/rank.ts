@@ -11,7 +11,8 @@ export type RankingRules = RuleSlice<'ranking.effectiveness'>;
  * MAP-03 effectiveness of an exercise for one muscle, 0…1: the weighted sum of (a) its credit for
  * the muscle, (b) the evidence strength of that mapping (H > EMG > C), (c) stretch emphasis, (d)
  * suitability for progressive overload and (e) sub-region coverage. Weights are registry data
- * (`ranking.effectiveness`, [INF]). Custom exercises are unrated beyond their credit (EXL-04).
+ * (`ranking.effectiveness`, [INF]). Custom exercises are unrated beyond their credit unless the
+ * user rated them (EXL-04: then stretch emphasis, overload and sub-regions count; evidence is C).
  * Each factor's contribution is a child explanation, for the "Why?" sheet.
  */
 export function effectiveness(
@@ -22,7 +23,7 @@ export function effectiveness(
   const param = rules['ranking.effectiveness'];
   const { weights, evidenceScore } = param.value;
   const credit = creditFor(exercise, muscle);
-  const rated = credit > 0 && !exercise.custom;
+  const rated = credit > 0 && (!exercise.custom || exercise.userRated === true);
   const evidence = evidenceFor(exercise, muscle);
   const factors = {
     credit,

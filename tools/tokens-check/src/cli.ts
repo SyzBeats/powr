@@ -48,12 +48,14 @@ const lowest = (kind: string) =>
       .filter((pair) => pair.kind === kind)
       .map((pair) => pair.ratio),
   );
-const smallestStep = Math.min(...tokenReport.scale.map((step) => step.deltaE));
+const smallest = (kind: 'scale' | 'series') =>
+  Math.min(...tokenReport.scale.filter((step) => step.kind === kind).map((step) => step.deltaE));
 console.log(
   `Tokens: ${tokens.size} colours × 2 themes; ${tokenReport.pairs.length + usageReport.pairs.length} pairs ` +
     `(lowest: text ${lowest('text').toFixed(2)}, on fills ${lowest('fill-text').toFixed(2)}, ` +
-    `UI ${lowest('ui').toFixed(2)}, heat map ${lowest('scale').toFixed(2)}); ` +
-    `heat-map steps ΔE00 ≥ ${smallestStep.toFixed(1)} (normal, protanopia, deuteranopia, tritanopia); ` +
+    `UI ${lowest('ui').toFixed(2)}, heat map ${lowest('scale').toFixed(2)}, chart series ${lowest('series').toFixed(2)}); ` +
+    `heat-map steps ΔE00 ≥ ${smallest('scale').toFixed(1)}, chart series (all pairs) ΔE00 ≥ ${smallest('series').toFixed(1)} ` +
+    `(normal, protanopia, deuteranopia, tritanopia); ` +
     `${scanned.usages.length} colour utilities in ${files.length} files`,
 );
 if (problems.length > 0) {

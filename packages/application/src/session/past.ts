@@ -20,6 +20,7 @@ import {
 } from '@powr/domain/session';
 
 import type { Deps } from '../deps';
+import { scheduleInsightsRefresh } from '../insights/derived';
 import type { Repositories } from '../ports';
 import { sessionExerciseIds } from '../ports';
 import { err, ok, type Result } from '../result';
@@ -88,6 +89,7 @@ export async function logPastSession(
     for (const set of built.state.sets) await repos.sets.put(set);
   });
   await rebuildExercises(deps, prepared, sessionExerciseIds(built.state.session, built.state.sets));
+  scheduleInsightsRefresh(deps, [built.state.session.localDate]);
   return ok(built.state);
 }
 
@@ -233,6 +235,7 @@ export async function editPastSession(
   });
   if (!result.ok) return result;
   await rebuildExercises(deps, prepared, result.value.touched);
+  scheduleInsightsRefresh(deps, [result.value.state.session.localDate]);
   return ok(result.value.state);
 }
 
@@ -262,10 +265,11 @@ export async function deletePastSession(
           ]);
         }
       }
-      return ok(sessionExerciseIds(session, sets));
+      return ok({ ids: sessionExerciseIds(session, sets), localDate: session.localDate });
     },
   );
   if (!result.ok) return result;
-  await rebuildExercises(deps, prepared, result.value);
+  await rebuildExercises(deps, prepared, result.value.ids);
+  scheduleInsightsRefresh(deps, [result.value.localDate]);
   return ok(undefined);
 }

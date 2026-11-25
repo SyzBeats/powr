@@ -29,6 +29,7 @@ import {
 import type { SettingsRecord } from '@powr/formats';
 
 import type { Deps } from '../deps';
+import { scheduleInsightsRefresh } from '../insights/derived';
 import type { Repositories, TableName } from '../ports';
 import { sessionExerciseIds } from '../ports';
 import { err, ok, type Result } from '../result';
@@ -367,6 +368,8 @@ export async function dispatch(
   const finished = event.type === 'FINISH';
   const summary = finished ? sessionSummary(transition.state, ctx) : undefined;
   await runAfterCommit(deps, prepared, transition.effects);
+  // M4a: the week's analytics and the streak, after the commit and without waiting (TD-43).
+  if (finished) scheduleInsightsRefresh(deps, [transition.state.session.localDate]);
   let lowDays: number | undefined;
   if (finished) {
     const entries = await deps.uow.read(['readiness'], (repos) =>

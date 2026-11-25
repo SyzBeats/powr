@@ -34,6 +34,18 @@ const STRENGTH_DOSE = ['lift', 'heavySets', 'min', 'max'];
 /** A stored session adjustment rebuilt for the sheet (`explainAdjustment`). */
 const ADJUSTMENT = ['loadMin', 'loadMax', 'setsMin', 'setsMax', 'rirAdd', 'daysOff', 'notes'];
 const RETURN = ['daysOff', 'action', 'weeks'];
+/** The PRG-07 pace check (TD-44): its args and its quantity facts. */
+const PACE = [
+  'insufficient',
+  'planned',
+  'observed',
+  'upper',
+  'weeks',
+  'exposures',
+  'typicalErrorPct',
+  'spanDays',
+  'exposuresPerWeek',
+];
 /** A PR record (MOT-01): the exercise, the set's reps, the new and the previous best. */
 const PR = ['exerciseId', 'reps', 'value', 'previous'];
 
@@ -210,4 +222,23 @@ export const WHY_VALUES: { readonly [K in RuleId]: readonly string[] } = {
   'guardrail.failure': ['extraHoursMin', 'extraHoursMax'],
   'guardrail.shortRest': ['restSeconds', 'minimum'],
   'guardrail.slowReps': ['repSeconds', 'limit'],
+  // M4a: insight and motivation (no screen yet; M4b shows them)
+  'streak.week': ['state', 'done', 'target', 'targetSource', 'deload', 'breakDays'],
+  'streak.current': ['current', 'best', 'weeks', 'paused', 'grace'],
+  'volume.target': [
+    'muscle',
+    'sets',
+    'direct',
+    'low',
+    'high',
+    'target',
+    'source',
+    'status',
+    'heat',
+  ],
+  'trend.change.repRange': ['medianBefore', 'medianNow', 'shift', 'threshold', 'shifted'],
+  'progression.pace.switch': PACE,
+  'progression.pace.ok': PACE,
+  'bodyweight.rate.band': ['phase', 'status', 'level', 'pctPerWeek', 'min', 'max', 'warning'],
+  'ranking.focus': ['exercise', 'muscle', 'credit', 'share'],
 };

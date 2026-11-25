@@ -44,7 +44,10 @@ export interface DecodedBackup {
 export interface DecodeOptions {
   readonly limits?: ArchiveLimits;
   readonly migrations?: MigrationChain;
-  /** Every set's exercise must resolve to built-in content or a custom exercise. */
+  /**
+   * Every exercise a record names must resolve to built-in content (this callback) or to a custom
+   * exercise of the backup itself (M4a, EXL-04).
+   */
   readonly isKnownExercise?: (exerciseId: string) => boolean;
 }
 
@@ -211,8 +214,30 @@ function unzipWithLimits(bytes: Uint8Array, limits: ArchiveLimits): UnzipResult 
 
 function findBrokenReference(
   tables: RawTables,
-  isKnownExercise: ((exerciseId: string) => boolean) | undefined,
+  isKnownBuiltIn: ((exerciseId: string) => boolean) | undefined,
 ): string | null {
+  // M4a: the backup's own custom exercises (EXL-04) resolve `cx.` IDs; built-in IDs resolve
+  // through the caller's content.
+  const customIds = new Set<string>(tables.customExercises.map((exercise) => exercise.id));
+  if (customIds.size !== tables.customExercises.length) return 'a custom exercise ID repeats';
+  const isKnownExercise = isKnownBuiltIn
+    ? (id: string) => customIds.has(id) || isKnownBuiltIn(id)
+    : undefined;
+  // Custom IDs start with `cx.` (the record schema), built-in ones with `ex.`: they never collide.
+  for (const exercise of tables.customExercises) {
+    for (const id of [exercise.variantOf, exercise.copiedFrom, exercise.replacedBy]) {
+      if (id !== undefined && isKnownExercise && !isKnownExercise(id)) {
+        return `custom exercise ${exercise.id} references unknown exercise ${id}`;
+      }
+    }
+  }
+  const userData = new Set<string>(tables.exerciseUserData.map((entry) => entry.exerciseId));
+  if (userData.size !== tables.exerciseUserData.length) return 'exercise user data repeats';
+  for (const entry of tables.exerciseUserData) {
+    if (isKnownExercise && !isKnownExercise(entry.exerciseId)) {
+      return `exercise user data references unknown exercise ${entry.exerciseId}`;
+    }
+  }
   const sessionIds = new Set(tables.sessions.map((session) => session.id));
   const sessions = new Map(tables.sessions.map((session) => [session.id, session]));
   for (const set of tables.sets) {

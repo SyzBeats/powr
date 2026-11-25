@@ -188,3 +188,10 @@
   note: >-
     Not an external study: the source for credits the EB rates C (convention or biomechanics, no
     direct hypertrophy data), e.g. every deadlift credit and the optional 0.25 credits.
+
+- id: src.powr-user-defined
+  citation: >-
+    Muscle credits a user entered for a custom exercise (PRD EXL-04). Shown as the user's own
+    convention; the evidence ranking treats the exercise as unrated (MAP-03).
+  tag: INF
+  status: active

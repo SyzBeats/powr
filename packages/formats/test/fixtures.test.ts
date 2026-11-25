@@ -114,6 +114,47 @@ describe('backup fixtures of every dataVersion (NFR-MNT-03, DAT-07)', () => {
       restMode: 'countup',
       hintsOff: ['failure'],
     });
+    // Made before M4a amended version 2: the new tables arrive empty.
+    expect(tables.customExercises).toEqual([]);
+    expect(tables.exerciseUserData).toEqual([]);
+    expect(tables.measurements).toEqual([]);
+    const again = await decodeBackup((await encodeBackup(tables, source)).bytes);
+    expect(again.ok && again.backup.tables).toEqual(tables);
+  });
+
+  it('v2/m4-insights.zip (made by M4a) restores custom exercises, setup memory, measurements and insight settings', async () => {
+    const fixture = fixtures().find(
+      (entry) => entry.version === 2 && entry.name === 'm4-insights.zip',
+    )!;
+    // A set of the backup's own custom exercise resolves through its customExercises table.
+    const decoded = await decodeBackup(fixture.bytes, {
+      isKnownExercise: (id) => id.startsWith('ex.'),
+    });
+    if (!decoded.ok) throw new Error(decoded.error.kind);
+    const { tables } = decoded.backup;
+    expect(tables.customExercises).toMatchObject([
+      {
+        id: 'cx.0190a6f2-belt-squat',
+        custom: true,
+        userRated: true,
+        load: { curveClass: 'legPressLike' },
+        copiedFrom: 'ex.barbell-back-squat',
+      },
+    ]);
+    expect(tables.sets[0]!.exerciseId).toBe('cx.0190a6f2-belt-squat');
+    expect(tables.exerciseUserData[0]).toMatchObject({
+      exerciseId: 'ex.barbell-bench-press',
+      trainingMax: { value: 72.5, unit: 'kg' },
+    });
+    expect(tables.measurements.map((entry) => [entry.site, entry.unit])).toEqual([
+      ['waist', 'cm'],
+      ['skinfoldThigh', 'mm'],
+    ]);
+    expect(tables.settings[0]!.insights).toMatchObject({
+      streakGrace: true,
+      weeklySessionTarget: 3,
+    });
+    expect(tables.profile[0]!.hiddenExercises).toEqual(['ex.barbell-shrug']);
     const again = await decodeBackup((await encodeBackup(tables, source)).bytes);
     expect(again.ok && again.backup.tables).toEqual(tables);
   });

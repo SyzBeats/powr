@@ -18,6 +18,8 @@ import {
   settingsRecordSchema as v2Settings,
 } from '../src/records/v2';
 
+const parseAlertsV2 = (alerts: object) => v2Settings.safeParse({ id: 'me', theme: 'dark', alerts });
+
 // A hypothetical chain v1 -> v2 -> v3, to exercise the mechanism before the first real migration.
 const chain: MigrationChain = {
   1: (table, record) => {
@@ -82,6 +84,37 @@ describe('record migration chain', () => {
     ).toBe(false);
     // v1 has no alerts: the field is v2-only (an unreleased version, amended in place).
     expect(v1Settings.safeParse({ id: 'me', theme: 'dark', alerts }).success).toBe(false);
+  });
+
+  it('accepts the optional timed-set and tempo switches at v2 (M4v: TMR-09, TMR-10)', () => {
+    const parse = parseAlertsV2;
+    const alerts = {
+      sound: true,
+      volume: 0.8,
+      vibration: true,
+      preAlert: true,
+      preAlertSeconds: 10,
+      countdown: false,
+      restingNotice: true,
+      keepScreenOn: true,
+    };
+    const extras = { setTimerLeadIn: true, setTimerAutoStop: false, tempoCues: true };
+    // Absent (records written before M4v) and present are both valid.
+    expect(parse(alerts).success).toBe(true);
+    expect(parse({ ...alerts, ...extras }).success).toBe(true);
+    for (const key of Object.keys(extras)) {
+      expect({ key, ok: parse({ ...alerts, [key]: 'yes' }).success }).toEqual({ key, ok: false });
+      expect({ key, ok: parse({ ...alerts, [key]: null }).success }).toEqual({ key, ok: false });
+      expect({ key, ok: parse({ ...alerts, [key]: undefined }).success }).toEqual({
+        key,
+        ok: false,
+      });
+    }
+    // Still strict: an unknown switch is rejected.
+    expect(parse({ ...alerts, ...extras, metronomeHaptics: true }).success).toBe(false);
+    expect(
+      v1Settings.safeParse({ id: 'me', theme: 'dark', alerts: { ...alerts, ...extras } }).success,
+    ).toBe(false);
   });
 
   it('takes v1 records to v2 unchanged, except sessions, which gain an empty session core (TD-19, M3a)', () => {

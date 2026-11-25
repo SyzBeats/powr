@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "../../.tsbuild/tools-body-map",
+    "rootDir": "../..",
+    "types": ["node"],
+    "allowImportingTsExtensions": true
+  },
+  "include": ["src", "test", "../../apps/web/src/ui/body-map/artwork.gen.ts"]
+}

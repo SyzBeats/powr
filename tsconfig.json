@@ -41,6 +41,9 @@
       "path": "tools/capability-matrix"
     },
     {
+      "path": "tools/body-map"
+    },
+    {
       "path": "./tsconfig.root.json"
     }
   ]

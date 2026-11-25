@@ -186,3 +186,41 @@ export function formatDurationLong(ms: number): string {
   ];
   return new Intl.ListFormat(deviceLocale(), { style: 'long', type: 'unit' }).format(parts);
 }
+
+/** Charts (§8.10): "Tue, 12 Nov 2025", for data that spans several years. */
+export function formatLocalDateWithYear(localDate: string): string {
+  return new Intl.DateTimeFormat(deviceLocale(), {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    timeZone: 'UTC',
+  }).format(utcDate(localDate));
+}
+
+/** A chart's time-axis label: "12 Nov" for windows up to about four months, "Nov 2025" beyond. */
+export function formatAxisDate(epochMs: number, spanMs: number): string {
+  const options: Intl.DateTimeFormatOptions =
+    spanMs <= 120 * 86_400_000
+      ? { day: 'numeric', month: 'short', timeZone: 'UTC' }
+      : { month: 'short', year: 'numeric', timeZone: 'UTC' };
+  return new Intl.DateTimeFormat(deviceLocale(), options).format(epochMs);
+}
+
+/** "November 2026" for a `YYYY-MM` month (the training calendar). */
+export function formatMonth(month: string): string {
+  return new Intl.DateTimeFormat(deviceLocale(), {
+    month: 'long',
+    year: 'numeric',
+    timeZone: 'UTC',
+  }).format(utcDate(`${month}-01`));
+}
+
+/** A chart range: "4 wks", "6 mths", "1 yr" (short units of the device locale). */
+export function formatSpan(value: number, unit: 'week' | 'month' | 'year'): string {
+  return new Intl.NumberFormat(deviceLocale(), {
+    style: 'unit',
+    unit,
+    unitDisplay: 'short',
+  }).format(value);
+}

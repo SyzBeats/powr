@@ -369,3 +369,16 @@
     A POWR design value: the set's base weight (RPE and effective-rep tiers, before the set-order
     decay) must reach the 0.5 tier (RPE ≥ 7 and ≤ 12 effective reps). Sets without entered
     effort never qualify (load.unknownEffort.eligibleForE1rmPr, E-1).
+
+# M4a (rules 1.5.0): the rep-range artefact flag of PRG-02 (TD-26).
+
+- id: load.trend.repRangeShift
+  value: 3
+  unit: reps
+  range: { min: 2, max: 6 }
+  evidence: [OBS, INF]
+  sources: [src.braith1993, src.mayhew2008, src.powr-eb-load]
+  ebRef: 'EB §Load › e1RM drift (flag e1RM jumps that coincide with a change in typical rep range); PRD PRG-02'
+  verified: false
+  userOverridable: false
+  note: 'A POWR design value: a "likely real" change is flagged as possibly a rep-range effect when the median reps of the latest sessions differ from those around the reference by at least this many reps.'

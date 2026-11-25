@@ -1410,4 +1410,66 @@ export const WHY_MESSAGES: { readonly [K in RuleId]: WhyMessage } = {
         'Your reps took about {repSeconds} seconds each. Reps slower than {limit} seconds build no more muscle; lowering under control for 2–4 seconds is enough.',
     }),
   },
+  // --- M4a: insight and motivation -------------------------------------------------------
+  'streak.week': {
+    full: msg({
+      id: 'why.streak.week',
+      message:
+        "{state, select, kept {Week kept: {done} of {target, plural, one {# session} other {# sessions}} done.{deload, select, yes { A deload week counts with its planned sessions.} other {}}} graced {Week kept with your grace: {done} of {target, plural, one {# session} other {# sessions}} done.} missed {{done} of {target, plural, one {# session} other {# sessions}} done that week. Your current streak started again; your best streak stays.} paused {A break week: it pauses your streak without breaking it.} pending {This week so far: {done} of {target, plural, one {# session} other {# sessions}}. There's still time.} other {}}{targetSource, select, freestyle { The target is your weekly session goal.} default { Without a plan or a weekly goal, one session keeps the week.} other {}}{breakDays, plural, =0 {} =7 {} one { One day was a break, so the week asks for fewer sessions.} other { # days were a break, so the week asks for fewer sessions.}}",
+    }),
+  },
+  'streak.current': {
+    full: msg({
+      id: 'why.streak.current',
+      message:
+        'Your streak counts weeks in a row in which you did your planned sessions: {current, plural, one {# week} other {# weeks}} now, {best, plural, one {# week} other {# weeks}} at best. Breaks and illness pause it{paused, plural, =0 {} one { (# week so far)} other { (# weeks so far)}}; deload weeks count like any other.{grace, select, yes { With your grace, a week with one session short still counts.} other {}}',
+    }),
+  },
+  'volume.target': {
+    full: msg({
+      id: 'why.volume.target',
+      message:
+        "{muscle}: {sets, number} hard sets this week ({direct, number} of them direct). {status, select, under {That's below your target range of {low, number} to {high, number} sets.} over {That's above your target range of {low, number} to {high, number} sets; more sets bring less extra growth each.} other {That's within your target range of {low, number} to {high, number} sets.}}{target, select, none { The range is the usual one for muscle growth.} other { Your plan aims for {target, number} sets.}}",
+    }),
+  },
+  'trend.change.repRange': {
+    full: msg({
+      id: 'why.trend.change.repRange',
+      message:
+        "{shifted, select, yes {Your typical reps changed from about {medianBefore, number} to {medianNow, number} at the same time. Estimated maxes from different rep ranges don't always line up, so part of this change may come from the rep range, not from strength.} other {Your typical reps stayed about the same, so the change isn't explained by a new rep range.}}",
+    }),
+  },
+  'progression.pace.switch': {
+    full: msg({
+      id: 'why.progression.pace.switch',
+      message:
+        'The plan adds about {planned, number}% a week, but your estimated max rose about {observed, number}% a week over the last {weeks, plural, one {# week} other {# weeks}}. The weight would get ahead of your strength, so the load now comes from your estimated max (or you add reps first) until they line up again.',
+    }),
+  },
+  'progression.pace.ok': {
+    full: msg({
+      id: 'why.progression.pace.ok',
+      message:
+        '{insufficient, select, yes {Not enough recent sessions to compare the planned increases with your progress yet ({exposures} so far).} other {Your estimated max keeps up with the planned increases (about {observed, number}% a week against {planned, number}% planned), so the plan keeps adding weight.}}',
+    }),
+  },
+  'bodyweight.rate.band': {
+    full: msg({
+      id: 'why.bodyweight.rate.band',
+      message:
+        '{status, select, untracked {Set a phase (bulk, cut or maintain) to compare your weekly rate with a target range.} insufficientData {A few more weigh-ins will show how your trend compares with your {phase, select, bulk {bulking} cut {cutting} other {maintenance}} range.} below {Your trend is changing by {pctPerWeek, number}% a week, below your {phase, select, bulk {bulking} cut {cutting} other {maintenance}} range of {min, number}% to {max, number}%.} above {Your trend is changing by {pctPerWeek, number}% a week, above your {phase, select, bulk {bulking} cut {cutting} other {maintenance}} range of {min, number}% to {max, number}%.} other {Your trend is changing by {pctPerWeek, number}% a week, within your {phase, select, bulk {bulking} cut {cutting} other {maintenance}} range of {min, number}% to {max, number}%.}}{warning, select, fastLoss { You have been losing faster than 1% a week for a while; a slower pace helps keep muscle and strength.} fastGain { You have been gaining faster than your range for a few weeks; a smaller surplus usually adds less fat.} other {}}',
+    }),
+  },
+  'ranking.focus': {
+    full: msg({
+      id: 'why.ranking.focus',
+      message:
+        '{exercise} credits {muscle} with {credit, number} of a set, {share, number, percent} of everything it trains. The higher the share, the more the exercise isolates the muscle.',
+    }),
+    simple: msg({
+      id: 'why.ranking.focus.simple',
+      message:
+        '{share, number, percent} of what {exercise} trains is {muscle}. Higher means it focuses on this muscle.',
+    }),
+  },
 };

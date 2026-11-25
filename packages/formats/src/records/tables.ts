@@ -1,7 +1,10 @@
 import type {
   BodyweightEntry,
+  CustomExercise,
   EquipmentProfile,
+  ExerciseUserData,
   LoggedSet,
+  MeasurementEntry,
   MeetInfo,
   Plan,
   PlannedSession,
@@ -38,6 +41,11 @@ export interface RawRecordMap {
   bodyweights: BodyweightEntry;
   // dataVersion 2, amended in M3a (unreleased): readiness check-ins (RDY-01).
   readiness: ReadinessEntry;
+  // dataVersion 2, amended in M4a (unreleased): custom exercises (EXL-04), per-exercise user data
+  // (EXL-09 setup memory) and body measurements (BOD-03).
+  customExercises: CustomExercise;
+  exerciseUserData: ExerciseUserData;
+  measurements: MeasurementEntry;
 }
 
 export type RawTableName = keyof RawRecordMap;
@@ -57,6 +65,9 @@ export const RAW_TABLE_KEYS = {
   meets: 'id',
   bodyweights: 'id',
   readiness: 'id',
+  customExercises: 'id',
+  exerciseUserData: 'exerciseId',
+  measurements: 'id',
 } as const satisfies Record<RawTableName, string>;
 
 export const RAW_TABLE_NAMES = Object.keys(RAW_TABLE_KEYS) as RawTableName[];
@@ -75,5 +86,8 @@ export function emptyRawTables(): RawTables {
     meets: [],
     bodyweights: [],
     readiness: [],
+    customExercises: [],
+    exerciseUserData: [],
+    measurements: [],
   };
 }

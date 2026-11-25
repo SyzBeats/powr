@@ -6,7 +6,10 @@
  */
 export {
   createContentCatalog,
+  customizableCatalog,
+  isCustomizable,
   type ContentCatalog,
+  type CustomizableCatalog,
   type EquipmentCatalog,
   type MuscleTaxonomy,
 } from './catalog';

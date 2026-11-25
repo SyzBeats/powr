@@ -354,6 +354,41 @@ export interface RankingEffectiveness {
   readonly evidenceScore: { readonly H: number; readonly EMG: number; readonly C: number };
 }
 
+// --- Insight and motivation (M4a: PRD MOT-03/04, BOD-02, PRG-07, PLN-03; EB §Nutrition) -------
+
+/**
+ * Weekly bodyweight gain while bulking (BOD-02; EB §Nutrition › Bulking): the target band in
+ * % of bodyweight per week by trainee level, and how many weeks above it count as sustained.
+ */
+export interface BulkRate {
+  readonly target: ByLevel<Range>;
+  readonly sustainedWeeks: number;
+}
+
+/**
+ * Weekly bodyweight loss while cutting (BOD-02; EB §Nutrition › Cutting), in % of bodyweight per
+ * week (positive = loss): the default target band, the allowed range and the hard warning above
+ * `hardWarnAbove` when it lasts `sustainedWeeks` weeks.
+ */
+export interface CutRate {
+  readonly target: Range;
+  readonly allowed: Range;
+  readonly hardWarnAbove: number;
+  readonly sustainedWeeks: number;
+}
+
+/** PLN-03 "heavy sets": at least `minPct1rm` % of 1RM and at most `maxReps` reps. */
+export interface HeavySetDefinition {
+  readonly minPct1rm: number;
+  readonly maxReps: number;
+}
+
+/** PRG-07 (TD-44): the window over which planned increases are compared with the e1RM trend. */
+export interface PaceWindow {
+  readonly weeks: number;
+  readonly minExposures: number;
+}
+
 // --- The registry ------------------------------------------------------------------------
 
 /** Every MVP parameter by ID, with its value type. IDs are stable (technical concept §8.1). */
@@ -520,6 +555,18 @@ export interface ParamValues {
   'bodyweight.trend.initialWeighIns': Range;
   'bodyweight.trend.winsorizePct': number;
   'bodyweight.rate.windowDays': Range;
+  // M4a (rules 1.5.0): rates by phase (BOD-02), streaks (MOT-03/04), PRG-07 pace (TD-44),
+  // the rep-range artefact flag (PRG-02, TD-26) and heavy sets (PLN-03).
+  'bodyweight.rate.bulk': BulkRate;
+  'bodyweight.rate.cut': CutRate;
+  'bodyweight.rate.maintain': Range;
+  'motivation.streak.partialMinShare': number;
+  'motivation.streak.graceSessions': number;
+  'motivation.streak.retroactiveBreakWeeks': number;
+  'motivation.streak.defaultWeeklyTarget': number;
+  'progression.pace.window': PaceWindow;
+  'load.trend.repRangeShift': number;
+  'volume.strength.heavySet': HeavySetDefinition;
 }
 
 export type ParamId = keyof ParamValues;

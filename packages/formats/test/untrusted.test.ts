@@ -30,6 +30,13 @@ const SESSION =
 const READINESS =
   '{"id":"r1","localDate":"2026-11-23","recordedAt":{"epochMs":1795456000000,"offsetMin":60,"zone":"Europe/Zurich"},"sessionId":"s1","items":{"energy":3,"prs":7}}';
 const POLLUTE = '{"polluted":"yes"}';
+// M4a: a custom exercise, a setup memory and a measurement.
+const CUSTOM =
+  '{"id":"cx.belt-squat","name":{"en":"Belt squat"},"synonyms":[],"pattern":"squat","mechanics":"compound","substitutionGroups":[],"equipment":{"allOf":["eq.belt-squat"],"anyOf":[]},"muscles":[{"muscle":"mu.quads","credit":1,"evidence":"C","source":"src.powr-user-defined"}],"load":{"type":"machine","curveClass":"legPressLike","unilateral":false,"bodyweightLoaded":false},"defaults":{"repRange":{"hypertrophy":[8,15],"strength":[3,6]},"restClass":"hypertrophyCompound","tempo":"2-0-X-0","fixedRom":false,"stretchEmphasis":true},"ranking":{"overloadSuitability":3},"cues":[],"custom":true,"status":"active","createdAt":{"epochMs":1795456000000,"offsetMin":60,"zone":"Europe/Zurich"},"updatedAt":{"epochMs":1795456000000,"offsetMin":60,"zone":"Europe/Zurich"}}';
+const USER_DATA =
+  '{"exerciseId":"ex.barbell-bench-press","setup":[{"field":"seat","value":"4"}],"updatedAt":{"epochMs":1795456000000,"offsetMin":60,"zone":"Europe/Zurich"}}';
+const MEASUREMENT =
+  '{"id":"m1","site":"waist","localDate":"2026-11-23","measuredAt":{"epochMs":1795456000000,"offsetMin":60,"zone":"Europe/Zurich"},"value":84.5,"unit":"cm"}';
 
 describe('regression: FC_SEED=637004341 (backup round-trip produced a `__proto__` key)', () => {
   // Counterexample: { meta: [{ key: 'a', value: { ['__proto__']: 0 } }] }. Export wrote the key;
@@ -125,6 +132,25 @@ describe('crafted backups that try prototype pollution are rejected', () => {
       'settings session preferences with prototype',
       { settings: `[{"id":"me","theme":"dark","session":{"exercises":[{"prototype":1}]}}]` },
     ],
+    // M4a: custom exercises, exercise user data, measurements and the insight settings.
+    [
+      'custom exercise muscle credit with a nested __proto__',
+      { customExercises: `[${CUSTOM.replace('"credit":1', `"credit":1,"__proto__":${POLLUTE}`)}]` },
+    ],
+    [
+      'setup memory entry with constructor.prototype',
+      {
+        exerciseUserData: `[${USER_DATA.replace('"value":"4"', `"value":"4","constructor":{"prototype":${POLLUTE}}`)}]`,
+      },
+    ],
+    [
+      'measurement with prototype',
+      { measurements: `[${MEASUREMENT.replace('"unit"', '"prototype":1,"unit"')}]` },
+    ],
+    [
+      'settings insights with __proto__',
+      { settings: `[{"id":"me","theme":"dark","insights":{"__proto__":${POLLUTE}}}]` },
+    ],
   ])('%s → invalidData', async (_name, data) => {
     const result = await decodeBackup(await craftBackup({ data }));
     expect(result).toMatchObject({
@@ -200,10 +226,92 @@ describe('crafted backups that try prototype pollution are rejected', () => {
           settings: `[${SETTINGS}]`,
           sessions: `[${SESSION}]`,
           readiness: `[${READINESS}]`,
+          customExercises: `[${CUSTOM}]`,
+          exerciseUserData: `[${USER_DATA}]`,
+          measurements: `[${MEASUREMENT}]`,
         },
       }),
     );
     expect(result.ok).toBe(true);
+  });
+});
+
+/** Built-in content: every `ex.` ID (the test's stand-in for the catalog). */
+const known = (id: string) => id.startsWith('ex.');
+
+describe('M4a records: strict schemas and references', () => {
+  it('resolves `cx.` IDs through the backup’s own custom exercises', async () => {
+    const set =
+      '{"id":"set1","sessionId":"s1","exerciseId":"cx.belt-squat","index":0,"type":"working","load":{"value":100,"unit":"kg"},"reps":8,"effort":{"rir":2,"source":"entered"},"state":"done","performedAt":{"epochMs":1795456000000,"offsetMin":60,"zone":"Europe/Zurich"},"localDate":"2026-11-23"}';
+    const withCustom = await decodeBackup(
+      await craftBackup({
+        data: { sessions: `[${SESSION}]`, sets: `[${set}]`, customExercises: `[${CUSTOM}]` },
+      }),
+      { isKnownExercise: known },
+    );
+    expect(withCustom.ok).toBe(true);
+    const without = await decodeBackup(
+      await craftBackup({ data: { sessions: `[${SESSION}]`, sets: `[${set}]` } }),
+      { isKnownExercise: known },
+    );
+    expect(without).toMatchObject({ ok: false, error: { kind: 'brokenReference' } });
+  });
+
+  it.each([
+    [
+      'a repeated custom exercise ID',
+      { customExercises: `[${CUSTOM},${CUSTOM}]` },
+      'brokenReference',
+    ],
+    [
+      'a custom variant of an unknown exercise',
+      {
+        customExercises: `[${CUSTOM.replace('"substitutionGroups"', '"variantOf":"zz.unknown","substitutionGroups"')}]`,
+      },
+      'invalidData',
+    ],
+    [
+      'a custom variant of an exercise the content lacks',
+      {
+        customExercises: `[${CUSTOM.replace('"substitutionGroups"', '"variantOf":"ex.gone","substitutionGroups"')}]`,
+      },
+      'brokenReference',
+    ],
+    [
+      'setup memory of an unknown exercise',
+      { exerciseUserData: `[${USER_DATA.replace('ex.barbell', 'cx.barbell')}]` },
+      'brokenReference',
+    ],
+    [
+      'a custom exercise that is not custom',
+      { customExercises: `[${CUSTOM.replace('"custom":true', '"custom":false')}]` },
+      'invalidData',
+    ],
+    [
+      'a custom exercise with a built-in ID',
+      { customExercises: `[${CUSTOM.replace('cx.belt-squat', 'ex.belt-squat')}]` },
+      'invalidData',
+    ],
+    [
+      'a skinfold in cm',
+      { measurements: `[${MEASUREMENT.replace('"waist"', '"skinfoldThigh"')}]` },
+      'invalidData',
+    ],
+    [
+      'an unknown measurement site',
+      { measurements: `[${MEASUREMENT.replace('"waist"', '"ankle"')}]` },
+      'invalidData',
+    ],
+    [
+      'a setup field outside the list',
+      { exerciseUserData: `[${USER_DATA.replace('"seat"', '"colour"')}]` },
+      'invalidData',
+    ],
+  ])('rejects %s', async (_name, data, kind) => {
+    const result = await decodeBackup(await craftBackup({ data }), {
+      isKnownExercise: (id) => known(id) && id !== 'ex.gone',
+    });
+    expect(result).toMatchObject({ ok: false, error: { kind } });
   });
 });
 

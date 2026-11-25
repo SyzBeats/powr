@@ -21,6 +21,12 @@ export interface TokenManifest {
    * (NFR-A11Y-10).
    */
   readonly scale: readonly string[];
+  /**
+   * Categorical chart series (§8.10), in their fixed order: every series is a graphic (≥ 3:1),
+   * and every pair (not only neighbours: lines cross and markers overlap) stays apart for normal
+   * vision and simulated protanopia, deuteranopia and tritanopia (NFR-A11Y-10).
+   */
+  readonly series: readonly string[];
   /** Decorative lines that carry no meaning (dividers, card edges): no contrast requirement. */
   readonly decorative: readonly string[];
 }
@@ -36,6 +42,7 @@ export const MANIFEST: TokenManifest = {
   ],
   ui: ['control', 'focus', 'fg-muted', 'primary', 'info', 'warning', 'danger', 'success'],
   scale: ['heat-0', 'heat-1', 'heat-2', 'heat-3', 'heat-4', 'heat-5'],
+  series: ['chart-1', 'chart-2', 'chart-3'],
   decorative: ['border'],
 };
 
@@ -47,3 +54,6 @@ export const MINIMUM = { text: 4.5, ui: 3 } as const;
  * regions clearly apart at a glance (a common threshold for categorical palettes).
  */
 export const MIN_ADJACENT_DELTA_E = 10;
+
+/** Smallest CIEDE2000 difference between any two chart series (all pairs), same visions. */
+export const MIN_SERIES_DELTA_E = 10;

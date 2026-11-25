@@ -11,7 +11,9 @@ import { pruneFiredFlags } from '../runtime-db';
 import { currentBrowser, type BrowserInfo } from './browser';
 import { createTimerEngine, type TimerEngine } from './engine';
 import { labs, type LabsFlags } from './labs';
+import { createLeadIn, type LeadIn } from './lead-in';
 import { browserLifecycle, browserTimers } from './lifecycle';
+import { createMetronome, type Metronome } from './metronome';
 import type { AlertEvent, RestAlerts } from './scheduler';
 import type { AlertStatusReport, ProductionVariant } from './status';
 import { createDisplayStore, createTicker, type DisplayStore, type Ticker } from './ticker';
@@ -34,6 +36,10 @@ export interface TimerKit {
   readonly restAlerts: RestAlerts;
   readonly screenWake: WakeLockPolicy;
   readonly labs: LabsFlags;
+  /** The tempo metronome (TMR-10, M4v): one at a time, stopped when the page is hidden. */
+  readonly metronome: Metronome;
+  /** The 3-2-1 lead-in before a timed set (TMR-09, M4v). */
+  readonly leadIn: LeadIn;
   /** A `useSyncExternalStore` store for one timer's display (`at`: frozen, no ticking). */
   displayStore(timer: TimerState | null, at?: number): DisplayStore;
   /** The honest screen-locked status for the variant the app runs and the known permission. */
@@ -91,6 +97,18 @@ export function createTimerKit(deps: {
         }),
     });
   }, logEnd(deps.log));
+  const vibrate = (pattern: readonly number[]) => void deps.haptics.vibrate(pattern);
+  const metronome = createMetronome({
+    timers: browserTimers,
+    now: () => performance.now(),
+    lifecycle,
+    output: { sound: (cue, volume, delayMs) => audio.schedule(cue, volume, delayMs), vibrate },
+  });
+  const leadIn = createLeadIn({
+    timers: browserTimers,
+    beep: (volume) => audio.play('countdown', volume),
+    vibrate,
+  });
   return {
     audio,
     engine,
@@ -98,6 +116,8 @@ export function createTimerKit(deps: {
     restAlerts,
     screenWake,
     labs,
+    metronome,
+    leadIn,
     displayStore: (timer, at) => createDisplayStore(engine, ticker, timer, at),
     browser: currentBrowser,
     async alertStatus(variant, permission) {
@@ -165,3 +185,4 @@ export type { TimerState, TimerDisplay } from './timer';
 export type { AlertEvent, AlertOptions, AlertPath, RestAlerts, RestAlertTexts } from './scheduler';
 export type { AlertLevel, AlertStatusReport } from './status';
 export type { WakeLockStatus } from './wake-lock-policy';
+export type { MetronomeState, TempoPhase } from './metronome';

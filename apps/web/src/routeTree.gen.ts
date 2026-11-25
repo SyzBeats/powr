@@ -14,7 +14,9 @@ import { Route as DataRouteImport } from './routes/data'
 import { Route as ExploreRouteImport } from './routes/explore'
 import { Route as ProgressRouteImport } from './routes/progress'
 import { Route as DebugAlertsRouteImport } from './routes/debug/alerts'
+import { Route as DebugBodyMapRouteImport } from './routes/debug/body-map'
 import { Route as DebugCapabilitiesRouteImport } from './routes/debug/capabilities'
+import { Route as DebugChartsRouteImport } from './routes/debug/charts'
 import { Route as LegalDisclaimerRouteImport } from './routes/legal/disclaimer'
 import { Route as LegalPrivacyRouteImport } from './routes/legal/privacy'
 import { Route as OnboardingIndexRouteImport } from './routes/onboarding/index'
@@ -57,9 +59,19 @@ const DebugAlertsRoute = DebugAlertsRouteImport.update({
   path: '/debug/alerts',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DebugBodyMapRoute = DebugBodyMapRouteImport.update({
+  id: '/debug/body-map',
+  path: '/debug/body-map',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DebugCapabilitiesRoute = DebugCapabilitiesRouteImport.update({
   id: '/debug/capabilities',
   path: '/debug/capabilities',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DebugChartsRoute = DebugChartsRouteImport.update({
+  id: '/debug/charts',
+  path: '/debug/charts',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LegalDisclaimerRoute = LegalDisclaimerRouteImport.update({
@@ -150,7 +162,9 @@ export interface FileRoutesByFullPath {
   '/explore': typeof ExploreRoute
   '/progress': typeof ProgressRoute
   '/debug/alerts': typeof DebugAlertsRoute
+  '/debug/body-map': typeof DebugBodyMapRoute
   '/debug/capabilities': typeof DebugCapabilitiesRoute
+  '/debug/charts': typeof DebugChartsRoute
   '/legal/disclaimer': typeof LegalDisclaimerRoute
   '/legal/privacy': typeof LegalPrivacyRoute
   '/onboarding/$step': typeof OnboardingStepRoute
@@ -174,7 +188,9 @@ export interface FileRoutesByTo {
   '/explore': typeof ExploreRoute
   '/progress': typeof ProgressRoute
   '/debug/alerts': typeof DebugAlertsRoute
+  '/debug/body-map': typeof DebugBodyMapRoute
   '/debug/capabilities': typeof DebugCapabilitiesRoute
+  '/debug/charts': typeof DebugChartsRoute
   '/legal/disclaimer': typeof LegalDisclaimerRoute
   '/legal/privacy': typeof LegalPrivacyRoute
   '/onboarding/$step': typeof OnboardingStepRoute
@@ -199,7 +215,9 @@ export interface FileRoutesById {
   '/explore': typeof ExploreRoute
   '/progress': typeof ProgressRoute
   '/debug/alerts': typeof DebugAlertsRoute
+  '/debug/body-map': typeof DebugBodyMapRoute
   '/debug/capabilities': typeof DebugCapabilitiesRoute
+  '/debug/charts': typeof DebugChartsRoute
   '/legal/disclaimer': typeof LegalDisclaimerRoute
   '/legal/privacy': typeof LegalPrivacyRoute
   '/onboarding/$step': typeof OnboardingStepRoute
@@ -225,7 +243,9 @@ export interface FileRouteTypes {
     | '/explore'
     | '/progress'
     | '/debug/alerts'
+    | '/debug/body-map'
     | '/debug/capabilities'
+    | '/debug/charts'
     | '/legal/disclaimer'
     | '/legal/privacy'
     | '/onboarding/$step'
@@ -249,7 +269,9 @@ export interface FileRouteTypes {
     | '/explore'
     | '/progress'
     | '/debug/alerts'
+    | '/debug/body-map'
     | '/debug/capabilities'
+    | '/debug/charts'
     | '/legal/disclaimer'
     | '/legal/privacy'
     | '/onboarding/$step'
@@ -273,7 +295,9 @@ export interface FileRouteTypes {
     | '/explore'
     | '/progress'
     | '/debug/alerts'
+    | '/debug/body-map'
     | '/debug/capabilities'
+    | '/debug/charts'
     | '/legal/disclaimer'
     | '/legal/privacy'
     | '/onboarding/$step'
@@ -298,7 +322,9 @@ export interface RootRouteChildren {
   ExploreRoute: typeof ExploreRoute
   ProgressRoute: typeof ProgressRoute
   DebugAlertsRoute: typeof DebugAlertsRoute
+  DebugBodyMapRoute: typeof DebugBodyMapRoute
   DebugCapabilitiesRoute: typeof DebugCapabilitiesRoute
+  DebugChartsRoute: typeof DebugChartsRoute
   LegalDisclaimerRoute: typeof LegalDisclaimerRoute
   LegalPrivacyRoute: typeof LegalPrivacyRoute
   OnboardingStepRoute: typeof OnboardingStepRoute
@@ -354,11 +380,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DebugAlertsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/debug/body-map': {
+      id: '/debug/body-map'
+      path: '/debug/body-map'
+      fullPath: '/debug/body-map'
+      preLoaderRoute: typeof DebugBodyMapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/debug/capabilities': {
       id: '/debug/capabilities'
       path: '/debug/capabilities'
       fullPath: '/debug/capabilities'
       preLoaderRoute: typeof DebugCapabilitiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/debug/charts': {
+      id: '/debug/charts'
+      path: '/debug/charts'
+      fullPath: '/debug/charts'
+      preLoaderRoute: typeof DebugChartsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/legal/disclaimer': {
@@ -482,7 +522,9 @@ const rootRouteChildren: RootRouteChildren = {
   ExploreRoute: ExploreRoute,
   ProgressRoute: ProgressRoute,
   DebugAlertsRoute: DebugAlertsRoute,
+  DebugBodyMapRoute: DebugBodyMapRoute,
   DebugCapabilitiesRoute: DebugCapabilitiesRoute,
+  DebugChartsRoute: DebugChartsRoute,
   LegalDisclaimerRoute: LegalDisclaimerRoute,
   LegalPrivacyRoute: LegalPrivacyRoute,
   OnboardingStepRoute: OnboardingStepRoute,

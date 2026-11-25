@@ -395,6 +395,29 @@ export const EB_DEFAULTS: ParamValues = {
   'bodyweight.trend.initialWeighIns': { min: 3, max: 7 },
   'bodyweight.trend.winsorizePct': 2.5,
   'bodyweight.rate.windowDays': { min: 14, max: 28 },
+  // M4a (EB §Nutrition › Bulking, › Cutting; PRD MOT-03/04, A-07, PLN-03; POWR design values).
+  'bodyweight.rate.bulk': {
+    target: {
+      novice: { min: 0.25, max: 0.5 },
+      intermediate: { min: 0.25, max: 0.5 },
+      advanced: { min: 0.1, max: 0.25 },
+    },
+    sustainedWeeks: 3,
+  },
+  'bodyweight.rate.cut': {
+    target: { min: 0.5, max: 0.7 },
+    allowed: { min: 0.25, max: 1 },
+    hardWarnAbove: 1,
+    sustainedWeeks: 2,
+  },
+  'bodyweight.rate.maintain': { min: -0.25, max: 0.25 },
+  'motivation.streak.partialMinShare': 0.5,
+  'motivation.streak.graceSessions': 1,
+  'motivation.streak.retroactiveBreakWeeks': 4,
+  'motivation.streak.defaultWeeklyTarget': 1,
+  'progression.pace.window': { weeks: 4, minExposures: 4 },
+  'load.trend.repRangeShift': 3,
+  'volume.strength.heavySet': { minPct1rm: 80, maxReps: 6 },
 };
 
 function param<K extends ParamId>(id: K, value: ParamValues[K]): Param<ParamValues[K]> {

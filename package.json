@@ -27,6 +27,7 @@
     "content:check": "node tools/content-build/src/cli.ts --check",
     "tokens:check": "node tools/tokens-check/src/cli.ts",
     "capability-matrix": "node tools/capability-matrix/src/cli.ts",
+    "body-map": "node tools/body-map/src/cli.ts",
     "docker:build": "docker build -f deploy/Dockerfile -t powr-web:local .",
     "docker:run": "docker run --rm --name powr-web -p 8080:8080 powr-web:local",
     "docker:smoke": "node deploy/smoke.ts http://localhost:8080",

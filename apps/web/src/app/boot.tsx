@@ -1,7 +1,11 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { reconcileRuntimeFlags, requestPersistentStorage } from '@powr/application';
+import {
+  loadCustomExercises,
+  reconcileRuntimeFlags,
+  requestPersistentStorage,
+} from '@powr/application';
 import type { ContentCatalog } from '@powr/content';
 import { DATA_VERSION } from '@powr/formats';
 
@@ -87,6 +91,8 @@ async function loadBuiltInContent(): Promise<ContentCatalog> {
 async function reconcileStartupState(container: Container): Promise<void> {
   // The service-worker install gate must agree with the database (§8.2.4).
   await reconcileRuntimeFlags(container.deps);
+  // EXL-04: custom exercises behave like built-in ones from the first screen on.
+  await loadCustomExercises(container.deps);
   // The settings table is the source of truth for the theme (it survives restore).
   const settings = await container.deps.uow.read(['settings'], (repos) => repos.settings.get());
   if (settings && settings.theme !== storedTheme()) applyTheme(settings.theme);

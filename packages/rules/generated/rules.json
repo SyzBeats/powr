@@ -1,8 +1,91 @@
 {
   "format": 1,
-  "version": "1.4.0",
-  "hash": "d3aff3c74c11da9523c04f54bee1f7a74a7699ac47fca5ad711a74061f76526c",
+  "version": "1.5.0",
+  "hash": "619fd4d55abd036393afd1fd16241e3fb928bdbc6292b35719011cb731541678",
   "params": [
+    {
+      "id": "bodyweight.rate.bulk",
+      "value": {
+        "target": {
+          "novice": {
+            "min": 0.25,
+            "max": 0.5
+          },
+          "intermediate": {
+            "min": 0.25,
+            "max": 0.5
+          },
+          "advanced": {
+            "min": 0.1,
+            "max": 0.25
+          }
+        },
+        "sustainedWeeks": 3
+      },
+      "unit": "pctPerWeek",
+      "evidence": [
+        "NARR",
+        "RCT-T",
+        "INF"
+      ],
+      "sources": [
+        "src.iraki2019",
+        "src.powr-eb-nutrition"
+      ],
+      "ebRef": "EB §Nutrition › Bulking (gain 0.25–0.5% BW/week for novices and intermediates, less for advanced; warn above the band for ≥ 3 weeks); §Defaults › Nutrition (bulk rate)",
+      "verified": true,
+      "userOverridable": true,
+      "since": "mvp",
+      "note": "The EB names novice 0.5 %/week as the target and 0.25–0.5 % for novices and intermediates (Iraki 2019); the band uses that range."
+    },
+    {
+      "id": "bodyweight.rate.cut",
+      "value": {
+        "target": {
+          "min": 0.5,
+          "max": 0.7
+        },
+        "allowed": {
+          "min": 0.25,
+          "max": 1
+        },
+        "hardWarnAbove": 1,
+        "sustainedWeeks": 2
+      },
+      "unit": "pctPerWeek",
+      "evidence": [
+        "NARR",
+        "RCT"
+      ],
+      "sources": [
+        "src.helms2014",
+        "src.garthe2011",
+        "src.powr-eb-nutrition"
+      ],
+      "ebRef": "EB §Nutrition › Cutting (default 0.5–0.7% BW/week; allowed 0.25–1.0%; hard warning above 1.0%/week sustained for ≥ 2 weeks); §Defaults › Nutrition (cut rate)",
+      "verified": true,
+      "userOverridable": true,
+      "since": "mvp"
+    },
+    {
+      "id": "bodyweight.rate.maintain",
+      "value": {
+        "min": -0.25,
+        "max": 0.25
+      },
+      "unit": "pctPerWeek",
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.powr-eb-nutrition"
+      ],
+      "ebRef": "EB §Nutrition › Trend smoothing (no maintenance band in the EB); a POWR design value",
+      "verified": false,
+      "userOverridable": true,
+      "since": "mvp",
+      "note": "A POWR design value: a trend within ±0.25 % of bodyweight per week reads as maintaining (below the slowest bulk band and half the slowest cut band)."
+    },
     {
       "id": "bodyweight.rate.windowDays",
       "value": {
@@ -1013,6 +1096,29 @@
       "note": "A POWR design value; the EB says only that a change must hold for 2–3 sessions."
     },
     {
+      "id": "load.trend.repRangeShift",
+      "value": 3,
+      "unit": "reps",
+      "range": {
+        "min": 2,
+        "max": 6
+      },
+      "evidence": [
+        "OBS",
+        "INF"
+      ],
+      "sources": [
+        "src.braith1993",
+        "src.mayhew2008",
+        "src.powr-eb-load"
+      ],
+      "ebRef": "EB §Load › e1RM drift (flag e1RM jumps that coincide with a change in typical rep range); PRD PRG-02",
+      "verified": false,
+      "userOverridable": false,
+      "since": "mvp",
+      "note": "A POWR design value: a \"likely real\" change is flagged as possibly a rep-range effect when the median reps of the latest sessions differ from those around the reference by at least this many reps."
+    },
+    {
       "id": "load.trend.strengthMaxReff",
       "value": 8,
       "unit": "reps",
@@ -1283,6 +1389,72 @@
         "src.powr-eb-monitoring"
       ],
       "ebRef": "EB §Defaults › Monitoring (spacing between hard sessions); §Monitoring › Recovery",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp"
+    },
+    {
+      "id": "motivation.streak.defaultWeeklyTarget",
+      "value": 1,
+      "unit": "sessions",
+      "range": {
+        "min": 1,
+        "max": 7
+      },
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.powr-prd"
+      ],
+      "ebRef": "PRD MOT-03 (in freestyle mode the user sets a weekly session target); the value before one is set is a POWR design value",
+      "verified": false,
+      "userOverridable": true,
+      "since": "mvp",
+      "note": "A POWR design value: weeks without plan sessions and without a user target ask for one session."
+    },
+    {
+      "id": "motivation.streak.graceSessions",
+      "value": 1,
+      "unit": "sessions",
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.powr-prd"
+      ],
+      "ebRef": "PRD MOT-03 and Assumption A-07 (the user can enable a grace of 1 missed session per week)",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp",
+      "note": "The grace is off by default (a user setting); with it, a week with at least one session and at most one session missing is kept."
+    },
+    {
+      "id": "motivation.streak.partialMinShare",
+      "value": 0.5,
+      "unit": "fraction",
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.powr-prd"
+      ],
+      "ebRef": "PRD MOT-03 (partial sessions count if ≥ 50% of the planned working sets were done)",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp"
+    },
+    {
+      "id": "motivation.streak.retroactiveBreakWeeks",
+      "value": 4,
+      "unit": "weeks",
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.powr-prd"
+      ],
+      "ebRef": "PRD MOT-04 (a past week can be marked as a break, at most 4 weeks back)",
       "verified": true,
       "userOverridable": false,
       "since": "mvp"
@@ -1806,6 +1978,28 @@
       "verified": true,
       "userOverridable": true,
       "since": "mvp"
+    },
+    {
+      "id": "progression.pace.window",
+      "value": {
+        "weeks": 4,
+        "minExposures": 4
+      },
+      "unit": "mixed",
+      "evidence": [
+        "INF"
+      ],
+      "sources": [
+        "src.hopkins2000",
+        "src.grgic2020",
+        "src.mcmaster2013",
+        "src.powr-technical-concept"
+      ],
+      "ebRef": "PRD PRG-07 (when planned increases exceed the observed e1RM trend, switch to rep/RPE progression); EB §Load › Real change (1 TE \"likely real\"); EB §Progression › Increment sizing",
+      "verified": false,
+      "userOverridable": false,
+      "since": "mvp",
+      "note": "A POWR design value: the planned weekly increase must exceed the one-sided 95% upper bound of the session-e1RM slope over the window, and the gap over the window must exceed one typical error."
     },
     {
       "id": "progression.stall.failedSessions",
@@ -3391,6 +3585,28 @@
       "verified": true,
       "userOverridable": false,
       "since": "mvp"
+    },
+    {
+      "id": "volume.strength.heavySet",
+      "value": {
+        "minPct1rm": 80,
+        "maxReps": 6
+      },
+      "unit": "mixed",
+      "evidence": [
+        "MA",
+        "POS"
+      ],
+      "sources": [
+        "src.acsm2026",
+        "src.androulakiskorakakis2021",
+        "src.powr-prd"
+      ],
+      "ebRef": "EB §Defaults › Volume (strength load ≥ 80% 1RM, 1–6 reps for main work); PRD PLN-03 (direct heavy sets: ≥ 80% 1RM, 1–6 reps)",
+      "verified": true,
+      "userOverridable": false,
+      "since": "mvp",
+      "note": "A logged set is heavy when it is a hard set of at most maxReps reps whose reps + RIR imply at least minPct1rm of 1RM on the exercise curve (unknown effort: the prior RIR)."
     },
     {
       "id": "volume.strength.minimumDosePerLift",

@@ -77,6 +77,11 @@ msgstr "{0} days selected"
 msgid "{0} deleted."
 msgstr "{0} deleted."
 
+#. placeholder {0}: formatNumber(value)
+#: src/ui/charts/volume-chart.tsx
+msgid "{0} direct"
+msgstr "{0} direct"
+
 #. placeholder {0}: profile.name
 #: src/features/equipment/EquipmentScreens.tsx
 msgid "{0} is now your default equipment."
@@ -99,12 +104,25 @@ msgstr "{0} since {1}"
 msgid "{0}, {1}"
 msgstr "{0}, {1}"
 
+#. placeholder {0}: formatLocalDate(date, 'long')
+#. placeholder {1}: statusWords[entry.status]
+#: src/ui/charts/training-calendar.tsx
+msgid "{0}: {1}"
+msgstr "{0}: {1}"
+
 #. placeholder {0}: labels.breakReason(current.reason)
 #. placeholder {1}: formatLocalDate(current.startDate)
 #. placeholder {2}: formatLocalDate(current.endDate)
 #: src/features/plan/PlanScreen.tsx
 msgid "{0}: {1} to {2}"
 msgstr "{0}: {1} to {2}"
+
+#. placeholder {0}: formatLocalDate(date, 'long')
+#. placeholder {1}: statusWords[entry.status]
+#. placeholder {2}: entry.label
+#: src/ui/charts/training-calendar.tsx
+msgid "{0}: {1}, {2}"
+msgstr "{0}: {1}, {2}"
 
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
@@ -219,6 +237,11 @@ msgstr "{exercise} ({day})"
 
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
+msgid "why.ranking.focus"
+msgstr "{exercise} credits {muscle} with {credit, number} of a set, {share, number, percent} of everything it trains. The higher the share, the more the exercise isolates the muscle."
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
 msgid "why.validate.avoided"
 msgstr "{exercise} is on your avoid list. Swap it for another exercise, or remove it from the avoid list."
 
@@ -274,6 +297,11 @@ msgstr "{fromDay} and {toDay} both work {subject} hard with little rest in betwe
 
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
+msgid "why.progression.pace.ok"
+msgstr "{insufficient, select, yes {Not enough recent sessions to compare the planned increases with your progress yet ({exposures} so far).} other {Your estimated max keeps up with the planned increases (about {observed, number}% a week against {planned, number}% planned), so the plan keeps adding weight.}}"
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
 msgid "why.e1rm.baseline"
 msgstr "{kind, select, oneRepMax {Your known 1-rep max, {e1rm}, is your starting estimated max (e1RM).} other {This set gives a starting estimated 1-rep max (e1RM) of {e1rm}, worked out like any set you log.}} The loads of your first sessions come from it. {old, select, yes {It was lifted {ageDays, plural, one {# day} other {# days}} ago, so POWR refines it from the sets you log.} other {POWR refines it from the sets you log.}}"
 
@@ -314,6 +342,10 @@ msgstr "{locked, select, yes {{exercise} stays, as you asked.} other {{exercise}
 msgid "{low} reps"
 msgstr "{low} reps"
 
+#: src/ui/charts/trend-chart.tsx
+msgid "{low} to {high}"
+msgstr "{low} to {high}"
+
 #: src/features/session/LoggingView.tsx
 msgid "{low}–{high} reps"
 msgstr "{low}–{high} reps"
@@ -336,10 +368,19 @@ msgstr "{mode, select, topBackoff {One top set, then back-off sets: {reps} reps 
 msgid "{more, plural, one {and # more} other {and # more}}"
 msgstr "{more, plural, one {and # more} other {and # more}}"
 
+#: src/ui/charts/parts.tsx
+msgid "{more, plural, one {Show # more row} other {Show # more rows}}"
+msgstr "{more, plural, one {Show # more row} other {Show # more rows}}"
+
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.validate.sessionCap.muscle"
 msgstr "{muscle}: {fractional, number} sets in this session ({direct, number} direct), above the per-session soft cap. Extra sets here bring low expected return; consider moving some to another day."
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.volume.target"
+msgstr "{muscle}: {sets, number} hard sets this week ({direct, number} of them direct). {status, select, under {That's below your target range of {low, number} to {high, number} sets.} over {That's above your target range of {low, number} to {high, number} sets; more sets bring less extra growth each.} other {That's within your target range of {low, number} to {high, number} sets.}}{target, select, none { The range is the usual one for muscle growth.} other { Your plan aims for {target, number} sets.}}"
 
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
@@ -419,6 +460,18 @@ msgstr "{name} × {count}"
 msgid "{name} done."
 msgstr "{name} done."
 
+#: src/ui/body-map/heat.tsx
+msgid "{name}, {band}"
+msgstr "{name}, {band}"
+
+#: src/ui/body-map/heat.tsx
+msgid "{name}, {valueText}"
+msgstr "{name}, {valueText}"
+
+#: src/ui/body-map/heat.tsx
+msgid "{name}, {valueText}, {band}"
+msgstr "{name}, {valueText}, {band}"
+
 #: src/features/plan/PlanScreen.tsx
 msgid "{name}, planned {date}"
 msgstr "{name}, planned {date}"
@@ -438,6 +491,10 @@ msgstr "{name}, set {number}: {message}"
 #: src/features/plan/PlanEditorScreen.tsx
 msgid "{name}: {sets} sets"
 msgstr "{name}: {sets} sets"
+
+#: src/ui/charts/trend-chart.tsx
+msgid "{name}: {value}"
+msgstr "{name}: {value}"
 
 #: src/features/onboarding/OnboardingFlow.tsx
 msgid "{name}: enter the reps as a whole number from 1 to {MAX_BASELINE_REPS}."
@@ -670,6 +727,16 @@ msgstr "{sets} of {target} heavy sets on {sessions} days"
 msgid "{sets} sets a week"
 msgstr "{sets} sets a week"
 
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.ranking.focus.simple"
+msgstr "{share, number, percent} of what {exercise} trains is {muscle}. Higher means it focuses on this muscle."
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.trend.change.repRange"
+msgstr "{shifted, select, yes {Your typical reps changed from about {medianBefore, number} to {medianNow, number} at the same time. Estimated maxes from different rep ranges don't always line up, so part of this change may come from the rep range, not from strength.} other {Your typical reps stayed about the same, so the change isn't explained by a new rep range.}}"
+
 #: src/features/session/past/PastSessionsScreen.tsx
 msgid "{shown} and {more} more"
 msgstr "{shown} and {more} more"
@@ -690,8 +757,18 @@ msgstr "{source, select, priority {{muscle}: {sets, plural, one {# weekly set} o
 
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
+msgid "why.streak.week"
+msgstr "{state, select, kept {Week kept: {done} of {target, plural, one {# session} other {# sessions}} done.{deload, select, yes { A deload week counts with its planned sessions.} other {}}} graced {Week kept with your grace: {done} of {target, plural, one {# session} other {# sessions}} done.} missed {{done} of {target, plural, one {# session} other {# sessions}} done that week. Your current streak started again; your best streak stays.} paused {A break week: it pauses your streak without breaking it.} pending {This week so far: {done} of {target, plural, one {# session} other {# sessions}}. There's still time.} other {}}{targetSource, select, freestyle { The target is your weekly session goal.} default { Without a plan or a weekly goal, one session keeps the week.} other {}}{breakDays, plural, =0 {} =7 {} one { One day was a break, so the week asks for fewer sessions.} other { # days were a break, so the week asks for fewer sessions.}}"
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
 msgid "why.session.calibration"
 msgstr "{status, select, uncalibrated {POWR doesn't know your strength on this exercise yet, so it calibrates: pick a weight you could lift about 12 times and stop with {rirMin}–{rirMax} reps in reserve (RIR). Your estimated 1-rep max (e1RM) comes from these sets.} calibrating {POWR is still calibrating this exercise: stop with {rirMin}–{rirMax} reps in reserve (RIR).{load, select, none {} other { The load, {load}, comes from your sets so far.}}} other {Stop with {rirMin}–{rirMax} reps in reserve (RIR).{load, select, none {} other { The load is {load}.}}}} After {exposuresMin}–{exposuresMax} sessions with this exercise, the loads follow your progress."
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.bodyweight.rate.band"
+msgstr "{status, select, untracked {Set a phase (bulk, cut or maintain) to compare your weekly rate with a target range.} insufficientData {A few more weigh-ins will show how your trend compares with your {phase, select, bulk {bulking} cut {cutting} other {maintenance}} range.} below {Your trend is changing by {pctPerWeek, number}% a week, below your {phase, select, bulk {bulking} cut {cutting} other {maintenance}} range of {min, number}% to {max, number}%.} above {Your trend is changing by {pctPerWeek, number}% a week, above your {phase, select, bulk {bulking} cut {cutting} other {maintenance}} range of {min, number}% to {max, number}%.} other {Your trend is changing by {pctPerWeek, number}% a week, within your {phase, select, bulk {bulking} cut {cutting} other {maintenance}} range of {min, number}% to {max, number}%.}}{warning, select, fastLoss { You have been losing faster than 1% a week for a while; a slower pace helps keep muscle and strength.} fastGain { You have been gaining faster than your range for a few weeks; a smaller surplus usually adds less fat.} other {}}"
 
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
@@ -755,6 +832,14 @@ msgstr "{time} is now the rest for {name}."
 msgid "{title} · POWR"
 msgstr "{title} · POWR"
 
+#: src/ui/charts/training-calendar.tsx
+msgid "{title}, {monthName}"
+msgstr "{title}, {monthName}"
+
+#: src/ui/charts/time-chart.tsx
+msgid "{title}, {rangeText}, newest first"
+msgstr "{title}, {rangeText}, newest first"
+
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.validate.prescription.effort.simple"
@@ -799,6 +884,10 @@ msgstr "{valid, select, yes {Each block has {accumulationWeeks, plural, one {# t
 #: src/features/why/messages.ts
 msgid "why.plan.mesocycle.simple"
 msgstr "{valid, select, yes {You train for {accumulationWeeks, plural, one {# week} other {# weeks}}, then have {deloadWeeks, plural, one {# lighter week} other {# lighter weeks}} to recover. Then the next block starts.{chosen, select, yes { You picked this; the plan's usual length is {defaultWeeks, plural, one {# week} other {# weeks}}.} no { That's the usual length.} other {}}} no {{accumulationWeeks, plural, one {# week} other {# weeks}} per block doesn't work. Please choose a different number of weeks.} other {Your next block is ready{rotations, plural, =0 {, with the same exercises.} one {, with # new exercise for variety.} other {, with # new exercises for variety.}}}}"
+
+#: src/ui/charts/volume-chart.tsx
+msgid "{value, plural, one {# set} other {# sets}}"
+msgstr "{value, plural, one {# set} other {# sets}}"
 
 #: src/features/onboarding/steps.tsx
 msgid "{value} min"
@@ -961,6 +1050,18 @@ msgstr "6 months to 2 years"
 #: src/features/onboarding/steps.tsx
 msgid "90+ min"
 msgstr "90+ min"
+
+#: src/ui/charts/trend-chart.tsx
+msgid "95% range"
+msgstr "95% range"
+
+#: src/ui/charts/trend-chart.tsx
+msgid "95% range {range}"
+msgstr "95% range {range}"
+
+#: src/features/settings/WorkoutSection.tsx
+msgid "A beep and a short vibration each second, then the set timer starts."
+msgstr "A beep and a short vibration each second, then the set timer starts."
 
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
@@ -1176,6 +1277,10 @@ msgstr "After {daysOff, plural, one {# day} other {# days}} off, your old number
 msgid "After a break, the first weeks start a little lighter."
 msgstr "After a break, the first weeks start a little lighter."
 
+#: src/features/settings/WorkoutSection.tsx
+msgid "After the \"Time is up\" alert, the target time is entered for the set. Otherwise the timer runs on until you tap Stop."
+msgstr "After the \"Time is up\" alert, the target time is entered for the set. Otherwise the timer runs on until you tap Stop."
+
 #: src/features/settings/AlertsSection.tsx
 msgid "Alerts"
 msgstr "Alerts"
@@ -1183,6 +1288,10 @@ msgstr "Alerts"
 #: src/features/settings/AlertsSection.tsx
 msgid "Alerts while screen is locked:"
 msgstr "Alerts while screen is locked:"
+
+#: src/ui/charts/time-chart.tsx
+msgid "All"
+msgstr "All"
 
 #: src/features/plan/PlanEditorScreen.tsx
 msgid "All checks pass."
@@ -1258,6 +1367,10 @@ msgstr "APRE: ramp-up sets at lighter percentages of your 6-rep max ({sixRm}), t
 msgid "Are you trying to change your body weight?"
 msgstr "Are you trying to change your body weight?"
 
+#: src/ui/body-map/body-map.tsx
+msgid "Arrow keys move between muscles. Enter selects one."
+msgstr "Arrow keys move between muscles. Enter selects one."
+
 #: src/features/session/words.ts
 msgid "As many reps as possible"
 msgstr "As many reps as possible"
@@ -1277,6 +1390,8 @@ msgstr "At the advanced level, the load stays the same from session to session. 
 
 #: src/features/onboarding/OnboardingFlow.tsx
 #: src/features/plan/PlanEditorScreen.tsx
+#: src/ui/body-map/body-map-list.tsx
+#: src/ui/body-map/body-map.tsx
 msgid "Back"
 msgstr "Back"
 
@@ -1301,6 +1416,10 @@ msgstr "Back to the plan"
 msgid "Back to workout"
 msgstr "Back to workout"
 
+#: src/ui/body-map/body-map.tsx
+msgid "Back view, body map"
+msgstr "Back view, body map"
+
 #: src/features/session/words.ts
 msgid "Back-off set"
 msgstr "Back-off set"
@@ -1316,6 +1435,10 @@ msgstr "Backup files you export are under your control. If you store or share th
 #: src/features/legal/LegalScreens.tsx
 msgid "Backups and data loss"
 msgstr "Backups and data loss"
+
+#: src/ui/charts/volume-chart.tsx
+msgid "Band"
+msgstr "Band"
 
 #: src/features/equipment/EquipmentEditor.tsx
 msgid "Band label"
@@ -1386,6 +1509,10 @@ msgstr "block"
 msgid "Block"
 msgstr "Block"
 
+#: src/ui/body-map/body-map.tsx
+msgid "Body view"
+msgstr "Body view"
+
 #: src/features/onboarding/steps.tsx
 msgid "Body weight"
 msgstr "Body weight"
@@ -1412,6 +1539,7 @@ msgid "Both: strength on the big three plus muscle-building work. Example week: 
 msgstr "Both: strength on the big three plus muscle-building work. Example week: two strength days and two size days."
 
 #: src/features/plan/PlanScreen.tsx
+#: src/ui/charts/training-calendar.tsx
 msgid "Break"
 msgstr "Break"
 
@@ -1452,6 +1580,7 @@ msgstr "Calibration: start conservatively so POWR can learn your loads."
 #: src/features/equipment/EquipmentScreens.tsx
 #: src/features/plan/PlanScreen.tsx
 #: src/features/session/past/PastSessionEditor.tsx
+#: src/features/session/timed-set.tsx
 msgid "Cancel"
 msgstr "Cancel"
 
@@ -1620,6 +1749,10 @@ msgstr "Coaching convention"
 msgid "Collar weight (each)"
 msgstr "Collar weight (each)"
 
+#: src/ui/charts/training-calendar.tsx
+msgid "Completed"
+msgstr "Completed"
+
 #: src/features/session/past/parts.tsx
 msgid "Compound lifts {rir} rep easier (short sleep)"
 msgstr "Compound lifts {rir} rep easier (short sleep)"
@@ -1655,6 +1788,10 @@ msgstr "core"
 #: src/features/settings/WorkoutSection.tsx
 msgid "Count down"
 msgstr "Count down"
+
+#: src/features/settings/WorkoutSection.tsx
+msgid "Count down 3-2-1 before a timed set"
+msgstr "Count down 3-2-1 before a timed set"
 
 #: src/features/settings/WorkoutSection.tsx
 msgid "Count up, ready when you are"
@@ -1698,6 +1835,10 @@ msgstr "curl"
 msgid "current"
 msgstr "current"
 
+#: src/ui/charts/time-chart.tsx
+msgid "Custom range"
+msgstr "Custom range"
+
 #: src/features/labels.ts
 msgid "daily undulating"
 msgstr "daily undulating"
@@ -1712,6 +1853,7 @@ msgid "Data and backups"
 msgstr "Data and backups"
 
 #: src/features/session/past/LogPastSessionScreen.tsx
+#: src/ui/charts/time-chart.tsx
 msgid "Date"
 msgstr "Date"
 
@@ -1772,6 +1914,14 @@ msgstr "Details"
 #: src/features/settings/AlertsSection.tsx
 msgid "Device test: {0} of {1} alerts on time ({2})."
 msgstr "Device test: {0} of {1} alerts on time ({2})."
+
+#: src/ui/charts/volume-chart.tsx
+msgid "Direct"
+msgstr "Direct"
+
+#: src/ui/charts/volume-chart.tsx
+msgid "Direct sets"
+msgstr "Direct sets"
 
 #: src/features/plan/PlanEditorScreen.tsx
 msgid "Discard"
@@ -1883,6 +2033,14 @@ msgstr "e.g. Red, light"
 #: src/features/why/messages.ts
 msgid "why.validate.deload.missing"
 msgstr "Each block should end with a lighter (deload) week after a set number of training weeks; it is part of training. Add the deload week, or set the block length within the usual range."
+
+#: src/ui/charts/trend-chart.tsx
+msgid "Each session"
+msgstr "Each session"
+
+#: src/ui/charts/time-chart.tsx
+msgid "Earlier"
+msgstr "Earlier"
 
 #: src/features/session/CheckIn.tsx
 msgid "Ease back in: {low}–{high}% of your usual weights"
@@ -2193,6 +2351,15 @@ msgstr "From the next block"
 msgid "From the next session"
 msgstr "From the next session"
 
+#: src/ui/body-map/body-map-list.tsx
+#: src/ui/body-map/body-map.tsx
+msgid "Front"
+msgstr "Front"
+
+#: src/ui/body-map/body-map.tsx
+msgid "Front view, body map"
+msgstr "Front view, body map"
+
 #: src/features/labels.ts
 msgid "Full body"
 msgstr "Full body"
@@ -2209,6 +2376,10 @@ msgstr "Gaining (bulk)"
 #: src/features/home/HomeScreen.tsx
 msgid "Get a plan for your days, time and equipment, with every choice explained."
 msgstr "Get a plan for your days, time and equipment, with every choice explained."
+
+#: src/features/session/timed-set.tsx
+msgid "Get ready"
+msgstr "Get ready"
 
 #: src/features/onboarding/steps.tsx
 msgid "Get stronger in squat, bench press and deadlift. Example week: heavy, light and medium days for each lift."
@@ -2257,6 +2428,10 @@ msgstr "Half an hour less sleep"
 msgid "Half an hour more sleep"
 msgstr "Half an hour more sleep"
 
+#: src/ui/charts/volume-chart.tsx
+msgid "Hard sets"
+msgstr "Hard sets"
+
 #: src/features/plan/PlanPreviewView.tsx
 msgid "Hard sets per week; a set for a helping muscle counts half. Most people grow well with 10 to 20."
 msgstr "Hard sets per week; a set for a helping muscle counts half. Most people grow well with 10 to 20."
@@ -2287,6 +2462,10 @@ msgstr "Height"
 #: src/features/plan/PlanEditorScreen.tsx
 msgid "Hide dismissed warnings"
 msgstr "Hide dismissed warnings"
+
+#: src/ui/charts/parts.tsx
+msgid "Hide table"
+msgstr "Hide table"
 
 #: src/features/session/LoggingView.tsx
 msgid "Hints"
@@ -2545,6 +2724,10 @@ msgstr "Last session went as planned, so the load goes up by {increment}, from {
 msgid "Last time ({date}):"
 msgstr "Last time ({date}):"
 
+#: src/ui/charts/time-chart.tsx
+msgid "Later"
+msgstr "Later"
+
 #: src/features/session/StartScreen.tsx
 msgid "Later this week"
 msgstr "Later this week"
@@ -2568,6 +2751,12 @@ msgstr "leg curl"
 #: src/features/legal/LegalScreens.tsx
 msgid "Legal framework"
 msgstr "Legal framework"
+
+#: src/ui/charts/training-calendar.tsx
+#: src/ui/charts/trend-chart.tsx
+#: src/ui/charts/volume-chart.tsx
+msgid "Legend"
+msgstr "Legend"
 
 #: src/features/session/words.ts
 msgid "Lengthened partials"
@@ -2608,6 +2797,10 @@ msgstr "Life event"
 msgid "why.schedule.missed.doToday"
 msgstr "Life happens. The session from {from} moves to today{shifted, plural, =0 {, and the rest of the week stays as planned.} one {, and # later session moves a day later so you don't train twice on one day.} other {, and # later sessions move later so you don't train twice on one day.}}"
 
+#: src/features/session/timed-set.tsx
+msgid "Lift"
+msgstr "Lift"
+
 #: src/features/legal/LegalScreens.tsx
 msgid "Lifting heavy weights carries a risk of injury. Use safe technique, a spotter or safety equipment such as rack safeties."
 msgstr "Lifting heavy weights carries a risk of injury. Use safe technique, a spotter or safety equipment such as rack safeties."
@@ -2623,6 +2816,7 @@ msgstr "Lighter (deload) week: the same exercises and days with fewer sets, load
 
 #: src/features/plan/PlanPreviewView.tsx
 #: src/features/plan/PlanScreen.tsx
+#: src/ui/charts/training-calendar.tsx
 msgid "Lighter week"
 msgstr "Lighter week"
 
@@ -2650,6 +2844,10 @@ msgstr "Likely a real drop"
 #: src/features/session/past/parts.tsx
 msgid "Likely a real gain"
 msgstr "Likely a real gain"
+
+#: src/ui/charts/trend-chart.tsx
+msgid "Likely real change"
+msgstr "Likely real change"
 
 #: src/features/settings/AlertsSection.tsx
 msgid "Limited"
@@ -2741,6 +2939,10 @@ msgstr "Logged later"
 msgid "Losing fat (cut)"
 msgstr "Losing fat (cut)"
 
+#: src/features/session/timed-set.tsx
+msgid "Lower"
+msgstr "Lower"
+
 #: src/features/plan/PlanEditorScreen.tsx
 msgid "Lower the target for {name}"
 msgstr "Lower the target for {name}"
@@ -2808,6 +3010,10 @@ msgstr "Mini-sets"
 #: src/hooks/use-timers.ts
 msgid "Minimum rest reached"
 msgstr "Minimum rest reached"
+
+#: src/ui/charts/training-calendar.tsx
+msgid "Missed"
+msgstr "Missed"
 
 #: src/features/equipment/EquipmentEditor.tsx
 msgid "Models differ: check the weight on your bar."
@@ -2965,6 +3171,10 @@ msgstr "Next exercise"
 msgid "Next exercise in {duration}"
 msgstr "Next exercise in {duration}"
 
+#: src/ui/charts/training-calendar.tsx
+msgid "Next month"
+msgstr "Next month"
+
 #: src/features/home/HomeScreen.tsx
 msgid "Next planned session"
 msgstr "Next planned session"
@@ -3054,6 +3264,10 @@ msgstr "No problem: the workout on {date} is marked as skipped, and your plan ca
 msgid "why.e1rm.set.unknownEffort"
 msgstr "No reps in reserve (RIR) were logged for this set, so POWR assumed {rir}. Estimated 1-rep max (e1RM): {e1rm}. The set counts less than sets with logged effort, so log RIR when you can."
 
+#: src/ui/charts/volume-chart.tsx
+msgid "No sets logged yet."
+msgstr "No sets logged yet."
+
 #: src/features/settings/AlertsSection.tsx
 msgid "No sound."
 msgstr "No sound."
@@ -3061,6 +3275,10 @@ msgstr "No sound."
 #: src/features/session/words.ts
 msgid "No timer is running."
 msgstr "No timer is running."
+
+#: src/ui/charts/parts.tsx
+msgid "No values in this range."
+msgstr "No values in this range."
 
 #: src/features/settings/AlertsSection.tsx
 msgid "No vibration."
@@ -3075,6 +3293,14 @@ msgstr "No warm-up needed: you can start right away with {workingLoad}."
 #: src/features/why/messages.ts
 msgid "why.warmup.none"
 msgstr "No warm-up sets needed: {workingLoad} is light enough to start with, or your equipment has no lighter steps."
+
+#: src/ui/charts/bodyweight-chart.tsx
+msgid "No weigh-ins yet."
+msgstr "No weigh-ins yet."
+
+#: src/ui/charts/training-calendar.tsx
+msgid "No workouts this month."
+msgstr "No workouts this month."
 
 #: src/features/plan/format.ts
 #: src/features/session/SetDetailsSheet.tsx
@@ -3167,6 +3393,10 @@ msgstr "Note on this set"
 msgid "Note: {0}"
 msgstr "Note: {0}"
 
+#: src/ui/charts/trend-chart.tsx
+msgid "Notes"
+msgstr "Notes"
+
 #: src/features/plan/PlanScreen.tsx
 msgid "Nothing is dropped without you deciding. Choose for each one:"
 msgstr "Nothing is dropped without you deciding. Choose for each one:"
@@ -3174,6 +3404,10 @@ msgstr "Nothing is dropped without you deciding. Choose for each one:"
 #: src/features/session/StartScreen.tsx
 msgid "Nothing is planned for today. You can start a session of this week early."
 msgstr "Nothing is planned for today. You can start a session of this week early."
+
+#: src/ui/charts/trend-chart.tsx
+msgid "Nothing logged yet."
+msgstr "Nothing logged yet."
 
 #: src/features/home/HomeScreen.tsx
 msgid "Nothing planned in the next three weeks."
@@ -3355,11 +3589,19 @@ msgstr "Partial blocks"
 msgid "Partials after failure"
 msgstr "Partials after failure"
 
+#: src/ui/charts/training-calendar.tsx
+msgid "Partly done"
+msgstr "Partly done"
+
 #: src/features/placeholder/screens.tsx
 #: src/features/session/past/PastSessionsScreen.tsx
 #: src/features/session/StartScreen.tsx
 msgid "Past sessions"
 msgstr "Past sessions"
+
+#: src/features/session/timed-set.tsx
+msgid "Pause"
+msgstr "Pause"
 
 #: src/features/legal/LegalScreens.tsx
 msgid "Permissions"
@@ -3410,6 +3652,7 @@ msgid "Plan not set up"
 msgstr "Plan not set up"
 
 #: src/features/labels.ts
+#: src/ui/charts/training-calendar.tsx
 msgid "Planned"
 msgstr "Planned"
 
@@ -3454,6 +3697,10 @@ msgstr "Please check the workout"
 #: src/features/onboarding/OnboardingFlow.tsx
 msgid "Please check your answers"
 msgstr "Please check your answers"
+
+#: src/ui/charts/time-chart.tsx
+msgid "Points of {title}"
+msgstr "Points of {title}"
 
 #. placeholder {0}: fixText(fix, slotName)
 #: src/features/plan/parts.tsx
@@ -3506,6 +3753,7 @@ msgid "POWR uses notifications only for rest timers: one when a rest ends while 
 msgstr "POWR uses notifications only for rest timers: one when a rest ends while you are away from the app, and an optional silent one with the end time. Nothing is sent over the internet."
 
 #: src/features/session/ExerciseList.tsx
+#: src/ui/charts/trend-chart.tsx
 msgid "PR"
 msgstr "PR"
 
@@ -3528,6 +3776,10 @@ msgstr "Preparing the next block…"
 #: src/features/session/SummaryScreen.tsx
 msgid "Preparing the summary…"
 msgstr "Preparing the summary…"
+
+#: src/ui/charts/training-calendar.tsx
+msgid "Previous month"
+msgstr "Previous month"
 
 #: src/features/plan/PlanScreen.tsx
 msgid "Previous week"
@@ -3685,6 +3937,11 @@ msgstr "Remove the last open set"
 #: src/features/plan/PlanEditorScreen.tsx
 msgid "Remove this day"
 msgstr "Remove this day"
+
+#. placeholder {0}: phaseLabel(phase)
+#: src/features/session/timed-set.tsx
+msgid "Rep {rep} · {0}"
+msgstr "Rep {rep} · {0}"
 
 #: src/features/session/StartScreen.tsx
 msgid "Repeat"
@@ -3979,9 +4236,17 @@ msgstr "Set details"
 msgid "Set timer"
 msgstr "Set timer"
 
+#: src/hooks/use-timed-set.ts
+msgid "Set timer cancelled"
+msgstr "Set timer cancelled"
+
 #: src/hooks/use-timers.ts
 msgid "Set timer started, {duration}"
 msgstr "Set timer started, {duration}"
+
+#: src/hooks/use-timed-set.ts
+msgid "Set timer starts in 3 seconds"
+msgstr "Set timer starts in 3 seconds"
 
 #: src/features/session/SetDetailsSheet.tsx
 msgid "Set type"
@@ -3997,6 +4262,10 @@ msgstr "Set up a plan"
 #: src/features/onboarding/OnboardingFlow.tsx
 msgid "Set up my plan"
 msgstr "Set up my plan"
+
+#: src/ui/charts/volume-chart.tsx
+msgid "sets"
+msgstr "sets"
 
 #: src/features/data/DataScreen.tsx
 #: src/features/session/SummaryScreen.tsx
@@ -4040,6 +4309,10 @@ msgstr "Show them again"
 #: src/features/session/ExerciseList.tsx
 msgid "Shown next time you do this exercise."
 msgstr "Shown next time you do this exercise."
+
+#: src/features/settings/WorkoutSection.tsx
+msgid "Shows a metronome button on each set: a cue when you start lowering, at each pause and when you lift, by sound and vibration as set under Alerts."
+msgstr "Shows a metronome button on each set: a cue when you start lowering, at each pause and when you lift, by sound and vibration as set under Alerts."
 
 #: src/features/labels.ts
 msgid "shrug"
@@ -4132,6 +4405,10 @@ msgstr "Sleep quality"
 msgid "Sleep, energy and soreness in under 30 seconds; it can suggest lighter work on bad days."
 msgstr "Sleep, energy and soreness in under 30 seconds; it can suggest lighter work on bad days."
 
+#: src/ui/body-map/body-map.tsx
+msgid "Small on the figure, so also here:"
+msgstr "Small on the figure, so also here:"
+
 #: src/features/equipment/SubstitutionReview.tsx
 msgid "Some planned exercises need equipment you removed"
 msgstr "Some planned exercises need equipment you removed"
@@ -4198,7 +4475,7 @@ msgstr "Start session"
 msgid "Start session: {name}, {date}"
 msgstr "Start session: {name}, {date}"
 
-#: src/features/session/LoggingView.tsx
+#: src/features/session/timed-set.tsx
 msgid "Start set timer"
 msgstr "Start set timer"
 
@@ -4226,6 +4503,10 @@ msgstr "Start today's session"
 msgid "starting without these numbers"
 msgstr "starting without these numbers"
 
+#: src/features/session/timed-set.tsx
+msgid "Starting…"
+msgstr "Starting…"
+
 #: src/features/plan/PlanPreviewView.tsx
 msgid "Starts"
 msgstr "Starts"
@@ -4249,9 +4530,13 @@ msgstr "Stay at {load} and aim for {reps, plural, one {# rep} other {# reps}}. O
 msgid "Step {position} of {count}"
 msgstr "Step {position} of {count}"
 
-#: src/features/session/RestPanel.tsx
+#: src/features/session/timed-set.tsx
 msgid "Stop"
 msgstr "Stop"
+
+#: src/features/settings/WorkoutSection.tsx
+msgid "Stop the set timer at the target time"
+msgstr "Stop the set timer at the target time"
 
 #: src/features/legal/LegalScreens.tsx
 msgid "Stop training and get medical help if you feel chest pain, dizziness, shortness of breath or sharp pain."
@@ -4341,6 +4626,14 @@ msgstr "Taken to failure"
 msgid "Talk to a doctor before you start or change a training or nutrition programme, especially if you have a known condition, are pregnant or have had an injury."
 msgstr "Talk to a doctor before you start or change a training or nutrition programme, especially if you have a known condition, are pregnant or have had an injury."
 
+#: src/ui/charts/time-chart.tsx
+msgid "Tap the chart or use the arrow keys to see a point's values."
+msgstr "Tap the chart or use the arrow keys to see a point's values."
+
+#: src/ui/charts/volume-chart.tsx
+msgid "Target {low} to {high}"
+msgstr "Target {low} to {high}"
+
 #: src/features/plan/parts.tsx
 msgid "Target met"
 msgstr "Target met"
@@ -4348,6 +4641,26 @@ msgstr "Target met"
 #: src/features/session/SetDetailsSheet.tsx
 msgid "Technique"
 msgstr "Technique"
+
+#: src/features/settings/WorkoutSection.tsx
+msgid "Tempo cues"
+msgstr "Tempo cues"
+
+#: src/features/session/timed-set.tsx
+msgid "Tempo cues {name}"
+msgstr "Tempo cues {name}"
+
+#: src/hooks/use-timed-set.ts
+msgid "Tempo cues off"
+msgstr "Tempo cues off"
+
+#: src/hooks/use-timed-set.ts
+msgid "Tempo cues on, {name}"
+msgstr "Tempo cues on, {name}"
+
+#: src/hooks/use-timed-set.ts
+msgid "Tempo cues stopped"
+msgstr "Tempo cues stopped"
 
 #: src/features/settings/AlertsSection.tsx
 msgid "Test alert"
@@ -4456,6 +4769,10 @@ msgstr "the change of {name}"
 msgid "The changes could not be applied. Try again or keep the plan."
 msgstr "The changes could not be applied. Try again or keep the plan."
 
+#: src/ui/charts/time-chart.tsx
+msgid "The chart could not be loaded. The table below has every value."
+msgstr "The chart could not be loaded. The table below has every value."
+
 #: src/features/session/CheckIn.tsx
 msgid "The check-in was not saved. Check the values and try again."
 msgstr "The check-in was not saved. Check the values and try again."
@@ -4517,6 +4834,11 @@ msgstr "The next block cannot be proposed for this plan."
 #: src/features/why/messages.ts
 msgid "why.validate.prescription.reps.simple"
 msgstr "The number of reps for {exercise} is unusually high or low for your goal. Adjusting it usually works better."
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.progression.pace.switch"
+msgstr "The plan adds about {planned, number}% a week, but your estimated max rose about {observed, number}% a week over the last {weeks, plural, one {# week} other {# weeks}}. The weight would get ahead of your strength, so the load now comes from your estimated max (or you add reps first) until they line up again."
 
 #: src/features/plan/NextMesocycleScreen.tsx
 msgid "The plan changed meanwhile. Open this page again."
@@ -4784,6 +5106,14 @@ msgstr "Time is up · +{over}"
 msgid "Time is up, {ago} ago"
 msgstr "Time is up, {ago} ago"
 
+#: src/features/session/timed-set.tsx
+msgid "Time is up, set timer stopped at {duration}"
+msgstr "Time is up, set timer stopped at {duration}"
+
+#: src/ui/charts/time-chart.tsx
+msgid "Time range"
+msgstr "Time range"
+
 #: src/hooks/use-timers.ts
 msgid "Time to switch to the next exercise."
 msgstr "Time to switch to the next exercise."
@@ -4791,6 +5121,10 @@ msgstr "Time to switch to the next exercise."
 #: src/features/session/words.ts
 msgid "Timed set"
 msgstr "Timed set"
+
+#: src/features/settings/WorkoutSection.tsx
+msgid "Timed sets and tempo"
+msgstr "Timed sets and tempo"
 
 #: src/features/session/ExerciseList.tsx
 msgid "to do"
@@ -4855,6 +5189,15 @@ msgstr "Training weeks before the lighter week"
 #: src/features/session/ExerciseList.tsx
 msgid "Trains the {muscle} directly"
 msgstr "Trains the {muscle} directly"
+
+#: src/ui/charts/bodyweight-chart.tsx
+#: src/ui/charts/trend-chart.tsx
+msgid "Trend"
+msgstr "Trend"
+
+#: src/ui/charts/trend-chart.tsx
+msgid "trend {value}"
+msgstr "trend {value}"
 
 #: src/features/labels.ts
 msgid "triceps extension"
@@ -4980,6 +5323,10 @@ msgstr "Usually 0. Competition collars weigh 2.5 kg each."
 msgid "Vacation"
 msgstr "Vacation"
 
+#: src/ui/charts/trend-chart.tsx
+msgid "Value"
+msgstr "Value"
+
 #. placeholder {0}: APP_INFO.version
 #. placeholder {1}: APP_INFO.build
 #: src/features/settings/SettingsScreen.tsx
@@ -5002,6 +5349,10 @@ msgstr "Very likely a real drop"
 msgid "Very likely a real gain"
 msgstr "Very likely a real gain"
 
+#: src/ui/charts/trend-chart.tsx
+msgid "Very likely real change"
+msgstr "Very likely real change"
+
 #: src/features/session/words.ts
 msgid "Very slow reps"
 msgstr "Very slow reps"
@@ -5013,6 +5364,10 @@ msgstr "Vibrated."
 #: src/features/settings/AlertsSection.tsx
 msgid "Vibration"
 msgstr "Vibration"
+
+#: src/ui/charts/parts.tsx
+msgid "View as table"
+msgstr "View as table"
 
 #: src/features/settings/AlertsSection.tsx
 msgid "Volume"
@@ -5076,6 +5431,10 @@ msgstr "week {blockWeek} of {weeks}"
 msgid "Week of {0}"
 msgstr "Week of {0}"
 
+#: src/ui/charts/volume-chart.tsx
+msgid "Week of {day}"
+msgstr "Week of {day}"
+
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.plan.volume.liftTarget"
@@ -5090,6 +5449,10 @@ msgstr "Weekly sets per muscle"
 #: src/features/labels.ts
 msgid "weekly undulating"
 msgstr "weekly undulating"
+
+#: src/ui/charts/bodyweight-chart.tsx
+msgid "Weigh-ins"
+msgstr "Weigh-ins"
 
 #: src/features/onboarding/BaselinesStep.tsx
 #: src/features/session/LoggingView.tsx
@@ -5531,6 +5894,11 @@ msgstr "Your setting"
 #: src/features/why/WhySheet.tsx
 msgid "Your setting for this exercise"
 msgstr "Your setting for this exercise"
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.streak.current"
+msgstr "Your streak counts weeks in a row in which you did your planned sessions: {current, plural, one {# week} other {# weeks}} now, {best, plural, one {# week} other {# weeks}} at best. Breaks and illness pause it{paused, plural, =0 {} one { (# week so far)} other { (# weeks so far)}}; deload weeks count like any other.{grace, select, yes { With your grace, a week with one session short still counts.} other {}}"
 
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts

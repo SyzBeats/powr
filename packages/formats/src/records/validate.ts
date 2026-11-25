@@ -3,7 +3,10 @@ import { RAW_TABLE_NAMES, type RawTableName, type RawTables } from './tables';
 import {
   bodyweightRecordSchema,
   breakRecordSchema,
+  customExerciseRecordSchema,
   equipmentProfileRecordSchema,
+  exerciseUserDataRecordSchema,
+  measurementRecordSchema,
   meetRecordSchema,
   metaRecordSchema,
   plannedSessionRecordSchema,
@@ -29,6 +32,9 @@ const RAW_TABLE_SCHEMAS = {
   meets: meetRecordSchema,
   bodyweights: bodyweightRecordSchema,
   readiness: readinessRecordSchema,
+  customExercises: customExerciseRecordSchema,
+  exerciseUserData: exerciseUserDataRecordSchema,
+  measurements: measurementRecordSchema,
 } as const satisfies Record<RawTableName, z.ZodType>;
 
 export type RecordIssue = { table: RawTableName; index: number; message: string };

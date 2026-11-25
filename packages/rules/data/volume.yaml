@@ -260,3 +260,15 @@
   ebRef: 'EB §Volume › Minimum and maintenance doses (powerlifting accessories at RPE 7–9 for 6–10 reps)'
   verified: true
   userOverridable: true
+
+# M4a (rules 1.5.0): logged heavy sets per competition lift (PLN-03, dWeekly).
+
+- id: volume.strength.heavySet
+  value: { minPct1rm: 80, maxReps: 6 }
+  unit: mixed
+  evidence: [MA, POS]
+  sources: [src.acsm2026, src.androulakiskorakakis2021, src.powr-prd]
+  ebRef: 'EB §Defaults › Volume (strength load ≥ 80% 1RM, 1–6 reps for main work); PRD PLN-03 (direct heavy sets: ≥ 80% 1RM, 1–6 reps)'
+  verified: true
+  userOverridable: false
+  note: 'A logged set is heavy when it is a hard set of at most maxReps reps whose reps + RIR imply at least minPct1rm of 1RM on the exercise curve (unknown effort: the prior RIR).'

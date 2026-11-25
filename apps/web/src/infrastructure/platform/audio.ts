@@ -3,14 +3,30 @@ import type { AudioPort, CueId } from '@powr/application';
 /**
  * Alert sounds (§8.8.2, TMR-05, PWA-07, MOT-02), synthesized with Web Audio: no audio files, so
  * nothing to download or license. `restEnd` and `preAlert` are the application port's cues; the
- * rest are the web app's own: one 3-2-1 `countdown` beep, a `gentle` two-note cue (count-up soft
- * minimum, "Rest over" noticed on return) and the PR `pr` arpeggio.
+ * rest are the web app's own: one 3-2-1 `countdown` beep (also the timed set's lead-in, TMR-09),
+ * a `gentle` two-note cue (count-up soft minimum, "Rest over" noticed on return), the PR `pr`
+ * arpeggio and the tempo metronome's cues (TMR-10, M4v): a low `tempoLower` when the eccentric
+ * starts, a short `tempoPause` at a pause, a high `tempoLift` when the concentric starts and a
+ * soft `tempoTick` on every further second of a phase.
  */
-export type AlertCue = CueId | 'countdown' | 'gentle' | 'pr';
+export type AlertCue =
+  | CueId
+  | 'countdown'
+  | 'gentle'
+  | 'pr'
+  | 'tempoLower'
+  | 'tempoPause'
+  | 'tempoLift'
+  | 'tempoTick';
 
 export interface AlertAudio extends AudioPort {
   /** Plays a cue at `volume` (0–1, the in-app volume, applied as gain). */
   play(cue: AlertCue, volume: number): void;
+  /**
+   * Plays a cue `delayMs` from now on the audio clock (the metronome schedules its beats ahead, so
+   * they keep time) and returns a function that silences it if it has not sounded yet.
+   */
+  schedule(cue: AlertCue, volume: number, delayMs: number): () => void;
   /** Suspends the audio context when the session ends (§8.8.6). */
   suspend(): Promise<void>;
 }
@@ -41,7 +57,14 @@ const CUES: Record<AlertCue, readonly Note[]> = {
     { frequency: 783.99, startMs: 200, durationMs: 110, type: 'triangle' },
     { frequency: 1046.5, startMs: 300, durationMs: 320, type: 'triangle' },
   ],
+  // TMR-10: low when lowering, high when lifting, so the phases differ by pitch as well as order.
+  tempoLower: [{ frequency: 392, startMs: 0, durationMs: 140 }],
+  tempoPause: [{ frequency: 587.33, startMs: 0, durationMs: 80, level: 0.7, type: 'triangle' }],
+  tempoLift: [{ frequency: 880, startMs: 0, durationMs: 140 }],
+  tempoTick: [{ frequency: 1318.5, startMs: 0, durationMs: 30, level: 0.35, type: 'triangle' }],
 };
+
+const silent = () => undefined;
 
 /** Attack and release of every note, so beeps do not click. */
 const RAMP_S = 0.01;
@@ -69,10 +92,15 @@ export const audio: AlertAudio = {
   },
 
   play(cue, volume) {
-    if (!context || context.state !== 'running') return;
+    audio.schedule(cue, volume, 0);
+  },
+
+  schedule(cue, volume, delayMs) {
+    if (!context || context.state !== 'running') return silent;
     const gainLevel = Math.min(1, Math.max(0, volume));
-    if (gainLevel === 0) return;
-    const base = context.currentTime;
+    if (gainLevel === 0) return silent;
+    const base = context.currentTime + Math.max(0, delayMs) / 1000;
+    const oscillators: OscillatorNode[] = [];
     for (const note of CUES[cue]) {
       const start = base + note.startMs / 1000;
       const end = start + note.durationMs / 1000;
@@ -88,7 +116,12 @@ export const audio: AlertAudio = {
       oscillator.connect(gain).connect(context.destination);
       oscillator.start(start);
       oscillator.stop(end + 0.02);
+      oscillators.push(oscillator);
     }
+    return () => {
+      // Before its start time a stop means the note never sounds; after its end, a no-op.
+      for (const oscillator of oscillators) oscillator.stop();
+    };
   },
 
   async suspend() {

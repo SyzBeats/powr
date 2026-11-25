@@ -1,0 +1,10 @@
+{
+  "name": "@powr/tools-body-map",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Body-map pipeline (S-5, §8.11): the original SVG artwork → typed region paths for the app.",
+  "type": "module",
+  "dependencies": {
+    "yaml": "2.9.1"
+  }
+}

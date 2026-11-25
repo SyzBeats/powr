@@ -6,6 +6,7 @@ import { builtInContent } from '@powr/content/built-in';
 import { SESSION_DEFAULTS, makeInstantTz, type ExerciseId } from '@powr/domain';
 import { MIGRATIONS, RAW_TABLE_NAMES, emptyRawTables, type MigrationChain } from '@powr/formats';
 
+import { createLiveQueries } from './live-queries';
 import { createRepositories } from './repositories';
 import { PowrDb, SCHEMA_HISTORY, type SchemaVersion } from './schema';
 import { createUnitOfWork } from './unit-of-work';
@@ -40,6 +41,7 @@ function depsFor(db: PowrDb): Deps {
       breaks: unused,
       activeSessionData: unused,
       sessionPrs: unused,
+      observe: unused,
     },
     clock: { now: () => makeInstantTz(Date.parse('2026-11-24T18:00:00Z'), 'Europe/Zurich') },
     ids: { next: () => `id-${++id}` },
@@ -420,5 +422,142 @@ describe('session core tables (M3a, amended dataVersion 2)', () => {
       repos.raw.replaceAll(emptyRawTables()),
     );
     expect(await read()).toEqual({ states: [], points: [], prs: [] });
+  });
+});
+
+/** A minimal weekly record (the repository does not look inside). */
+const week = (weekStart: string) =>
+  ({ weekStart, key: 'k', muscles: [], exercises: [], lifts: [] }) as never;
+
+describe('insight tables (M4a, amended dataVersion 2)', () => {
+  const at = makeInstantTz(Date.parse('2026-11-24T08:00:00Z'), 'Europe/Zurich');
+  const tables = [
+    'customExercises',
+    'exerciseUserData',
+    'measurements',
+    'dExerciseState',
+    'dSessionE1rm',
+    'dPrs',
+  ] as const;
+
+  it('stores custom exercises, setup memory and measurements, and finds points and PRs by day', async () => {
+    const db = openDb();
+    const uow = createUnitOfWork(db);
+    const custom = {
+      ...builtInContent().exercise(squat)!,
+      id: 'cx.belt-squat' as ExerciseId,
+      custom: true as const,
+      createdAt: at,
+      updatedAt: at,
+    };
+    await uow.write(tables, async (repos) => {
+      await repos.customExercises.put(custom);
+      await repos.exerciseUserData.put({
+        exerciseId: squat,
+        setup: [{ field: 'rack', value: '12' }],
+        updatedAt: at,
+      });
+      await repos.measurements.put({
+        id: 'm1',
+        site: 'waist',
+        localDate: '2026-11-24' as never,
+        measuredAt: at,
+        value: 80,
+        unit: 'cm',
+      });
+      await repos.derived.replaceExercise(squat, {
+        state: { exerciseId: squat } as never,
+        points: [
+          {
+            exerciseId: squat,
+            sessionId: 's1',
+            localDate: '2026-11-20',
+            e1rmKg: 120,
+            weight: 1,
+            strength: null,
+            all: null,
+          } as never,
+        ],
+        prs: [
+          {
+            id: 'x.load',
+            type: 'load',
+            exerciseId: squat,
+            sessionId: 's1',
+            setId: 'x',
+            localDate: '2026-11-20',
+            reps: 5,
+            valueKg: 100,
+            previousKg: null,
+          } as never,
+        ],
+      });
+    });
+    const read = await uow.read(tables, async (repos) => ({
+      custom: await repos.customExercises.list(),
+      setup: await repos.exerciseUserData.get(squat),
+      measurements: await repos.measurements.list(),
+      points: await repos.derived.pointsInRange('2026-11-19' as never, '2026-11-21' as never),
+      prs: await repos.derived.prsInRange('2026-11-21' as never, '2026-11-30' as never),
+    }));
+    expect(read.custom.map((entry) => entry.id)).toEqual(['cx.belt-squat']);
+    expect(read.setup?.setup).toEqual([{ field: 'rack', value: '12' }]);
+    expect(read.measurements).toHaveLength(1);
+    expect(read.points).toHaveLength(1);
+    expect(read.prs).toEqual([]);
+  });
+
+  it('keeps dWeekly by week and dStreak as one record; a restore clears both', async () => {
+    const db = openDb();
+    const uow = createUnitOfWork(db);
+    await uow.write(['dWeekly', 'dStreak'], async (repos) => {
+      await repos.insights.putWeeks([week('2026-11-09'), week('2026-11-16'), week('2026-11-23')]);
+      await repos.insights.deleteWeeks(['2026-11-16' as never]);
+      await repos.insights.putStreak({
+        id: 'me',
+        key: 'k',
+        baseKey: 'b',
+        inputs: [],
+        streak: {} as never,
+      });
+    });
+    const read = () =>
+      uow.read(['dWeekly', 'dStreak'], async (repos) => ({
+        weeks: (await repos.insights.weeks('2026-11-01' as never, '2026-11-30' as never)).map(
+          (entry) => entry.weekStart,
+        ),
+        streak: await repos.insights.streak(),
+      }));
+    expect(await read()).toMatchObject({
+      weeks: ['2026-11-09', '2026-11-23'],
+      streak: { id: 'me', key: 'k' },
+    });
+    await uow.write([...RAW_TABLE_NAMES, 'dWeekly', 'dStreak'], (repos) =>
+      repos.raw.replaceAll(emptyRawTables()),
+    );
+    expect(await read()).toEqual({ weeks: [], streak: undefined });
+  });
+
+  it('runs any repository read as a live query (LiveQueries.observe)', async () => {
+    const db = openDb();
+    await db.open();
+    const uow = createUnitOfWork(db);
+    const values: number[] = [];
+    const subscription = createLiveQueries(db)
+      .observe(['measurements'], async (repos) => (await repos.measurements.list()).length)
+      .subscribe({ next: (count) => values.push(count) });
+    await vi.waitFor(() => expect(values).toEqual([0]));
+    await uow.write(['measurements'], (repos) =>
+      repos.measurements.put({
+        id: 'm2',
+        site: 'neck',
+        localDate: '2026-11-24' as never,
+        measuredAt: at,
+        value: 38,
+        unit: 'cm',
+      }),
+    );
+    await vi.waitFor(() => expect(values.at(-1)).toBe(1));
+    subscription.unsubscribe();
   });
 });

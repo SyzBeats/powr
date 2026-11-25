@@ -1,10 +1,9 @@
 import { Trans, useLingui } from '@lingui/react/macro';
-import { RotateCcw, SkipForward, Square } from 'lucide-react';
+import { RotateCcw, SkipForward } from 'lucide-react';
 import type { ReactNode } from 'react';
 
 import type { SessionView } from '@powr/domain/session';
 
-import { Button } from '#ui/button';
 import { cn } from '#ui/cn';
 import { TimerRing } from '#ui/timer-ring';
 
@@ -13,6 +12,7 @@ import { formatClock, formatDurationLong } from '../../i18n/format';
 import { useLabels } from '../labels';
 import { useSessionCommands } from './commands';
 import { useSessionUi } from './session-ui';
+import { SetTimerPanel } from './timed-set';
 
 const STEP_MS = 15_000;
 
@@ -20,7 +20,8 @@ const STEP_MS = 15_000;
  * The running timer in the dock (TMR-01…09, TMR-13): the ring and the time (≥ 1.5× body text),
  * "Rest over · +0:42" once it ended (TMR-04), the count-up with its soft minimum (TMR-07), the
  * superset transition with the next exercise (TMR-13), and ±15 s, skip and restart (TMR-03). A
- * set timer (TMR-09) shows a large Stop that hands the achieved time to the set.
+ * set timer (TMR-09) shows a large Stop that hands the achieved time to the set, or stops itself
+ * at the target when the user chose that (`SetTimerPanel`, M4v).
  */
 export function RestPanel({
   view,
@@ -70,28 +71,13 @@ export function RestPanel({
 
   if (timer.kind === 'set') {
     return (
-      <div className="flex items-center gap-3" data-testid="rest-panel">
-        <TimerRing progress={display.progress} done={display.done} />
-        <p className="flex min-w-0 flex-1 flex-col">
-          <span className="text-sm text-fg-muted">{label}</span>
-          <span className="text-3xl font-bold tabular" data-testid="timer-time">
-            {time}
-          </span>
-        </p>
-        <Button
-          size="lg"
-          className="w-auto"
-          onClick={() =>
-            void dispatch({ type: 'TIMER_STOP' }).then((outcome) => {
-              if (outcome.ok && outcome.value.result.elapsedMs !== undefined)
-                onSetTimerStopped(outcome.value.result.elapsedMs);
-            })
-          }
-        >
-          <Square aria-hidden="true" />
-          <Trans>Stop</Trans>
-        </Button>
-      </div>
+      <SetTimerPanel
+        timer={timer}
+        display={display}
+        label={label}
+        time={time}
+        onStopped={onSetTimerStopped}
+      />
     );
   }
 

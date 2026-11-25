@@ -1,10 +1,13 @@
 import type {
   BodyweightEntry,
   BreakId,
+  CustomExercise,
   EquipmentProfile,
+  ExerciseUserData,
   InstantTz,
   LocalDate,
   LoggedSet,
+  MeasurementEntry,
   MeetInfo,
   Plan,
   PlanId,
@@ -18,8 +21,10 @@ import type {
   SetId,
   TrainingBreak,
 } from '@powr/domain';
+import type { WeeklyRecord } from '@powr/domain/analytics';
 import type { RuleSet } from '@powr/domain/rules';
 import type { ExerciseState, PrRecord, SessionE1rmPoint } from '@powr/domain/session';
+import type { Streak, StreakWeekInput } from '@powr/domain/streaks';
 import type { MetaRecord, RawTableName, RawTables, SettingsRecord } from '@powr/formats';
 import type { ParamOverride, ResolveContext } from '@powr/rules';
 
@@ -42,9 +47,16 @@ export interface IdGenerator {
 
 /**
  * Derived tables (§8.2.2, §8.2.8): rebuildable caches, never backed up. M3a: the exercise state,
- * one e1RM point per exercise and session, and the PR records.
+ * one e1RM point per exercise and session, and the PR records. M4a: the weekly analytics and the
+ * streak.
  */
-export const DERIVED_TABLE_NAMES = ['dExerciseState', 'dSessionE1rm', 'dPrs'] as const;
+export const DERIVED_TABLE_NAMES = [
+  'dExerciseState',
+  'dSessionE1rm',
+  'dPrs',
+  'dWeekly',
+  'dStreak',
+] as const;
 export type DerivedTableName = (typeof DERIVED_TABLE_NAMES)[number];
 
 /** Every table of `powr` a unit of work may name. */
@@ -69,8 +81,65 @@ export interface Repositories {
   meets: MeetRepo;
   bodyweights: BodyweightRepo;
   readiness: ReadinessRepo;
+  customExercises: CustomExerciseRepo;
+  exerciseUserData: ExerciseUserDataRepo;
+  measurements: MeasurementRepo;
   derived: DerivedRepo;
+  insights: InsightsRepo;
   raw: RawDataRepo;
+}
+
+/** Custom exercises (EXL-04; raw table `customExercises`). */
+export interface CustomExerciseRepo {
+  get(id: ExerciseId): Promise<CustomExercise | undefined>;
+  list(): Promise<CustomExercise[]>;
+  put(exercise: CustomExercise): Promise<void>;
+  delete(id: ExerciseId): Promise<void>;
+}
+
+/** Per-exercise user data (EXL-09 setup memory, training max; raw table `exerciseUserData`). */
+export interface ExerciseUserDataRepo {
+  get(id: ExerciseId): Promise<ExerciseUserData | undefined>;
+  list(): Promise<ExerciseUserData[]>;
+  put(entry: ExerciseUserData): Promise<void>;
+  delete(id: ExerciseId): Promise<void>;
+}
+
+/** Body measurements (BOD-03; raw table `measurements`). */
+export interface MeasurementRepo {
+  get(id: string): Promise<MeasurementEntry | undefined>;
+  /** Every measurement, by measurement time. */
+  list(): Promise<MeasurementEntry[]>;
+  put(entry: MeasurementEntry): Promise<void>;
+  delete(id: string): Promise<void>;
+}
+
+/** The M4a derived tables `dWeekly` (one record per user week) and `dStreak` (one record). */
+export interface InsightsRepo {
+  /** Weekly records with `from ≤ weekStart ≤ to`, in date order. */
+  weeks(from: LocalDate, to: LocalDate): Promise<WeeklyRecord[]>;
+  putWeeks(records: readonly WeeklyRecord[]): Promise<void>;
+  deleteWeeks(weekStarts: readonly LocalDate[]): Promise<void>;
+  streak(): Promise<StreakRecord | undefined>;
+  putStreak(record: StreakRecord): Promise<void>;
+}
+
+/** What one recorded week contributes to the streak (mirrors its `dWeekly` record). */
+export interface StreakWeekEntry extends StreakWeekInput {
+  /** The week's first day with a counting session or a planned session. */
+  readonly firstDay: LocalDate;
+}
+
+/** The derived streak (table `dStreak`, key `'me'`): the streak and what it was computed from. */
+export interface StreakRecord {
+  readonly id: 'me';
+  /** Fingerprint of the settings, versions, breaks and the current week it was computed for. */
+  readonly key: string;
+  /** The weeks' base fingerprint it was computed with; another one rebuilds every week. */
+  readonly baseKey: string;
+  /** Every recorded week's contribution, oldest first (kept in step with `dWeekly`). */
+  readonly inputs: readonly StreakWeekEntry[];
+  readonly streak: Streak;
 }
 
 /** The single local profile (ONB-13). */
@@ -89,6 +158,8 @@ export interface EquipmentProfileRepo {
 
 export interface PlanRepo {
   get(id: PlanId): Promise<Plan | undefined>;
+  /** Every plan, active and ended (M4a: targets of past weeks, chart annotations). */
+  list(): Promise<Plan[]>;
   /** The one plan with status `active`, if any. */
   getActive(): Promise<Plan | undefined>;
   put(plan: Plan): Promise<void>;
@@ -121,6 +192,9 @@ export interface BodyweightRepo {
   put(entry: BodyweightEntry): Promise<void>;
   /** Every entry, by measurement time (the trend for bodyweight-loaded e1RMs, WKT-11). */
   list(): Promise<BodyweightEntry[]>;
+  /** M4a (BOD-01): edit and delete past entries. */
+  get(id: string): Promise<BodyweightEntry | undefined>;
+  delete(id: string): Promise<void>;
 }
 
 /** Readiness check-ins (RDY-01). */
@@ -146,9 +220,12 @@ export interface DerivedRepo {
   prsBySession(id: SessionId): Promise<PrRecord[]>;
   prsByExercise(id: ExerciseId): Promise<PrRecord[]>;
   pointsByExercise(id: ExerciseId): Promise<SessionE1rmPoint[]>;
+  /** M4a: PRs and e1RM points with `from ≤ localDate ≤ to` (PR history, Home's recent changes). */
+  prsInRange(from: LocalDate, to: LocalDate): Promise<PrRecord[]>;
+  pointsInRange(from: LocalDate, to: LocalDate): Promise<SessionE1rmPoint[]>;
   /** Drops the states of these exercises, so they are rebuilt from the raw logs on next use. */
   invalidate(ids: readonly ExerciseId[]): Promise<void>;
-  /** Drops every derived record (import, "Verify data"). */
+  /** Drops every derived record of the tables in the transaction (import, "Verify data"). */
   clear(): Promise<void>;
 }
 

@@ -156,11 +156,15 @@ export interface ChangeLabel {
   readonly typicalError: number;
 }
 
-/** Labels the change of the latest trend point against its reference point. */
+/**
+ * Labels the change of the latest trend point (or of the point at `at`, M4a: the label a chart
+ * shows at each session) against its reference point.
+ */
 export function labelChange(
   points: readonly TrendPoint[],
   level: TraineeLevel,
   rules: ChangeRules,
+  at: number = points.length - 1,
 ): Explained<ChangeLabel> {
   const te = rules['load.trend.typicalErrorCv'].value[level];
   const thresholds = rules['load.trend.changeThresholds'].value;
@@ -169,7 +173,7 @@ export function labelChange(
     rules['load.trend.changeThresholds'],
     rules['load.trend.reference'],
   ];
-  const now = points.length - 1;
+  const now = Math.min(at, points.length - 1);
   const current = deltaAt(points, now, rules);
   if (current === null) {
     return explained(
@@ -188,7 +192,12 @@ export function labelChange(
 
   const sign = Math.sign(current.delta);
   const size = Math.abs(current.delta);
-  const veryLikely = size > thresholds.veryLikelyTe * te || size > Z95 * current.sd;
+  // Never a claim within one typical error (the noise, EB §Load › Real change); beyond it, 2.8 TE
+  // or a 95% interval of the change that excludes zero makes it "very likely" (M4a: the interval
+  // alone no longer labels a change smaller than 1 TE).
+  const beyondNoise = size > thresholds.likelyTe * te;
+  const veryLikely =
+    beyondNoise && (size > thresholds.veryLikelyTe * te || size > Z95 * current.sd);
   let sustained = sign !== 0;
   for (let k = 0; k < thresholds.sustainSessions && sustained; k++) {
     const earlier = deltaAt(points, now - k, rules);
@@ -246,5 +255,89 @@ function deltaAt(
     delta: point.logMean - reference.logMean,
     sd: Math.sqrt(point.logVariance + reference.logVariance),
     reference,
+  };
+}
+
+/** One exposure's typical rep count, as the rep-range check reads it. */
+export interface RepRangeSample {
+  readonly localDate: LocalDate;
+  /** Median reps of the exposure's working sets; null without one. */
+  readonly medianReps: number | null;
+}
+
+export interface RepRangeShift {
+  readonly shifted: boolean;
+  /** Median reps around the reference date and of the latest exposures. */
+  readonly medianBefore: number | null;
+  readonly medianNow: number | null;
+  readonly shift: number;
+}
+
+/**
+ * PRG-02, TD-26 (EB §Load › e1RM drift): an e1RM change that coincides with a change of the
+ * typical rep range (a hypertrophy block followed by a strength block) is possibly an artefact of
+ * the load–rep curve, not a strength change. Compares the median reps of the latest `recentCount`
+ * exposures with the up to three exposures on or before the change's reference date; a shift of
+ * at least `load.trend.repRangeShift` reps is flagged.
+ */
+export function repRangeShift(
+  samples: readonly RepRangeSample[],
+  referenceDate: LocalDate | null,
+  rules: RuleSlice<'load.trend.repRangeShift'>,
+  recentCount = 2,
+): Explained<RepRangeShift> {
+  const param = rules['load.trend.repRangeShift'];
+  const withReps = samples.filter(
+    (sample): sample is RepRangeSample & { readonly medianReps: number } =>
+      sample.medianReps !== null,
+  );
+  const now = withReps.slice(-recentCount).map((sample) => sample.medianReps);
+  const before =
+    referenceDate === null
+      ? []
+      : withReps
+          .filter((sample) => sample.localDate <= referenceDate)
+          .slice(-3)
+          .map((sample) => sample.medianReps);
+  const medianNow = median(now);
+  const medianBefore = median(before);
+  const shift =
+    medianNow === null || medianBefore === null ? 0 : Math.abs(medianNow - medianBefore);
+  const value: RepRangeShift = {
+    shifted: medianNow !== null && medianBefore !== null && shift >= param.value,
+    medianBefore,
+    medianNow,
+    shift,
+  };
+  return explained(value, 'trend.change.repRange', {
+    args: { medianBefore, medianNow, shift, threshold: param.value, shifted: value.shifted },
+    params: [param],
+  });
+}
+
+/** The median of a list (the mean of the middle two for an even count); null when empty. */
+export function median(values: readonly number[]): number | null {
+  if (values.length === 0) return null;
+  const sorted = values.toSorted((a, b) => a - b);
+  const middle = Math.floor(sorted.length / 2);
+  return sorted.length % 2 === 1
+    ? (sorted[middle] ?? null)
+    : ((sorted[middle - 1] ?? 0) + (sorted[middle] ?? 0)) / 2;
+}
+
+/** A trend point rebuilt from a stored band (`dSessionE1rm`): the band is ±1.96 SD on the log scale. */
+export function pointFromBand(
+  localDate: LocalDate,
+  band: { readonly e1rmKg: number; readonly lowKg: number; readonly highKg: number },
+): TrendPoint {
+  const half = (Math.log(band.highKg) - Math.log(band.lowKg)) / 2;
+  const sd = half / Z95;
+  return {
+    localDate,
+    e1rmKg: band.e1rmKg,
+    lowKg: band.lowKg,
+    highKg: band.highKg,
+    logMean: Math.log(band.e1rmKg),
+    logVariance: Math.max(sd * sd, MIN_VARIANCE),
   };
 }

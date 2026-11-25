@@ -1,9 +1,15 @@
 import { composite, contrast, deltaE2000, DEFICIENCIES, simulate, type Rgb } from './color.ts';
-import { MANIFEST, MIN_ADJACENT_DELTA_E, MINIMUM, type TokenManifest } from './manifest.ts';
+import {
+  MANIFEST,
+  MIN_ADJACENT_DELTA_E,
+  MIN_SERIES_DELTA_E,
+  MINIMUM,
+  type TokenManifest,
+} from './manifest.ts';
 import { THEMES, type Theme, type TokenColours } from './tokens.ts';
 
 export interface PairResult {
-  readonly kind: 'text' | 'fill-text' | 'ui' | 'scale' | 'tint-text';
+  readonly kind: 'text' | 'fill-text' | 'ui' | 'scale' | 'series' | 'tint-text';
   readonly fg: string;
   readonly bg: string;
   readonly theme: Theme;
@@ -12,6 +18,8 @@ export interface PairResult {
 }
 
 export interface ScaleResult {
+  /** `scale`: adjacent heat-map steps; `series`: any two chart series. */
+  readonly kind: 'scale' | 'series';
   readonly theme: Theme;
   readonly vision: 'normal' | (typeof DEFICIENCIES)[number];
   readonly from: string;
@@ -47,6 +55,7 @@ export function checkTokens(
     ...manifest.fills.flatMap(({ fill, on }) => [fill, on]),
     ...manifest.ui,
     ...manifest.scale,
+    ...manifest.series,
     ...manifest.decorative,
   ]);
   for (const name of tokens.keys()) {
@@ -64,19 +73,44 @@ export function checkTokens(
       for (const fg of manifest.ui) pair('ui', fg, bg, MINIMUM.ui);
       for (const { fill } of manifest.fills) pair('ui', fill, bg, MINIMUM.ui);
       for (const step of manifest.scale) pair('scale', step, bg, MINIMUM.ui);
+      for (const series of manifest.series) pair('series', series, bg, MINIMUM.ui);
     }
     for (const { fill, on } of manifest.fills) pair('fill-text', on, fill, MINIMUM.text);
 
     const steps = manifest.scale.map((name) => ({ name, rgb: colour(name, theme) }));
+    const series = manifest.series.map((name) => ({ name, rgb: colour(name, theme) }));
     for (const vision of ['normal', ...DEFICIENCIES] as const) {
-      const seen = steps.map(({ name, rgb }) => ({
+      const see = ({ name, rgb }: { name: string; rgb: Rgb | null }) => ({
         name,
         rgb: rgb && vision !== 'normal' ? simulate(rgb, vision) : rgb,
-      }));
+      });
+      const seen = steps.map(see);
       for (let i = 1; i < seen.length; i++) {
         const [a, b] = [seen[i - 1]!, seen[i]!];
         if (a.rgb && b.rgb)
-          scale.push({ theme, vision, from: a.name, to: b.name, deltaE: deltaE2000(a.rgb, b.rgb) });
+          scale.push({
+            kind: 'scale',
+            theme,
+            vision,
+            from: a.name,
+            to: b.name,
+            deltaE: deltaE2000(a.rgb, b.rgb),
+          });
+      }
+      const seenSeries = series.map(see);
+      for (let i = 0; i < seenSeries.length; i++) {
+        for (let j = i + 1; j < seenSeries.length; j++) {
+          const [a, b] = [seenSeries[i]!, seenSeries[j]!];
+          if (a.rgb && b.rgb)
+            scale.push({
+              kind: 'series',
+              theme,
+              vision,
+              from: a.name,
+              to: b.name,
+              deltaE: deltaE2000(a.rgb, b.rgb),
+            });
+        }
       }
     }
   }
@@ -88,9 +122,11 @@ export function checkTokens(
     }
   }
   for (const result of scale) {
-    if (result.deltaE < MIN_ADJACENT_DELTA_E) {
+    const minimum = result.kind === 'series' ? MIN_SERIES_DELTA_E : MIN_ADJACENT_DELTA_E;
+    if (result.deltaE < minimum) {
+      const arrow = result.kind === 'series' ? '↔' : '→';
       problems.push(
-        `${result.from} → ${result.to} (${result.theme}, ${result.vision}): ΔE00 ${result.deltaE.toFixed(1)}, needs ${MIN_ADJACENT_DELTA_E}`,
+        `${result.from} ${arrow} ${result.to} (${result.theme}, ${result.vision}): ΔE00 ${result.deltaE.toFixed(1)}, needs ${minimum}`,
       );
     }
   }

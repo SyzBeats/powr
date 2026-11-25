@@ -1,0 +1,43 @@
+# Motivation (PRD MOT-03, MOT-04, A-07; M4a, rules 1.5.0). The weekly adherence streak and its
+# fairness rules. No evidence base section covers streaks; the values are the PRD's own numbers,
+# except the default freestyle target, a POWR design value. Tone rules (MOT-10) are copy rules,
+# not parameters.
+
+- id: motivation.streak.partialMinShare
+  value: 0.5
+  unit: fraction
+  evidence: [INF]
+  sources: [src.powr-prd]
+  ebRef: 'PRD MOT-03 (partial sessions count if ≥ 50% of the planned working sets were done)'
+  verified: true
+  userOverridable: false
+
+- id: motivation.streak.graceSessions
+  value: 1
+  unit: sessions
+  evidence: [INF]
+  sources: [src.powr-prd]
+  ebRef: 'PRD MOT-03 and Assumption A-07 (the user can enable a grace of 1 missed session per week)'
+  verified: true
+  userOverridable: false
+  note: 'The grace is off by default (a user setting); with it, a week with at least one session and at most one session missing is kept.'
+
+- id: motivation.streak.retroactiveBreakWeeks
+  value: 4
+  unit: weeks
+  evidence: [INF]
+  sources: [src.powr-prd]
+  ebRef: 'PRD MOT-04 (a past week can be marked as a break, at most 4 weeks back)'
+  verified: true
+  userOverridable: false
+
+- id: motivation.streak.defaultWeeklyTarget
+  value: 1
+  unit: sessions
+  range: { min: 1, max: 7 }
+  evidence: [INF]
+  sources: [src.powr-prd]
+  ebRef: 'PRD MOT-03 (in freestyle mode the user sets a weekly session target); the value before one is set is a POWR design value'
+  verified: false
+  userOverridable: true
+  note: 'A POWR design value: weeks without plan sessions and without a user target ask for one session.'

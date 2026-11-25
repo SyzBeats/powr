@@ -77,6 +77,7 @@ export function createRepositories(db: PowrDb): Repositories {
     },
     plans: {
       get: (id) => db.plans.get(id),
+      list: () => db.plans.toArray(),
       getActive: () => db.plans.where('status').equals('active').first(),
       put: async (plan) => {
         await db.plans.put(plan);
@@ -114,6 +115,43 @@ export function createRepositories(db: PowrDb): Repositories {
         await db.bodyweights.put(entry);
       },
       list: () => db.bodyweights.orderBy('measuredAt.epochMs').toArray(),
+      get: (id) => db.bodyweights.get(id),
+      delete: (id) => db.bodyweights.delete(id),
+    },
+    customExercises: {
+      get: (id) => db.customExercises.get(id),
+      list: () => db.customExercises.toArray(),
+      put: async (exercise) => {
+        await db.customExercises.put(exercise);
+      },
+      delete: (id) => db.customExercises.delete(id),
+    },
+    exerciseUserData: {
+      get: (id) => db.exerciseUserData.get(id),
+      list: () => db.exerciseUserData.toArray(),
+      put: async (entry) => {
+        await db.exerciseUserData.put(entry);
+      },
+      delete: (id) => db.exerciseUserData.delete(id),
+    },
+    measurements: {
+      get: (id) => db.measurements.get(id),
+      list: () => db.measurements.orderBy('measuredAt.epochMs').toArray(),
+      put: async (entry) => {
+        await db.measurements.put(entry);
+      },
+      delete: (id) => db.measurements.delete(id),
+    },
+    insights: {
+      weeks: (from, to) => db.dWeekly.where('weekStart').between(from, to, true, true).toArray(),
+      putWeeks: async (records) => {
+        await db.dWeekly.bulkPut([...records]);
+      },
+      deleteWeeks: (weekStarts) => db.dWeekly.bulkDelete([...weekStarts]),
+      streak: () => db.dStreak.get('me'),
+      putStreak: async (record) => {
+        await db.dStreak.put(record);
+      },
     },
     readiness: {
       put: async (entry) => {
@@ -143,9 +181,15 @@ export function createRepositories(db: PowrDb): Repositories {
           .where('[exerciseId+localDate]')
           .between([id, Dexie.minKey], [id, Dexie.maxKey])
           .toArray(),
+      prsInRange: (from, to) => db.dPrs.where('localDate').between(from, to, true, true).toArray(),
+      pointsInRange: (from, to) =>
+        db.dSessionE1rm.where('localDate').between(from, to, true, true).toArray(),
       invalidate: (ids) => db.dExerciseState.bulkDelete([...ids]),
       clear: async () => {
-        for (const table of DERIVED_TABLE_NAMES) await db.table(table).clear();
+        const scope = Dexie.currentTransaction?.storeNames ?? [];
+        for (const table of DERIVED_TABLE_NAMES) {
+          if (scope.includes(table)) await db.table(table).clear();
+        }
       },
     },
     raw: {

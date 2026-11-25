@@ -33,3 +33,5 @@ export {
   type WorkoutOutcome,
 } from './workout';
 export { preferencesOf } from './context';
+// EXL-09 (M4a): the setup memory of the active session's exercises, for the session screen.
+export { observeSessionSetups } from '../library/user-data';

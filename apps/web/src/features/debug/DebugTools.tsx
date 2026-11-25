@@ -39,6 +39,18 @@ export default function DebugTools() {
         >
           Capability probe (S-2)
         </Link>
+        <Link
+          to="/debug/body-map"
+          className="flex min-h-target items-center font-semibold text-primary"
+        >
+          Body map demo (S-5)
+        </Link>
+        <Link
+          to="/debug/charts"
+          className="flex min-h-target items-center font-semibold text-primary"
+        >
+          Charts (S-4)
+        </Link>
         <Button onClick={() => void diagnostics.exportToFile()}>Export diagnostics</Button>
         <Button variant="danger" onClick={() => void diagnostics.resetAppFiles()}>
           Reset app files (keeps data)

@@ -42,6 +42,11 @@ function sorted(tables: RawTables): RawTables {
     meets: byId(tables.meets),
     bodyweights: byId(tables.bodyweights),
     readiness: byId(tables.readiness),
+    customExercises: byId(tables.customExercises),
+    exerciseUserData: tables.exerciseUserData.toSorted((a, b) =>
+      a.exerciseId < b.exerciseId ? -1 : 1,
+    ),
+    measurements: byId(tables.measurements),
   };
 }
 
@@ -135,6 +140,9 @@ describe('backup round-trip', () => {
       'data/meets.json',
       'data/bodyweights.json',
       'data/readiness.json',
+      'data/customExercises.json',
+      'data/exerciseUserData.json',
+      'data/measurements.json',
       'README.txt',
     ]);
     expect(encoded.manifest).toMatchObject({

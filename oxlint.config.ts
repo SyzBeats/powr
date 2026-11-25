@@ -94,6 +94,18 @@ const LAZY_SESSION: ImportPattern = {
 };
 
 /**
+ * The insight and library use cases (M4a) are lazy chunks too: the analytics engine, the library
+ * search and the rules resolver stay off the startup path (§8.19). The screens' loaders (M4b)
+ * carry the disable comments; type imports are allowed.
+ */
+const LAZY_INSIGHTS: ImportPattern = {
+  regex: '^@powr/application/(insights|library)$',
+  allowTypeImports: true,
+  message:
+    "The insight and library use cases are lazy-loaded: use import('@powr/application/insights') or import('@powr/application/library').",
+};
+
+/**
  * The built-in content data is a lazy chunk too (TD-17): the single loader in src/app/boot.tsx
  * carries the disable comment. The content schemas (Zod) are build-time only.
  */
@@ -278,6 +290,7 @@ const config: OxlintConfig = {
           LAZY_BACKUP,
           LAZY_PLANNING,
           LAZY_SESSION,
+          LAZY_INSIGHTS,
           LAZY_CONTENT,
           CONTENT_SCHEMA,
           RULES_SUBPATHS,
@@ -360,6 +373,7 @@ const config: OxlintConfig = {
           LAZY_BACKUP,
           LAZY_PLANNING,
           LAZY_SESSION,
+          LAZY_INSIGHTS,
           LAZY_CONTENT,
           CONTENT_SCHEMA,
           RULES_SUBPATHS,
@@ -379,6 +393,7 @@ const config: OxlintConfig = {
           LAZY_BACKUP,
           LAZY_PLANNING,
           LAZY_SESSION,
+          LAZY_INSIGHTS,
           LAZY_CONTENT,
           CONTENT_SCHEMA,
           RULES_SUBPATHS,
@@ -398,6 +413,7 @@ const config: OxlintConfig = {
           LAZY_BACKUP,
           LAZY_PLANNING,
           LAZY_SESSION,
+          LAZY_INSIGHTS,
           LAZY_CONTENT,
           CONTENT_SCHEMA,
           RULES_SUBPATHS,
@@ -417,6 +433,7 @@ const config: OxlintConfig = {
           LAZY_BACKUP,
           LAZY_PLANNING,
           LAZY_SESSION,
+          LAZY_INSIGHTS,
           LAZY_CONTENT,
           CONTENT_SCHEMA,
           RULES_SUBPATHS,

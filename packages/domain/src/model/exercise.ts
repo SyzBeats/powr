@@ -1,4 +1,5 @@
 import type { EquipmentId, ExerciseId, MuscleId, SourceId } from '../ids';
+import type { InstantTz } from '../time';
 import type { Mass } from '../units';
 import type { MappingEvidence } from './evidence';
 import type { Goal } from './training';
@@ -157,6 +158,25 @@ export interface ExerciseDef {
   readonly cues: readonly LocalizedText[];
   /** User-created (EXL-04); the MAP-03 ranking treats custom exercises as unrated. */
   readonly custom: boolean;
+  /**
+   * Custom exercises only (EXL-04, MAP-03): the user rated its stretch emphasis and overload
+   * suitability, so the effectiveness score uses them (the evidence factor stays at C).
+   */
+  readonly userRated?: boolean;
   readonly status: ExerciseStatus;
   readonly replacedBy?: ExerciseId;
+}
+
+/**
+ * A user-defined exercise (EXL-04; raw table `customExercises`, technical concept §8.2.2): an
+ * `ExerciseDef` with `custom: true` and a `cx.<uuid>` ID, so plans, logging, e1RM, volume, the
+ * body map and backups treat it like a built-in one. A custom exercise that has history is
+ * retired (`status: 'deprecated'`) instead of deleted.
+ */
+export interface CustomExercise extends ExerciseDef {
+  readonly custom: true;
+  readonly createdAt: InstantTz;
+  readonly updatedAt: InstantTz;
+  /** The built-in exercise it was copied from (EXL-04 "by copying a built-in one"). */
+  readonly copiedFrom?: ExerciseId;
 }

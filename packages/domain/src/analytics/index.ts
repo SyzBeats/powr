@@ -1,0 +1,102 @@
+/**
+ * `@powr/domain/analytics`: insight data (M4a; ANL-01…07, MAP-02…05, MAP-07 data, MOT-01…04).
+ * Pure functions over the raw logs and the derived tables: the derived week (`dWeekly`), volume
+ * per muscle against its target with the heat steps of the body map, e1RM and performance
+ * trends with the "likely real" labels, the rep-max table, PR history and the training
+ * calendar, the powerlifting score board and the body map's ranked exercise lists.
+ */
+export {
+  muscleRanking,
+  regionsOf,
+  type MuscleRankingInput,
+  type RankMode,
+  type RankedExercise,
+} from './bodymap';
+export {
+  DAY_STATES,
+  REP_MAX_ROWS,
+  calendarDays,
+  filterSessions,
+  fold,
+  prHistory,
+  repMaxTable,
+  type CalendarDay,
+  type CalendarInput,
+  type DayState,
+  type PrFilter,
+  type RepMaxRow,
+  type SessionFilter,
+  type SessionListItem,
+} from './history';
+export {
+  LEGACY_FORMULAS,
+  SCORE_FORMULA_VERSIONS,
+  scoreBoard,
+  type DatedTotal,
+  type FormulaScore,
+  type LiftValue,
+  type ScoreBoard,
+  type ScoreBoardInput,
+  type ScoreSource,
+} from './scores';
+export {
+  RANGE_PRESETS,
+  WEEKLY_AGGREGATION_DAYS,
+  chartAnnotations,
+  commonLoads,
+  compareSeries,
+  e1rmSeries,
+  performanceSeries,
+  rangeStart,
+  repsAtLoad,
+  seriesSummary,
+  weeklyMaxima,
+  type ChartAnnotation,
+  type ComparisonPoint,
+  type E1rmSeries,
+  type E1rmSeriesPoint,
+  type ExposureSets,
+  type PerformancePoint,
+  type RangePreset,
+  type RepsAtLoadPoint,
+  type SeriesInput,
+  type SeriesRules,
+  type SeriesSource,
+  type SeriesSummary,
+} from './trends';
+export {
+  HEAT_STEPS,
+  averageWeeks,
+  heatStep,
+  muscleSeries,
+  plannedRemainder,
+  volumeRows,
+  type BodyView,
+  type HeatLabel,
+  type HeatStep,
+  type MuscleSeriesPoint,
+  type MuscleWeekRow,
+  type SubRegionRow,
+  type TargetBand,
+  type TargetStatus,
+  type TaxonomyGroup,
+  type TaxonomyRegion,
+  type VolumeContributor,
+  type VolumeRowRules,
+  type VolumeRowsInput,
+} from './volume';
+export {
+  WEEKLY_VERSION,
+  buildWeek,
+  isHeavySet,
+  type WeekInput,
+  type WeekSessionInput,
+  type WeeklyContext,
+  type WeeklyExercise,
+  type WeeklyLift,
+  type WeeklyMuscle,
+  type WeeklyPlanned,
+  type WeeklyRecord,
+  type WeeklySessions,
+  type WeeklyTargets,
+} from './weekly';

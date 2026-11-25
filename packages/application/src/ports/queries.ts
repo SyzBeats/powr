@@ -13,7 +13,7 @@ import type {
 import type { ExerciseState, PrRecord } from '@powr/domain/session';
 import type { MetaRecord, SettingsRecord } from '@powr/formats';
 
-import type { Observable } from './index';
+import type { Observable, Repositories, TableName } from './index';
 
 /** Live views of persisted state for the UI (§8.5): they re-emit whenever the data changes. */
 export interface LiveQueries {
@@ -34,6 +34,15 @@ export interface LiveQueries {
   activeSessionData(): Observable<ActiveSessionData | undefined>;
   /** PRs recorded for a session (the summary of a finished session, MOT-02). */
   sessionPrs(id: SessionId): Observable<PrRecord[]>;
+  /**
+   * M4a: any read over the repositories as a live query: it runs in one read transaction over
+   * `tables` and re-runs whenever one of them changes (Dexie `liveQuery`). The insight and
+   * library entries build their observables (Home, volume, streak, history) on it.
+   */
+  observe<T>(
+    tables: readonly TableName[],
+    read: (repos: Repositories) => Promise<T>,
+  ): Observable<T>;
 }
 
 export interface ActiveSessionData {

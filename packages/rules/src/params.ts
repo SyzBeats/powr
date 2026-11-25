@@ -382,6 +382,36 @@ export const PARAM_SCHEMAS = {
   'bodyweight.trend.initialWeighIns': range(z.number().int().min(1)),
   'bodyweight.trend.winsorizePct': positive,
   'bodyweight.rate.windowDays': range(z.number().int().min(1)),
+  // M4a (rules 1.5.0): rates by phase, streaks, the PRG-07 pace, the rep-range flag, heavy sets.
+  'bodyweight.rate.bulk': z.strictObject({
+    target: byLevel(range(z.number().min(0).max(2))),
+    sustainedWeeks: z.number().int().min(1).max(12),
+  }),
+  'bodyweight.rate.cut': z
+    .strictObject({
+      target: range(z.number().min(0).max(2)),
+      allowed: range(z.number().min(0).max(2)),
+      hardWarnAbove: z.number().min(0).max(3),
+      sustainedWeeks: z.number().int().min(1).max(12),
+    })
+    .refine(
+      (cut) => cut.allowed.min <= cut.target.min && cut.target.max <= cut.allowed.max,
+      'the target lies within the allowed range',
+    ),
+  'bodyweight.rate.maintain': range(z.number().min(-2).max(2)),
+  'motivation.streak.partialMinShare': fraction,
+  'motivation.streak.graceSessions': z.number().int().min(0).max(3),
+  'motivation.streak.retroactiveBreakWeeks': z.number().int().min(0).max(12),
+  'motivation.streak.defaultWeeklyTarget': z.number().int().min(1).max(7),
+  'progression.pace.window': z.strictObject({
+    weeks: z.number().int().min(2).max(16),
+    minExposures: z.number().int().min(3).max(50),
+  }),
+  'load.trend.repRangeShift': z.number().positive().max(20),
+  'volume.strength.heavySet': z.strictObject({
+    minPct1rm: percent,
+    maxReps: z.number().int().min(1).max(12),
+  }),
 } satisfies ParamSchemas;
 
 /** Every MVP parameter ID, sorted. */

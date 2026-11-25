@@ -7,6 +7,8 @@
   "exports": {
     ".": "./src/index.ts",
     "./backup": "./src/usecases/backup.ts",
+    "./insights": "./src/insights/index.ts",
+    "./library": "./src/library/index.ts",
     "./planning": "./src/planning/index.ts",
     "./session": "./src/session/index.ts"
   },

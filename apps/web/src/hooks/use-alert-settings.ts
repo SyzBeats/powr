@@ -14,8 +14,9 @@ import { useTimerKit } from './use-timer-kit';
 /**
  * Alert settings (SET-03, SET-04, SET-10), stored in the settings record as `alerts`. Absent
  * fields mean the defaults below (product-owner decision 2026-11-24: pre-alert on at 10 s, 3-2-1
- * off, the "Resting – ends at" notice on, volume 80%, keep the screen on); a change writes the
- * whole object.
+ * off, the "Resting – ends at" notice on, volume 80%, keep the screen on; M4v: the timed set's
+ * 3-2-1 lead-in, its automatic stop at the target and the tempo metronome off); a change writes
+ * the whole object.
  */
 export type AlertSettings = Required<NonNullable<SettingsRecord['alerts']>>;
 
@@ -24,7 +25,10 @@ export const PRE_ALERT_SECONDS = [
   5, 10, 15,
 ] as const satisfies readonly AlertSettings['preAlertSeconds'][];
 
-const DEFAULT_ALERT_SETTINGS: AlertSettings = {
+type OptionalAlertSwitch = 'setTimerLeadIn' | 'setTimerAutoStop' | 'tempoCues';
+
+/** The fields the stored `alerts` object always carries (the strict v2 record requires them). */
+const STORED_DEFAULTS: Omit<AlertSettings, OptionalAlertSwitch> = {
   sound: true,
   volume: 0.8,
   vibration: true,
@@ -33,6 +37,14 @@ const DEFAULT_ALERT_SETTINGS: AlertSettings = {
   countdown: false,
   restingNotice: true,
   keepScreenOn: true,
+};
+
+/** M4v's optional switches are stored only once changed: absent means off. */
+const DEFAULT_ALERT_SETTINGS: AlertSettings = {
+  ...STORED_DEFAULTS,
+  setTimerLeadIn: false,
+  setTimerAutoStop: false,
+  tempoCues: false,
 };
 
 export function useAlertSettings(): AlertSettings & { readonly loaded: boolean } {
@@ -58,7 +70,7 @@ export function useSetAlertSettings() {
         platform.timers.current()?.screenWake.setEnabled(patch.keepScreenOn);
       await deps.uow.write(['settings'], async (repos) => {
         const current = await repos.settings.get();
-        const alerts: AlertSettings = { ...DEFAULT_ALERT_SETTINGS, ...current?.alerts, ...patch };
+        const alerts = { ...STORED_DEFAULTS, ...current?.alerts, ...patch };
         await repos.settings.put({
           ...current,
           id: 'me',

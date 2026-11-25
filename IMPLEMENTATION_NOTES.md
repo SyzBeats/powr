@@ -2225,3 +2225,684 @@ stepper per row with the label beside it, Undo as a dock button, the mini timer 
 session, the timer kit loading with the Train tab); TD-39 (metronome) and TD-48 (timed-set lead-in
 and auto-stop) go to M4, TD-49 (the preference screens) to M5; PRD v0.6 carries the proposed
 TMR-12, WKT-03 and SET-03 wording.
+
+## M4a analytics core
+
+Written 2026-11-25 by the M4a work (roadmap A.4 "M4 Insight and motivation", the part without UI:
+the analytics core under the M4b screens; M4v builds the charts, the body map and the timer extras
+in parallel). Status: `pnpm verify` green (numbers under "Evidence").
+
+### What landed
+
+| Area                             | Where                                                                                                                                                                                                                                                                                                                                                                                                                       | PRD (data and logic)                     |
+| -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
+| Derived weeks and streak         | `@powr/domain/analytics` `buildWeek` (`dWeekly`), `@powr/domain/streaks` `computeStreak`, `countsForStreak`, `canMarkBreak`, `breakDaysIn`, `streakChange`; `@powr/application/insights` `ensureInsights`, `rebuildInsights` (fingerprint-and-rebuild like M3a; finish, past log/edit/delete schedule a rebuild of their week after their own commit)                                                                       | TD-43, MOT-03, MOT-04, ANL-03            |
+| Volume against targets, heat map | `@powr/domain/analytics` `volumeRows` (per display group: fractional/direct, evidence band, target band and status, heat step 0–5, regions per view, sub-regions, contributors, planned remainder), `averageWeeks`, `muscleSeries`, `plannedRemainder`; insights `weeklyVolume`, `observeWeeklyVolume`, `volumeHistory`                                                                                                     | ANL-03, MAP-04, MAP-06 data, MAP-07 data |
+| Trends                           | `@powr/domain/analytics` `e1rmSeries` (raw points, Kalman band, "likely real" labels per session with the rep-range flag, PR markers, weekly maxima beyond a year, summary), `compareSeries`, `chartAnnotations`, `performanceSeries`, `repsAtLoad`, `commonLoads`; `@powr/domain/trend` `repRangeShift`, `pointFromBand`, `median`, `labelChange(…, at)`; insights `exerciseTrend`, `compareTrends`, `exercisePerformance` | ANL-02, PRG-02, TD-26 (rep-range flag)   |
+| PRG-07 switch                    | `@powr/domain/progression` `progressionPace`; the session engine (`suggestSet`) loads an outrun linear slot from the e1RM (or adds reps first without an RIR target), with the "Why?"; insights `progressionAdvice`                                                                                                                                                                                                         | PRG-07, TD-44                            |
+| History                          | `@powr/domain/analytics` `repMaxTable`, `prHistory`, `calendarDays`, `filterSessions`; insights `exerciseHistory`, `prHistory`, `trainingCalendar`, `sessionHistory`                                                                                                                                                                                                                                                        | ANL-04, ANL-05, ANL-06                   |
+| Scores                           | `@powr/domain/analytics` `scoreBoard` (current and best per formula, per lift, points history, version IDs, registry provenance); insights `scores`                                                                                                                                                                                                                                                                         | ANL-07                                   |
+| Bodyweight and measurements      | `@powr/domain/bodyweight` `firstReadingPerDay`, `rateBand`, `measurementSeries`; insights `logBodyweight`, `editBodyweight`, `deleteBodyweight`, `bodyweightOverview`, `observeBodyweight`, `logMeasurement`, `editMeasurement`, `deleteMeasurement`, `measurementsOverview`                                                                                                                                                | BOD-01, BOD-02, BOD-03                   |
+| Home                             | insights `observeHome` (one live query), `homeView`                                                                                                                                                                                                                                                                                                                                                                         | ANL-01, MOT-03                           |
+| Motivation                       | streak and fairness (above); insights `streakView`, `markWeekAsBreak`, `updateInsightPreferences`, `sessionStreakChange` (celebration data); PR kinds unchanged (M3a)                                                                                                                                                                                                                                                       | MOT-01…04, MOT-10                        |
+| Library                          | `@powr/domain/library` `searchLibrary`, `exerciseInfo`, `buildCustomExercise`, `customDraftFrom`, `fold`; `@powr/application/library` (below)                                                                                                                                                                                                                                                                               | EXL-02…05, EXL-07…09                     |
+| Body map ranking and actions     | `@powr/domain/analytics` `muscleRanking` (Effectiveness = M2a MAP-03 composite, Focus), `regionsOf`; library `muscleExercises`, `bodyMapRegions`, `addExerciseToToday`, `planPlacements`                                                                                                                                                                                                                                    | MAP-02, MAP-03, MAP-05                   |
+| Custom exercises in the catalog  | `@powr/content` `customizableCatalog`, `isCustomizable`; root `loadCustomExercises` (boot), restore re-syncs                                                                                                                                                                                                                                                                                                                | EXL-04                                   |
+| Rules                            | registry 1.4.0 → **1.5.0**, 133 → **143** parameters, 34 → **38** `verified: false`; new table `motivation.yaml`; 8 new `RuleId`s with English `why.*` messages                                                                                                                                                                                                                                                             | PRG-18, PRG-09                           |
+| Records                          | `records/v2.ts` amended (unreleased version 2): `customExercises`, `exerciseUserData`, `measurements`; `profile.hiddenExercises?`; `settings.insights?`; reference checks; fixture `v2/m4-insights.zip`                                                                                                                                                                                                                     | DAT-05…07, NFR-SEC-02                    |
+| Persistence                      | Dexie version 2 amended: stores `customExercises 'id, status'`, `exerciseUserData 'exerciseId'`, `measurements 'id, [site+localDate], localDate, measuredAt.epochMs'`, `dWeekly 'weekStart'`, `dStreak 'id'`, index `dSessionE1rm.localDate`; repositories; `LiveQueries.observe(tables, read)`                                                                                                                             | §8.2.2                                   |
+| Lint                             | `LAZY_INSIGHTS` in `oxlint.config.ts`: `@powr/application/insights` and `/library` are `import()`-only in the app                                                                                                                                                                                                                                                                                                           | §8.19                                    |
+
+Engine version 0.0.0 → **0.1.0** (`ENGINE_VERSION`): the PRG-07 switch changes suggestions, and the
+derived exercise state gained `recent` (the last 12 exposures: session e1RM, weight, top load,
+median reps) and each `dSessionE1rm` point a `change` (the strength trend's PRG-02 label at that
+session, with the rep-range flag). The version is part of every derivation key, so stored states
+rebuild on first use.
+
+### Application API for M4b
+
+All take the container's `deps`; expected failures are `Result`s; `observe*` are live queries built
+on `LiveQueries.observe` (a Dexie `liveQuery` over one read transaction), emitting in order. Both
+entries are lazy (`LAZY_INSIGHTS`): M4b's loaders carry the one disable comment each, like
+`usePlanning`/`useWorkout`.
+
+**`@powr/application/insights`**
+
+| Use case                                                                                                             | Returns                                          | Notes                                                                                                                              |
+| -------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `observeHome(deps)`, `homeView(deps)`                                                                                | `HomeView`                                       | ANL-01; `refreshing: true` while stale weeks or the streak rebuild in the background (the next emission is fresh)                  |
+| `weeklyVolume(deps, { mode?: 'week' \| 'lastWeek' \| 'avg4', date? })`, `observeWeeklyVolume`                        | `WeeklyVolumeView`                               | ANL-03 table, MAP-04 heat map and list (MAP-06), MAP-07 sub-regions; rebuilds stale weeks first                                    |
+| `volumeHistory(deps, { from, to?, muscles? })`                                                                       | `{ weeks, series: { muscle, points }[] }`        | ANL-03 chart: `MuscleSeriesPoint { weekStart, fractional, direct, target }`                                                        |
+| `exerciseTrend(deps, { exerciseId, range?: '4w' \| '12w' \| '6m' \| '1y' \| 'all', source?: 'strength' \| 'all' })`  | `ExerciseTrendView`                              | ANL-02 chart data, annotations, PRG-07 pace                                                                                        |
+| `compareTrends(deps, { exerciseIds (≤ 3), range?, source? })`                                                        | `{ exerciseId, points: { localDate, pct }[] }[]` | ANL-02 comparison (% change from the first point in range)                                                                         |
+| `exercisePerformance(deps, { exerciseId, range?, loadKg? })`                                                         | `PerformanceView`                                | best set, volume load, reps at a load (default: the most used load), `loads` to choose from                                        |
+| `progressionAdvice(deps)`                                                                                            | `ProgressionAdvice[]`                            | TD-44: linear slots of the current mesocycle whose planned increases outrun the trend (for the plan editor)                        |
+| `exerciseHistory(deps, exerciseId)`                                                                                  | `ExerciseHistoryView \| null`                    | ANL-04: sessions newest first with sets, `repMax` (12 rows), bests, e1RM (strength/all, band), calibration, training max, PRs      |
+| `prHistory(deps, { types?, exerciseIds?, from?, to? })`                                                              | `PrRecord[]` newest first                        | ANL-05; each PR names `sessionId` and `setId`                                                                                      |
+| `trainingCalendar(deps, { month: 'YYYY-MM' } \| { from, to })`                                                       | `CalendarDay[]`                                  | ANL-06: `states` ⊆ completed, partial, missed, planned, deload, break; sessions and planned sessions per day                       |
+| `sessionHistory(deps, { query?, exerciseIds?, statuses?, origins?, from?, to?, withPrs? })`                          | `SessionListItem[]` newest first                 | ANL-06 list; the query matches exercise names and notes, accents ignored                                                           |
+| `streakView(deps, { weeks? })`                                                                                       | `StreakView`                                     | MOT-03/04: current, best, this week, the last weeks with "Why?", `markableWeeks`, preferences                                      |
+| `markWeekAsBreak(deps, { weekStart, reason, note? })`                                                                | `Result<TrainingBreak, MarkBreakError>`          | MOT-04 (≤ 4 weeks back; `tooFarBack`, `future`, `alreadyBreak`); pauses the week's open planned sessions                           |
+| `updateInsightPreferences(deps, { streakGrace?, weeklySessionTarget?, measurementSites?, scoreSource?, division? })` | `Result<void, …>`                                | settings `insights`                                                                                                                |
+| `sessionStreakChange(deps, sessionId)`                                                                               | `StreakChange \| null`                           | MOT-02/03 celebration data for the summary: `{ kept, current, best, newBest }`, independent of whether the post-finish rebuild ran |
+| `scores(deps, { source?, division? })`                                                                               | `ScoreBoardView`                                 | ANL-07 (below)                                                                                                                     |
+| `logBodyweight`, `editBodyweight`, `deleteBodyweight`                                                                | `Result<BodyweightEntry \| void, …>`             | BOD-01 (20–400 kg plausible, not in the future)                                                                                    |
+| `bodyweightOverview(deps, { from? })`, `observeBodyweight`                                                           | `BodyweightView`                                 | BOD-02: entries, trend points, latest, `rate`, `band` (with "Why?")                                                                |
+| `logMeasurement`, `editMeasurement`, `deleteMeasurement`, `measurementsOverview`                                     | …, `MeasurementsView`                            | BOD-03: skinfolds in mm, circumferences in cm or in                                                                                |
+| `ensureInsights(deps, range?)`, `rebuildInsights(deps)`                                                              | `InsightsReport`                                 | "Verify data" and tests; runs serialized per container                                                                             |
+
+**`@powr/application/library`**
+
+| Use case                                                                                                                                      | Returns                                     | Notes                                                                                                                                                        |
+| --------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `searchExercises(deps, LibraryQuery)`                                                                                                         | `LibraryItem[]`                             | EXL-02: `text`, `muscles` (+`minCredit`), `equipment`, `patterns`, `mechanics`, `availableOnly`, `favouritesOnly`, `customOnly`, `includeHidden`             |
+| `exerciseDetail(deps, exerciseId)`                                                                                                            | `ExerciseDetailView \| null`                | EXL-03: `info` (muscles with role, evidence, convention flag; equipment with what is missing; lift, variants, substitutes; marks), rest, history, PRs, setup |
+| `muscleExercises(deps, { muscle, mode?: 'effectiveness' \| 'focus', includeUnavailable? })`                                                   | `RankedExercise[]`                          | MAP-02/03 (shape below)                                                                                                                                      |
+| `bodyMapRegions(deps)`                                                                                                                        | `{ front, back: { muscle, region }[] }`     | MAP-01, MAP-06                                                                                                                                               |
+| `addExerciseToToday(deps, exerciseId)`                                                                                                        | `Result<AddToTodayOutcome, …>`              | MAP-05: `addedToSession` (active session, `ADD_EXERCISE`), `addedToPlanned` (today's planned session), `noSessionToday` (offer a freestyle start)            |
+| `planPlacements(deps, { exerciseId, muscle? })`                                                                                               | `{ planId, days: PlanPlacement[] } \| null` | MAP-05 → PLN-09: per day `swaps[].edit` and `add` are `PlanEdit`s for the planning entry's `previewPlanEdit`/`savePlanEdit`                                  |
+| `customExerciseDraft(deps, from?)`, `saveCustomExercise(deps, { id?, exercise, copiedFrom? })`, `deleteCustomExercise`, `listCustomExercises` | …                                           | EXL-04: `invalid` lists every `CustomExerciseIssue`; delete retires (`deprecated`) one with history or in a plan                                             |
+| `setFavourite`, `setHidden`, `setAvoided` (exercise or pattern)                                                                               | `Result<Profile, …>`                        | EXL-08 (profile, as M2)                                                                                                                                      |
+| `exerciseUserData`, `exerciseUserDataFor`, `saveExerciseUserData(deps, { exerciseId, setup, note?, trainingMax? })`                           | `ExerciseUserData \| null`                  | EXL-09 setup memory (fields `seat`, `backrest`, `pin`, `handle`, `grip`, `stance`, `rack`, `safeties`, `other` with a label), ANL-04 training max            |
+| `observeSessionSetups(deps)` (also re-exported by `@powr/application/session`)                                                                | `Map<ExerciseId, ExerciseUserData>`         | EXL-09 "shown whenever the exercise appears in a session"                                                                                                    |
+
+**Data shapes the charts and the body map need** (M4v components, M4b screens):
+
+```ts
+// e1RM chart (ANL-02): ExerciseTrendView.series
+interface E1rmSeries {
+  exerciseId; source: 'strength' | 'all';
+  points: E1rmSeriesPoint[];          // sessions, or weekly maxima when `aggregated`
+  aggregated: boolean;                // range > 365 days (§8.10)
+  latest: Explained<ChangeLabel> | null;   // the current label with its "Why?"
+  summary: { fromDate, toDate, fromKg, toKg, deltaPct, weeks, label, direction }; // the aria sentence
+}
+interface E1rmSeriesPoint {
+  sessionId; localDate;
+  rawKg: number | null; weight: number | null;           // scatter points
+  trend: { e1rmKg; lowKg; highKg } | null;               // line + 95% band (stacked area pair)
+  change: { label: 'insufficientData'|'none'|'likely'|'veryLikely'; direction: 'up'|'down'|null;
+            deltaPct; referenceDate; repRange: boolean } | null;  // "likely real" marks
+  prs: ('rep'|'load'|'e1rm'|'volume')[];                 // PR symbols
+}
+annotations: { kind: 'mesocycle'|'deload'|'break'; from; to; index }[]   // markAreas
+// Performance: { points: { sessionId, localDate, bestSet: { loadKg, reps, rir, e1rmKg } | null,
+//   volumeKg, topLoadKg, workingSets }[], loads: number[], repsAtLoad: { loadKg, points: { sessionId, localDate, reps }[] } | null }
+
+// Volume and the body map (ANL-03, MAP-04/06/07): WeeklyVolumeView
+interface WeeklyVolumeView {
+  mode; weekStart; weeks: LocalDate[];
+  rows: MuscleWeekRow[];                          // one per display group, taxonomy order (19)
+  regions: { front: { muscle, region }[]; back: { muscle, region }[] };
+  lifts: { lift; heavySets; sets; tonnageKg; target: number | null }[];
+  sessions: { finished; partial; counting; minutes; ids } | null; targets;
+}
+interface MuscleWeekRow {
+  muscle: MuscleId;                               // 'mu.chest' (content IDs)
+  regions: { front?: 'front.chest'; back?: string };   // body-map region per view
+  fractional; direct;
+  band: 'belowFloor'|'low'|'default'|'high'|'softWarning'|'hardWarning';   // evidence band
+  heat: 0|1|2|3|4|5;                              // --heat-0…5: none, below floor, below target,
+  heatLabel: 'none'|'belowFloor'|'belowTarget'|'inTarget'|'high'|'veryHigh'; //   in target, high, very high
+  status: 'under'|'in'|'over'; target: { low; high; sets: number | null; source };
+  targeted: boolean;                              // the plan has a target for it
+  remaining: { fractional; direct };              // planned remainder (dashed outline overlay)
+  subRegions: { muscle; fractional; direct; regions; contributors }[];  // MAP-07
+  contributors: { exerciseId; sets; credit; fractional }[];             // "contributing exercises"
+  why: Explanation;                               // 'volume.target'
+}
+
+// Muscle → exercises (MAP-02/03): RankedExercise
+{ exerciseId; rank; credit; role: 'primary'|'secondary'|'minor'; evidence: 'H'|'EMG'|'C'|null;
+  effectiveness: Explained<number>  /* children: ranking.factor.* */; focus: Explained<number>;
+  available; missing: { allOf: EquipmentId[]; anyOf: EquipmentId[][] } | null;
+  favourite; custom; last: ExposureSummary | null }
+
+// Scores (ANL-07): ScoreBoardView
+{ available; missing: ('sex'|'bodyweight'|'lifts')[]; source: 'e1rm'|'tested'; division;
+  bodyweightKg; totalKg; lifts: { lift; exerciseId; kg }[]; rulesVersion;
+  formulas: { formula; version /* 'ipf-gl-2020', 'dots-2019', 'ipf-points-2019', 'wilks-original',
+              'wilks-2020', 'allometric-0.67' */; legacy; total; best: { value, localDate, totalKg,
+              bodyweightKg } | null; lifts: { lift, value, informal }[]; sources; verified; params; why }[];
+  history: { localDate; totalKg; bodyweightKg; scores: Record<formula, number | null> }[] }
+
+// Home (ANL-01): HomeView
+{ today; weekStart; activeSession; next: { plannedSessionId, name, localDate, kind, adjustments,
+  isToday } | null; restDay; lastSession: { sessionId, localDate, status, durationMs, doneSets,
+  exerciseIds, prs } | null; week: { progress: StreakWeek | null /* "2 of 4" */, volume:
+  MuscleWeekRow[] /* mini heat map */, minutes }; streak: { current, best } | null; recentPrs;
+  trendChanges: { exerciseId, localDate, sessionId, change, e1rmKg }[]; bodyweight: { latestKg,
+  trendKg, latestDate, sparkline: { localDate, trendKg }[], rate, band } | null; meet: { date,
+  daysUntil } | null; scores: ScoreBoard | null; lastBackupAt; refreshing }
+```
+
+### The derived tables (TD-43) as built
+
+- **`dWeekly`** holds one record per user week (SET-11 week start) that has a finished or partial
+  session or a planned session. A session belongs to the week of its own day (a session past
+  midnight stays whole), so the week's volume is exactly the sum of its sessions' (property
+  test). The record: muscles (groups and sub-regions, fractional and direct), exercises (credited
+  sets, working sets, volume load), lifts (PLN-03 heavy sets, sets, tonnage; close variants
+  included, EXL-07), sessions (finished, partial, counting, minutes, IDs), planned sessions by
+  status and the deload flag, break days, and the plan targets in force. Its `key` fingerprints
+  the engine, analytics, rules and content versions (custom exercises included), the overrides,
+  the week start, the targets, the break days and every raw record of the week (session and
+  planned-session IDs, statuses and revisions; every edit bumps a revision).
+- **`dStreak`** holds the streak plus each recorded week's contribution, so a changed week
+  updates it without reading the others; its key adds the current week, the grace, the weekly
+  target and the breaks. Without a stored streak (restore, cleared tables) `ensureInsights`
+  rebuilds the whole history.
+- **Triggers:** finish (`dispatch(FINISH)`), `logPastSession`, `editPastSession` and
+  `deletePastSession` schedule a rebuild of their week after their own commit and do not wait for
+  it (logging never blocks); a restore clears the derived tables; Home and every insight query
+  check the fingerprints of the weeks they show and rebuild what is stale (Home: this and last
+  week plus the streak, in the background, `refreshing: true`); M0's quick-log finish is caught
+  the same way. Rebuilds run one at a time per container.
+- **Property (fast-check):** after any sequence of backdated logging, quick-log finishes, edits,
+  deletes, clock moves, retroactive breaks, partial ensures and backup round trips, the derived
+  tables equal a full rebuild.
+
+### Streak rules as built (MOT-03/04)
+
+| Case                                                    | Rule                                                                                                                                                                                         |
+| ------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Kept                                                    | counting sessions ≥ the week's target; sessions on unscheduled days count; a partial session counts at ≥ 50% of its planned working sets (`motivation.streak.partialMinShare`)               |
+| Target                                                  | the plan's sessions that week (planned, done or skipped; not merged, not paused by a break); without plan sessions the freestyle weekly target, else **1** (`defaultWeeklyTarget`)           |
+| Deload weeks                                            | count with their planned sessions                                                                                                                                                            |
+| Grace (A-07, off by default)                            | one session short still keeps a week (`graced`), never a week without a session                                                                                                              |
+| Breaks (PLN-12; illness, vacation/travel, injury, life) | a week fully inside a break, or whose plan sessions were all paused, is `paused`: it neither keeps nor breaks the streak                                                                     |
+| Partial weeks                                           | plan weeks ask only for the sessions outside the break; freestyle weeks ask for ⌊target × free days / 7⌋ (0 → paused); the first week asks for its share from the first activity, at least 1 |
+| Missed                                                  | resets the current streak to 0; the best stays                                                                                                                                               |
+| Current week                                            | `pending` until kept: it can only add to the streak                                                                                                                                          |
+| Retroactive breaks (MOT-04)                             | `markWeekAsBreak`, at most 4 weeks back (`retroactiveBreakWeeks`); edits and backdating recompute                                                                                            |
+| Properties                                              | best ≥ current; more sessions never lower it; a break on a missed or pending week never lowers it; the grace never lowers it; the current week is never `missed`; input order irrelevant     |
+
+### Decisions and deviations
+
+| Concept / brief says                                                                    | What I did                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Never claim a change that is within the noise"                                         | `labelChange` now requires \|Δ\| > 1 TE for any claim: "very likely" (2.8 TE, or the 95% interval excluding 0) only upgrades a change already beyond 1 TE. Before, the interval alone could label a change below 1 TE "very likely". Property-tested over random series                                                                                                                                                                                                                       |
+| Rep-range artefact flag (PRG-02, TD-26)                                                 | `load.trend.repRangeShift` (3 reps, `verified: false`): a likely/very likely change is flagged when the median reps of the latest two sessions differ from those of the up to three sessions at the reference by ≥ 3. The personal curve fit and the correction factor stay open (TD-26)                                                                                                                                                                                                      |
+| PRG-07 "switch to rep/RPE progression when planned increases outrun the observed trend" | `progressionPace` [INF]: over 4 weeks (≥ 4 exposures spanning half of it), the planned weekly increase (novice increment × sessions a week relative to the load; intermediate %/week; advanced: none) must exceed the one-sided 95% upper bound of the weighted log-linear e1RM slope AND the gap over the window must exceed one TE. Then a linear slot loads from the e1RM at its reps and RIR (RPE), or keeps the load and adds a rep without an RIR target. The "Why?" names both numbers |
+| Heavy sets (PLN-03 "≥ 80% 1RM, 1–6 reps")                                               | `volume.strength.heavySet` {80, 6}: a hard set of ≤ 6 reps whose reps + RIR imply ≥ 80% on the exercise's curve (unknown effort: the prior RIR 2). The plan's heavy sets (M2a) remain the plan-time count                                                                                                                                                                                                                                                                                     |
+| Target band for status and heat (MAP-04 "relative to the user's target band")           | low = the plan's weekly target of the muscle (else 10), high = max(20, target); `status` under/in/over against it; heat 1 below the floor (4), 2 below the band, 3 in it, 4 up to 30, 5 above. A muscle the plan has no target for shows `targeted: false` against the default band                                                                                                                                                                                                           |
+| BOD-01 "the morning/first value is used for the trend"                                  | `firstReadingPerDay` before the EMA, in the insights and in the session engine's bodyweight trend (M1 averaged a day's readings). The derivation key now fingerprints every entry, since entries can be edited                                                                                                                                                                                                                                                                                |
+| BOD-02 "the weekly rate with its band"                                                  | `bodyweight.rate.bulk` (by level, EB), `.cut` (EB), `.maintain` ±0.25 %/week (`verified: false`); `fastLoss`/`fastGain` only when sustained (2 / 3 weekly rates), never from one day                                                                                                                                                                                                                                                                                                          |
+| ANL-07 "tested 1RMs"                                                                    | the heaviest load lifted for at least one rep (the rep-max table's first row); the history from load PRs. e1RM source: the strength trend's current value, the best of a lift's competition exercises (conventional or sumo)                                                                                                                                                                                                                                                                  |
+| "Show the source and version of each formula"                                           | a version ID per formula (`ipf-gl-2020`, …) plus the registry rows' sources and `verified` flags and the rules version; no new rows (the M1 coefficients)                                                                                                                                                                                                                                                                                                                                     |
+| EXL-04 custom exercises "behave like built-in ones"                                     | `customizableCatalog` merges them into `deps.content`; its version gains `+cx.<fnv8>` while any exist, so derived data and resolved rules follow edits; the boot loads them before the first screen, a restore re-syncs. Credits are `C` with `src.powr-user-defined`; MAP-03 treats them as unrated unless `userRated` (then stretch, overload and sub-region count)                                                                                                                         |
+| `exerciseUserData` (§8.2.2: flags, setup notes, rest override, last note)               | holds the setup memory and the training max only; favourites, hidden and avoided stay in the profile (as M2 decided; `profile.hiddenExercises` added); the rest override stays a parameter override (M3a)                                                                                                                                                                                                                                                                                     |
+| `@powr/domain/charts` (§8.10), `planning.rankExercises` (§8.11)                         | the chart data preparation and the body-map ranking live in `@powr/domain/analytics` (`e1rmSeries`, `muscleRanking`, reusing `effectiveness`)                                                                                                                                                                                                                                                                                                                                                 |
+| Day arithmetic (Temporal)                                                               | `addDays`, `daysBetween`, `weekStartOf` use integer arithmetic (days-from-civil) with the same results (property test against Temporal over 1900–2199); the five-year rebuild calls them ~10⁶ times                                                                                                                                                                                                                                                                                           |
+| The session summary's "counts for the streak"                                           | reads `motivation.streak.partialMinShare` (same 50%)                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| No `features/**`                                                                        | Only `features/why/{messages,args}.ts` and the catalogs: the 8 new rules need English messages for the PRG-09 coverage test (as M3a did); no screen changed                                                                                                                                                                                                                                                                                                                                   |
+| Composition root                                                                        | `app/container.ts` wraps the content in `customizableCatalog`; `app/boot.tsx` calls `loadCustomExercises` after the runtime-flag reconcile                                                                                                                                                                                                                                                                                                                                                    |
+| Application test fakes                                                                  | writes of the in-memory unit of work run one after another (the scheduled insight rebuild runs concurrently with the next use case; IndexedDB queues such transactions too)                                                                                                                                                                                                                                                                                                                   |
+
+### Evidence for the new parameters (rules 1.4.0 → 1.5.0: 133 → 143 parameters, 34 → 38 `verified: false`)
+
+| Parameter                                 | Value                                                                    | Evidence and sources                                                                       | Verified | Why                                                                                                 |
+| ----------------------------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------ | -------- | --------------------------------------------------------------------------------------------------- |
+| `bodyweight.rate.bulk`                    | novice and intermediate 0.25–0.5, advanced 0.1–0.25 %/week; 3 weeks      | [NARR, RCT-T, INF] `src.iraki2019` (new), `src.powr-eb-nutrition`                          | true     | EB §Nutrition › Bulking (Iraki 2019; warn above the band for ≥ 3 weeks)                             |
+| `bodyweight.rate.cut`                     | target 0.5–0.7, allowed 0.25–1.0 %/week; hard warning > 1.0% for 2 weeks | [NARR, RCT] `src.helms2014` (new), `src.garthe2011` (new), `src.powr-eb-nutrition`         | true     | EB §Nutrition › Cutting, §Defaults › Nutrition                                                      |
+| `bodyweight.rate.maintain`                | −0.25 to +0.25 %/week                                                    | [INF] `src.powr-eb-nutrition`                                                              | false    | POWR design value: the EB has no maintenance band                                                   |
+| `motivation.streak.partialMinShare`       | 0.5                                                                      | [INF] `src.powr-prd`                                                                       | true     | PRD MOT-03                                                                                          |
+| `motivation.streak.graceSessions`         | 1                                                                        | [INF] `src.powr-prd`                                                                       | true     | PRD MOT-03, A-07                                                                                    |
+| `motivation.streak.retroactiveBreakWeeks` | 4                                                                        | [INF] `src.powr-prd`                                                                       | true     | PRD MOT-04                                                                                          |
+| `motivation.streak.defaultWeeklyTarget`   | 1                                                                        | [INF] `src.powr-prd`                                                                       | false    | POWR design value for weeks without plan sessions before the user sets a target                     |
+| `progression.pace.window`                 | 4 weeks, ≥ 4 exposures                                                   | [INF] `src.hopkins2000`, `src.grgic2020`, `src.mcmaster2013`, `src.powr-technical-concept` | false    | PRD PRG-07; the 1-TE gap ties it to PRG-02's "likely real" threshold; the window is a design value  |
+| `load.trend.repRangeShift`                | 3 reps                                                                   | [OBS, INF] `src.braith1993`, `src.mayhew2008`, `src.powr-eb-load`                          | false    | EB §Load › e1RM drift: flag jumps that coincide with a rep-range change; the size is a design value |
+| `volume.strength.heavySet`                | ≥ 80% 1RM, ≤ 6 reps                                                      | [MA, POS] `src.acsm2026`, `src.androulakiskorakakis2021`, `src.powr-prd`                   | true     | PRD PLN-03, EB §Defaults › Volume                                                                   |
+
+New sources: `src.iraki2019`, `src.helms2014`, `src.garthe2011` (`data/sources/bodyweight.yaml`)
+and `src.powr-user-defined` (`exercise-mapping.yaml`, the source of custom credits). New
+`RuleId`s: `streak.week`, `streak.current`, `volume.target`, `trend.change.repRange`,
+`progression.pace.switch`, `progression.pace.ok`, `bodyweight.rate.band`, `ranking.focus` (with a
+plain-language variant).
+
+### Evidence
+
+`pnpm verify` green on 2026-11-25 (exit 0): lint (0 errors, 0 warnings), format, token gate,
+knip, catalog check, typecheck, **888 unit and component tests in 82 files** (788 in 76 before;
+100 new: domain 59, formats 16, application 22, web 3), build, licence gate (33 distributed, 841
+build-only, passed), size (**entry JS 178.44 kB gzip** of 186, was 177.34: the Dexie stores and
+repositories of the new tables, `LiveQueries.observe`, the custom-exercise catalog and its boot
+load; the insight and library use cases are lazy entries no screen imports yet; CSS 6.3 kB;
+service worker 8.08 kB; precache 104 files + sw.js, 584.6 kB; **startup path 1 script, 0 with
+Zod**) and **55 E2E tests** (unchanged; the screens are M4b).
+
+- **Domain** (`packages/domain/test/analytics/`): `streaks.test.ts` (every MOT-03/04 rule, then
+  fast-check: best ≥ current and the current streak counts the kept weeks since the last miss,
+  more sessions never lower it, a break never lowers it, the grace never lowers it, the current
+  week never breaks it, input order irrelevant), `weekly.test.ts` (the EB worked example 5 curls +
+  5 rows = 7.5 fractional / 5 direct biceps sets, a drop set with 2 drops = 2 sets, PLN-03 heavy
+  sets: 5 @ RIR 2 is heavy (Wathan 80.6%), 6 without effort is not (78.3%), tonnage with a close
+  variant, sessions and minutes, planned statuses, break days; fast-check: the week equals the sum
+  of its sets' credits; heat steps, target bands, sub-regions, contributors, the planned
+  remainder; the day arithmetic equals Temporal over 1900–2199), `insights.test.ts` (no change
+  claimed for a flat series, a sustained rise "likely real" beyond 3.3% and a step "very likely"
+  beyond 2.8 × 3.3%; fast-check: every claim is beyond one TE; the rep-range flag; chart data,
+  weekly maxima, comparison, annotations, performance; PRG-07 switch and no switch; the rep-max
+  table (100 kg × 5 @ RIR 2 → 124.0 kg e1RM); PR filters; calendar states; accent-insensitive
+  search; the EB scoring table: male 83 kg / 700 kg → Wilks 467.25, Wilks2020 561.15, DOTS 472.56,
+  GL 96.90, allometric 36.25; female 63 kg / 400 kg → 429.58, 511.45, 430.21, 87.51), `library.test.ts`
+  (search relevance and filters, detail, the MAP-02 example "biceps with dumbbells and a bench:
+  curls above rows", Focus, custom exercises unrated unless rated, custom-exercise validation,
+  BOD-02 bands and sustained warnings, first reading per day, measurement units).
+- **Application** (`test/m4a.test.ts`): the week after a finished planned workout equals the
+  session summary's volume (one calculation); edits, deletes, backdating and the quick log;
+  **fast-check: the derived tables equal a full rebuild after any sequence of operations**; Home
+  (next, last, week, streak, bodyweight band, scores) and its live updates; volume rows with
+  regions and targets; the live weekly volume and the volume series; library search, marks,
+  detail with setup memory, the MAP-02 ranking on the real content, custom exercises through a
+  restore and their retirement, "add to today" in all three cases, plan placements the plan editor
+  accepts, live setup memory; the streak with a retroactive break and the celebration data;
+  trends, comparison, performance, history, calendar and session list; scores from e1RMs and from
+  tested loads; bodyweight and measurements.
+- **Formats:** hostile keys in the new tables and in `settings.insights` are rejected; `cx.` IDs
+  resolve only through the backup's own custom exercises; strict schemas (a skinfold in cm, an
+  unknown site or setup field, a non-custom or `ex.` custom record); the new fixture
+  `v2/m4-insights.zip` round-trips; the v1 and M3a v2 fixtures still import (their new tables empty).
+- **Web** (`db.test.ts`): the new stores, the day-range queries of points and PRs, `dWeekly` and
+  `dStreak` (cleared by a restore), and `LiveQueries.observe` re-running after a write.
+
+**Five-year history** (`packages/application/test/perf.test.ts`; 260 weeks × 4 sessions × 6
+exercises × 6 sets = 1,040 sessions, **37,440 sets**, the concept's reference size; dev machine,
+Node 26; `POWR_PERF=1` prints them):
+
+| Step (one-off full rebuild unless noted)                                       | Time     |
+| ------------------------------------------------------------------------------ | -------- |
+| Pure engine: `dExerciseState` + `dSessionE1rm` + `dPrs`, all 22 exercises      | 1,063 ms |
+| Pure engine: `dWeekly`, 260 weeks                                              | 37 ms    |
+| Pure engine: `dStreak`                                                         | 1 ms     |
+| Pure engine: e1RM series of the most trained lift, all history (weekly maxima) | 4 ms     |
+| Pure engine: volume rows of one week (19 groups)                               | 1 ms     |
+| Application (fake): `ensureDerived`, all exercises                             | 1,362 ms |
+| Application (fake): `ensureInsights`, full history                             | 1,361 ms |
+| Application (fake): `ensureInsights` when everything is fresh                  | 531 ms   |
+| Application (fake): Home view                                                  | 183 ms   |
+| Application (fake): weekly volume                                              | 963 ms   |
+| Application (fake): squat trend, all history                                   | 528 ms   |
+
+The application timings run on the in-memory fake, which copies the whole database (all 37,440
+sets) on every read and write, so they overstate IndexedDB's cost for the small indexed reads
+Home makes (this and last week's records, the streak record, the last session, 28 days of PRs and
+e1RM points, the bodyweight log). The S22 measurement belongs to the device tests (S-4 for the
+charts; NFR-PERF-01/06).
+
+### Open items
+
+- **For M4b:** the screens and their two loaders (one disable comment each); English texts for
+  week states, heat labels, statuses, formula versions and measurement sites (the "Why?" texts
+  exist); "Verify data" can call `rebuildInsights`; run `ensureInsights()` once in idle time after
+  start (it catches planned-session changes older than the four weeks Home checks); the session
+  screen shows `observeSessionSetups`; the summary can show `sessionStreakChange`.
+- **For M4v:** the body map consumes `MuscleWeekRow.heat` (0–5), `heatLabel`, `remaining`
+  (outline overlay) and the `regions` per view; the charts consume `E1rmSeries`, the annotations,
+  `PerformanceView` and `muscleSeries`.
+- **Product owner:** (1) a _skipped_ planned session still counts as asked for in the streak
+  (merging it keeps the week; grace covers one); (2) the four new `verified: false` values above;
+  (3) the strength trend is slow by design (intermediate process noise 1%/week): a steady +3% a
+  week reads "likely real" (≈ +7%) after 8 weeks, "very likely" needs a larger step; review
+  `load.trend.processSdPerWeek` with the evidence base if that is too conservative; (4) whether a
+  custom exercise may be a competition lift's variant for the heavy-set count (now: yes, through
+  `variantOf`).
+- **Later:** the personal curve fit and correction factor (TD-26); rebuilds in the engine worker
+  (TD-32); per-lift reactive-deload signals from `dSessionE1rm` (TD-43 remainder); RDY-03
+  high-stress spacing (TD-45); baselines to variants (TD-47); ANL-08 percentiles (v1.1).
+
+### Doc amendments for the docs pass
+
+- **§5.4:** rows `analytics` (`@powr/domain/analytics`: derived week, volume rows and heat steps,
+  trends, history, scores, body-map ranking; ANL-01…07, MAP-02…04/07, TD-43), `streaks` (built:
+  MOT-03/04), `library` (`@powr/domain/library`: EXL-02/03/04); `trend` gains the rep-range flag;
+  `progression` gains the PRG-07 pace check.
+- **§5.5:** ports `CustomExerciseRepo`, `ExerciseUserDataRepo`, `MeasurementRepo`, `InsightsRepo`
+  (`weeks`, `putWeeks`, `deleteWeeks`, `streak`, `putStreak`), `PlanRepo.list`,
+  `BodyweightRepo.get/delete`, `DerivedRepo.prsInRange/pointsInRange`, `LiveQueries.observe`;
+  `TableName` includes `dWeekly`, `dStreak`; `ContentCatalog` merged through
+  `customizableCatalog` (version `+cx.<hash>`).
+- **§8.2.2:** M4a state of version 2 (amended): the three raw tables, the two derived tables, the
+  `dSessionE1rm.localDate` index, `profile.hiddenExercises`, `settings.insights`; `dWeekly` keyed by
+  `weekStart`, `dStreak` by `'me'` (as planned); the `exerciseUserData` contents as built.
+- **§8.2.8:** the `dWeekly`/`dStreak` fingerprints and triggers above; Home's background rebuild.
+- **§8.3:** fixture `v2/m4-insights.zip`; custom `cx.` IDs resolve through the backup's own
+  `customExercises`.
+- **§8.7.5:** the change-label rule (1 TE for any claim) and the rep-range flag;
+  `ExerciseState.recent`, the per-point `change`.
+- **§8.7 (new §8.7.12 "Insight as built in M4a"):** PRG-07 pace, heavy sets, the target band and
+  heat steps, the streak table, ENGINE_VERSION 0.1.0, rules 1.5.0.
+- **§8.10:** data preparation is `@powr/domain/analytics` (`e1rmSeries`, `weeklyMaxima`,
+  `compareSeries`, `chartAnnotations`, `performanceSeries`); the summary sentence's data.
+- **§8.11:** heat steps 0–5 against the target band (definition above); ranking is
+  `muscleRanking` (Effectiveness and Focus) in `@powr/domain/analytics`.
+- **§11.2:** TD-43 closed for `dWeekly`, `dStreak` and the PR history data (per-lift
+  reactive-deload signals remain); TD-44 closed; TD-26 narrowed (rep-range flag built).
+- **PRD:** MOT-03 "without a plan or a weekly target, one session keeps the week"; MOT-04 "a
+  skipped planned session counts as missed; merging keeps the week"; BOD-01 first reading
+  (already the PRD's rule; the engine now follows it); BOD-02 maintenance band ±0.25 %/week;
+  ANL-04 training max is a per-exercise user value; ANL-07 "tested" = heaviest load for ≥ 1 rep.
+
+## M4v charts, body map and timer extras
+
+Written 2026-11-25 by the M4v work (roadmap A.4 "M4 Insight and motivation", the visual building
+blocks; spikes S-4 and S-5; TD-39 and TD-48), in parallel with M4a (the analytics core). The
+charts and the body map take plain props and appear only on two debug demo routes so far; M4b
+connects them to M4a's data. Status: `pnpm verify` green (numbers under "Evidence").
+
+### What landed
+
+| Area                           | Where                                                                                                                                                                                                                                                                                                                 | PRD / concept                |
+| ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------- |
+| ECharts, modular and lazy      | `src/ui/charts/echarts-runtime.ts`, the only runtime import of ECharts (line, scatter and bar charts, `GridSimpleComponent`, the inside data zoom, mark line and mark area, the canvas renderer), loaded with `import()` by `echart.tsx`: its own chunk, precached                                                    | §8.10, TC-08                 |
+| Chart wrapper                  | `src/ui/charts/echart.tsx` (`EChart`: init, `ResizeObserver`, `setOption` with a merged overlay for the window and the selection, dispose, a tap → the x value, a pinch or pan → the window, performance measures)                                                                                                    | §8.10, §8.19                 |
+| Shared chart frame             | `time-chart.tsx` (`TimeChart`, `timeOption`), `parts.tsx` (legend swatches, `DataTable`), `range.ts` (presets, Earlier/Later), `theme.ts` (`useChartTheme`: the tokens resolved at runtime in both themes, the root font size, reduced motion)                                                                        | ANL-11, NFR-A11Y-05/06/08/10 |
+| e1RM trend                     | `trend-chart.tsx` (`TrendChart`: session points, trend line, 95% band with dashed edges, PR stars, likely and very likely real diamonds with the newest one labelled, shaded annotations, up to 3 compared series)                                                                                                    | ANL-02, PRG-02, MOT-01       |
+| Volume against target          | `volume-chart.tsx` (`VolumeChart`: weekly bars in the heat-map band colours, hatched below the floor and cross-hatched when very high, direct sets as a dash, the target band)                                                                                                                                        | ANL-03, MAP-04               |
+| Bodyweight                     | `bodyweight-chart.tsx` (`BodyweightChart`: the trend prominent, weigh-ins small and hollow)                                                                                                                                                                                                                           | BOD-02                       |
+| Training calendar              | `training-calendar.tsx` (`TrainingCalendar`: an own month grid, no ECharts)                                                                                                                                                                                                                                           | ANL-06, SET-11               |
+| Chart tokens and gate          | `--chart-1…3` in `src/ui/tokens.css` (Tailwind names in `app.css`); a `series` role in `tools/tokens-check`: ≥ 3:1 on every surface and every pair ΔE00 ≥ 10 for normal vision and simulated protanopia, deuteranopia and tritanopia                                                                                  | §8.9.3, NFR-A11Y-10          |
+| Date helpers                   | `src/i18n/format.ts`: `formatLocalDateWithYear`, `formatAxisDate`, `formatMonth`, `formatSpan`                                                                                                                                                                                                                        | NFR-L10N-01                  |
+| Chart demo, S-4 bench          | `/debug/charts` (`features/debug/ChartsDemo.tsx`, `chart-demo-data.ts`: five seeded years), behind the debug gating, linked from Developer tools                                                                                                                                                                      | S-4                          |
+| Body-map artwork               | `tools/body-map/art/body-map.svg`: original own work, front and back, one closed region per display group with exactly the `muscles.yaml` region IDs, sub-region shapes nested for MAP-07; `assets-inventory.yaml` entry `powr-body-map-artwork` (LicenseRef-Own-Work, the artwork awaits the product owner's review) | MAP-01, MAP-08, OQ-08        |
+| Body-map pipeline              | `tools/body-map` (`pnpm body-map`, `--check`): a strict parser of the SVG subset, the taxonomy checks, geometry (reading order, arrow-key neighbours, drawing order, tap targets, the `small` flag), writes `src/ui/body-map/artwork.gen.ts`; registered in the architecture test's dependency matrix                 | §8.11                        |
+| Body-map components            | `src/ui/body-map/`: `BodyMap`, `HeatLegend`, `BodyMapList` (MAP-06), `heat.tsx` (bands, patterns, swatches, names)                                                                                                                                                                                                    | MAP-01, 04, 06               |
+| Body-map demo                  | `/debug/body-map` (`features/debug/BodyMapDemo.tsx`), behind the debug gating                                                                                                                                                                                                                                         | S-5                          |
+| Tempo metronome                | `infrastructure/alerts/metronome.ts` on the lazy timer kit, cues in `platform/audio.ts`, `hooks/use-timed-set.ts`, `features/session/timed-set.tsx` (`TempoCues`)                                                                                                                                                     | TMR-10, TD-39                |
+| Lead-in and stop at the target | `infrastructure/alerts/lead-in.ts`, `timed-set.tsx` (`SetTimerButton`, `SetTimerPanel`), minimal edits in `LoggingView.tsx`, `RestPanel.tsx`, `session-ui.ts`                                                                                                                                                         | TMR-09, TD-48                |
+| Settings                       | `alerts.setTimerLeadIn`, `alerts.setTimerAutoStop`, `alerts.tempoCues` (optional booleans, absent = off) in the unreleased v2 settings record (`packages/formats`, the one `packages/` edit, with arbitraries and schema tests); Settings → Workout "Timed sets and tempo"                                            | SET-03, SET-05               |
+
+### S-4 charts: numbers and go/no-go
+
+- **Chunk:** the modular ECharts chunk is **515.6 kB minified, 174.0 kB gzip** (Vite's report;
+  171.9 kB with `gzip -6`), inside the 150–250 kB estimate of §8.10. It loads on the first chart
+  only: the E2E test checks that the start screen never fetched it. The chart components and the
+  demo data are a 13.8 kB route chunk. Entry JS 177.34 → **177.62 kB** gzip (the new date helpers
+  and the timer settings defaults); **1 first-wave script**, 0 with Zod; precache 575.6 → 787.6 kB.
+- **One startup script kept:** with `GridComponent` the chunk was 180 kB and needed Rolldown's
+  `__export` helper (the axis pointer's `graphic[type]` lookup keeps a namespace object), which
+  moved Rolldown's runtime out of the startup chunk into a second first-wave script. The charts
+  draw their own selection marker, so `GridSimpleComponent` (no axis pointer) is enough.
+- **Timings** (`CHART_BENCH=1 pnpm e2e charts`: production build, Playwright's mobile profile
+  360 × 780 at DPR 3, Trusted Types on, two runs each, which agreed within a few percent; CPU
+  slowdown through `Emulation.setCPUThrottlingRate`, pinches through
+  `Input.synthesizePinchGesture`, timings are the charts' own `powr-chart-*` measures from the
+  start mark to the first rendered frame):
+
+|                                                                                          | 1×        | 4×                   | 6×                   |
+| ---------------------------------------------------------------------------------------- | --------- | -------------------- | -------------------- |
+| First render, squat e1RM, full five years (1,275 sessions, trend, band, 45 shaded spans) | 88–95 ms  | 316–330 ms           | 472–486 ms           |
+| First render, bodyweight (1,791 weigh-ins and the trend)                                 | 42–45 ms  | 127–135 ms           | 189–202 ms           |
+| First render, volume (261 weekly bars with patterns)                                     | 25–28 ms  | 102–104 ms           | 151–158 ms           |
+| First render, 3 compared trends (1,275 + 765 + 765 days)                                 | 9 ms      | 35–38 ms             | 53–55 ms             |
+| Range chip to the first frame (12 weeks … all)                                           | 10–32 ms  | 65–134 ms            | 98–220 ms            |
+| Pinch, squat chart (all sessions in view)                                                | 3–30 ms   | 41–49 ms, one 182 ms | 59–83 ms, one 278 ms |
+| Pinch, 3 compared trends                                                                 | 1–13 ms   | 3–34 ms              | 4–62 ms              |
+| Navigation to four charts ready (route, chunk, demo data, four inits)                    | 1.3–1.4 s | 5.3–5.4 s            | 7.9–8.0 s            |
+
+- **Go.** ECharts stays (ADR-0007): the chunk is within the estimate and lazy, everything works
+  under the production CSP with Trusted Types (one host shim, below), and the budgets of §8.10 and
+  §8.19 (render ≤ 500 ms, interaction ≤ 100 ms) hold unthrottled and, for the render, at 4× and
+  6×. Interactions on the whole five-year history pass at 1× and exceed 100 ms at 4× (range
+  chips up to 134 ms, one zoom-out pinch 182 ms). Conditions: (1) the weekly aggregation of
+  ranges over one year that §8.10 already plans (`@powr/domain/charts`, M4a/M4b: about 260
+  points instead of 1,300), and (2) the device measurement on the S22 that §8.19 requires (a
+  4× slowdown of this machine is a conservative stand-in for it). Recharts 3 stays the
+  documented fallback if the S22 run fails.
+
+### Trusted Types and the CSP (TD-03)
+
+- **The tooltip is not used.** ECharts' HTML tooltip (`TooltipHTMLContent`) writes its content
+  with `innerHTML` and would need a policy. The charts show the selected point in an HTML readout
+  above the canvas (it also scales with the text size), so the tooltip component is not
+  registered.
+- **zrender still needs one fix.** Its canvas painter empties the host with `innerHTML = ''` on
+  init and dispose, and Trusted Types throw for the empty string too (checked in Chromium: "This
+  document requires 'TrustedHTML' assignment"). A policy cannot help (third-party code assigns a
+  string; only a document-wide `default` policy would). `createChart` gives the chart's own host
+  element an `innerHTML` setter that accepts only `''` and clears it with `replaceChildren()`;
+  anything else still throws. **No new policy:** the allow-list stays `powr-sw`. Negative check:
+  without the shim, every chart fails with `require-trusted-types-for` violations in the ECharts
+  chunk and shows its fallback text; with it, the E2E suite has no violation. ECharts sets its
+  inline styles through the CSSOM, which `style-src 'self'` allows.
+- **For TD-03:** with this setup ECharts is compatible with Trusted Types in production.
+
+### S-5 body map: outcome and the small-region list
+
+- **Reference size:** the figure fills the content column (max 20 rem): **320 × 725 CSS px** at a
+  360 × 780 viewport. A region's tap target is the region plus its invisible hit area (a 12-unit
+  stroke clipped to the gaps between regions, so a visible region always takes its own taps;
+  smaller regions drawn later win a shared gap). The pipeline's computed targets and the
+  browser's own hit testing agree within 1 px for all 21 regions (component test).
+- **Small regions** (largest square target under 46 px, that is 44 px plus a 2 px raster
+  margin), repeated as buttons below the figure (MAP-01 fallback):
+
+| Region              | Browser | Pipeline |
+| ------------------- | ------- | -------- |
+| `front.front-delts` | 29 px   | 28.5 px  |
+| `front.side-delts`  | 33 px   | 33.1 px  |
+| `front.adductors`   | 34 px   | 34.0 px  |
+| `front.tibialis`    | 43 px   | 43.2 px  |
+| `back.rear-delts`   | 31 px   | 30.3 px  |
+| `back.side-delts`   | 32 px   | 32.2 px  |
+
+- **The other 15:** front chest 92, biceps 56, obliques 47, abs 62, forearms 51, quads 62 px; back
+  upper traps 58, mid back 49, triceps 54, lats 57, lower back 56, forearms 51, glutes 73,
+  hamstrings 70, calves 72 px.
+- **Size trade-off:** a figure that fits the screen height (255 × 576) left 14 of 21 regions
+  under 44 px, so the figure takes the column width and the legs scroll slightly below the fold.
+  M4b must give `BodyMap` the whole content column (not a padded card: in a card the figure is
+  296 px and every target about 7% smaller); at 320 px width it is 288 px.
+- **Still open:** TalkBack on the S22 with SVG buttons (explore by touch over the hit areas,
+  double-tap) is a device test.
+
+### Component APIs for M4b
+
+All take plain data (`src/ui` imports no `@powr/*`); every string they show is a Lingui message
+or comes from the caller. Memoize array props: a new array redraws every series.
+
+```tsx
+import { TrendChart } from '#ui/charts/trend-chart';
+import { BodyweightChart } from '#ui/charts/bodyweight-chart';
+import { VolumeChart } from '#ui/charts/volume-chart';
+import { TrainingCalendar } from '#ui/charts/training-calendar';
+import { BodyMap } from '#ui/body-map/body-map';
+import { BodyMapList } from '#ui/body-map/body-map-list';
+import { HeatLegend } from '#ui/body-map/heat-legend';
+
+// ANL-02: one lift, or up to 3 normalised to % change (unit '%'); dates are 'YYYY-MM-DD'.
+<TrendChart
+  title="Squat e1RM"
+  summary="Squat e1RM rose 4% over 12 weeks." // the domain's one sentence for the range
+  series={[{ name, points: [{ date, value }], trend: [{ date, value, low?, high? }],
+             markers: [{ date, kind: 'pr' | 'likely' | 'veryLikely', label }] }]}
+  unit="kg"
+  formatValue={(v) => formatMass(v, 'kg')}
+  annotations={[{ from, to, label: 'Deload' }]}
+  endDate={today} defaultRange="12w" // '4w' | '12w' | '6m' | '1y' | 'all'
+  onRangeChange={(preset, window) => …} // preset null after a pinch or Earlier/Later
+  onOpen={(date) => openSetsSheet(date)} openLabel="Show the sets"
+  headingLevel={2} emptyText="…" />
+
+// BOD-02: the same frame; summary carries the weekly rate.
+<BodyweightChart title summary entries={[{ date, value }]} trend={[{ date, value }]} unit="kg" … />
+
+// ANL-03: one muscle, weekly; `bands` is the same list BodyMap and HeatLegend take.
+<VolumeChart title summary weeks={[{ week, sets, direct?, step? }]} target={{ low: 10, high: 20 }}
+  bands={[{ step: 0…5, label: '10–20 sets, in target' }]} onOpen={(week) => …} … />
+
+// ANL-06: month grid; days with a status are buttons when onDaySelect is given.
+<TrainingCalendar title summary month="2026-11" weekStart={1} today="2026-11-20"
+  days={[{ date, status: 'completed' | 'partial' | 'missed' | 'planned' | 'deload' | 'break',
+           label? }]} onDaySelect={(date) => …} onMonthChange={(month) => …} />
+
+// MAP-01/04/06: keyed by display-group muscle ID, so one entry colours both views.
+<BodyMap muscles={{ 'mu.chest': { name: 'Chest', step: 3, valueText: '14 sets this week' } }}
+  bands={bands} selected={id} onSelect={(muscleId) => openPanel(muscleId)}
+  view? defaultView="front" onViewChange? />
+<HeatLegend title="Hard sets this week" bands={bands} />
+<BodyMapList muscles={…} bands={bands} selected={id} onSelect={…} headingLevel={3} />
+```
+
+- **Time charts** (`TimeChart` frame): title (h2 or h3) and the summary; range chips (4 wks,
+  12 wks, 6 mths, 1 yr, all; the default 12 weeks follows new data); the canvas (vertical swipes
+  scroll the page, horizontal drags pan, pinches zoom); a tap shows the nearest point in the
+  readout (with the `openLabel` button); a visually hidden point slider (`input type=range`, its
+  focus ring drawn around the chart) for the keyboard (arrows, Home, End, Page Up/Down, Enter
+  opens, Escape clears) and screen readers (the value text is the readout; TalkBack swipes up and
+  down); Earlier/Later buttons (the tap alternative to panning); the legend in words; "View as
+  table" (caption, the visible range, newest first, 30 rows a page). The canvas is
+  `aria-hidden`: summary, slider and table carry everything (NFR-A11Y-06). Animations are off
+  under reduced motion. If the chart chunk cannot load, a text says the table has every value.
+- **Colour:** series 1–3 are `--chart-1…3` in that order, also told apart by dash (solid, dashed,
+  dotted) and symbol (circle, square, triangle); points are hollow; PRs are `--pr-accent` stars;
+  changes are `--fg` diamonds (hollow: likely, filled: very likely). Volume bars use
+  `--heat-0…5` with the body map's patterns; the legend uses the body map's `HeatSwatch`.
+- **BodyMap:** a one-tap Front/Back switch; every region a `role=button` with `aria-pressed`,
+  named "Chest, 14 sets this week, 10–20 sets, in target" (name, value, band); one tab stop
+  with arrow keys along the precomputed neighbours, Home/End, Enter/Space; a focus ring of its
+  own; selection is a thick double outline plus dots; band 1 hatched, band 5 cross-hatched;
+  the small regions repeated as buttons below the figure; nothing animates. `BodyMapList` shows
+  the same names, values, bands and selection, grouped Front and Back (side delts and forearms in
+  both). M4b puts the list one tap away from the map (MAP-06).
+- **Lazy loading:** the body-map module is about 12.8 kB gzip (artwork) plus 7.7 kB
+  (components), the chart components about 10 kB, ECharts 174 kB. Only lazy routes may import
+  them; the Home mini heat map (ANL-01) must load the body map with `import()` or the entry grows.
+- **Timer extras:** `useLeadIn()` → `{ count, start(onDone), cancel }`; `useMetronome()` →
+  `{ state, start(tempo, name), stop }` (both suspend on the lazy kit); the kit's `metronome` and
+  `leadIn`; `audio.schedule(cue, volume, delayMs)` returns a canceller; cues `tempoLower`,
+  `tempoPause`, `tempoLift`, `tempoTick`.
+
+### Timer extras (TD-39 metronome, TD-48 lead-in and stop at the target)
+
+- **Settings:** `alerts.setTimerLeadIn`, `alerts.setTimerAutoStop`, `alerts.tempoCues`, optional
+  booleans in the unreleased v2 record (absent = off, so no development database needs a reset);
+  written through `useSetAlertSettings` only once changed (`STORED_DEFAULTS` in
+  `hooks/use-alert-settings.ts`), because the session preferences' use case lives in
+  `@powr/application`. UI: Settings → Workout, "Timed sets and tempo", three switches with a
+  one-line description each.
+- **Metronome** (TMR-10): `tempoRep` turns a tempo (eccentric–bottom–concentric–top, "X" = 1 s)
+  into beats: a cue at each phase start (low for lowering, high for lifting, short for a pause)
+  and a soft tick on each further second; scheduled 450 ms ahead on the audio clock (the first
+  beat 600 ms after the tap), vibration at phase starts only, both following the alert sound,
+  volume and vibration switches. It stops when the page is hidden, after 5 minutes, on stop,
+  confirm, skip or a set change, and runs nothing while stopped. On the session screen, with the
+  switch on and an exercise tempo (not for timed sets): one toggle "Tempo cues 2-0-X-0"
+  (`aria-pressed`, ≥ 48 px) in the current-set card and an `aria-hidden` "Rep N · Lower / Pause /
+  Lift" label that changes at phase starts only, with no animation; one polite announcement on
+  start and one on stop.
+- **Lead-in** (TMR-09): with the switch on, "Start set timer" counts 3-2-1 (the `countdown` cue
+  and a short vibration each second, a large number, Cancel ≥ 48 px, one announcement "Set timer
+  starts in 3 seconds"), then sends the same `TIMER_START`; focus goes Start → Cancel → Stop. Page
+  state only: a reload during the count loses it before anything started.
+- **Stop at the target** (TMR-09): with the switch on, a countdown set timer stops itself once
+  its display is done and the end alert has fired (`timer.fired.end`), so "Time is up" always
+  sounds first; the set gets `min(elapsed, target + adjust)`, also after a return to a hidden
+  page; one announcement "Time is up, set timer stopped at N seconds". Count-up set timers never
+  stop by themselves. Stop (manual or automatic) moves focus to "Confirm set" when it had focus.
+
+### Decisions and deviations
+
+| Concept / brief says                                                                                | What I did                                                                                                                                                                                                                                                                                                                              |
+| --------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `role="img"` with the summary as `aria-label` on the chart (§8.10)                                  | The canvas is `aria-hidden`; the summary is visible text under the title, and a visually hidden range input ("Points of Squat e1RM") is the keyboard and screen-reader way through the points (its value text is the readout). A focusable `role=img` with key handlers fails three jsx-a11y rules and gives TalkBack nothing to adjust |
+| Tooltip on tap (`triggerOn: 'click'`, §8.10)                                                        | An HTML readout above the canvas (no `innerHTML`, scales with the text size, holds the "Show the sets" button) plus a ring and a dashed line on the selected point; the ECharts tooltip is not registered                                                                                                                               |
+| `dataZoom` inside plus a slider (§8.10)                                                             | Inside only (pinch, horizontal pan, the wheel on desktop) with `touch-action: pan-y`, so vertical swipes still scroll the page; range chips and Earlier/Later are the tap alternatives (NFR-A11Y-04)                                                                                                                                    |
+| `GridComponent`, `TooltipComponent`, `LegendComponent`, `AriaComponent`, `DatasetComponent` (§8.10) | `GridSimpleComponent` (see the startup script above); legend, title, summary and table in HTML; no aria decals (the patterns are drawn per bar)                                                                                                                                                                                         |
+| ECharts theme object registered at runtime (§8.10)                                                  | Colours resolved from the tokens on each theme change and put straight into the option; re-rendered on `data-theme`, OS scheme, root font size and reduced motion changes                                                                                                                                                               |
+| `--chart-1…8` (§8.9.3)                                                                              | `--chart-1…3`: ANL-02 compares at most three series, and three colours pass the all-pairs colour-vision check; more would need folding or small multiples                                                                                                                                                                               |
+| Range presets 4 w / 12 w / 6 m / 1 y / all                                                          | As listed, shown as locale short units ("4 wks", "6 mths", "1 yr") so the visible text is the accessible name                                                                                                                                                                                                                           |
+| Calendar or heat strip in ECharts (ANL-06)                                                          | An own month grid: an HTML table with day buttons (icon and words per status), so it is its own table view                                                                                                                                                                                                                              |
+| Body-map pipeline in `packages/content/scripts/bodymap.ts` with SVGO (§8.11)                        | `tools/body-map`, writing into `src/ui/body-map/` (packages are M4a's, and `src/ui` may not import them); a strict own parser, no new dependency                                                                                                                                                                                        |
+| Body map props keyed by region ID (brief)                                                           | Keyed by display-group muscle ID (`mu.side-delts`), so one entry colours both views                                                                                                                                                                                                                                                     |
+| `smallRegion: true` in content (§8.11)                                                              | The `small` flag is computed into the generated module from the geometry and checked against the browser                                                                                                                                                                                                                                |
+| Hit path: the outline with a 12–16-unit stroke (§8.11)                                              | A 12-unit stroke clipped to the gaps (a stroke over a neighbour stole its taps); the regions are in reading order in the DOM, the hit areas a separate hidden layer                                                                                                                                                                     |
+| Metronome "Start/Stop tempo cues" labels                                                            | One name with `aria-pressed` (a changing name plus a pressed state is announced twice)                                                                                                                                                                                                                                                  |
+| Timed-set and tempo settings in `settings.session`                                                  | In `settings.alerts` (the session preferences go through `@powr/application`)                                                                                                                                                                                                                                                           |
+
+**Fixed on the way:** a race in the lead-in component test (the count was read before the click's
+state update landed under a full parallel run).
+
+### Evidence
+
+`pnpm verify` green on 2026-11-25 (exit 0): lint (0 errors, 0 warnings), format, token gate (27 colours; lowest text 4.56, on fills 5.41, UI 3.88, heat map 3.13, chart series 4.10; heat-map steps ΔE00 ≥ 10.7, chart series all pairs ΔE00 ≥ 10.2), knip, catalog check, typecheck, **844 unit and component tests in 81 files** (788 before), build, licence gate (37 distributed: ECharts 6.1.0 Apache-2.0 with its NOTICE in the attributions, zrender 6.1.0 BSD-3-Clause, tslib 2.3.0 0BSD; 841 build-only; passed), size (**entry JS 177.62 kB gzip** of 186, was 177.34; CSS 7.0 kB, was 6.3; service worker 8.22 kB; precache 114 files + sw.js, 787.6 kB; **startup path 1 script, 0 with Zod**; ECharts chunk 515.6 kB, 174.0 kB gzip) and **57 E2E tests** (55 before; 3 opt-in S-4 measurements skipped).
+
+- **Component tests:** `test/charts.test.tsx` (12: range windows; the trend chart's summary,
+  legend, table with paging and the lazy canvas; the point slider with real key presses, Enter
+  and the open button, Home moving the window; range chips, Earlier/Later and a real tap on the
+  canvas; three compared series; the empty state; the volume chart's bands in legend, readout and
+  table; the bodyweight legend and table; the calendar's day names, today, month change, legend
+  and week start; axe in light and dark with the tables open; +30% strings at 360 px),
+  `test/body-map.test.tsx` (11), `test/timer-extras.test.tsx` (9); unit tests
+  `alerts/metronome.test.ts`, `tools/body-map/test` (10), `tools/tokens-check` (+2 for the series
+  role), the formats schema tests for the new fields.
+- **E2E:** `e2e/charts.spec.ts` (the demo route under the production CSP with Trusted Types: the
+  ECharts chunk not fetched before, four canvases, a touch tap, the slider, chips, Earlier/Later,
+  the table, the calendar, axe in both themes, reflow at 320 px and 200% text; plus the opt-in
+  S-4 measurements), `e2e/body-map.spec.ts` (both views, keyboard and tap selection, chips, list,
+  axe in both themes, reflow).
+- **Screenshots** (360 × 780, light and dark) were handed to the coordinator outside the
+  repository: every chart (e1RM, the selected point, the table, compare, volume, bodyweight,
+  calendar, the demo viewport) and the body map (front and back with heat, viewport and full
+  page).
+
+### Open items
+
+- **Device (S22):** chart render and interaction timings with the reference dataset (§8.19);
+  TalkBack with the SVG body-map buttons and the chart point slider; metronome timing in Chrome
+  and Samsung Internet, whether its vibrations can be told apart, the first-beat delay.
+- **M4b:** wire the charts and the body map to M4a (summaries per range, the weekly aggregation
+  over one year, the "Show the sets" sheet, `bands` from the one volume calculation); the list
+  alternative one tap from the map; the body map in the full content column; lazy imports only.
+- **Not built:** MAP-07 drill-down (the sub-region paths are in the artwork and the module but not
+  drawn); MAP-04's planned-remainder overlay; a fourth or more chart series.
+- **Product owner:** review and approve the body-map artwork (assets inventory); whether the
+  metronome needs its own sound and vibration choice or a rep count.
+- **Size:** 8.4 kB of entry headroom remain; M4b's Home additions must stay lazy.
+
+### Doc amendments for the docs pass
+
+- **§8.10:** the modular set as built (`GridSimpleComponent` and why, no tooltip, legend, title,
+  aria or slider zoom), the chunk number (515.6 kB, 174.0 kB gzip), the wrapper with its overlay
+  and `powr-chart-*` measures, the theme from tokens without `registerTheme`, the HTML readout
+  instead of the tooltip, the hidden point slider instead of `role="img"`, the inside zoom with
+  `touch-action: pan-y` and the Earlier/Later buttons, the 30-row table pages, `--chart-1…3`, the
+  host `innerHTML` shim, the S-4 table above and the go with its two conditions.
+- **§8.9.3:** tokens `--chart-1…3` (light `#2a6fc9`, `#c2410c`, `#0f7d5c`; dark `#5486e6`,
+  `#dd6e32`, `#1fa577`) and the gate's `series` role (all pairs, ≥ 10 ΔE00, lowest 10.2).
+- **§8.11:** pipeline location and output, the reference size 320 × 725, gap-clipped hit areas,
+  the 46 px threshold and the small-region list, keying by muscle ID, the list grouping; §8.11's
+  `role="img"`-free group semantics as built.
+- **§7.3 / §8.18 / §11.2 TD-03:** ECharts is Trusted-Types-compatible as used (no tooltip; the host
+  shim for zrender's `innerHTML = ''`); the allow-list stays `powr-sw`.
+- **§8.8.2, §8.8.7, §8.9.9:** the tempo cues and `schedule`, the metronome, the lead-in and the
+  stop at the target as built; "Not built" no longer lists TMR-10.
+- **§8.2.2:** the three optional `alerts` fields of the unreleased v2 settings record.
+- **§8.19:** entry JS 177.62 kB, 1 first-wave script, precache 787.6 kB; the S-4 numbers.
+- **§8.20:** the new component and E2E tests and the opt-in `CHART_BENCH` measurements.
+- **§11.2:** TD-39 and TD-48 closed; TD-03 narrowed (ECharts confirmed).
+- **Appendix A.3:** S-4 and S-5 rows with their outcomes; **Appendix B:** ECharts 6.1.0 (Apache-2.0,
+  NOTICE in the attributions), zrender 6.1.0 (BSD-3-Clause), tslib 2.3.0 (0BSD).
+- **PRD (proposed, not edited):** ANL-11 "a range slider" → "pinch-zoom with range chips and
+  Earlier/Later buttons"; MAP-01 "or a list fallback" → "or a button for it below the figure".
+
+**Product-owner answers after M4a and M4v (2026-11-25):**
+
+- The body-map artwork (`tools/body-map/art/body-map.svg`) is approved as own work
+  (`assets-inventory.yaml`).
+- The strength-trend process noise (`load.trend.processSdPerWeek`, 1 %/week) gets an evidence
+  review and tuning now, in parallel with M4b (a steady +3 %/week read "likely real" only after
+  about 8 weeks).
+- Accepted as built: ECharts (S-4 go, with weekly aggregation of ranges over one year and an S22
+  timing run as conditions), the accessible chart pattern (visible summary, point slider, readout
+  instead of ECharts tooltips, range chips plus Earlier/Later), up to 3 chart colours, and the large
+  body-map figure with chips for the 6 small regions. The PRD gets M4v's proposed ANL-11 and
+  MAP-01 wording in the M4b docs pass.
+- Accepted as built: the streak rules (a skipped planned session still counts as asked for; merge
+  or the grace keeps the week; a missed week resets only the current streak), a custom variant of
+  a competition lift counting toward its heavy sets, the metronome following the Alerts sound and
+  vibration settings without counting reps, all three new timed-set and tempo switches off by
+  default, and the four new `verified: false` design values.
+- Merge fix: `apps/web/test/timer-extras.test.tsx` waits up to 2.5 s for the lead-in count (it is
+  on screen for 3 s); under the full parallel run the first render took longer than the default
+  1 s.

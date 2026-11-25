@@ -17,6 +17,7 @@ export {
   type CompetitionLift,
   type CreditValue,
   type CurveClass,
+  type CustomExercise,
   type EquipmentRequirement,
   type ExerciseDef,
   type ExerciseDefaults,
@@ -163,3 +164,17 @@ export {
   type TemplateId,
   type TemplateSlot,
 } from './template';
+export {
+  CIRCUMFERENCE_SITES,
+  DEFAULT_MEASUREMENT_SITES,
+  MEASUREMENT_SITES,
+  SETUP_FIELDS,
+  SKINFOLD_SITES,
+  isSkinfold,
+  type ExerciseUserData,
+  type MeasurementEntry,
+  type MeasurementSite,
+  type MeasurementUnit,
+  type SetupEntry,
+  type SetupField,
+} from './body';

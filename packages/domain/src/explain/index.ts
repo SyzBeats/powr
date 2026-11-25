@@ -149,6 +149,15 @@ export const RULE_IDS = [
   'guardrail.failure',
   'guardrail.shortRest',
   'guardrail.slowReps',
+  // M4a: insight and motivation
+  'streak.week',
+  'streak.current',
+  'volume.target',
+  'trend.change.repRange',
+  'progression.pace.switch',
+  'progression.pace.ok',
+  'bodyweight.rate.band',
+  'ranking.focus',
 ] as const;
 export type RuleId = (typeof RULE_IDS)[number];
 

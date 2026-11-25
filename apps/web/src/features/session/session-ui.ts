@@ -26,6 +26,8 @@ export interface SessionUiState {
   } | null;
   /** WCAG 2.4.3: the next set's dock takes focus after a confirm re-mounted it. */
   focusDock: boolean;
+  /** WCAG 2.4.3: the set timer's Stop takes focus when it replaced the lead-in's Cancel (TMR-09). */
+  focusSetTimer: boolean;
   /** WKT-16 hints of the last confirmed sets, until dismissed. */
   hints: readonly Guardrail[];
   /** PRG-12: the reactive-deload check after a finish, for the summary. */
@@ -43,6 +45,7 @@ export const useSessionUi = create<SessionUiState>(() => ({
   celebration: null,
   proposals: null,
   focusDock: false,
+  focusSetTimer: false,
   hints: [],
   deloadCheck: null,
 }));

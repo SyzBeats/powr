@@ -3,10 +3,12 @@ import { liveQuery } from 'dexie';
 import { sessionExerciseIds, type LiveQueries } from '@powr/application';
 import { withSessionDefaults } from '@powr/formats';
 
+import { createRepositories } from './repositories';
 import type { PowrDb } from './schema';
 
 /** Dexie live queries re-run whenever their tables change, also when another context writes. */
 export function createLiveQueries(db: PowrDb): LiveQueries {
+  const repos = createRepositories(db);
   return {
     activeSession: () =>
       liveQuery(async () => {
@@ -37,5 +39,14 @@ export function createLiveQueries(db: PowrDb): LiveQueries {
         return { session, sets, states };
       }),
     sessionPrs: (id) => liveQuery(() => db.dPrs.where('sessionId').equals(id).toArray()),
+    // M4a: any repository read as a live query, in one read transaction over its tables.
+    observe: (tables, read) =>
+      liveQuery(() =>
+        db.transaction(
+          'r',
+          tables.map((name) => db.table(name)),
+          async () => read(repos),
+        ),
+      ),
   };
 }

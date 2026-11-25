@@ -167,3 +167,15 @@
   note: >-
     The EB lists four training-age bands but no mapping to three levels; mapping 2+ years to
     advanced is a POWR choice until the observed slope takes over (≥ 8 weeks of data).
+
+# M4a (rules 1.5.0): PRG-07 (TD-44), the switch from linear increases to RPE loading.
+
+- id: progression.pace.window
+  value: { weeks: 4, minExposures: 4 }
+  unit: mixed
+  evidence: [INF]
+  sources: [src.hopkins2000, src.grgic2020, src.mcmaster2013, src.powr-technical-concept]
+  ebRef: 'PRD PRG-07 (when planned increases exceed the observed e1RM trend, switch to rep/RPE progression); EB §Load › Real change (1 TE "likely real"); EB §Progression › Increment sizing'
+  verified: false
+  userOverridable: false
+  note: 'A POWR design value: the planned weekly increase must exceed the one-sided 95% upper bound of the session-e1RM slope over the window, and the gap over the window must exceed one typical error.'

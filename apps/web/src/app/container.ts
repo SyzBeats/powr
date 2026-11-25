@@ -6,7 +6,7 @@ import type {
   NotificationPort,
   WakeLockPort,
 } from '@powr/application';
-import type { ContentCatalog } from '@powr/content';
+import { customizableCatalog, isCustomizable, type ContentCatalog } from '@powr/content';
 import type { CompiledRules } from '@powr/rules';
 
 import type { TimerKit } from '../infrastructure/alerts';
@@ -39,7 +39,9 @@ export type {
   AlertOptions,
   AlertPath,
   AlertStatusReport,
+  MetronomeState,
   RestAlertTexts,
+  TempoPhase,
   TimerDisplay,
   TimerKit,
   TimerState,
@@ -123,7 +125,8 @@ export function createContainer(
     queries: createLiveQueries(db),
     clock: systemClock,
     ids: uuidv7Generator,
-    content,
+    // EXL-04 (M4a): the user's custom exercises merge into the catalog (`loadCustomExercises`).
+    content: isCustomizable(content) ? content : customizableCatalog(content),
     rules: createRulesProvider(rules),
     app: APP,
     runtime: runtimeFlags,

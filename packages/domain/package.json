@@ -6,11 +6,13 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
+    "./analytics": "./src/analytics/index.ts",
     "./bodyweight": "./src/bodyweight/index.ts",
     "./deload": "./src/deload/index.ts",
     "./e1rm": "./src/e1rm/index.ts",
     "./equipment": "./src/equipment/index.ts",
     "./explain": "./src/explain/index.ts",
+    "./library": "./src/library/index.ts",
     "./loading": "./src/loading/index.ts",
     "./planning": "./src/planning/index.ts",
     "./progression": "./src/progression/index.ts",
@@ -18,6 +20,7 @@
     "./rules": "./src/rules/index.ts",
     "./scoring": "./src/scoring/index.ts",
     "./session": "./src/session/index.ts",
+    "./streaks": "./src/streaks/index.ts",
     "./trend": "./src/trend/index.ts",
     "./volume": "./src/volume/index.ts",
     "./warmup": "./src/warmup/index.ts"

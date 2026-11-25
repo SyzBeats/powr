@@ -238,11 +238,13 @@ export function sessionSummary(state: SessionState, ctx: SessionContext): Sessio
   });
   const endedAt = session.endedAt ?? null;
   const durationMs = Math.max(0, (endedAt?.epochMs ?? ctx.now.epochMs) - session.startedAt.epochMs);
+  // MOT-03, the same rule as `countsForStreak` in `@powr/domain/streaks` (M4a: the share is the
+  // registry's `motivation.streak.partialMinShare`); an active session is judged as a partial one.
   const countsForStreak =
     session.status === 'finished' ||
     ((session.status === 'partial' || session.status === 'active') &&
       plannedWorking > 0 &&
-      doneWorking >= plannedWorking / 2);
+      doneWorking >= plannedWorking * ctx.rules(null)['motivation.streak.partialMinShare'].value);
   return {
     sessionId: session.id,
     status: session.status,

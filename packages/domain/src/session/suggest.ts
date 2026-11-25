@@ -7,7 +7,9 @@
  *    the target (PRG-05 in-session autoregulation); otherwise the last set's load;
  * 3. the first working set from the history: manual mode (last performance), calibration
  *    (PRG-08: RIR 3–4, no load or a load from the first exposure), double progression (PRG-04),
- *    linear with the stall rule (PRG-06) or RPE loading from the current e1RM (PRG-05);
+ *    linear with the stall rule (PRG-06) or RPE loading from the current e1RM (PRG-05); a linear
+ *    slot whose planned increases outrun the observed e1RM trend switches to RPE loading, or to
+ *    reps first without an RIR target (PRG-07, TD-44);
  * 4. deload and return-from-break loads at their percentage of the normal load (PRG-11/13).
  * Every load is rounded to the user's equipment (WKT-07), in the implement's unit.
  */
@@ -18,6 +20,7 @@ import type { ExerciseDef, LoggedSet, PlannedSet, RirRange, SessionExercise } fr
 import {
   bodyRegionOf,
   percentLoad,
+  progressionPace,
   suggestBackoff,
   suggestDoubleProgression,
   suggestLinear,
@@ -354,9 +357,35 @@ function suggestFromHistory(
     if (dp.value) return fromLoadSuggestion(base, dp, 'progression');
   }
 
+  // PRG-07 (TD-44): planned linear increases that outrun the observed e1RM trend switch the
+  // slot to RPE loading (below) or, without an RIR target, to reps first.
+  let paceWhy: Explanation | null = null;
   if (model === 'linear' && reps !== null && lastWorking.length > 0) {
     const lastLoad = heaviest(lastWorking);
-    if (lastLoad) {
+    const pace = lastLoad
+      ? progressionPace(
+          {
+            samples: history?.recent ?? [],
+            today: toLocalDate(ctx.now),
+            level: ctx.level,
+            region: bodyRegionOf(exercise.pattern),
+            loadKg: toKg(lastLoad),
+          },
+          rules,
+        )
+      : null;
+    if (lastLoad && pace?.value.outrun) {
+      paceWhy = pace.why;
+      if (rir === null) {
+        const lastReps = lastWorking.find((set) => set.reps !== null)?.reps ?? reps;
+        const top = planned.reps?.[1] ?? lastReps + 1;
+        const repsUp = Math.min(top, lastReps + 1);
+        return {
+          value: suggestion(base, { load: lastLoad, reps: repsUp, basis: 'progression' }),
+          why: pace.why,
+        };
+      }
+    } else if (lastLoad) {
       const sameWeek =
         ctx.level !== 'novice' &&
         last !== null &&
@@ -460,7 +489,10 @@ function suggestFromHistory(
     target,
     rules,
   );
-  return fromTarget(base, loaded, targetReps, rir);
+  const fromE1rm = fromTarget(base, loaded, targetReps, rir);
+  return paceWhy
+    ? { value: fromE1rm.value, why: { ...paceWhy, children: [...paceWhy.children, fromE1rm.why] } }
+    : fromE1rm;
 }
 
 function heaviest(sets: readonly { readonly load: Mass | null }[]): Mass | null {

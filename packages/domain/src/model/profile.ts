@@ -109,6 +109,11 @@ export interface Profile {
   readonly avoid: AvoidList;
   /** Favourites the generator prefers (EXL-08), e.g. the sumo deadlift as the competition pull. */
   readonly preferredExercises: readonly ExerciseId[];
+  /**
+   * EXL-08 (M4a): exercises removed from lists (library, body-map rankings, substitutions); still
+   * loggable and kept in plans that use them. Absent = none (profiles written before M4a).
+   */
+  readonly hiddenExercises?: readonly ExerciseId[];
   readonly baselines: readonly Baseline[];
   readonly createdAt: InstantTz;
   readonly updatedAt: InstantTz;

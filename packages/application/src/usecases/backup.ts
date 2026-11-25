@@ -11,6 +11,7 @@ import {
 import type { Deps } from '../deps';
 import { DERIVED_TABLE_NAMES } from '../ports';
 import { err, ok, type Result } from '../result';
+import { syncCustomExercises } from './custom-content';
 
 export type { BackupError, DecodedBackup, ImportPreview } from '@powr/formats/backup';
 
@@ -83,6 +84,8 @@ export async function applyImport(deps: Deps, backup: DecodedBackup): Promise<Im
     repos.raw.replaceAll(backup.tables),
   );
 
+  // EXL-04 (M4a): the restored custom exercises replace the catalog's.
+  syncCustomExercises(deps, backup.tables.customExercises);
   const active = backup.tables.sessions.find((session) => session.status === 'active');
   await deps.runtime.setActiveSession(active ? { id: active.id, build: deps.app.build } : null);
   return { counts: backup.preview.counts, safetySnapshot: snapshot.fileName };

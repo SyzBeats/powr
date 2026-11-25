@@ -77,3 +77,65 @@ export function createContentCatalog(bundle: ContentBundle): ContentCatalog {
 function indexBy<T extends { readonly id: string }>(entries: readonly T[]): Map<T['id'], T> {
   return new Map(entries.map((entry) => [entry.id, entry]));
 }
+
+/**
+ * EXL-04: the catalog with the user's custom exercises merged in (technical concept §5.5:
+ * "built-in or custom, merged"). The composition root holds one and replaces its custom list
+ * whenever custom exercises change (boot, save, delete, restore). Built-in IDs (`ex.`) and custom
+ * IDs (`cx.`) never collide. The version gains `+cx.<digest>` while custom exercises exist, so
+ * everything derived from the catalog (derived tables, resolved rules) is rebuilt when they change.
+ */
+export interface CustomizableCatalog extends ContentCatalog {
+  readonly builtIn: ContentCatalog;
+  customExercises(): readonly ExerciseDef[];
+  setCustomExercises(exercises: readonly ExerciseDef[]): void;
+}
+
+export function customizableCatalog(
+  builtIn: ContentCatalog,
+  initial: readonly ExerciseDef[] = [],
+): CustomizableCatalog {
+  let custom: readonly ExerciseDef[] = [];
+  let byId = new Map<ExerciseId, ExerciseDef>();
+  let all: readonly ExerciseDef[] = builtIn.exercises();
+  let version = builtIn.version;
+  const set = (exercises: readonly ExerciseDef[]) => {
+    custom = exercises
+      .filter((exercise) => builtIn.exercise(exercise.id) === undefined)
+      .toSorted((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
+    byId = new Map(custom.map((exercise) => [exercise.id, exercise]));
+    all = custom.length === 0 ? builtIn.exercises() : [...builtIn.exercises(), ...custom];
+    version = custom.length === 0 ? builtIn.version : `${builtIn.version}+cx.${digest(custom)}`;
+  };
+  set(initial);
+  return {
+    builtIn,
+    get version() {
+      return version;
+    },
+    exercise: (id) => builtIn.exercise(id) ?? byId.get(id),
+    exercises: () => all,
+    muscles: () => builtIn.muscles(),
+    equipment: () => builtIn.equipment(),
+    templates: () => builtIn.templates(),
+    template: (id) => builtIn.template(id),
+    customExercises: () => custom,
+    setCustomExercises: set,
+  };
+}
+
+/** Whether a catalog can merge custom exercises (the app's and the tests' composition roots). */
+export function isCustomizable(catalog: ContentCatalog): catalog is CustomizableCatalog {
+  return typeof (catalog as Partial<CustomizableCatalog>).setCustomExercises === 'function';
+}
+
+/** FNV-1a (8 hex digits) over the custom exercises' JSON. */
+function digest(exercises: readonly ExerciseDef[]): string {
+  const text = JSON.stringify(exercises);
+  let hash = 0x811c9dc5;
+  for (let index = 0; index < text.length; index++) {
+    hash ^= text.charCodeAt(index);
+    hash = Math.imul(hash, 0x01000193) >>> 0;
+  }
+  return hash.toString(16).padStart(8, '0');
+}

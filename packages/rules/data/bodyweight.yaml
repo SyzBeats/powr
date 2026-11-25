@@ -43,3 +43,44 @@
   verified: true
   userOverridable: false
   note: 'The slope uses the readings of the last 28 days and needs them to span at least 14 days.'
+
+# M4a (rules 1.5.0): the weekly rate against the phase (BOD-02 "the weekly rate with its band").
+# Rates are % of bodyweight per week; the cut's are losses. Never derived from a single day.
+
+- id: bodyweight.rate.bulk
+  value:
+    target:
+      novice: { min: 0.25, max: 0.5 }
+      intermediate: { min: 0.25, max: 0.5 }
+      advanced: { min: 0.1, max: 0.25 }
+    sustainedWeeks: 3
+  unit: pctPerWeek
+  evidence: [NARR, RCT-T, INF]
+  sources: [src.iraki2019, src.powr-eb-nutrition]
+  ebRef: 'EB §Nutrition › Bulking (gain 0.25–0.5% BW/week for novices and intermediates, less for advanced; warn above the band for ≥ 3 weeks); §Defaults › Nutrition (bulk rate)'
+  verified: true
+  userOverridable: true
+  note: 'The EB names novice 0.5 %/week as the target and 0.25–0.5 % for novices and intermediates (Iraki 2019); the band uses that range.'
+
+- id: bodyweight.rate.cut
+  value:
+    target: { min: 0.5, max: 0.7 }
+    allowed: { min: 0.25, max: 1.0 }
+    hardWarnAbove: 1.0
+    sustainedWeeks: 2
+  unit: pctPerWeek
+  evidence: [NARR, RCT]
+  sources: [src.helms2014, src.garthe2011, src.powr-eb-nutrition]
+  ebRef: 'EB §Nutrition › Cutting (default 0.5–0.7% BW/week; allowed 0.25–1.0%; hard warning above 1.0%/week sustained for ≥ 2 weeks); §Defaults › Nutrition (cut rate)'
+  verified: true
+  userOverridable: true
+
+- id: bodyweight.rate.maintain
+  value: { min: -0.25, max: 0.25 }
+  unit: pctPerWeek
+  evidence: [INF]
+  sources: [src.powr-eb-nutrition]
+  ebRef: 'EB §Nutrition › Trend smoothing (no maintenance band in the EB); a POWR design value'
+  verified: false
+  userOverridable: true
+  note: 'A POWR design value: a trend within ±0.25 % of bodyweight per week reads as maintaining (below the slowest bulk band and half the slowest cut band).'

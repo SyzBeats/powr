@@ -22,8 +22,17 @@ import type { ExerciseId, LocalDate, SessionId, SetId } from '../ids';
 import type { Baseline, ExerciseDef, LoggedSet, SetType } from '../model';
 import type { RuleSet, TraineeLevel } from '../rules';
 import { daysBetween } from '../time';
-import { isStrengthSet, trendObservation, trendStep, type TrendPoint } from '../trend';
-import type { Mass } from '../units';
+import {
+  isStrengthSet,
+  labelChange,
+  median,
+  repRangeShift,
+  trendObservation,
+  trendStep,
+  type ChangeLabel,
+  type TrendPoint,
+} from '../trend';
+import { toKg, type Mass } from '../units';
 import { EMPTY_BESTS, exposurePrs, type ExerciseBests, type PrRecord } from './prs';
 
 /** A performed set as later sessions read it. */
@@ -48,6 +57,21 @@ export interface ExposureSummary {
   readonly note?: string;
   /** Linear progression (PRG-06): every planned working set reached its target reps. */
   readonly prescribedRepsMet: boolean | null;
+}
+
+/**
+ * One recent exposure (M4a): what the PRG-07 pace check (TD-44) and the rep-range artefact flag
+ * (PRG-02, TD-26) read without scanning raw sets.
+ */
+export interface RecentExposure {
+  readonly localDate: LocalDate;
+  /** Session e1RM from all sets and its weight; null when the exposure gave none. */
+  readonly e1rmKg: number | null;
+  readonly weight: number | null;
+  /** The heaviest external load of a working set, kg. */
+  readonly topLoadKg: number | null;
+  /** Median reps of the working sets. */
+  readonly medianReps: number | null;
 }
 
 export interface ExerciseState {
@@ -77,6 +101,20 @@ export interface ExerciseState {
   readonly bests: ExerciseBests;
   /** E-1: entered RIR of recent working sets, for the personal prior. */
   readonly effort: readonly EffortHistoryEntry[];
+  /** M4a: the last exposures, oldest first (absent in states an M3 build stored). */
+  readonly recent?: readonly RecentExposure[];
+}
+
+/**
+ * PRG-02 at one session (M4a): the strength trend's change label after it, and whether it
+ * coincides with a rep-range shift (TD-26, "possibly a rep-range effect").
+ */
+export interface PointChange {
+  readonly label: ChangeLabel['label'];
+  readonly direction: ChangeLabel['direction'];
+  readonly deltaPct: number;
+  readonly referenceDate: LocalDate | null;
+  readonly repRange: boolean;
 }
 
 /** One point per exercise per session (table `dSessionE1rm`, the chart source of ANL-02). */
@@ -90,6 +128,8 @@ export interface SessionE1rmPoint {
   /** Smoothed strength and all-sets trend after the session, with the 95% bands. */
   readonly strength: TrendBand | null;
   readonly all: TrendBand | null;
+  /** M4a: the strength trend's change label at this session; null without a strength point. */
+  readonly change?: PointChange | null;
 }
 
 export interface TrendBand {
@@ -118,6 +158,7 @@ export interface FoldInput {
 const MAX_POINTS = 30;
 const MAX_LINEAR = 6;
 const MAX_EFFORT = 200;
+const MAX_RECENT = 12;
 
 export function emptyExerciseState(exerciseId: ExerciseId, key: string): ExerciseState {
   return {
@@ -135,6 +176,7 @@ export function emptyExerciseState(exerciseId: ExerciseId, key: string): Exercis
     linear: [],
     bests: EMPTY_BESTS,
     effort: [],
+    recent: [],
   };
 }
 
@@ -261,6 +303,13 @@ export function foldExposure(
     .slice(-MAX_EFFORT);
 
   const met = prescribedRepsMet(working);
+  const recent = [
+    ...(state.recent ?? []),
+    recentExposure(date, working, all?.e1rmKg ?? null, all?.weight ?? null),
+  ].slice(-MAX_RECENT);
+  const points =
+    strong && strengthPoint ? [...state.points, strengthPoint].slice(-MAX_POINTS) : state.points;
+  const change = strong && strengthPoint ? pointChange(points, recent, input) : null;
   const next: ExerciseState = {
     ...state,
     exposures: state.exposures + 1,
@@ -272,8 +321,7 @@ export function foldExposure(
     },
     all: allPoint,
     strength: strengthPoint,
-    points:
-      strong && strengthPoint ? [...state.points, strengthPoint].slice(-MAX_POINTS) : state.points,
+    points,
     last: {
       sessionId: exposure.sessionId,
       localDate: date,
@@ -284,6 +332,7 @@ export function foldExposure(
     linear: met === null ? state.linear : [...state.linear, met].slice(-MAX_LINEAR),
     bests: prs.bests,
     effort,
+    recent,
   };
   return {
     state: next,
@@ -295,9 +344,46 @@ export function foldExposure(
       weight: all?.weight ?? null,
       strength: strong ? band(strengthPoint) : null,
       all: all ? band(allPoint) : null,
+      change,
     },
     prs: prs.prs,
     firstTimeSetId: prs.firstTimeSetId,
+  };
+}
+
+/** The exposure's summary for `ExerciseState.recent`. */
+function recentExposure(
+  localDate: LocalDate,
+  working: readonly LoggedSet[],
+  e1rmKg: number | null,
+  weight: number | null,
+): RecentExposure {
+  const done = working.filter((set) => set.state === 'done' && set.type !== 'timed');
+  const reps = done.flatMap((set) => (set.reps === null ? [] : [set.reps]));
+  const loads = done.flatMap((set) => (set.load === null ? [] : [toKg(set.load)]));
+  return {
+    localDate,
+    e1rmKg,
+    weight,
+    topLoadKg: loads.length > 0 ? Math.max(...loads) : null,
+    medianReps: median(reps),
+  };
+}
+
+/** The strength trend's label after this session, with the rep-range check (PRG-02, TD-26). */
+function pointChange(
+  points: readonly TrendPoint[],
+  recent: readonly RecentExposure[],
+  input: FoldInput,
+): PointChange {
+  const label = labelChange(points, input.level, input.rules).value;
+  const real = label.label === 'likely' || label.label === 'veryLikely';
+  return {
+    label: label.label,
+    direction: label.direction,
+    deltaPct: label.deltaPct,
+    referenceDate: label.referenceDate,
+    repRange: real && repRangeShift(recent, label.referenceDate, input.rules).value.shifted,
   };
 }
 

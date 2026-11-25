@@ -4,6 +4,9 @@ import type {
   BodyweightEntry,
   BreakId,
   CustomEquipmentId,
+  CustomExercise,
+  ExerciseUserData,
+  MeasurementEntry,
   EquipmentId,
   EquipmentProfile,
   ExerciseId,
@@ -288,17 +291,34 @@ const metaRecords = metaRecordsOf(
     .filter((value) => !hasReservedKey(value)),
 );
 
-/** The M3t alert settings (SET-03, SET-04, SET-10). */
-const alertSettings: fc.Arbitrary<NonNullable<SettingsRecord['alerts']>> = fc.record({
-  sound: fc.boolean(),
-  volume: fc.integer({ min: 0, max: 100 }).map((percent) => percent / 100),
-  vibration: fc.boolean(),
-  preAlert: fc.boolean(),
-  preAlertSeconds: fc.constantFrom(5 as const, 10 as const, 15 as const),
-  countdown: fc.boolean(),
-  restingNotice: fc.boolean(),
-  keepScreenOn: fc.boolean(),
-});
+/** The M3t alert settings (SET-03, SET-04, SET-10), with M4v's optional timed-set and tempo switches. */
+const alertSettings: fc.Arbitrary<NonNullable<SettingsRecord['alerts']>> = fc.record(
+  {
+    sound: fc.boolean(),
+    volume: fc.integer({ min: 0, max: 100 }).map((percent) => percent / 100),
+    vibration: fc.boolean(),
+    preAlert: fc.boolean(),
+    preAlertSeconds: fc.constantFrom(5 as const, 10 as const, 15 as const),
+    countdown: fc.boolean(),
+    restingNotice: fc.boolean(),
+    keepScreenOn: fc.boolean(),
+    setTimerLeadIn: fc.boolean(),
+    setTimerAutoStop: fc.boolean(),
+    tempoCues: fc.boolean(),
+  },
+  {
+    requiredKeys: [
+      'sound',
+      'volume',
+      'vibration',
+      'preAlert',
+      'preAlertSeconds',
+      'countdown',
+      'restingNotice',
+      'keepScreenOn',
+    ],
+  },
+);
 
 const settingsRecords: fc.Arbitrary<SettingsRecord[]> = fc
   .option(
@@ -315,6 +335,20 @@ const settingsRecords: fc.Arbitrary<SettingsRecord[]> = fc
           { nil: null },
         ),
         alerts: alertSettings,
+        insights: fc.record(
+          {
+            streakGrace: fc.boolean(),
+            weeklySessionTarget: fc.option(fc.integer({ min: 1, max: 7 }), { nil: null }),
+            measurementSites: fc.subarray([
+              'waist' as const,
+              'neck' as const,
+              'skinfoldThigh' as const,
+            ]),
+            scoreSource: fc.constantFrom('e1rm' as const, 'tested' as const),
+            division: fc.constantFrom('classic' as const, 'equipped' as const),
+          },
+          { requiredKeys: [] },
+        ),
       },
       { requiredKeys: ['id', 'theme', 'prefs'] },
     ),
@@ -415,8 +449,9 @@ function tablesWith(meta: fc.Arbitrary<MetaRecord[]>): fc.Arbitrary<RawTables> {
           sets,
           readiness,
           planning: planningTables,
+          insights: insightTables,
         })
-        .map(({ planning, ...core }) => ({ ...core, ...planning }));
+        .map(({ planning, insights, ...core }) => ({ ...core, ...planning, ...insights }));
     });
 }
 
@@ -611,11 +646,13 @@ const profile: fc.Arbitrary<Profile> = fc
       maxLength: 3,
     }),
     displayName: fc.option(fc.string({ maxLength: 20 }), { nil: undefined }),
+    hidden: fc.boolean(),
     at: instantTz,
   })
-  .map(({ displayName, at, ...rest }): Profile => ({
+  .map(({ displayName, hidden, at, ...rest }): Profile => ({
     id: 'me',
     ...(displayName !== undefined ? { displayName } : {}),
+    ...(hidden ? { hiddenExercises: ['ex.barbell-bench-press' as ExerciseId] } : {}),
     units: { load: 'kg', bodyweight: 'kg', length: 'cm' },
     referenceSet: rest.sex === 'preferNotToSay' ? null : rest.sex,
     height: { value: 180, unit: 'cm' },
@@ -731,3 +768,127 @@ const planningTables = fc
       ),
     });
   });
+
+// --- dataVersion 2 tables amended in M4a: custom exercises, exercise user data, measurements ----
+
+/** The custom exercise every arbitrary set or slot may name (`cx.0190a6f2-custom`). */
+const customExercise = fc
+  .record({
+    createdAt: instantTz,
+    userRated: fc.option(fc.boolean(), { nil: undefined }),
+    increment: fc.option(mass(0.25, 5), { nil: undefined }),
+    curveClass: fc.constantFrom('equation' as const, 'legPressLike' as const, 'pooled' as const),
+  })
+  .map(({ createdAt, userRated, increment, curveClass }): CustomExercise => ({
+    id: 'cx.0190a6f2-custom' as ExerciseId,
+    name: { en: 'Belt squat (gym B) – 🏋' },
+    synonyms: ['belt squat'],
+    pattern: 'squat',
+    mechanics: 'compound',
+    variantOf: 'ex.barbell-back-squat' as ExerciseId,
+    substitutionGroups: ['sg.squat-pattern'],
+    equipment: {
+      allOf: ['eq.belt-squat' as EquipmentId],
+      anyOf: [['eq.plates' as EquipmentId, 'ce.0190a6f2-hook' as EquipmentId]],
+    },
+    muscles: [
+      {
+        muscle: 'mu.quads' as MuscleId,
+        credit: 1,
+        evidence: 'C',
+        source: 'src.powr-user-defined' as never,
+      },
+      {
+        muscle: 'mu.glutes.max' as MuscleId,
+        credit: 0.5,
+        evidence: 'C',
+        source: 'src.powr-user-defined' as never,
+      },
+    ],
+    load: {
+      type: 'machine',
+      curveClass,
+      unilateral: false,
+      bodyweightLoaded: false,
+      ...(increment ? { increment } : {}),
+    },
+    defaults: {
+      repRange: { hypertrophy: [8, 15], strength: [3, 6] },
+      restClass: 'hypertrophyCompound',
+      tempo: '2-0-X-0',
+      fixedRom: false,
+      stretchEmphasis: true,
+    },
+    ranking: { overloadSuitability: 3 },
+    cues: [{ en: 'Hook the belt low on the hips.' }],
+    custom: true,
+    ...(userRated === undefined ? {} : { userRated }),
+    status: 'active',
+    createdAt,
+    updatedAt: createdAt,
+    copiedFrom: 'ex.barbell-back-squat' as ExerciseId,
+  }));
+
+const insightTables = fc
+  .record({
+    withCustom: fc.boolean(),
+    setupFor: fc.subarray(['ex.barbell-bench-press', 'ex.barbell-back-squat'] as ExerciseId[]),
+    measurementIds: fc.uniqueArray(fc.uuid(), { maxLength: 3 }),
+  })
+  .chain(({ withCustom, setupFor, measurementIds }) =>
+    fc.record({
+      customExercises: withCustom
+        ? customExercise.map((record) => [record])
+        : fc.constant([] as CustomExercise[]),
+      exerciseUserData: fc.tuple(
+        ...setupFor.map((exerciseId) =>
+          fc
+            .record({
+              updatedAt: instantTz,
+              seat: fc.integer({ min: 1, max: 9 }),
+              max: fc.boolean(),
+            })
+            .map(({ updatedAt, seat, max }): ExerciseUserData => ({
+              exerciseId,
+              setup: [
+                { field: 'seat', value: String(seat) },
+                { field: 'other', label: 'Cable height', value: 'notch 7 – ⬆' },
+              ],
+              note: 'Wide grip',
+              ...(max ? { trainingMax: { value: 140, unit: 'kg' as const } } : {}),
+              updatedAt,
+            })),
+        ),
+      ),
+      measurements: fc.tuple(
+        ...measurementIds.map((id, index) =>
+          fc
+            .record({
+              localDate,
+              measuredAt: instantTz,
+              tenths: fc.integer({ min: 100, max: 1500 }),
+            })
+            .map(({ localDate: date, measuredAt, tenths }): MeasurementEntry =>
+              index === 2
+                ? {
+                    id,
+                    site: 'skinfoldThigh',
+                    localDate: date,
+                    measuredAt,
+                    value: tenths / 50,
+                    unit: 'mm',
+                  }
+                : {
+                    id,
+                    site: index === 0 ? 'waist' : 'upperArmLeft',
+                    localDate: date,
+                    measuredAt,
+                    value: tenths / 10,
+                    unit: index === 0 ? 'cm' : 'in',
+                    ...(index === 0 ? { note: 'Morgens – 🌅' } : {}),
+                  },
+            ),
+        ),
+      ),
+    }),
+  );

@@ -35,3 +35,27 @@
   tag: INF
   status: active
   note: The EB's inferred trend algorithm ([INF], equivalent to the Hacker's Diet at Δt = 1 day).
+
+- id: src.iraki2019
+  citation: >-
+    Iraki et al. 2019. Nutrition recommendations for bodybuilders in the off-season: a narrative
+    review. [Surplus about 10–20%; gain 0.25–0.5% BW/week for novices and intermediates.]
+  url: https://pubmed.ncbi.nlm.nih.gov/31247944/
+  tag: NARR
+  status: active
+
+- id: src.helms2014
+  citation: >-
+    Helms, Aragon & Fitschen 2014. Evidence-based recommendations for natural bodybuilding contest
+    preparation: nutrition and supplementation. [Lose 0.5–1% BW/week.]
+  url: https://pubmed.ncbi.nlm.nih.gov/24864135/
+  tag: NARR
+  status: active
+
+- id: src.garthe2011
+  citation: >-
+    Garthe et al. 2011. [Slow (0.7%/week) vs fast (1.4%/week) weight loss in elite athletes:
+    lean body mass +2.1% vs −0.2%.]
+  url: https://pubmed.ncbi.nlm.nih.gov/21558571/
+  tag: RCT
+  status: active
