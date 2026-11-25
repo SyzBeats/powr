@@ -186,9 +186,9 @@ function useCauseText() {
   return (cause: IssueCause): string => {
     switch (cause) {
       case 'timeBudget':
-        return t`Your session time does not allow more.`;
+        return t`Your workout time does not allow more.`;
       case 'sessionCap':
-        return t`The sessions already hold as much for this muscle as is useful.`;
+        return t`The workouts already hold as much for this muscle as is useful.`;
       case 'slotLimit':
         return t`The exercises for it already have the most sets that make sense.`;
       case 'equipment':
@@ -228,7 +228,7 @@ export function BudgetNote({
     .filter(isInputFix)
     .filter((fix, index, all) => all.findIndex((other) => other.kind === fix.kind) === index);
   return (
-    <Callout tone="warning" title={t`Your session time is tight`}>
+    <Callout tone="warning" title={t`Your workout time is tight`}>
       <p>
         <WhyText why={note} />
       </p>

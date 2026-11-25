@@ -156,7 +156,7 @@ export function useStreakWords() {
       case 'kept':
         return t`Kept`;
       case 'graced':
-        return t`Kept with the grace session`;
+        return t`Kept with your grace`;
       case 'missed':
         return t`Not kept`;
       case 'paused':
@@ -173,7 +173,7 @@ export function useStreakWords() {
 
 /** "2 of 4 sessions" (MOT-03 week progress). */
 function sessionProgress(done: number, target: number): string {
-  return plural(target, { one: `${done} of # session`, other: `${done} of # sessions` });
+  return plural(target, { one: `${done} of # workout`, other: `${done} of # workouts` });
 }
 
 /** "3 weeks". */

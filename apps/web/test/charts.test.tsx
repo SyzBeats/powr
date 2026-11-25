@@ -83,7 +83,7 @@ describe('TrendChart (ANL-02, ANL-11)', () => {
     expect(within(section).getByText('Squat e1RM rose 4% over 12 weeks.')).toBeTruthy();
     // Legend in words: line, points, band, PR and the change marker.
     const legend = within(section).getByRole('list', { name: 'Legend' });
-    for (const label of ['Trend', 'Each session', '95% range', 'PR', 'Likely real change'])
+    for (const label of ['Trend', 'Each workout', '95% range', 'PR', 'Likely real change'])
       expect(within(legend).getByText(label)).toBeTruthy();
     // 12 weeks are the default range: 42 sessions every other day, newest first, 30 per page.
     await userEvent.click(within(section).getByRole('button', { name: 'View as table' }));

@@ -18,8 +18,11 @@ import {
   settingsRecordSchema,
 } from './v2';
 
-/** The strict Zod schema of every raw table at the current DATA_VERSION. */
-const RAW_TABLE_SCHEMAS = {
+/**
+ * The strict Zod schema of every raw table at the current DATA_VERSION. Also the source of the
+ * published JSON Schemas (`pnpm formats:schemas`, docs/formats/schemas/).
+ */
+export const RAW_TABLE_SCHEMAS = {
   meta: metaRecordSchema,
   settings: settingsRecordSchema,
   sessions: sessionRecordSchema,

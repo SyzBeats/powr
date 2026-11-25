@@ -5,7 +5,7 @@
 id: tpl.pb-full-body-2day
 name: { en: 'Full body ×2 (strength and size)' }
 description:
-  en: 'Two full-body sessions a week, each opening with heavy competition lifts and finishing with hypertrophy work.'
+  en: 'Two full-body workouts a week, each opening with heavy competition lifts and finishing with hypertrophy work.'
 style: powerbuilding
 daysPerWeek: 2
 split: fullBody

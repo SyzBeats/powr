@@ -148,7 +148,7 @@ export function TrendChart({
         multi || entry.points.length === 0 ? null : (
           <LegendItem
             key={`points-${entry.name}`}
-            label={labels?.points ?? t`Each session`}
+            label={labels?.points ?? t`Each workout`}
             swatch={<PointSwatch series={seriesIndex(index)} />}
           />
         ),

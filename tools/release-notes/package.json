@@ -1,0 +1,10 @@
+{
+  "name": "@powr/tools-release-notes",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Compiles the reviewed release notes (docs/release-notes/*.md) into changelog.json (NFR-MNT-07, SET-09).",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  }
+}

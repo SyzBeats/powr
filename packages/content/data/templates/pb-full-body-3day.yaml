@@ -5,7 +5,7 @@
 id: tpl.pb-full-body-3day
 name: { en: 'Full body ×3 (strength and size)' }
 description:
-  en: 'Three full-body sessions a week: each competition lift twice, heavy and light, with hypertrophy work in every session.'
+  en: 'Three full-body workouts a week: each competition lift twice, heavy and light, with hypertrophy work in every workout.'
 style: powerbuilding
 daysPerWeek: 3
 split: fullBody

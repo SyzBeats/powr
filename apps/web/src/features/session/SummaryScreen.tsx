@@ -442,7 +442,7 @@ function DeloadCheck({ sessionId }: { sessionId: SessionId }) {
     <Callout tone="warning" title={t`Consider bringing your lighter week forward`}>
       <p>
         <Trans>
-          Your recent sessions show signs of fatigue. A lighter week now can help you recover and
+          Your recent workouts show signs of fatigue. A lighter week now can help you recover and
           keep progressing.
         </Trans>
       </p>

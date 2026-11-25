@@ -44,7 +44,8 @@ export async function craftBackup(options: CraftOptions = {}): Promise<Uint8Arra
   manifest.contentDigest = await contentDigest(manifest.entries);
   const text = JSON.stringify(manifest);
   files['manifest.json'] = strToU8(options.manifest ? options.manifest(text) : text);
-  return zipSync({ ...files, ...options.extra });
+  // A fixed entry time, so the same options always give the same bytes (kept fixtures).
+  return zipSync({ ...files, ...options.extra }, { mtime: source.createdAt.epochMs });
 }
 
 /**

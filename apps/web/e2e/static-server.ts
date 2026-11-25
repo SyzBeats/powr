@@ -27,6 +27,8 @@ const CONTENT_TYPES: Record<string, string> = {
 };
 const NO_CACHE =
   /^\/(sw\.js|index\.html|manifest\.webmanifest|changelog\.json|version\.json|theme-init\.js)$/;
+/** The static website copy of the legal texts (TD-71): revalidated, and a 404 when missing. */
+const LEGAL_STATIC = '/legal-static/';
 
 function securityHeaders(trustedTypes: boolean): Record<string, string> {
   const conf = readFileSync(join(repoRoot, 'deploy/security-headers.conf'), 'utf8');
@@ -67,9 +69,16 @@ export async function startStaticServer(options: StaticServerOptions = {}): Prom
     const path = decodeURIComponent(new URL(request.url ?? '/', 'http://localhost').pathname);
     let file = normalize(join(distDir, path));
     if (!file.startsWith(distDir)) file = join(distDir, 'index.html');
+    // nginx's `$uri/`: the directory of the static legal pages serves its index.html.
+    if (path.startsWith(LEGAL_STATIC) && existsSync(file) && statSync(file).isDirectory()) {
+      file = join(file, 'index.html');
+    }
 
     const exists = existsSync(file) && statSync(file).isFile();
-    if (!exists && (path.startsWith('/assets/') || path.startsWith('/icons/'))) {
+    if (
+      !exists &&
+      (path.startsWith('/assets/') || path.startsWith('/icons/') || path.startsWith(LEGAL_STATIC))
+    ) {
       response.writeHead(404, headers).end();
       return;
     }
@@ -81,13 +90,14 @@ export async function startStaticServer(options: StaticServerOptions = {}): Prom
       body = body.toString('utf8').replaceAll(build, `${build}-next`);
     }
 
-    const cacheControl = NO_CACHE.test(servedPath)
-      ? 'no-cache'
-      : servedPath.startsWith('/assets/')
-        ? 'public, max-age=31536000, immutable'
-        : servedPath.startsWith('/icons/')
-          ? 'public, max-age=604800'
-          : undefined;
+    const cacheControl =
+      NO_CACHE.test(servedPath) || servedPath.startsWith(LEGAL_STATIC)
+        ? 'no-cache'
+        : servedPath.startsWith('/assets/')
+          ? 'public, max-age=31536000, immutable'
+          : servedPath.startsWith('/icons/')
+            ? 'public, max-age=604800'
+            : undefined;
     response.writeHead(200, {
       ...headers,
       'Content-Type': CONTENT_TYPES[extname(served)] ?? 'application/octet-stream',

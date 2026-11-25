@@ -24,6 +24,7 @@ describe('internal dependency matrix', () => {
       '@powr/tools-content-build',
       '@powr/tools-icons',
       '@powr/tools-licence',
+      '@powr/tools-release-notes',
       '@powr/tools-tokens-check',
       '@powr/web',
     ]);

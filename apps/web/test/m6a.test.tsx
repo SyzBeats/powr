@@ -51,7 +51,7 @@ describe('TD-64: the update before the one-tap start', () => {
     ).toBeTruthy();
     expect(screen.getByTestId('next-session').textContent).toContain('today');
     // The plain one-tap start gives way to the explicit choice.
-    expect(screen.queryByRole('link', { name: "Start today's session" })).toBeNull();
+    expect(screen.queryByRole('link', { name: "Start today's workout" })).toBeNull();
     expect(await seriousViolations()).toEqual([]);
 
     await user.click(within(offer).getByRole('button', { name: 'Update first' }));
@@ -108,7 +108,7 @@ describe('TD-64: the update before the one-tap start', () => {
     await plannedToday(container);
     const user = userEvent.setup();
     renderRoute(container, '/');
-    const start = await screen.findByRole('link', { name: "Start today's session" });
+    const start = await screen.findByRole('link', { name: "Start today's workout" });
     expect(screen.queryByTestId('update-first')).toBeNull();
     await user.click(start);
     expect(

@@ -7,7 +7,7 @@
 id: tpl.bb-upper-lower-6day
 name: { en: Upper/lower ×3 }
 description:
-  en: Three upper-body and three lower-body sessions a week. Shorter sessions than push/pull/legs, with each muscle trained two or three times.
+  en: Three upper-body and three lower-body workouts a week. Shorter workouts than push/pull/legs, with each muscle trained two or three times.
 style: bodybuilding
 daysPerWeek: 6
 split: upperLower

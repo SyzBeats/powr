@@ -5,7 +5,7 @@
 id: tpl.pl-sbd-5day
 name: { en: 'SBD 5-day' }
 description:
-  en: 'Five sessions with squat and bench press three times and deadlift twice a week, plus accessory work for the upper back and arms.'
+  en: 'Five workouts with squat and bench press three times and deadlift twice a week, plus accessory work for the upper back and arms.'
 style: powerlifting
 daysPerWeek: 5
 split: sbd

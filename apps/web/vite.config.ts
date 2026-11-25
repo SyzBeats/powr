@@ -14,6 +14,8 @@ import { licenceCollector, licenceFixturePlugin } from '@powr/tools-licence';
 import packageJson from './package.json' with { type: 'json' };
 import { citationsPlugin } from './scripts/citations-plugin.ts';
 import { compilerReport } from './scripts/compiler-report.ts';
+import { legalStaticPages } from './scripts/legal-static-plugin.ts';
+import { releaseNotesPlugin } from './scripts/release-notes-plugin.ts';
 import { TRUSTED_TYPES_CSP } from './scripts/trusted-types.ts';
 
 const root = fileURLToPath(new URL('.', import.meta.url));
@@ -120,9 +122,9 @@ export default defineConfig({
         // app puts Home beneath them in the history, so Back goes to Home (PWA-12).
         shortcuts: [
           {
-            name: "Start today's session",
+            name: "Start today's workout",
             short_name: 'Train',
-            description: "Starts today's planned session, or opens the workout start screen.",
+            description: "Starts today's planned workout, or opens the workout start screen.",
             url: '/session?start=today&source=shortcut',
             icons: [{ src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' }],
           },
@@ -139,7 +141,8 @@ export default defineConfig({
         // A classic script: no module service worker needed, works on every Chromium we support.
         rollupFormat: 'iife',
         globPatterns: ['**/*.{js,css,html,svg,png,webmanifest,json,txt}'],
-        globIgnores: ['sw.js', 'version.json'],
+        // legal-static/: the website copy of the legal texts, never needed offline (TD-71).
+        globIgnores: ['sw.js', 'version.json', 'legal-static/**'],
         buildPlugins: {
           vite: [
             licenceCollector({
@@ -151,6 +154,13 @@ export default defineConfig({
                 assetsInventoryFile: `${repoRoot}assets-inventory.yaml`,
               },
             }),
+            // LEG-09, TD-71: dist/legal-static/*.html, after the gate wrote attributions.json.
+            legalStaticPages({
+              root,
+              distDir,
+              lingui: linguiConfig,
+              app: { version: APP_VERSION, build: APP_BUILD },
+            }),
           ],
         },
       },
@@ -161,6 +171,8 @@ export default defineConfig({
     citationsPlugin(),
     licenceFixturePlugin(process.env['POWR_LICENCE_FIXTURE'], `${root}src/main.tsx`),
     versionFile(),
+    // NFR-MNT-07, SET-09 (M6c): docs/release-notes/*.md → /changelog.json.
+    releaseNotesPlugin({ dir: `${repoRoot}docs/release-notes`, appVersion: APP_VERSION }),
     compiler.plugin,
   ],
 });

@@ -29,6 +29,12 @@ export interface LicencePolicy {
   /** Refused whatever their licence, shipped or build-only; no exception overrides them. */
   readonly deniedPackages: readonly DeniedPackage[];
   readonly exceptions: readonly LicenceException[];
+  /**
+   * Programs the publisher runs on its server (deploy/server-inventory.yaml, L-2) are never
+   * distributed, so only these licences matter for them: ones that bind the publisher for
+   * running a program as a network service, or restrict running it in production.
+   */
+  readonly serverDenied: readonly string[];
 }
 
 export function loadPolicy(file: string): LicencePolicy {
@@ -39,6 +45,7 @@ export function loadPolicy(file: string): LicencePolicy {
     devOnlyAllowed: raw.devOnlyAllowed ?? [],
     deniedPackages: raw.deniedPackages ?? [],
     exceptions: raw.exceptions ?? [],
+    serverDenied: raw.serverDenied ?? [],
   };
 }
 
@@ -89,6 +96,29 @@ export function evaluate(component: Component, policy: LicencePolicy): Verdict {
     ? policy.allowed
     : [...policy.allowed, ...policy.devOnlyAllowed];
   return evaluateNode(tree, permitted, policy.denied);
+}
+
+/**
+ * Evaluates a program the publisher runs on its server (L-2). Its licence is recorded as the
+ * package manager declares it (not always an SPDX expression), so every licence-like word is
+ * checked against `serverDenied`; anything else is allowed, because nothing is distributed.
+ */
+export function evaluateServer(
+  component: Omit<Component, 'distributed'>,
+  policy: LicencePolicy,
+): Verdict {
+  if (!component.licence?.trim()) return { status: 'unknown', reason: 'no licence declared' };
+  const words = component.licence.split(/[\s()]+/).filter((word) => word !== '');
+  const found = words.find((word) =>
+    policy.serverDenied.some((pattern) => matchesPattern(word, pattern)),
+  );
+  if (found) {
+    return {
+      status: 'denied',
+      reason: `${found} binds running it as a network service or in production: review it first`,
+    };
+  }
+  return { status: 'allowed', chosen: component.licence };
 }
 
 function evaluateNode(

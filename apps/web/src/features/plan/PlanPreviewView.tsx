@@ -172,7 +172,7 @@ export function PlanPreviewView({
           </ul>
           {budget !== null ? (
             <p className="text-sm text-fg-muted">
-              <Trans>Your session budget: {formatMinutes(budget)}</Trans>
+              <Trans>Your time per workout: {formatMinutes(budget)}</Trans>
             </p>
           ) : null}
           <h3 id="preview-block" className="pt-2 text-lg font-bold">
@@ -202,7 +202,7 @@ export function PlanPreviewView({
 
         <section className="flex flex-col gap-3" aria-labelledby="preview-days">
           <h2 id="preview-days" className="text-xl font-bold">
-            <Trans>Sessions</Trans>
+            <Trans>Workouts</Trans>
           </h2>
           {proposal.days.map((day) => (
             <DayCard

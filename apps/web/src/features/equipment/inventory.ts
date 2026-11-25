@@ -86,3 +86,23 @@ export function parseNumber(text: string): number | null {
 export function itemCount(profile: EquipmentProfile): number {
   return profile.items.length + profile.customItems.length;
 }
+
+/**
+ * Whether two profiles hold the same equipment, whatever the order of their lists (a box ticked
+ * and unticked again moves the item to the end): the editor's "unsaved changes" test (TD-68).
+ */
+export function sameEquipment(a: EquipmentProfile, b: EquipmentProfile | null): boolean {
+  return b !== null && canonicalJson(a) === canonicalJson(b);
+}
+
+/** JSON with every list sorted, so the order of a list does not count. */
+function canonicalJson(profile: EquipmentProfile): string {
+  return JSON.stringify(profile, (_key, value: unknown) =>
+    Array.isArray(value)
+      ? value.toSorted((x, y) => {
+          const [left, right] = [JSON.stringify(x), JSON.stringify(y)];
+          return left < right ? -1 : left > right ? 1 : 0;
+        })
+      : value,
+  );
+}

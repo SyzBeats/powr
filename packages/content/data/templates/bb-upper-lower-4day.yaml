@@ -3,7 +3,7 @@
 id: tpl.bb-upper-lower-4day
 name: { en: Upper/lower ×2 }
 description:
-  en: Two upper-body and two lower-body sessions a week, so every muscle is trained twice.
+  en: Two upper-body and two lower-body workouts a week, so every muscle is trained twice.
 style: bodybuilding
 daysPerWeek: 4
 split: upperLower

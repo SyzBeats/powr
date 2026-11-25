@@ -8,7 +8,7 @@ import { useRegistryInfo } from '../../hooks/use-settings';
 import { loadCatalog } from '../../i18n';
 import { NotFound } from '../shell/NotFound';
 import { fetchAttributions, type AttributionEntry } from './attributions-data';
-import { isPlaceholder, LEGAL_DETAILS } from './publisher';
+import { DraftMarker } from './DraftMarker';
 import { AttributionsText } from './texts/Attributions';
 import { DisclaimerText } from './texts/Disclaimer';
 import { HowPowrDecidesText } from './texts/HowPowrDecides';
@@ -64,32 +64,6 @@ function Loading() {
     <p className="text-fg-muted">
       <Trans>Loading…</Trans>
     </p>
-  );
-}
-
-/**
- * The visible "Draft" marker while a legal detail is a placeholder (product-owner decision
- * 2026-11-25): dev and beta builds only, because `pnpm release:check` blocks a production deploy
- * until every placeholder is filled in.
- */
-function DraftMarker() {
-  const { t } = useLingui();
-  const missing = [
-    ...(isPlaceholder(LEGAL_DETAILS.postalAddress) ? [t`the publisher's postal address`] : []),
-    ...(isPlaceholder(LEGAL_DETAILS.legalReview) ? [t`the legal review`] : []),
-  ];
-  if (missing.length === 0) return null;
-  const list = missing.join(t`, `);
-  return (
-    <div data-testid="legal-draft">
-      <Callout tone="warning" title={t`Draft`}>
-        <p>
-          <Trans>
-            This text is a draft until its legal review and may still change. Still to come: {list}.
-          </Trans>
-        </p>
-      </Callout>
-    </div>
   );
 }
 

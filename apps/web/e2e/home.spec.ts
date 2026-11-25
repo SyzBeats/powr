@@ -69,9 +69,9 @@ test.describe('Home and motivation (M4b)', () => {
     await page.goto('/');
     await expect(page.getByRole('heading', { level: 1, name: 'Home' })).toBeVisible();
     await expect(page.getByTestId('next-session')).toContainText('today');
-    await expect(page.getByRole('link', { name: "Start today's session" })).toBeVisible();
+    await expect(page.getByRole('link', { name: "Start today's workout" })).toBeVisible();
     await expect(page.getByTestId('home-status')).toHaveText('', { timeout: 15_000 });
-    await expect(page.getByTestId('week-progress')).toHaveText(/\d+ of \d+ sessions?/);
+    await expect(page.getByTestId('week-progress')).toHaveText(/\d+ of \d+ workouts?/);
     await expect(page.getByTestId('home-streak')).toHaveText(/\d+ weeks?, best \d+ weeks?/);
     await expect(page.getByTestId('home-prs')).toContainText(
       'New heaviest weight on Barbell bench press: 70 kg',
@@ -155,7 +155,7 @@ test.describe('Home and motivation (M4b)', () => {
     // Settings → Insights (MOT-03 grace, BOD-03 sites, ANL-07 points).
     await page.goto('/settings');
     const grace = page.getByRole('checkbox', {
-      name: /Grace: a week with one session short still counts/,
+      name: /Grace: a week with one workout short still counts/,
     });
     await grace.click();
     await expect(grace).toHaveAttribute('aria-checked', 'true');

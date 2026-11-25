@@ -190,7 +190,7 @@ export function Proposals({
     const started =
       swapped?.ok === true ? await start({ kind: 'planned', plannedSessionId: other }) : null;
     setBusy(false);
-    if (!started?.ok) setError(t`The sessions could not be swapped. Try again from the plan.`);
+    if (!started?.ok) setError(t`The workouts could not be swapped. Try again from the plan.`);
   };
 
   const proposalText = (proposal: SessionProposal): string => {
@@ -247,11 +247,11 @@ export function Proposals({
         <Card>
           <p>
             <Trans>
-              A lighter session is planned later this week. You can do it today instead.
+              A lighter workout is planned later this week. You can do it today instead.
             </Trans>
           </p>
           <Button disabled={busy} onClick={() => void swap()}>
-            <Trans>Do the lighter session today</Trans>
+            <Trans>Do the lighter workout today</Trans>
           </Button>
         </Card>
       ) : null}

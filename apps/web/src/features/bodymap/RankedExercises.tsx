@@ -163,7 +163,7 @@ function RankedItem({
     else if (result.value.kind === 'addedToSession')
       announce(t`${name} was added to your workout.`);
     else if (result.value.kind === 'addedToPlanned')
-      announce(t`${name} was added to today's planned session.`);
+      announce(t`${name} was added to today's planned workout.`);
     else announce(t`No workout today yet. Start one with ${name}?`);
   };
 
@@ -301,7 +301,7 @@ function AddOutcome({
       return (
         <Callout tone="ok">
           <p>
-            <Trans>{name} was added to today's planned session.</Trans>
+            <Trans>{name} was added to today's planned workout.</Trans>
           </p>
           <Link to="/session" className={buttonClass({}, 'self-start')}>
             <Trans>Go to Train</Trans>

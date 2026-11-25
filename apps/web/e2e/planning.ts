@@ -15,10 +15,12 @@ const SCREENS = process.env['M2B_SCREENS'];
 
 /** axe (WCAG 2.2 A/AA) in light and dark; with M2B_SCREENS set, a screenshot of each. */
 export async function checkScreen(page: Page, name: string): Promise<void> {
-  // A screen has its h1; a modal sheet hides the page behind it from assistive technology.
+  // A screen has its h1; a modal sheet or alert dialog hides the page behind it from assistive
+  // technology.
   await expect(
     page
       .getByRole('dialog')
+      .or(page.getByRole('alertdialog'))
       .or(page.getByRole('heading', { level: 1 }))
       .first(),
   ).toBeVisible();

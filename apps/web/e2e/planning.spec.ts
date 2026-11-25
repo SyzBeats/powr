@@ -137,7 +137,7 @@ test.describe('onboarding and planning (M2b: ONB, EQP, PLN)', () => {
     await expect(page.getByRole('button', { name: 'Undo last change' })).toBeEnabled();
 
     await page.getByRole('button', { name: 'Save changes' }).click();
-    await page.getByRole('button', { name: 'From the next session' }).click();
+    await page.getByRole('button', { name: 'From the next workout' }).click();
     await expect(page).toHaveURL(/\/plan$/);
   });
 
@@ -151,7 +151,7 @@ test.describe('onboarding and planning (M2b: ONB, EQP, PLN)', () => {
     // Four days later, Monday's and Wednesday's sessions are missed.
     await page.clock.setSystemTime(new Date('2026-12-04T08:00:00'));
     await page.reload();
-    const missed = page.getByRole('heading', { level: 2, name: /missed session/ });
+    const missed = page.getByRole('heading', { level: 2, name: /missed workout/ });
     await expect(missed).toBeVisible();
     await checkScreen(page, 'plan-missed');
     await page

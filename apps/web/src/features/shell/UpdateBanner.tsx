@@ -1,4 +1,5 @@
 import { Trans } from '@lingui/react/macro';
+import { Link } from '@tanstack/react-router';
 
 import { buttonClass } from '#ui/button-class';
 
@@ -27,14 +28,20 @@ export function UpdateBanner() {
             <Trans>A new version of POWR is ready.</Trans>
           )}
         </output>
-        <button
-          type="button"
-          className={buttonClass({ variant: 'primary' })}
-          disabled={sessionActive}
-          onClick={applyUpdate}
-        >
-          <Trans>Update</Trans>
-        </button>
+        <div className="flex flex-wrap items-center gap-2">
+          {/* NFR-MNT-07, SET-09 (M6c): the release notes, with the waiting update's when online. */}
+          <Link to="/settings/whats-new" className={buttonClass({ variant: 'secondary' })}>
+            <Trans>What's new</Trans>
+          </Link>
+          <button
+            type="button"
+            className={buttonClass({ variant: 'primary' })}
+            disabled={sessionActive}
+            onClick={applyUpdate}
+          >
+            <Trans>Update</Trans>
+          </button>
+        </div>
       </div>
     </div>
   );

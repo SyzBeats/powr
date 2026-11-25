@@ -65,7 +65,25 @@ Never put secret values into the repository.
   beta application at the new tag (`deploy/coolify-deploy.sh`) and runs `deploy/wait-and-smoke.sh`.
 - **Production:** bump `apps/web/package.json` version, tag `vX.Y.Z` on a commit that is already on
   beta, push the tag, approve the `production` environment. The beta image of that commit is retagged
-  and deployed; it is never rebuilt.
+  and deployed; it is never rebuilt. Before the tag (M6c):
+  1. **Release notes** (NFR-MNT-07): write `docs/release-notes/<X.Y.Z>.md` (the format is described
+     in `tools/release-notes/src/index.ts`; `pnpm release-notes` checks it), read it, set
+     `reviewed: true`. The build fails when the app version has no notes; the production job's
+     `pnpm release:check` fails while they are not reviewed. The seed notes are
+     `docs/release-notes/0.0.0.md` (the beta): rename them to the release version.
+  2. **Dependency audit** (NFR-SEC-01): `pnpm audit:prod` (the CI `audit` job runs it on every push,
+     and the production job again on the tag). Severity policy: a **high or critical** advisory in a
+     **production** dependency blocks the release until it is fixed (update, or an override in
+     `pnpm-workspace.yaml`); **low and moderate** ones, and every advisory in a **build-only**
+     package, are reported (`pnpm audit:all`, the `audit` artifact) and reviewed before each
+     release, then fixed with the next routine update when a fix exists. Keep the release's
+     `audit-prod.json` with its other artifacts. An advisory that cannot apply to POWR is ignored only
+     with the product owner's written note (`pnpm audit --ignore <GHSA>` in the script, with the date
+     and the reason).
+  3. `pnpm release:check` passes locally (legal placeholders, release notes).
+- After any deploy, open `https://<host>/legal-static/` once: the publisher details must match the
+  app's Settings → Legal (`deploy/smoke.ts` checks the status, the headers and that the pages have no
+  scripts).
 - **Manual smoke test** of any environment: `node deploy/smoke.ts https://beta.<business-domain>`.
 
 ## 5. Rollback
@@ -82,6 +100,8 @@ Never put secret values into the repository.
 | ------------------------------------------------------------------------- | ------------------------------------------ |
 | Coolify upgrade after reading the release notes; Hetzner snapshot first   | Monthly; immediately for security releases |
 | Rebuild the image for `nginx:1.30-alpine` updates (Dependabot opens a PR) | Weekly check                               |
+| Refresh `deploy/server-inventory.yaml` from the CI `image-packages.txt`   | When the base image changes                |
+| Review `pnpm audit:all` (the CI `audit` artifact)                         | Before each release                        |
 | Review firewall, SSH users and API tokens                                 | Quarterly                                  |
 | Restore drill from this runbook (target: under 2 hours)                   | Once before launch, then yearly            |
 

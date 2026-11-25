@@ -1,6 +1,6 @@
 # ADR-0006: IndexedDB library and persistence model: Dexie 4
 
-- Status: Accepted (photo storage revisited after spike S-3b; v0.3, 2026-11-24: amended after M0, see below; amended v0.5, v0.7)
+- Status: Accepted (photo storage revisited after spike S-3b; v0.3, 2026-11-24: amended after M0, see below; amended v0.5, v0.7, v0.9, v0.11)
 - Date: 2026-11-23
 - Related: technical concept §8.2, §6.3, §6.5, §6.8; PRD DAT-01…04, DAT-14, NFR-REL-01…08, TC-01, TC-14
 
@@ -75,7 +75,13 @@ The decision stands. As built in M5 (technical concept §6.7, §6.8, §8.2.1):
 
 - **Delete all data (DAT-13)** deletes `powr`, `powr-safety`, `powr-diag` and `powr-runtime` through **their own instances** with auto-open off: Dexie closes a database on `versionchange` with auto-open still on, so a later write would recreate a deleted database. Both web storages are cleared; Cache Storage (app files only) stays, so the app still opens offline into the first run.
 - **The data-update guard (DAT-14)** checks the stored version with `indexedDB.databases()` before opening anything, reads every store at the stored version without Dexie (`infrastructure/db/raw-read.ts`, never creating or upgrading) and writes the safety snapshot as a regular backup of the **stored** `dataVersion` (`encodeRawSnapshot`), so the normal restore migrates it; without a writable snapshot the update does not run. A failing upgrade is rolled back by IndexedDB and the recovery screen offers "Try again", "Save a copy of your data" and "Export diagnostics" (no restore: it needs the database at the current version).
-- **Safety copies** are listed, saved and deleted (`SafetySnapshots.list`, `read`, `delete`), but **not auto-pruned** after 30 days or a newer backup; only the rotation of the latest two deletes one (open product decision, TD-67). **Amendment (v0.10, M6a, TD-67 closed):** auto-pruning is built: the latest two copies are always kept, plus every copy younger than 30 days; only copies that are neither are deleted, after each new copy and when Data and backups lists them. Deleting a copy after a newer regular backup is not built, because POWR cannot know the exported file was kept. Whether to cap the count (for example at five) is an open product decision.
+- **Safety copies** are listed, saved and deleted (`SafetySnapshots.list`, `read`, `delete`), but **not auto-pruned** after 30 days or a newer backup; only the rotation of the latest two deletes one (open product decision, TD-67). **Amendment (v0.10, M6a, TD-67 closed):** auto-pruning is built: the latest two copies are always kept, plus every copy younger than 30 days; only copies that are neither are deleted, after each new copy and when Data and backups lists them. Deleting a copy after a newer regular backup is not built, because POWR cannot know the exported file was kept. Whether to cap the count (for example at five) is an open product decision (decided in v0.11, below).
 - `dataVersion` 2 was amended once more (settings `backup`, `training`, `display`; `meta.backupReminder`, `meta.calendarExport`); the install-prompt state is in `localStorage`, not in `meta`, because it belongs to the browser rather than to the training data.
 
 Source: `IMPLEMENTATION_NOTES.md` (repository root), sections "M5d data, calendar and PWA" and "M5z bundle trim, fixes and docs".
+
+## Amendment (v0.11, 2026-11-25)
+
+The decision stands. **Safety copies are capped at five** (product-owner decision 2026-11-25, technical concept §8.2.1): the rule is still "the latest two copies, plus every copy younger than 30 days", but **never more than five copies in all**; past five, the oldest go first. `SAFETY_COPIES.keepMax` in `@powr/application/data`; `safetyCopiesToPrune` returns the IDs to delete oldest first. Several restores in a month therefore keep at most five full copies (each the size of a backup); a copy taken before a restore stays up to 30 days unless five newer copies follow it in that time. Data and backups says: "It keeps the latest two copies and any from the last 30 days, never more than five, and deletes the oldest ones by itself." Tests: `packages/application/test/m6c.test.ts` (the cap, the same-day restores, unreadable times, a fast-check property: at most five kept, never fewer than two, every kept copy newer than every deleted one, oldest deleted first; six restores in a row leave five copies).
+
+Source: `IMPLEMENTATION_NOTES.md` (repository root), section "M6c checklist rows and decisions".

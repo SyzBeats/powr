@@ -145,9 +145,9 @@ export function useFixText() {
       case 'timeSaverRest':
         return t`Use shorter rests on isolation exercises`;
       case 'sessionMinutes': {
-        if (fix.minutes === null) return t`Allow sessions of more than 90 minutes`;
+        if (fix.minutes === null) return t`Allow workouts of more than 90 minutes`;
         const minutes = formatMinutes(fix.minutes);
-        return t`Allow ${minutes} per session`;
+        return t`Allow ${minutes} per workout`;
       }
       case 'addDay':
         return t`Add a training day`;

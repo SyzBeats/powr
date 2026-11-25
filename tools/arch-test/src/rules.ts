@@ -17,8 +17,11 @@ export const ALLOWED_DEPENDENCIES: Readonly<Record<string, readonly string[]>> =
     '@powr/formats',
     '@powr/application',
     '@powr/tools-licence',
+    '@powr/tools-release-notes',
   ],
   '@powr/tools-licence': [],
+  // Release notes → changelog.json (NFR-MNT-07, M6c): reads Markdown files, no package dependency.
+  '@powr/tools-release-notes': [],
   '@powr/tools-arch-test': [],
   '@powr/tools-icons': [],
   '@powr/tools-tokens-check': [],

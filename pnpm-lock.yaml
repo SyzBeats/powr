@@ -304,6 +304,9 @@ importers:
       '@powr/tools-licence':
         specifier: workspace:*
         version: link:../../tools/licence
+      '@powr/tools-release-notes':
+        specifier: workspace:*
+        version: link:../../tools/release-notes
       '@rolldown/plugin-babel':
         specifier: 0.3.1
         version: 0.3.1(@babel/core@8.1.2)(@babel/runtime@8.1.2)(rolldown@1.2.19)(vite@8.3.8(@types/node@26.6.6)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))
@@ -470,6 +473,8 @@ importers:
       vite:
         specifier: 8.3.8
         version: 8.3.8(@types/node@26.6.6)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1)
+
+  tools/release-notes: {}
 
   tools/tokens-check: {}
 

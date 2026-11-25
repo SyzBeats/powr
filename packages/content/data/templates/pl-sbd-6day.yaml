@@ -5,7 +5,7 @@
 id: tpl.pl-sbd-6day
 name: { en: 'SBD 6-day (advanced)' }
 description:
-  en: 'Six shorter sessions with squat and bench press three times and deadlift twice a week, for advanced lifters.'
+  en: 'Six shorter workouts with squat and bench press three times and deadlift twice a week, for advanced lifters.'
 style: powerlifting
 daysPerWeek: 6
 split: sbd

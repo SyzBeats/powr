@@ -6,7 +6,7 @@
 id: tpl.bb-full-body-2day
 name: { en: 'Full body ×2' }
 description:
-  en: 'Two full-body sessions a week, each with a squat or hinge, a press, a pull and isolation work.'
+  en: 'Two full-body workouts a week, each with a squat or hinge, a press, a pull and isolation work.'
 style: bodybuilding
 daysPerWeek: 2
 split: fullBody

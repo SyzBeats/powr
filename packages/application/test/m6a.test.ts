@@ -15,20 +15,21 @@ const copy = (id: number, daysAgo: number) => ({ id, at: iso(daysAgo) });
 
 describe('safety-copy pruning (TD-67, §8.2.1)', () => {
   it('keeps the latest two whatever their age', () => {
-    expect(SAFETY_COPIES).toEqual({ keepLatest: 2, keepDays: 30 });
+    expect(SAFETY_COPIES).toEqual({ keepLatest: 2, keepDays: 30, keepMax: 5 });
     expect(safetyCopiesToPrune([], NOW)).toEqual([]);
     expect(safetyCopiesToPrune([copy(1, 400)], NOW)).toEqual([]);
     expect(safetyCopiesToPrune([copy(1, 400), copy(2, 300)], NOW)).toEqual([]);
   });
 
-  it('keeps every copy younger than 30 days, however many', () => {
+  it('keeps every copy younger than 30 days, up to the cap of five (M6c)', () => {
     const young = [copy(1, 29), copy(2, 20), copy(3, 10), copy(4, 1), copy(5, 0)];
     expect(safetyCopiesToPrune(young, NOW)).toEqual([]);
   });
 
   it('deletes copies that are neither among the latest two nor younger than 30 days', () => {
     const copies = [copy(1, 90), copy(2, 45), copy(3, 25), copy(4, 5), copy(5, 2)];
-    expect(safetyCopiesToPrune(copies, NOW)).toEqual([2, 1]);
+    // Oldest first (M6c).
+    expect(safetyCopiesToPrune(copies, NOW)).toEqual([1, 2]);
     // Old copies after the latest two: only the third and later go.
     expect(safetyCopiesToPrune([copy(1, 90), copy(2, 80), copy(3, 70)], NOW)).toEqual([1]);
   });

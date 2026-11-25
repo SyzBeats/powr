@@ -162,7 +162,7 @@ test.describe('body map screens (M4b: MAP-01…07)', () => {
         .or(sheet.getByText('New or changed plan checks with this change:')),
     ).toBeVisible();
     await checkScreen(page, 'muscle-place-in-plan');
-    await sheet.getByRole('button', { name: 'Save from the next session' }).click();
+    await sheet.getByRole('button', { name: 'Save from the next workout' }).click();
     await expect(sheet).toHaveCount(0);
 
     // The plan editor shows the exercise in the saved week.

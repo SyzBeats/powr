@@ -298,15 +298,15 @@ function MissedCard({ plan, onChanged }: { plan: Plan; onChanged: (outcome: Outc
     else
       setError(
         result.error.kind === 'noTarget'
-          ? t`There is no later session this week to merge it into. Do it today or skip it.`
-          : t`This session changed meanwhile. Try again.`,
+          ? t`There is no later workout this week to merge it into. Do it today or skip it.`
+          : t`This workout changed meanwhile. Try again.`,
       );
   };
   return (
     <Card className="border-2 border-warning">
       <h2 className="flex items-center gap-2 text-xl font-bold">
         <CalendarClock aria-hidden="true" className="text-warning" />
-        <Plural value={missed.length} one="# missed session" other="# missed sessions" />
+        <Plural value={missed.length} one="# missed workout" other="# missed workouts" />
       </h2>
       <p>
         <Trans>Nothing is dropped without you deciding. Choose for each one:</Trans>
@@ -332,7 +332,7 @@ function MissedCard({ plan, onChanged }: { plan: Plan; onChanged: (outcome: Outc
                   <Trans>Do it today</Trans>
                 </Button>
                 <Button
-                  aria-label={t`Merge ${name} into the next session`}
+                  aria-label={t`Merge ${name} into the next workout`}
                   onClick={() => void resolve(session, 'merge')}
                 >
                   <Trans>Merge into next</Trans>
@@ -485,7 +485,7 @@ function SessionSheet({
   ) => {
     const result = await run(task);
     if (result.ok) onChanged(result.value);
-    else setError(t`This session changed meanwhile. Close and try again.`);
+    else setError(t`This workout changed meanwhile. Close and try again.`);
   };
   return (
     <Sheet
@@ -509,7 +509,7 @@ function SessionSheet({
               this time.
             </Trans>
           ) : adjustment.kind === 'mergedWork' ? (
-            <Trans>Includes key work from a missed session.</Trans>
+            <Trans>Includes key work from a missed workout.</Trans>
           ) : (
             <Trans>Calibration: start conservatively so POWR can learn your loads.</Trans>
           )}
@@ -609,7 +609,7 @@ function BreakCard({ onChanged }: { onChanged: (outcome: Outcome) => void }) {
           </p>
           <p className="text-fg-muted">
             <Trans>
-              Sessions in a break do not count as missed. When you are back, the first weeks ease
+              Workouts in a break do not count as missed. When you are back, the first weeks ease
               you in.
             </Trans>
           </p>
@@ -730,7 +730,7 @@ function DeloadCard({
       </h2>
       <p>
         {state.skipped ? (
-          <Trans>Skipped this block. Your sessions stay as planned.</Trans>
+          <Trans>Skipped this block. Your workouts stay as planned.</Trans>
         ) : (
           <Trans>
             Planned from {formatLocalDate(deloadStart, 'long')}: fewer sets and easier efforts, so

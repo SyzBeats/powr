@@ -7,7 +7,7 @@
 id: tpl.bb-full-body-3day
 name: { en: Full body ×3 }
 description:
-  en: Three full-body sessions a week. Each muscle is trained on at least two days with a mix of compound and isolation work.
+  en: Three full-body workouts a week. Each muscle is trained on at least two days with a mix of compound and isolation work.
 style: bodybuilding
 daysPerWeek: 3
 split: fullBody

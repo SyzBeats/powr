@@ -409,21 +409,6 @@ msgstr ""
 
 #. js-lingui-explicit-id
 #: src/features/why/params/labels.ts
-msgid "params.motivation.streak.graceSessions"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/features/why/params/labels.ts
-msgid "params.volume.frequency.strengthPerLift"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/features/why/params/labels.ts
-msgid "params.volume.frequency.hypertrophyPerMuscle"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/features/why/params/labels.ts
 msgid "params.planning.strength.accessorySets"
 msgstr ""
 
@@ -584,11 +569,6 @@ msgstr ""
 
 #. js-lingui-explicit-id
 #: src/features/why/params/labels.ts
-msgid "params.motivation.streak.defaultWeeklyTarget"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/features/why/params/labels.ts
 msgid "params.volume.puos"
 msgstr ""
 
@@ -600,6 +580,11 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/features/why/params/labels.ts
 msgid "params.progression.increment.intermediatePctPerWeek"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.motivation.streak.defaultWeeklyTarget"
 msgstr ""
 
 #. js-lingui-explicit-id
@@ -715,6 +700,21 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/features/why/params/labels.ts
 msgid "params.scoring.wilks2020.coefficients"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.motivation.streak.graceSessions"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.volume.frequency.strengthPerLift"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.volume.frequency.hypertrophyPerMuscle"
 msgstr ""
 
 #. js-lingui-explicit-id

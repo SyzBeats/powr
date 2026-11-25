@@ -4288,6 +4288,9 @@ legal texts none; only the "Why?" texts used contractions (about 90).
 | Examples                    | for example                                                                                               | e.g.                                |
 | Quotes                      | straight quotes and apostrophes (the catalog's majority: 30 against 5)                                    | “ ” ’                               |
 
+The product owner decided the open terms on 2026-11-25: "workout" everywhere in the UI and "beginner"
+as the level name. The updated rows are in "M6c checklist rows and decisions".
+
 **Changes in the boot catalog (`messages.po`, 54):**
 
 | Message                                                                                                                                                                                                         | Problem                                                      | Fix                                                         |
@@ -4581,3 +4584,380 @@ One commit, or two:
 2. `docs: M6b release-readiness documents and technical concept v0.10` — `docs/release/*`,
    `docs/device-tests/TalkBack-protocol.md`, `docs/device-tests/S22-performance-protocol.md`,
    `docs/device-tests/README.md`, `docs/technical-concept.md`, `IMPLEMENTATION_NOTES.md`.
+
+## M6c checklist rows and decisions
+
+Written 2026-11-25 by the M6c work: the remaining agent-side rows of the release checklist (G-01…G-06,
+EC-17) and the product owner's decisions of 2026-11-25 (wording, safety copies, licences). Status:
+`pnpm verify` green (numbers under "Evidence"). Nothing committed or staged beyond the baseline; the
+product owner commits. G-03 (static legal pages), G-04 (backup format) and G-06 (kill test) were built
+in parallel in three separate worktrees by forks of this agent and copied in; everything else here.
+
+### What landed
+
+| Area          | Where                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Wording       | The source strings of 35 files in `apps/web/src` (`t`, `<Trans>`, plural branches, the "Why?" and parameter messages), the three catalogs (re-extracted), the manifest shortcut (`vite.config.ts`), 12 template descriptions in `packages/content/data/templates/` (content 0.3.0, unreleased, amended in place; `generated/content.json` rebuilt), the tests that name the texts                                                                                                                  |
+| Safety copies | `@powr/application/data` (`SAFETY_COPIES.keepMax`, `safetyCopiesToPrune` oldest first), the Data and backups sentence; `packages/application/test/m6c.test.ts`; ADR-0006 amended                                                                                                                                                                                                                                                                                                                   |
+| Licences      | `tools/licence/src/packages.ts` (`copyrightLines`, NOTICE fallback, `licenses/` folder), `policy.ts` (`serverDenied`, `evaluateServer`), `inventory.ts` (`kind: server`, `readServerInventory`), `cli.ts`; `tools/licence/fixtures/copyright/` (five packages' real licence files); `tools/licence/test/copyright.test.ts`, `server.test.ts`; `licence-policy.yaml` (`Python-2.0` removed, `serverDenied`); `deploy/server-inventory.yaml`; ADR-0018 amended; `docs/release/licence-review.md` 1.1 |
+| G-01          | `apps/web/src/ui/unsaved-changes.tsx` (`UnsavedChangesGuard`), `PlanEditorScreen.tsx`, `EquipmentScreens.tsx`, `equipment/inventory.ts` (`sameEquipment`), `ui/back-dismiss.tsx` (the sheet's entry is taken when it arrives); `e2e/unsaved-changes.spec.ts`, `test/m6c.test.tsx`, `equipment/inventory.test.ts`; `e2e/planning.ts` (`checkScreen` also waits for an alert dialog)                                                                                                                 |
+| G-02          | `tools/release-notes` (new workspace package: parser, checks, `cli.ts`), `docs/release-notes/0.0.0.md` (seed), `apps/web/scripts/release-notes-plugin.ts`, `vite.config.ts`, `features/settings/WhatsNewScreen.tsx` and `changelog-data.ts`, `routes/settings/whats-new.tsx`, `SettingsScreen.tsx` (About link), `shell/UpdateBanner.tsx` (link), `sw/sw.ts` (network-first before the precache, precache fallback), `scripts/release-check.ts` (+ test); arch-test matrix; `pnpm release-notes`   |
+| G-03 (fork)   | `apps/web/scripts/legal-static-plugin.ts` and `legal-static.css`, `src/features/legal/texts/static/render.tsx`, `features/legal/DraftMarker.tsx` (moved out of `LegalScreens.tsx`), `vite.config.ts` (plugin in the SW build, `globIgnores`), `sw/sw.ts` (denylist), `index.html` (`<noscript>` link), `e2e/static-server.ts`, `deploy/nginx.conf` (`location /legal-static/`, `absolute_redirect off`), `deploy/smoke.ts`; `test/legal-static.test.tsx`, `e2e/legal-static.spec.ts`               |
+| G-04 (fork)   | `docs/formats/backup-format.md`, `docs/formats/schemas/` (20 files), `packages/formats/scripts/json-schemas.ts` and `hostile-fixtures.ts`, `packages/formats/fixtures/backups/hostile/` (17 files), `test/json-schemas.test.ts`, `test/hostile-fixtures.test.ts`; small exports in `records/validate.ts` and `records/v2.ts`, a fixed `mtime` in `test/craft.ts`; `pnpm formats:schemas`                                                                                                           |
+| G-05          | Root `package.json` (`audit:prod`, `audit:all`), `.github/workflows/ci.yml` (job `audit`), `.github/workflows/deploy.yml` (production step), `deploy/runbook.md` §4 and §6                                                                                                                                                                                                                                                                                                                         |
+| G-06 (fork)   | `apps/web/e2e/kill.spec.ts`, `apps/web/e2e/kill.ts`, `e2e:kill` scripts, `.github/workflows/ci.yml` (job `kill-test`); after merging, the storage dump on a failure (`describeStorage`) and the sweep of leftover processes before a reopen (`profileLeftovers`)                                                                                                                                                                                                                                   |
+| CI for L-2    | `.github/workflows/ci.yml` saves each image's `apk list --installed` as `image-packages.txt` in the `reports` artifact                                                                                                                                                                                                                                                                                                                                                                             |
+
+### Product-owner decisions (2026-11-25) and what they became
+
+**1. Wording.** "Workout" everywhere in the UI; "session" stays in code, data and docs. "Beginner"
+is the level name; "novice" appears once, explained, on the evidence page ("beginners (called novices
+in training research) add a fixed step each workout", How POWR decides). How it was applied: a script
+changed "session(s)" to "workout(s)" only inside message regions (the `message:` literals of the "Why?"
+and parameter texts, `t` templates, `<Trans>` children, plural branches), never in code, IDs, ICU
+argument names (`{sessions, plural, …}` stays) or comments; every changed line was read. Hand-made
+exceptions: "Kept with the grace session" became "Kept with your grace", "Your session budget: …"
+became "Your time per workout: …". After re-extraction no English message says "session" or "novice"
+except the one explained "novices" (checked over the three catalogs; `noviceLimit` is an ICU select
+key). In numbers: 173 source lines in 35 files, about 150 catalog messages (the boot catalog has 2,504
+messages after re-extraction, with the new M6c ones). The legal texts
+changed in terms only (session → workout, novices → beginners and the one explanation), so
+`features/legal/versions.ts` stays and nobody is asked to acknowledge again. Also changed: the manifest
+shortcut "Start today's workout" (the PRD already says so) and its description, and the descriptions
+of 12 plan templates in the content (shown in the template chooser). Not changed: exercise content (no
+"session" in it), the debug pages, code comments, `data-testid`s and route paths (`/session`).
+
+Updated copy glossary (supersedes the M6a rows for these concepts):
+
+| Concept                            | Term                                                                                                                                                                              | Not                                           |
+| ---------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------- |
+| What the user plans, does and logs | workout (start, finish, log, edit, past workouts; planned workout, today's workout, missed workout; per-workout statistics: "Volume load per workout", "Each workout's estimate") | session (code, data, docs only)               |
+| Training level                     | beginner, intermediate, advanced                                                                                                                                                  | novice (only on the evidence page, explained) |
+| Time a plan allows per day         | workout time, time per workout                                                                                                                                                    | session time, session budget                  |
+| Everything else                    | as in the M6a glossary (lighter week, block, RIR/RPE, e1RM, bodyweight, weigh-in, POWR as the actor, this phone, IPF GL Points, for example, straight quotes)                     |                                               |
+
+**2. Safety copies (TD-67).** "The latest two, plus any younger than 30 days", but never more than
+five, the oldest first. `SAFETY_COPIES.keepMax = 5`; the pruned IDs come oldest first. The young
+copies are a prefix of the newest-first list, so the rule is "keep min(5, max(2, young))".
+Data and backups: "It keeps the latest two copies and any from the last 30 days, never more than five,
+and deletes the oldest ones by itself." Tests (`packages/application/test/m6c.test.ts`, 6): the cap
+with seven young copies; eight copies taken on one day keep the newest five (the higher ID is the
+newer); old copies still go after the latest two; unreadable times count as new and the cap still
+holds; a fast-check property (at most five kept, never fewer than two or all, every kept copy newer
+than every deleted one, a young copy goes only when five are kept, deleted oldest first); six
+restores through `applyImport` leave five copies with the newest among them. The M6a test's
+expectations changed only where the order is now oldest first (`[2, 1]` → `[1, 2]`) and in the name
+of the "however many" test. ADR-0006 and §8.2.1 amended; the backup-format document (G-04) states
+the rule.
+
+**3. Licences.**
+
+- **L-1 fixed.** A copyright line must start like a notice ("Copyright", "(c)", "©") and then name a
+  year or a holder (a capital letter, case-sensitive, so "copyright license to reproduce" is out);
+  lines with licence words ("license", "notice", "holders", "owner", "permission", "you must",
+  "retain", "statement") and template lines ("[yyyy]", "{name …}", "<YEAR>") are dropped. A package
+  whose licence file has no notice takes the NOTICE file's. Result against the M6b build's
+  attributions: exactly the five packages changed (class-variance-authority "Copyright 2022 Joe
+  Bell"; dexie "Copyright (c) 2014-2017 David Fahlander"; echarts "Copyright 2017-2026 The Apache
+  Software Foundation"; @floating-ui/utils and lucide-react without their boilerplate line); the
+  other 26 are byte-identical. Fixtures: the five packages' real `LICENSE` and `NOTICE` files (and
+  ECharts' `licenses/LICENSE-d3`) in `tools/licence/fixtures/copyright/`, copied from `node_modules`.
+- **L-5 (found while fixing L-1).** ECharts embeds parts of d3 (BSD-3-Clause, "Copyright 2010-2016
+  Mike Bostock"); its LICENSE points to `licenses/LICENSE-d3`, which the attributions did not show,
+  although BSD-3-Clause asks binary redistributions to reproduce it. The extraction now appends the
+  files of a package's `licenses/` folder to its licence text, with their notices. Only ECharts has
+  such a folder among the shipped packages.
+- **L-2 done.** `deploy/server-inventory.yaml`: Coolify (Apache-2.0) and Traefik (MIT) as the
+  concept plans them (the installed versions go into runbook §8 at S-7), and the 71 packages of
+  `nginx:1.30-alpine` read with `apk list --installed` from the image at
+  `sha256:8eb04fe3b385090e9aa02961f77398ad09b6bf33ab07f6669a5bb7acce22c0d3` (pulled for this; Alpine
+  3.24.4, nginx 1.30.8), licences as Alpine declares them. The gate records them as `kind: server`,
+  `distributed: false` and checks only `serverDenied` (AGPL, SSPL, BUSL, Elastic, Commons Clause):
+  copyleft (busybox, apk-tools and others are GPL-2.0-only) does not matter for programs that are run,
+  not distributed. `pnpm licence`: "37 distributed, 841 build-only, 73 server-side". The image must
+  stay private on GHCR. The tag is not pinned to a digest, so CI saves each image's package list
+  (`image-packages.txt`); refresh the YAML from it when the base image changes. Not inventoried: the
+  VPS's Ubuntu and the Docker engine (the hosting platform). Appendix B amended; licence review §3.
+- **L-4 done.** `Python-2.0` removed from `allowed`; the gate stays green (no component used it).
+
+### Checklist rows
+
+**G-01, PWA-12 (TD-68).** `UnsavedChangesGuard` (`#ui/unsaved-changes`) registers TanStack Router's
+`useBlocker` while there is something to lose: in the plan editor any edit, in the equipment editor a
+change that differs from the stored profile (`sameEquipment`, so ticking a box off and on again is no
+change although the item moves to the end of the list). Every navigation to another path is stopped:
+in-app links (the bottom navigation, the editor's own "Discard" and "Cancel", the update notice's link,
+a fix that opens the plan setup), Back and the Android back gesture (in an installed app the gesture
+is a history step back). An alert dialog (Base UI `AlertDialog`, `role="alertdialog"`, title
+"Discard your changes?", the editor's own sentence: "Your changes to the plan are not saved. If you
+leave now, they are lost.") offers "Keep editing" (first and focused; Escape and Back answer it too)
+and "Discard changes". A link waits for the answer (the blocker returns a promise). A back step has
+already moved the browser when the blocker runs, so it returns `true` at once (TanStack moves the
+browser back) and "Discard changes" repeats the step with `history.back({ ignoreBlocker: true })`;
+waiting there instead would leave the browser one entry back while the dialog is open, and a second
+Back would race the first. A sheet's own history entry has the same path, so Back still closes an
+open sheet first. Saving navigates with `ignoreBlocker`. Reloading or closing the tab gets the
+browser's own "Leave site?" (`enableBeforeUnload`). **A fix found on the way:** with a blocker
+registered, TanStack applies a push only after awaiting the blockers, so `useBackDismiss` read the
+history before its own entry existed and never closed the sheet on Back. It now takes the sheet's
+entry when the history reports it (and at once when there is no blocker). **Not covered:** the back
+gesture on the very first history entry (a launch straight into an editor) leaves the app without a
+page event; the editors are reached from inside the app. Evidence: `e2e/unsaved-changes.spec.ts` (2:
+the plan editor with an untouched Back, a link, the gesture with Escape, a sheet closed by Back
+without a question, Back while asking, "Discard", the gesture with "Discard changes", saving; the
+equipment editor with an untouched Cancel, Cancel, the gesture, an undone change, saving; axe in both
+themes with the dialog open, focus on "Keep editing"); `test/m6c.test.tsx` (the dialog in the
+component harness, focus, axe, both choices); `src/features/equipment/inventory.test.ts` (2).
+
+**G-02, NFR-MNT-07 and SET-09 (TD-20).** `tools/release-notes` parses `docs/release-notes/<X.Y.Z>.md`:
+front matter `version` (must match the file name), `date` (a real calendar date), `reviewed`
+(true/false); one summary paragraph; sections `## New`, `Improved`, `Changed`, `Fixed`, `Removed`,
+`Known limitations` in that order, each with `- ` items (continuation lines indented by two spaces);
+plain text only (no HTML, links, code or emphasis, because the app shows text nodes). The build
+(`release-notes-plugin.ts`, also serving `/changelog.json` in `vite dev`) fails on a malformed file,
+on a date after today (one day of grace for time zones), on dates that go back as versions go up,
+and when the app version has no notes, so a version bump cannot ship without them. The shipped
+`changelog.json` (`format: powr-changelog`, `formatVersion: 1`, releases newest first) leaves the
+review flag out. Settings → About has "What's new: the release notes" → `/settings/whats-new`: every
+release with its date, summary and sections, "This version" on the running one and, online with an
+update waiting, "In the waiting update" on newer ones; "Try again" when the file cannot be loaded. The
+update notice has a "What's new" link next to "Update" (also while a workout runs; the link only
+navigates). The service worker precaches `changelog.json` and answers it network-first (the route now
+comes before the precache route) with the runtime cache, then the precache as fallbacks, so the screen
+works offline and shows a waiting update's notes online. `pnpm release:check` also fails while the app
+version's notes are missing or `reviewed: false` (the deploy job loads the dependency-free tool with
+plain Node). **The seed** (`docs/release-notes/0.0.0.md`, dated 2026-11-25, `reviewed: false`):
+"The first version of POWR, for the beta", 11 "New" items (each checked against what is built: the
+plan from the setup with its preview and editor, one-tap logging with the rest timer and suggestions,
+past workouts, Progress, "Why?" and How POWR decides, the 190-exercise library with custom exercises,
+equipment profiles, bodyweight, backups and safety copies, the calendar export, themes, larger
+controls and RPE or RIR) and 3 known limitations (locked-screen alerts depend on the phone, English
+only, legal texts are drafts). It is filed under the current app version, 0.0.0: the product owner
+renames it to the release version (no version number is invented here). Evidence:
+`tools/release-notes/test/release-notes.test.ts` (21), `test/m6c.test.tsx` (2), `release-check.test.ts`.
+
+**G-03, LEG-09 (TD-71), built by a fork.** `/legal-static/` (index, imprint, privacy, disclaimer,
+attributions) is rendered in the service-worker build's `closeBundle`, after the licence gate wrote
+`attributions.json`, by a small server-side Vite build of `texts/static/render.tsx` with the app's
+Lingui options, then `renderToStaticMarkup`: the same React texts, `publisher.ts`, `versions.ts`, the
+shared `DraftMarker` and the English catalogs. No scripts, no inline styles, a skip link, a "Legal
+texts" navigation, one h1, a footer with the version and build; the stylesheet is the app's token CSS
+plus layout. Served by nginx (`location /legal-static/`, `no-cache`, a missing page is a 404) and the
+E2E server with the same headers; the service worker's navigation route has a denylist for it and the
+pages are not precached. `index.html`'s `<noscript>` links them. "How POWR decides" is not included
+(it needs the registry resolver, the citations module and the router). Evidence:
+`test/legal-static.test.tsx` (8, including the static text equal to the app screens word for word),
+`e2e/legal-static.spec.ts` (5: without JavaScript, the production CSP, axe in light and dark, 24 px
+targets, reflow at 320 px, exactly the build's attributions, the service worker leaves the pages
+alone); the fork also ran the spec against the real nginx image and `deploy/smoke.ts` (182 checks).
+
+**G-04, DAT-05 and DAT-07, built by a fork.** `docs/formats/backup-format.md` (13 sections: reading a
+backup by hand with `unzip` and `sha256sum`, the container, the manifest field by field, every table,
+versions and the newer/older rule with the exact messages, the import's twelve checks in order,
+integrity and its limits, archive/JSON/record limits, migrations and kept fixtures, safety copies,
+what is planned, the JSON Schemas and what they cannot express, changing the format). 20 JSON Schemas
+(draft 2020-12, `z.toJSONSchema()` from the input side of the import's own schemas; a Zod type without
+a JSON Schema form fails the generator instead of becoming "anything"): `manifest.format-1.schema.json`,
+`data-1/` (4 tables), `data-2/` (15 tables), shared parts under `$defs`. `json-schemas.test.ts` fails
+when a file is stale, missing or extra ("run pnpm formats:schemas"). 17 kept hostile fixtures, each
+rejected with its error and `Object.prototype` untouched (TD-22). The concept-vs-code differences the
+document records are listed in technical concept §8.3.4 (v0.11). One finding: the import does not
+apply `withSessionDefaults` to `dataVersion` 2 files, so a v2 backup from an M2 development build with
+workouts would fail today's schema; no public build is affected (v2 is unreleased).
+
+**G-05, NFR-SEC-01.** `pnpm audit:prod` = `pnpm audit --prod --audit-level high` (exit 1 on high or
+critical in production dependencies; pnpm 12's `--audit-level` sets the exit code, checked);
+`pnpm audit:all` = every advisory of every dependency, report only (exit 0). CI job `audit` (push,
+pull request, nightly): both, plus `audit-prod.json` and `audit-all.json` as the `audit` artifact (90
+days). The production deploy runs `pnpm audit:prod` on the tagged commit before the promotion (it
+reads the lockfile; no install). Not part of `pnpm verify`, which stays offline. Severity policy (runbook
+§4, technical concept §8.18): high or critical in a production dependency blocks the release until
+fixed (update or `pnpm-workspace.yaml` override); low and moderate, and every build-only advisory, are
+reported, reviewed before each release and fixed with the next routine update; an advisory that
+cannot apply is ignored only with the product owner's written note (`--ignore <GHSA>`).
+
+**Audit results (2026-11-25):**
+
+| Scope                                       | Result                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Production dependencies (`pnpm audit:prod`) | No known vulnerabilities (exit 0)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| All dependencies (`pnpm audit:all`)         | 2 moderate, 0 high, 0 critical; both build-only: glob 11.1.0 (GHSA-3g3m-2fjr-6pw4, "AbortSignal cancellation bypass allows post-timeout filesystem traversal", fixed in ≥ 14.0.2) and minimatch 10.2.6 (GHSA-g3hv-75wg-m249, "denial of service via globparts amplification", fixed in ≥ 11.0.1), both through `vite-plugin-pwa` → `workbox-build`, which globs the project's own `dist/` at build time. Under the policy: reported, no release block; fixed when `vite-plugin-pwa`/`workbox-build` move to the fixed versions (Dependabot) |
+
+**G-06, NFR-REL-01 and QS-01 (TD-13), built by a fork.** `e2e/kill.spec.ts` with `e2e/kill.ts`:
+Chromium with a persistent profile; sets logged through the UI (onboarding skipped, an empty workout,
+the barbell back squat). At a seeded random point (mulberry32; values typed but not confirmed, 0–15 ms
+into the "Confirm set" click, 0–30 ms after the tap, 0–100 ms after the acknowledgement, 0.3–3 s into
+the rest, 0–300 ms after "Save set" of an edit) it sends SIGKILL to the profile's process tree
+(browser, zygotes, GPU, network and storage services, renderers; found through `/proc` by
+`--user-data-dir`; 4 of 5 kills) or only to the renderers (1 of 5), waits for the processes to be
+reaped and reopens the profile. A set counts as acknowledged when the app takes the `powr-set-commit`
+measure (after the strict commit; reported through `exposeBinding` at once) or, for an edit, when the
+row shows the new value. After every kill: exactly one active workout; the screen shows "Workout
+resumed" and every stored row; every stored set complete; no ID or weight twice, indexes without a gap;
+the undo entry names only stored sets; every acknowledged set or edit stored with its values; a typed-
+only set not stored; an in-flight confirm complete or absent; an in-flight edit old or new, nothing
+else; no CSP violation. Linux only (skips elsewhere). `pnpm e2e` runs 10 kills with the fixed seed
+20261125; `pnpm e2e:kill` runs 200 (20 tests of 10 in parallel; `POWR_KILLS`, `POWR_KILL_SEED`;
+every test prints its seed and the command that repeats it); CI job `kill-test` nightly and on demand.
+
+**Kill-test results (2026-11-25):**
+
+| Run                                                                                           | Result                                                                                                                                                                                                                                                                                                                                                                                        |
+| --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 200 kills, base seed 1795635703, 8 workers                                                    | 20 of 20 tests passed in 84.7 s (load average 30–50 from other worktrees)                                                                                                                                                                                                                                                                                                                     |
+| Kill points                                                                                   | in the commit 53, after an edit 39, during the rest 37, at the tap 25, before the tap 23, after the acknowledgement 23                                                                                                                                                                                                                                                                        |
+| Kill modes                                                                                    | whole browser 150, renderers only 50                                                                                                                                                                                                                                                                                                                                                          |
+| Acknowledged sets                                                                             | 273, all recovered with their values                                                                                                                                                                                                                                                                                                                                                          |
+| In-flight confirms                                                                            | 55: 30 stored complete, 25 absent, 0 partial                                                                                                                                                                                                                                                                                                                                                  |
+| Typed only                                                                                    | 23, none stored                                                                                                                                                                                                                                                                                                                                                                               |
+| Edits                                                                                         | 20 acknowledged, all kept; 19 in flight, all with the new value, none partial                                                                                                                                                                                                                                                                                                                 |
+| Stored at the end                                                                             | 303 (273 + 30); **lost 0, duplicated 0**                                                                                                                                                                                                                                                                                                                                                      |
+| Earlier run (before a seed fix)                                                               | 200 kills passed in 65.7 s                                                                                                                                                                                                                                                                                                                                                                    |
+| Short run (10 kills)                                                                          | 17.7–23.3 s alone; 27.9 s inside the full E2E run (25.4 s in the final `pnpm verify`)                                                                                                                                                                                                                                                                                                         |
+| Merged tree, 12 rounds of 200 (this worktree, after the wording sweep and every other change) | 2,397 kills checked, **1 failure** (below); the 2,200 kills of the 11 passing rounds: 3,003 acknowledged sets and 240 acknowledged edits all kept, 612 in-flight confirms (301 stored complete, 311 absent, 0 partial), 314 typed-only sets none stored, 186 in-flight edits (178 new value, 8 old value, 0 other), 1,766 whole-browser and 434 renderer kills; 0 lost, partial or duplicated |
+
+**One unexplained failure.** In the first 200-kill round on the merged tree (base seed 1795637024, test "kills 91–100", kill 97: a whole-browser kill at the tap), the reopened profile showed the first-run screen ("Welcome to POWR") instead of the workout: the app read no legal acknowledgement, so the `powr` database it opened was empty or not the stored one. The app never deletes the database (an open error goes to the recovery screen, `app/boot.tsx`), so the data was either lost by Chromium after the kill or not visible to the new browser. It did not happen again: the same seed four times, then 2,200 more kills in 11 rounds, all passed. The failure report did not record the storage, so the cause is open. Since then the test (a) attaches the origin's databases and the record count of every `powr` store to a failure and prints them, and (b) kills any process that still names the profile before reopening it (none was found in the next 200 kills), so the nightly job will tell the two cases apart.
+
+Observation: after "Just let me log" with an en-US profile the dock shows `lb`; the test's
+selectors accept both units.
+
+**EC-17.** Done through L-1 (and L-5); the E2E check of the attributions stays.
+
+### Decisions and deviations
+
+| Brief or concept says                                                     | What I did                                                                                                                                                                                                                             |
+| ------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| G-02: release notes "for example `release-notes/*.md`"                    | `docs/release-notes/<version>.md`, the path the concept (§8.21) and the checklist name; Markdown with a small front matter, parsed by an own dependency-free parser (the deploy job has no install)                                    |
+| A seed entry "with no invented dates beyond today"                        | Dated 2026-11-25 and filed under the current app version 0.0.0 with `reviewed: false`, because the release version is the product owner's choice; the build requires notes for the app version, `release:check` requires them reviewed |
+| `changelog.json` read by the update notice (§8.4)                         | The notice links to "What's new", which reads the file (network-first, precache fallback); the notice itself stays one line, so the startup chunk grows by a link only                                                                 |
+| G-01 "using the router's blocker"                                         | `useBlocker` with a promise for links and an immediate block plus a repeat for back steps (above); plus the browser's prompt on reload, which the brief did not ask for but costs nothing                                              |
+| G-03 "imprint, privacy, disclaimer, attributions"                         | Those four and an index; "How POWR decides" left out (not cheap; it is not one of the asked pages)                                                                                                                                     |
+| G-04 schemas `docs/formats/schema/v<N>.json` (§8.3.4)                     | `docs/formats/schemas/manifest.format-1.schema.json` and `data-<N>/<table>.schema.json`, per the brief's folder; one file per table reads better                                                                                       |
+| G-04 "no hostile-file fixture (TD-22)"                                    | 17 kept hostile files (the in-memory hostile tests stay)                                                                                                                                                                               |
+| G-06 "200 randomised kills; a short version in the normal run if it fits" | 10 kills with a fixed seed in `pnpm e2e` (about 20–30 s), 200 opt-in and nightly                                                                                                                                                       |
+| L-2 "the inventory"                                                       | A separate input file `deploy/server-inventory.yaml` (next to the Dockerfile) instead of `assets-inventory.yaml`, because server programs need their own policy (`serverDenied`); the output is the same `licence-inventory.json`      |
+| Wording "across all catalogs"                                             | Also the manifest shortcut and the template descriptions in the content, which are UI text outside the catalogs                                                                                                                        |
+| —                                                                         | L-5 (the embedded d3 licence) fixed with L-1                                                                                                                                                                                           |
+
+### Evidence
+
+`pnpm verify` on the final state, 2026-11-25: **exit 0**. Lint (0 errors, **0 warnings**), format,
+token gate, knip, catalog check, typecheck, **1,113 unit tests in 95 files** (1,051 before) and
+**137 component tests in 25 files** (126 before), build, licence gate (37 distributed, 841
+build-only, 73 server-side), size (**entry JS 178.41 kB** gzip of 186, was 178.14: the guard's blocker
+is in the editor chunks, the entry carries the update notice's link and the release-notes route;
+**1 first-wave script, 0 with Zod**; CSS 7.35 kB; service worker 9.67 kB; precache 220 files + `sw.js`, 1,084.8 kB) and
+**98 E2E tests** (93 passed, 5 opt-in skipped: the three S-4 measurements, the perf spec
+and the 200-kill run). New tests: unit `packages/application/test/m6c.test.ts` (6),
+`packages/formats/test/json-schemas.test.ts` (3) and `hostile-fixtures.test.ts` (18),
+`tools/licence/test/copyright.test.ts` (7) and `server.test.ts` (5),
+`tools/release-notes/test/release-notes.test.ts` (21), `apps/web/src/features/equipment/inventory.test.ts`
+(2); component `test/m6c.test.tsx` (3) and `test/legal-static.test.tsx` (8); E2E
+`e2e/unsaved-changes.spec.ts` (2), `e2e/legal-static.spec.ts` (5), `e2e/kill.spec.ts` (1 + the opt-in
+200). `pnpm audit:prod` exit 0; `pnpm release:check` exits 1 as intended (2 legal placeholders, the
+seed notes not reviewed). The baseline `pnpm verify` before any change: green (1,051 unit, 126
+component, 85 E2E, 4 skipped, entry 178.14 kB).
+
+Under the load of the three forks (load average up to 65 on 16 cores) two unit tests (the reference
+dataset size, the oxlint boundary probes) timed out at 5 s once and `home.spec.ts` timed out in the
+forks' runs; all passed in the final run at normal load. Nothing was loosened for them.
+
+### Open items and decisions for the product owner
+
+- **Release notes:** read `docs/release-notes/0.0.0.md`, choose the release version, rename the file,
+  set `reviewed: true` (runbook §4).
+- **L-3:** do the citations in "How POWR decides" and the "Why?" sheets count as LEG-06's data-source
+  credit, or should the attributions screen get a "Data sources" section?
+- **T-10:** "Verify it yourself" and release checksums (§8.18) wait for a decision.
+- **The server image:** pin `nginx:1.30-alpine` to its digest in `deploy/Dockerfile` (Dependabot can
+  bump digests), so the image and `deploy/server-inventory.yaml` change only through a reviewed PR?
+  Keep the GHCR package private (licence review §3).
+- **Backup README:** the `README.txt` inside each backup has an outdated restore path and no link to
+  the format document; changing it changes every new backup's bytes (harmless for import). Fix now?
+- **Copy:** "this device" in the legal texts, straight quotes and "Welcome back!" stay open from M6a.
+- **Unsaved edits:** the browser's own "Leave site?" on reload with unsaved edits is on; the back
+  gesture on a first history entry cannot be asked about.
+- **The fork worktrees** `.claude/worktrees/agent-a1d71d2d89df4ace8`, `agent-a6932984bd5cc6720` and
+  `agent-aa50873c5c8417fd2` hold the baseline and the forks' work, already copied here; they can be
+  removed (`git worktree remove --force <path>`) after review.
+- **The kill test's one failure** (G-06 above): watch the nightly `kill-test` job; its failure
+  report now shows whether the database was lost. If Chromium does drop the database after a
+  kill now and then, nothing in the app can prevent it; the backup reminder (DAT-08) and the
+  safety copies are the protection, and the S22 cannot be tested this way.
+- **Rows left for agents:** T-01 (a research task), T-09 (after 2026-12-01).
+
+### Proposed PRD wording (`docs/PRD.md` not edited)
+
+- **Terms:** the glossary and the requirements use "session" for what the UI now calls a workout;
+  add to PRD §12 "Workout: what the user plans, does and logs; the UI's word (the data and the docs
+  say session)" and "Beginner: the user-facing name of the novice level", and use "beginner" in
+  user-facing examples (ONB, PRG-04/06 descriptions that quote UI copy).
+- **PWA-12:** "… and asks before discarding unsaved edits in the plan and equipment editors (on Back,
+  the back gesture and in-app navigation; the browser asks on reload)."
+- **NFR-MNT-07 / SET-09:** "Each release has reviewed release notes (`docs/release-notes/<version>.md`);
+  Settings → About → What's new lists them, and the update notice links there."
+- **LEG-09:** "The website copy of the publisher details, the privacy notice, the health notice and
+  the attributions is served as static pages (`/legal-static/`), readable without JavaScript."
+- **DAT-05 / DAT-07:** "The format is described in `docs/formats/backup-format.md` with generated JSON
+  Schemas per data version."
+- **DAT-06 / §8.2.1:** "Safety copies: the latest two and any from the last 30 days, never more than
+  five; the oldest go first."
+- **NFR-SEC-01:** "Production dependencies are audited on every build and before each release; a high
+  or critical advisory blocks the release; others are reviewed before each release."
+- **NFR-REL-01 / QS-01:** "Verified by 200 randomised process kills (nightly) and 10 in every test run."
+- From M6b, still open: §8.6 "A postal contact address and e-mail are to be provided" (the e-mail is
+  decided).
+
+### Doc changes
+
+`docs/technical-concept.md` v0.11 (§0, the change log, §7.1, §8.2.1, §8.3.4, §8.4, §8.9.1, §8.15,
+§8.18, §8.20, §8.21, §11.2 with TD-13, TD-20, TD-22, TD-68 and TD-71 closed and TD-67 completed,
+Appendix A.4, Appendix B); `docs/release/checklist.md` 1.1 (statuses, evidence, counts);
+`docs/release/licence-review.md` 1.1; `docs/adr/0006-…` and `docs/adr/0018-…` amended;
+`deploy/runbook.md` §4 and §6; new `docs/release-notes/0.0.0.md`, `docs/formats/`.
+
+### Suggested commits (no attribution)
+
+Files shared by several rows go into the first commit that needs them (noted); or stage hunks with
+`git add -p`.
+
+1. `feat(copy): "workout" in the UI and "beginner" as the level name` — the wording changes in
+   `apps/web/src/features/**` (all but the files of commits 3 and 4), `apps/web/src/ui/charts/trend-chart.tsx`,
+   `packages/content/data/templates/*.yaml`, `packages/content/generated/content.json`, the test files
+   with updated strings (`apps/web/e2e/{a11y,body-map-screen,home,m2c,m5d,planning,progress,session}.spec.ts`,
+   `apps/web/test/{charts,home,m2c,m5d,m6a,progress}.test.tsx`).
+2. `feat(data): never more than five safety copies` — `packages/application/src/data/safety.ts`,
+   `packages/application/test/m6a.test.ts`, `packages/application/test/m6c.test.ts`,
+   `apps/web/src/features/data/DataScreen.tsx`, `docs/adr/0006-indexeddb-library-and-persistence.md`.
+3. `feat(web): ask before discarding unsaved edits (G-01, TD-68)` — `apps/web/src/ui/unsaved-changes.tsx`,
+   `apps/web/src/ui/back-dismiss.tsx`, `apps/web/src/features/plan/PlanEditorScreen.tsx` (also its
+   wording), `apps/web/src/features/equipment/{EquipmentScreens.tsx,inventory.ts,inventory.test.ts}`,
+   `apps/web/e2e/unsaved-changes.spec.ts`, `apps/web/e2e/planning.ts`.
+4. `feat(release-notes): versioned release notes and What's new (G-02, TD-20)` — `tools/release-notes/**`,
+   `docs/release-notes/0.0.0.md`, `apps/web/scripts/release-notes-plugin.ts`,
+   `apps/web/scripts/release-check.ts` and its test, `apps/web/src/features/settings/{WhatsNewScreen.tsx,changelog-data.ts,SettingsScreen.tsx}`,
+   `apps/web/src/routes/settings/whats-new.tsx`, `apps/web/src/routeTree.gen.ts`,
+   `apps/web/src/features/shell/UpdateBanner.tsx`, `apps/web/src/sw/sw.ts` (also the G-03 denylist),
+   `apps/web/vite.config.ts` (also the G-03 plugin and the manifest wording), `apps/web/test/m6c.test.tsx`,
+   `apps/web/package.json` (also `e2e:kill`), `pnpm-lock.yaml`, `tsconfig.json`,
+   `apps/web/tsconfig.node.json`, `tools/arch-test/src/rules.ts`, `tools/arch-test/test/architecture.test.ts`,
+   the three `apps/web/src/i18n/locales/*/messages.po`, `legal.po`, `params.po` (all catalog changes).
+5. `feat(legal): static website copy of the legal texts (G-03, TD-71)` — `apps/web/scripts/legal-static-plugin.ts`,
+   `apps/web/scripts/legal-static.css`, `apps/web/src/features/legal/{DraftMarker.tsx,LegalScreens.tsx}`,
+   `apps/web/src/features/legal/texts/static/render.tsx`, `apps/web/index.html`,
+   `apps/web/e2e/{static-server.ts,legal-static.spec.ts}`, `apps/web/test/legal-static.test.tsx`,
+   `deploy/nginx.conf`, `deploy/smoke.ts`.
+6. `docs(formats): backup format, JSON Schemas and hostile fixtures (G-04, TD-22)` — `docs/formats/**`,
+   `packages/formats/{scripts/**,fixtures/backups/hostile/**,tsconfig.json}`,
+   `packages/formats/src/records/{validate.ts,v2.ts}`,
+   `packages/formats/test/{craft.ts,fixtures.test.ts,json-schemas.test.ts,hostile-fixtures.test.ts}`.
+7. `test(e2e): randomised process kills (G-06, TD-13)` — `apps/web/e2e/kill.spec.ts`, `apps/web/e2e/kill.ts`.
+8. `fix(licence): copyright lines, server-side inventory, Python-2.0 off the allowlist (L-1, L-2, L-4)` —
+   `tools/licence/src/{packages.ts,policy.ts,inventory.ts,cli.ts}`, `tools/licence/fixtures/copyright/**`,
+   `tools/licence/test/{copyright.test.ts,server.test.ts,gate.test.ts,policy.test.ts}`, `licence-policy.yaml`,
+   `deploy/server-inventory.yaml`, `docs/adr/0018-licence-compliance-tooling.md`, `docs/release/licence-review.md`.
+9. `ci: dependency audit, image package list and nightly kill test (G-05, L-2, G-06)` — `package.json`
+   (also the `release-notes`, `formats:schemas` and `e2e:kill` scripts), `.github/workflows/ci.yml`,
+   `.github/workflows/deploy.yml`, `deploy/runbook.md`.
+10. `docs: technical concept v0.11, release checklist 1.1, M6c notes` — `docs/technical-concept.md`,
+    `docs/release/checklist.md`, `IMPLEMENTATION_NOTES.md`.

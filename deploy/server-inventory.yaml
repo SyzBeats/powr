@@ -1,0 +1,319 @@
+# Server-side components (licence review L-2; technical concept §7 and Appendix B; product-owner
+# decision 2026-11-25). The publisher runs these on its own server to deliver the app. None of
+# them is distributed to users: a user receives only the app's files over HTTPS, never these
+# programs. tools/licence records every entry in licence-inventory.json as `kind: server`,
+# `distributed: false`. Because nothing here is distributed, the copyleft rules of
+# licence-policy.yaml do not apply; `serverDenied` there lists the licences that would bind the
+# publisher merely for running a program as a network service, or restrict running it in
+# production, and the gate fails on those.
+#
+# Keep the image private on GHCR (runbook §2): publishing the image would distribute these
+# programs, with the source-offer duties of their GPL and LGPL parts.
+
+# Run on the VPS (Ubuntu 24.04 LTS, runbook §1). The versions are the ones the concept plans;
+# the installed versions are recorded in runbook §8 when the server is set up (D-01).
+server:
+  - name: coolify
+    version: 4.7.x
+    licence: Apache-2.0
+    role: Self-hosted deployment platform; pulls the image from GHCR and runs it
+  - name: traefik
+    version: 3.7.x
+    licence: MIT
+    role: Coolify's reverse proxy; terminates TLS (Let's Encrypt) in front of nginx
+
+# The web server image (deploy/Dockerfile): the official nginx image plus the app's files and
+# deploy/nginx.conf. Package list read on 2026-11-25 with `apk list --installed` from
+# nginx:1.30-alpine at the digest below (Alpine 3.24.4, nginx 1.30.8); licences as Alpine
+# declares them (nginx's own "2-clause BSD-like license" is BSD-2-Clause). The tag is not pinned
+# to the digest, so CI saves the package list of every image it builds (`image-packages.txt` in
+# the `reports` artifact); refresh this list from it when the base image changes.
+image:
+  reference: nginx:1.30-alpine
+  digest: sha256:8eb04fe3b385090e9aa02961f77398ad09b6bf33ab07f6669a5bb7acce22c0d3
+  read: 2026-11-25
+  packages:
+    - name: alpine-baselayout
+      version: 3.7.2-r1
+      origin: alpine-baselayout
+      licence: GPL-2.0-only
+    - name: alpine-baselayout-data
+      version: 3.7.2-r1
+      origin: alpine-baselayout
+      licence: GPL-2.0-only
+    - name: alpine-keys
+      version: 2.6-r0
+      origin: alpine-keys
+      licence: MIT
+    - name: alpine-release
+      version: 3.24.4-r0
+      origin: alpine-base
+      licence: MIT
+    - name: aom-libs
+      version: 3.14.1-r0
+      origin: aom
+      licence: BSD-2-Clause AND custom
+    - name: apk-tools
+      version: 3.0.9-r0
+      origin: apk-tools
+      licence: GPL-2.0-only
+    - name: brotli-libs
+      version: 1.2.1-r0
+      origin: brotli
+      licence: MIT
+    - name: busybox
+      version: 1.37.0-r31
+      origin: busybox
+      licence: GPL-2.0-only
+    - name: busybox-binsh
+      version: 1.37.0-r31
+      origin: busybox
+      licence: GPL-2.0-only
+    - name: c-ares
+      version: 1.34.9-r0
+      origin: c-ares
+      licence: MIT
+    - name: ca-certificates
+      version: 20261020-r0
+      origin: ca-certificates
+      licence: MPL-2.0 AND MIT
+    - name: ca-certificates-bundle
+      version: 20261020-r0
+      origin: ca-certificates
+      licence: MPL-2.0 AND MIT
+    - name: curl
+      version: 8.23.0-r0
+      origin: curl
+      licence: curl
+    - name: fontconfig
+      version: 2.17.1-r1
+      origin: fontconfig
+      licence: MIT
+    - name: freetype
+      version: 2.14.3-r0
+      origin: freetype
+      licence: FTL OR GPL-2.0-or-later
+    - name: geoip
+      version: 1.6.12-r6
+      origin: geoip
+      licence: LGPL-2.1-or-later
+    - name: gettext-envsubst
+      version: 1.0-r0
+      origin: gettext
+      licence: GPL-3.0-or-later AND LGPL-2.1-or-later AND MIT
+    - name: libapk
+      version: 3.0.9-r0
+      origin: apk-tools
+      licence: GPL-2.0-only
+    - name: libavif
+      version: 1.4.1-r0
+      origin: libavif
+      licence: BSD-2-Clause
+    - name: libbsd
+      version: 0.12.2-r0
+      origin: libbsd
+      licence: BSD-3-Clause
+    - name: libbz2
+      version: 1.0.8-r6
+      origin: bzip2
+      licence: bzip2-1.0.6
+    - name: libcrypto3
+      version: 3.5.9-r1
+      origin: openssl
+      licence: Apache-2.0
+    - name: libcurl
+      version: 8.23.0-r0
+      origin: curl
+      licence: curl
+    - name: libdav1d
+      version: 1.5.3-r0
+      origin: dav1d
+      licence: BSD-2-Clause
+    - name: libedit
+      version: 20260508.3.1-r1
+      origin: libedit
+      licence: BSD-3-Clause
+    - name: libexpat
+      version: 2.10.0-r0
+      origin: expat
+      licence: MIT
+    - name: libgcc
+      version: 15.2.0-r5
+      origin: gcc
+      licence: GPL-2.0-or-later AND LGPL-2.1-or-later
+    - name: libgd
+      version: 2.3.3-r10
+      origin: gd
+      licence: GD
+    - name: libice
+      version: 1.1.2-r0
+      origin: libice
+      licence: X11
+    - name: libidn2
+      version: 2.3.8-r0
+      origin: libidn2
+      licence: GPL-2.0-or-later OR LGPL-3.0-or-later
+    - name: libintl
+      version: 1.0-r0
+      origin: gettext
+      licence: LGPL-2.1-or-later
+    - name: libjpeg-turbo
+      version: 3.1.3-r0
+      origin: libjpeg-turbo
+      licence: BSD-3-Clause AND IJG AND Zlib
+    - name: libmd
+      version: 1.2.0-r0
+      origin: libmd
+      licence: BSD-3-Clause AND BSD-2-Clause AND ISC AND Beerware AND Public Domain
+    - name: libncursesw
+      version: 6.6_p20260516-r0
+      origin: ncurses
+      licence: X11
+    - name: libpng
+      version: 1.6.59-r0
+      origin: libpng
+      licence: Libpng
+    - name: libpsl
+      version: 0.21.5-r3
+      origin: libpsl
+      licence: MIT
+    - name: libsharpyuv
+      version: 1.6.0-r0
+      origin: libwebp
+      licence: BSD-3-Clause
+    - name: libsm
+      version: 1.2.6-r0
+      origin: libsm
+      licence: MIT
+    - name: libssl3
+      version: 3.5.9-r1
+      origin: openssl
+      licence: Apache-2.0
+    - name: libstdc++
+      version: 15.2.0-r5
+      origin: gcc
+      licence: GPL-2.0-or-later AND LGPL-2.1-or-later
+    - name: libunistring
+      version: 1.4.2-r0
+      origin: libunistring
+      licence: GPL-2.0-or-later OR LGPL-3.0-or-later
+    - name: libuuid
+      version: 2.42.3-r1
+      origin: util-linux
+      licence: BSD-3-Clause
+    - name: libwebp
+      version: 1.6.0-r0
+      origin: libwebp
+      licence: BSD-3-Clause
+    - name: libx11
+      version: 1.8.14-r0
+      origin: libx11
+      licence: X11
+    - name: libxau
+      version: 1.0.12-r0
+      origin: libxau
+      licence: MIT
+    - name: libxcb
+      version: 1.17.0-r2
+      origin: libxcb
+      licence: MIT
+    - name: libxdmcp
+      version: 1.1.5-r1
+      origin: libxdmcp
+      licence: MIT
+    - name: libxext
+      version: 1.3.7-r0
+      origin: libxext
+      licence: MIT
+    - name: libxml2
+      version: 2.13.9-r3
+      origin: libxml2
+      licence: MIT
+    - name: libxpm
+      version: 3.5.20-r0
+      origin: libxpm
+      licence: X11
+    - name: libxslt
+      version: 1.1.43-r4
+      origin: libxslt
+      licence: X11
+    - name: libxt
+      version: 1.3.1-r0
+      origin: libxt
+      licence: MIT
+    - name: libyuv
+      version: 0.0.1928-r0
+      origin: libyuv
+      licence: BSD-3-Clause
+    - name: musl
+      version: 1.2.6-r3
+      origin: musl
+      licence: MIT
+    - name: musl-utils
+      version: 1.2.6-r3
+      origin: musl
+      licence: MIT AND BSD-2-Clause AND GPL-2.0-or-later
+    - name: ncurses-terminfo-base
+      version: 6.6_p20260516-r0
+      origin: ncurses
+      licence: X11
+    - name: nghttp2-libs
+      version: 1.70.0-r0
+      origin: nghttp2
+      licence: MIT
+    - name: nginx
+      version: 1.30.8-r1
+      origin: nginx
+      licence: 2-clause BSD-like license
+    - name: nginx-module-acme
+      version: 1.30.8.0.4.2-r1
+      origin: nginx-module-acme
+      licence: 2-clause BSD-like license
+    - name: nginx-module-geoip
+      version: 1.30.8-r1
+      origin: nginx-module-geoip
+      licence: 2-clause BSD-like license
+    - name: nginx-module-image-filter
+      version: 1.30.8-r1
+      origin: nginx-module-image-filter
+      licence: 2-clause BSD-like license
+    - name: nginx-module-njs
+      version: 1.30.8.1.0.2-r1
+      origin: nginx-module-njs
+      licence: 2-clause BSD-like license
+    - name: nginx-module-xslt
+      version: 1.30.8-r1
+      origin: nginx-module-xslt
+      licence: 2-clause BSD-like license
+    - name: pcre2
+      version: 10.49-r0
+      origin: pcre2
+      licence: BSD-3-Clause
+    - name: scanelf
+      version: 1.3.9-r1
+      origin: pax-utils
+      licence: GPL-2.0-only
+    - name: ssl_client
+      version: 1.37.0-r31
+      origin: busybox
+      licence: GPL-2.0-only
+    - name: tiff
+      version: 4.7.2-r0
+      origin: tiff
+      licence: libtiff
+    - name: tzdata
+      version: 2026f-r0
+      origin: tzdata
+      licence: Public-Domain
+    - name: xz-libs
+      version: 5.8.4-r0
+      origin: xz
+      licence: GPL-2.0-or-later AND 0BSD AND Public-Domain AND LGPL-2.1-or-later
+    - name: zlib
+      version: 1.3.2-r1
+      origin: zlib
+      licence: Zlib
+    - name: zstd-libs
+      version: 1.5.7-r2
+      origin: zstd
+      licence: BSD-3-Clause OR GPL-2.0-or-later

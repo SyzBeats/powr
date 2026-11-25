@@ -61,7 +61,7 @@ describe('Home (ANL-01, MOT-03)', () => {
     expect(await screen.findByRole('heading', { level: 1, name: 'Home' })).toBeTruthy();
     expect(await screen.findByTestId('next-session')).toBeTruthy();
     const progress = await screen.findByTestId('week-progress', {}, { timeout: 5000 });
-    expect(progress.textContent).toMatch(/\d+ of \d+ sessions?/);
+    expect(progress.textContent).toMatch(/\d+ of \d+ workouts?/);
     await waitFor(() => expect(screen.getByTestId('home-streak').textContent).toMatch(/best/));
     const prs = await screen.findByTestId('home-prs');
     expect(prs.textContent).toContain('New rep PR on Barbell bench press: 100 kg for 5');
@@ -160,7 +160,7 @@ describe('Settings → Insights and Data → Verify data', () => {
     const user = userEvent.setup();
     renderRoute(container, '/settings');
     const grace = await screen.findByRole('checkbox', {
-      name: /Grace: a week with one session short still counts/,
+      name: /Grace: a week with one workout short still counts/,
     });
     expect(grace.getAttribute('aria-checked')).toBe('false');
     await user.click(grace);

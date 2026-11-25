@@ -5,7 +5,7 @@
 id: tpl.pl-sbd-4day
 name: { en: SBD 4-day }
 description:
-  en: Four sessions with squat and deadlift twice and bench press three times a week, each with a heavy and a lighter exposure.
+  en: Four workouts with squat and deadlift twice and bench press three times a week, each with a heavy and a lighter exposure.
 style: powerlifting
 daysPerWeek: 4
 split: sbd

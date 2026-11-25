@@ -151,10 +151,10 @@ describe('calendar export (CAL-01…05)', () => {
     await user.click(screen.getByRole('radio', { name: 'Next 4 weeks' }));
     await user.click(screen.getByRole('radio', { name: '1 hour before' }));
     const preview = screen.getByTestId('calendar-preview');
-    await waitFor(() => expect(preview.textContent).toMatch(/\d+ sessions/));
+    await waitFor(() => expect(preview.textContent).toMatch(/\d+ workouts/));
 
     // An impossible time is named at the field, and the download waits for a valid one.
-    const time = screen.getByLabelText('Time for every session');
+    const time = screen.getByLabelText('Time for every workout');
     await user.clear(time);
     expect(await screen.findByText('Enter a time such as 18:00.')).toBeTruthy();
     expect(

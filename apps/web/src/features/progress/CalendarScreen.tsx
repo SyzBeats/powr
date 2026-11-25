@@ -159,8 +159,8 @@ function DaySheet({ day, onClose }: { day: DomainCalendarDay | null; onClose: ()
             >
               <Plural
                 value={planned}
-                one="# planned session: open the plan"
-                other="# planned sessions: open the plan"
+                one="# planned workout: open the plan"
+                other="# planned workouts: open the plan"
               />
             </Link>
           ) : null}

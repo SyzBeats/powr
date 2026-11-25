@@ -402,8 +402,8 @@ function BackupErrorMessage({ error }: { error: BackupError }) {
 
 /**
  * Safety copies (§8.2.1, TD-14): the backups POWR took before a restore and before a data update.
- * Each can be saved as a file or deleted; the latest two and any younger than 30 days are kept
- * (TD-67, `pruneSafetyCopies` runs when the list loads).
+ * Each can be saved as a file or deleted; the latest two and any younger than 30 days are kept,
+ * never more than five (TD-67, M6c; `pruneSafetyCopies` runs when the list loads).
  */
 function SafetyCopiesCard() {
   const { t } = useLingui();
@@ -435,8 +435,8 @@ function SafetyCopiesCard() {
       <p className="text-sm text-fg-muted">
         <Trans>
           POWR saves your data by itself before a restore replaces it and before an update changes
-          how it is stored. It keeps the latest two copies and any from the last 30 days, and
-          deletes older ones by itself.
+          how it is stored. It keeps the latest two copies and any from the last 30 days, never more
+          than five, and deletes the oldest ones by itself.
         </Trans>
       </p>
       {copies.length === 0 ? (

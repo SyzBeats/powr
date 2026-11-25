@@ -87,7 +87,7 @@ export function useTrendSentence() {
   const words = useSummaryWords();
   return (name: string, summary: SeriesSummary, unit: MassUnit): string => {
     if (summary.fromKg === null || summary.toKg === null || summary.fromDate === null) {
-      return t`${name}: not enough sessions with an effort rating in this range for a trend yet.`;
+      return t`${name}: not enough workouts with an effort rating in this range for a trend yet.`;
     }
     const from = massFromKg(summary.fromKg, unit, 1);
     const to = massFromKg(summary.toKg, unit, 1);

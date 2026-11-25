@@ -38,6 +38,7 @@ import { Route as SettingsIndexRouteImport } from './routes/settings/index'
 import { Route as SettingsDeviceSupportRouteImport } from './routes/settings/device-support'
 import { Route as SettingsExercisesRouteImport } from './routes/settings/exercises'
 import { Route as SettingsRestRouteImport } from './routes/settings/rest'
+import { Route as SettingsWhatsNewRouteImport } from './routes/settings/whats-new'
 import { Route as ExploreBodyMapIndexRouteImport } from './routes/explore/body-map/index'
 import { Route as ExploreBodyMapMuscleIdRouteImport } from './routes/explore/body-map/$muscleId'
 import { Route as ExploreExercisesIndexRouteImport } from './routes/explore/exercises/index'
@@ -199,6 +200,11 @@ const SettingsRestRoute = SettingsRestRouteImport.update({
   path: '/settings/rest',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SettingsWhatsNewRoute = SettingsWhatsNewRouteImport.update({
+  id: '/settings/whats-new',
+  path: '/settings/whats-new',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ExploreBodyMapIndexRoute = ExploreBodyMapIndexRouteImport.update({
   id: '/explore/body-map/',
   path: '/explore/body-map/',
@@ -302,6 +308,7 @@ export interface FileRoutesByFullPath {
   '/settings/device-support': typeof SettingsDeviceSupportRoute
   '/settings/exercises': typeof SettingsExercisesRoute
   '/settings/rest': typeof SettingsRestRoute
+  '/settings/whats-new': typeof SettingsWhatsNewRoute
   '/body/': typeof BodyIndexRoute
   '/explore/': typeof ExploreIndexRoute
   '/onboarding/': typeof OnboardingIndexRoute
@@ -348,6 +355,7 @@ export interface FileRoutesByTo {
   '/settings/device-support': typeof SettingsDeviceSupportRoute
   '/settings/exercises': typeof SettingsExercisesRoute
   '/settings/rest': typeof SettingsRestRoute
+  '/settings/whats-new': typeof SettingsWhatsNewRoute
   '/body': typeof BodyIndexRoute
   '/explore': typeof ExploreIndexRoute
   '/onboarding': typeof OnboardingIndexRoute
@@ -395,6 +403,7 @@ export interface FileRoutesById {
   '/settings/device-support': typeof SettingsDeviceSupportRoute
   '/settings/exercises': typeof SettingsExercisesRoute
   '/settings/rest': typeof SettingsRestRoute
+  '/settings/whats-new': typeof SettingsWhatsNewRoute
   '/body/': typeof BodyIndexRoute
   '/explore/': typeof ExploreIndexRoute
   '/onboarding/': typeof OnboardingIndexRoute
@@ -443,6 +452,7 @@ export interface FileRouteTypes {
     | '/settings/device-support'
     | '/settings/exercises'
     | '/settings/rest'
+    | '/settings/whats-new'
     | '/body/'
     | '/explore/'
     | '/onboarding/'
@@ -489,6 +499,7 @@ export interface FileRouteTypes {
     | '/settings/device-support'
     | '/settings/exercises'
     | '/settings/rest'
+    | '/settings/whats-new'
     | '/body'
     | '/explore'
     | '/onboarding'
@@ -535,6 +546,7 @@ export interface FileRouteTypes {
     | '/settings/device-support'
     | '/settings/exercises'
     | '/settings/rest'
+    | '/settings/whats-new'
     | '/body/'
     | '/explore/'
     | '/onboarding/'
@@ -582,6 +594,7 @@ export interface RootRouteChildren {
   SettingsDeviceSupportRoute: typeof SettingsDeviceSupportRoute
   SettingsExercisesRoute: typeof SettingsExercisesRoute
   SettingsRestRoute: typeof SettingsRestRoute
+  SettingsWhatsNewRoute: typeof SettingsWhatsNewRoute
   BodyIndexRoute: typeof BodyIndexRoute
   ExploreIndexRoute: typeof ExploreIndexRoute
   OnboardingIndexRoute: typeof OnboardingIndexRoute
@@ -811,6 +824,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsRestRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/settings/whats-new': {
+      id: '/settings/whats-new'
+      path: '/settings/whats-new'
+      fullPath: '/settings/whats-new'
+      preLoaderRoute: typeof SettingsWhatsNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/explore/body-map/': {
       id: '/explore/body-map/'
       path: '/explore/body-map'
@@ -942,6 +962,7 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsDeviceSupportRoute: SettingsDeviceSupportRoute,
   SettingsExercisesRoute: SettingsExercisesRoute,
   SettingsRestRoute: SettingsRestRoute,
+  SettingsWhatsNewRoute: SettingsWhatsNewRoute,
   BodyIndexRoute: BodyIndexRoute,
   ExploreIndexRoute: ExploreIndexRoute,
   OnboardingIndexRoute: OnboardingIndexRoute,

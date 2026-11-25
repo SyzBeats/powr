@@ -772,7 +772,7 @@ export function useFieldErrors() {
         const step = stepOfField(field);
         const where =
           step === 'schedule'
-            ? t`Check your training days and session time.`
+            ? t`Check your training days and workout time.`
             : step === 'equipment'
               ? t`Give your equipment a name.`
               : step === 'body'

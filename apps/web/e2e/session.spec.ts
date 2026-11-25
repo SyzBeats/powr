@@ -102,13 +102,13 @@ test.describe('workout session (M3b)', () => {
 
     // WKT-01: today's planned session in one tap from Home; the check-in comes first (RDY-01).
     await expect(
-      page.getByRole('button', { name: 'Start session', exact: true }).first(),
+      page.getByRole('button', { name: 'Start workout', exact: true }).first(),
     ).toBeVisible();
     await page
       .getByRole('navigation', { name: 'Main' })
       .getByRole('link', { name: 'Home' })
       .click();
-    await page.getByRole('link', { name: "Start today's session" }).click();
+    await page.getByRole('link', { name: "Start today's workout" }).click();
     await expect(page).toHaveURL(/\/session$/);
     await expect(page.getByRole('heading', { level: 1, name: 'How are you today?' })).toBeVisible();
     await checkScreen(page, 'session-check-in');

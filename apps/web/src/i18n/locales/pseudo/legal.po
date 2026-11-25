@@ -11,6 +11,14 @@ msgstr ""
 msgid "{name} version {version}"
 msgstr ""
 
+#: src/features/legal/texts/static/render.tsx
+msgid "{title} · POWR"
+msgstr ""
+
+#: src/features/legal/texts/static/render.tsx
+msgid "A copy of the texts in the POWR app, made with version {version} ({build}) of the app. The app shows the same texts under Settings, Legal."
+msgstr ""
+
 #: src/features/legal/texts/HowPowrDecides.tsx
 msgid "A value marked \"Preliminary value\" has not yet been checked against the original publication, comes from a study that is not yet peer-reviewed (a preprint), or is a design choice of POWR where research only gives a direction. It may change after a review; any change comes with a new registry version. {preliminary} of the {total} values are preliminary in this version."
 msgstr ""
@@ -20,7 +28,7 @@ msgid "A value or model POWR chose where research gives only a direction. Treat 
 msgstr ""
 
 #: src/features/legal/texts/HowPowrDecides.tsx
-msgid "A week counts for your streak when you did the sessions you planned. Breaks pause it, they never break it."
+msgid "A week counts for your streak when you did the workouts you planned. Breaks pause it, they never break it."
 msgstr ""
 
 #: src/features/legal/texts/Imprint.tsx
@@ -28,7 +36,7 @@ msgid "About this app"
 msgstr ""
 
 #: src/features/legal/texts/HowPowrDecides.tsx
-msgid "After a block of training weeks comes a lighter week with fewer sets and a little more in reserve. POWR offers it earlier when several signs suggest it. After a break, the first sessions ease back in."
+msgid "After a block of training weeks comes a lighter week with fewer sets and a little more in reserve. POWR offers it earlier when several signs suggest it. After a break, the first workouts ease back in."
 msgstr ""
 
 #: src/features/legal/texts/Privacy.tsx
@@ -36,7 +44,7 @@ msgid "All of it stays in your browser's storage on this device, for this app on
 msgstr ""
 
 #: src/features/legal/texts/HowPowrDecides.tsx
-msgid "Assistance exercises add reps until the top of the range, then a small weight step (double progression). Main lifts use your estimated 1-rep max and the target effort; novices add a fixed step each session. Steps follow your equipment and your level."
+msgid "Assistance exercises add reps until the top of the range, then a small weight step (double progression). Main lifts use your estimated 1-rep max and the target effort; beginners (called novices in training research) add a fixed step each workout. Steps follow your equipment and your level."
 msgstr ""
 
 #: src/features/legal/texts/Privacy.tsx
@@ -128,7 +136,11 @@ msgid "Exercise library and templates: {contentVersion}"
 msgstr ""
 
 #: src/features/legal/texts/HowPowrDecides.tsx
-msgid "From the weight, reps and effort of your sets, POWR estimates the most you could lift once (your estimated 1-rep max). Heavy, hard sets count most. The trend is smoothed, because single sessions vary by several percent; a change is only called likely real once it is larger than that day-to-day variation and lasts for a few sessions."
+msgid "From the weight, reps and effort of your sets, POWR estimates the most you could lift once (your estimated 1-rep max). Heavy, hard sets count most. The trend is smoothed, because single workouts vary by several percent; a change is only called likely real once it is larger than that day-to-day variation and lasts for a few workouts."
+msgstr ""
+
+#: src/features/legal/texts/static/render.tsx
+msgid "Health and safety notice"
 msgstr ""
 
 #: src/features/legal/texts/Privacy.tsx
@@ -153,6 +165,14 @@ msgstr ""
 
 #: src/features/legal/texts/Privacy.tsx
 msgid "Legal framework"
+msgstr ""
+
+#: src/features/legal/texts/static/render.tsx
+msgid "Legal texts"
+msgstr ""
+
+#: src/features/legal/texts/static/render.tsx
+msgid "Legal texts · POWR"
 msgstr ""
 
 #: src/features/legal/texts/Attributions.tsx
@@ -197,6 +217,14 @@ msgstr ""
 
 #: src/features/legal/texts/HowPowrDecides.tsx
 msgid "Official documents, for example the federation's scoring formulas."
+msgstr ""
+
+#: src/features/legal/texts/static/render.tsx
+msgid "Open POWR"
+msgstr ""
+
+#: src/features/legal/texts/static/render.tsx
+msgid "Open-source licences and attributions"
 msgstr ""
 
 #: src/features/legal/texts/Attributions.tsx
@@ -247,6 +275,10 @@ msgstr ""
 msgid "POWR is a training planner and log for healthy people aged 16 and over. It gives general fitness information and training suggestions based on published research and on what you enter."
 msgstr ""
 
+#: src/features/legal/texts/static/render.tsx
+msgid "POWR is a training planner and log that runs in your browser and keeps your data on your device. These are the legal texts shown in the app, readable here without JavaScript."
+msgstr ""
+
 #: src/features/legal/texts/Attributions.tsx
 msgid "POWR is built with open-source software. This list is generated from the licence inventory when the app is built, so it always matches this version. It shows every component shipped with the app, its licence and copyright, and the notices its licence asks for."
 msgstr ""
@@ -291,6 +323,10 @@ msgstr ""
 msgid "Preliminary values"
 msgstr ""
 
+#: src/features/legal/texts/static/render.tsx
+msgid "Privacy notice"
+msgstr ""
+
 #: src/features/legal/texts/Privacy.tsx
 msgid "profile answers, such as your goal, experience, training days, and optionally your sex, birth year, height and the lifts you know;"
 msgstr ""
@@ -299,8 +335,16 @@ msgstr ""
 msgid "Progression: when the weight goes up"
 msgstr ""
 
+#: src/features/legal/texts/static/render.tsx
+msgid "Published by {person}, {business}, {country}."
+msgstr ""
+
 #: src/features/legal/texts/Imprint.tsx
 msgid "Publisher"
+msgstr ""
+
+#: src/features/legal/texts/static/render.tsx
+msgid "Publisher and imprint"
 msgstr ""
 
 #: src/features/legal/texts/Privacy.tsx
@@ -309,6 +353,10 @@ msgstr ""
 
 #: src/features/legal/texts/Disclaimer.tsx
 msgid "Questions about this notice: <0/>"
+msgstr ""
+
+#: src/features/legal/texts/static/render.tsx
+msgid "Questions or feedback: <0/>"
 msgstr ""
 
 #: src/features/legal/texts/HowPowrDecides.tsx
@@ -329,6 +377,10 @@ msgstr ""
 
 #: src/features/legal/texts/HowPowrDecides.tsx
 msgid "Single trials, observational studies, narrative reviews and studies not yet peer-reviewed. Useful, but less certain."
+msgstr ""
+
+#: src/features/legal/texts/static/render.tsx
+msgid "Skip to the text"
 msgstr ""
 
 #: src/features/legal/texts/HowPowrDecides.tsx
@@ -365,7 +417,7 @@ msgid "Talk to a doctor before you start or change a training or nutrition progr
 msgstr ""
 
 #: src/features/legal/texts/HowPowrDecides.tsx
-msgid "Tempo, techniques and session length"
+msgid "Tempo, techniques and workout length"
 msgstr ""
 
 #: src/features/legal/texts/HowPowrDecides.tsx
@@ -389,7 +441,7 @@ msgid "The body-map figure, the app icons, the exercise library, the muscle name
 msgstr ""
 
 #: src/features/legal/texts/HowPowrDecides.tsx
-msgid "The default tempo, how special techniques such as drop sets count, and how long a session will take."
+msgid "The default tempo, how special techniques such as drop sets count, and how long a workout will take."
 msgstr ""
 
 #: src/features/legal/texts/Imprint.tsx
@@ -397,7 +449,7 @@ msgid "The fastest way to reach us is by e-mail."
 msgstr ""
 
 #: src/features/legal/texts/HowPowrDecides.tsx
-msgid "The optional check-in compares today with your usual sleep, energy and soreness. On a low day POWR can offer a lighter session; you choose."
+msgid "The optional check-in compares today with your usual sleep, energy and soreness. On a low day POWR can offer a lighter workout; you choose."
 msgstr ""
 
 #: src/features/legal/texts/Privacy.tsx
@@ -428,12 +480,16 @@ msgstr ""
 msgid "use a spotter or safety equipment such as rack safeties and collars, especially near your limit;"
 msgstr ""
 
+#: src/features/legal/texts/static/render.tsx
+msgid "Version {version}"
+msgstr ""
+
 #: src/features/legal/texts/HowPowrDecides.tsx
 msgid "Versions in this app"
 msgstr ""
 
 #: src/features/legal/texts/HowPowrDecides.tsx
-msgid "Volume is counted as hard sets per muscle per week: sets close to failure count fully, and an exercise counts fully for its main muscles and in part for helping muscles. Weekly targets sit inside a range from research, with fewer sets for novices and more for muscles you chose as priorities."
+msgid "Volume is counted as hard sets per muscle per week: sets close to failure count fully, and an exercise counts fully for its main muscles and in part for helping muscles. Weekly targets sit inside a range from research, with fewer sets for beginners and more for muscles you chose as priorities."
 msgstr ""
 
 #: src/features/legal/texts/Disclaimer.tsx
@@ -517,7 +573,7 @@ msgid "your equipment, settings and the choices you made in the app."
 msgstr ""
 
 #: src/features/legal/texts/HowPowrDecides.tsx
-msgid "Your plan is built from a template for your goal, days and equipment, with exercises ranked for each muscle, sets per exercise and the length of a training block. It is checked against your time per session."
+msgid "Your plan is built from a template for your goal, days and equipment, with exercises ranked for each muscle, sets per exercise and the length of a training block. It is checked against your time per workout."
 msgstr ""
 
 #: src/features/legal/texts/HowPowrDecides.tsx

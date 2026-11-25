@@ -186,10 +186,10 @@ export function ScheduleStep({ draft, update, errors, weekStart }: StepProps) {
       </div>
       <div className="flex flex-col gap-2">
         <p className="text-lg font-semibold">
-          <Trans>How long can a session be?</Trans>
+          <Trans>How long can a workout be?</Trans>
         </p>
         <Segmented
-          label={t`Session length in minutes`}
+          label={t`Workout length in minutes`}
           value={minutes}
           onChange={(value) =>
             update({
@@ -414,7 +414,7 @@ export function PrioritiesStep({ draft, update, errors }: StepProps) {
         </p>
         <p className="text-fg-muted">
           <Trans>
-            They get more sets and come first in a session. If time is short, they keep their full
+            They get more sets and come first in a workout. If time is short, they keep their full
             volume.
           </Trans>
         </p>

@@ -297,7 +297,7 @@ function AreaTitle({ area }: { area: Area }): ReactNode {
     case 'warmup':
       return <Trans>Warm-up sets</Trans>;
     case 'session':
-      return <Trans>Tempo, techniques and session length</Trans>;
+      return <Trans>Tempo, techniques and workout length</Trans>;
     case 'planning':
       return <Trans>Building your plan</Trans>;
     case 'monitoring':
@@ -322,8 +322,8 @@ function AreaText({ area }: { area: Area }): ReactNode {
         <Trans>
           From the weight, reps and effort of your sets, POWR estimates the most you could lift once
           (your estimated 1-rep max). Heavy, hard sets count most. The trend is smoothed, because
-          single sessions vary by several percent; a change is only called likely real once it is
-          larger than that day-to-day variation and lasts for a few sessions.
+          single workouts vary by several percent; a change is only called likely real once it is
+          larger than that day-to-day variation and lasts for a few workouts.
         </Trans>
       );
     case 'volume':
@@ -331,16 +331,17 @@ function AreaText({ area }: { area: Area }): ReactNode {
         <Trans>
           Volume is counted as hard sets per muscle per week: sets close to failure count fully, and
           an exercise counts fully for its main muscles and in part for helping muscles. Weekly
-          targets sit inside a range from research, with fewer sets for novices and more for muscles
-          you chose as priorities.
+          targets sit inside a range from research, with fewer sets for beginners and more for
+          muscles you chose as priorities.
         </Trans>
       );
     case 'progression':
       return (
         <Trans>
           Assistance exercises add reps until the top of the range, then a small weight step (double
-          progression). Main lifts use your estimated 1-rep max and the target effort; novices add a
-          fixed step each session. Steps follow your equipment and your level.
+          progression). Main lifts use your estimated 1-rep max and the target effort; beginners
+          (called novices in training research) add a fixed step each workout. Steps follow your
+          equipment and your level.
         </Trans>
       );
     case 'deload':
@@ -348,7 +349,7 @@ function AreaText({ area }: { area: Area }): ReactNode {
         <Trans>
           After a block of training weeks comes a lighter week with fewer sets and a little more in
           reserve. POWR offers it earlier when several signs suggest it. After a break, the first
-          sessions ease back in.
+          workouts ease back in.
         </Trans>
       );
     case 'rest':
@@ -368,7 +369,7 @@ function AreaText({ area }: { area: Area }): ReactNode {
     case 'session':
       return (
         <Trans>
-          The default tempo, how special techniques such as drop sets count, and how long a session
+          The default tempo, how special techniques such as drop sets count, and how long a workout
           will take.
         </Trans>
       );
@@ -377,14 +378,14 @@ function AreaText({ area }: { area: Area }): ReactNode {
         <Trans>
           Your plan is built from a template for your goal, days and equipment, with exercises
           ranked for each muscle, sets per exercise and the length of a training block. It is
-          checked against your time per session.
+          checked against your time per workout.
         </Trans>
       );
     case 'monitoring':
       return (
         <Trans>
           The optional check-in compares today with your usual sleep, energy and soreness. On a low
-          day POWR can offer a lighter session; you choose.
+          day POWR can offer a lighter workout; you choose.
         </Trans>
       );
     case 'bodyweight':
@@ -404,7 +405,7 @@ function AreaText({ area }: { area: Area }): ReactNode {
     case 'motivation':
       return (
         <Trans>
-          A week counts for your streak when you did the sessions you planned. Breaks pause it, they
+          A week counts for your streak when you did the workouts you planned. Breaks pause it, they
           never break it.
         </Trans>
       );

@@ -12,6 +12,7 @@ import { Button, buttonClass } from '#ui/button';
 import { ChoiceCards } from '#ui/choice';
 import { Card, Screen } from '#ui/screen';
 import { Sheet } from '#ui/sheet';
+import { UnsavedChangesGuard } from '#ui/unsaved-changes';
 
 import {
   useActivePlan,
@@ -21,7 +22,7 @@ import {
   useProfile,
 } from '../../hooks/use-planning';
 import { EquipmentEditor } from './EquipmentEditor';
-import { itemCount } from './inventory';
+import { itemCount, sameEquipment } from './inventory';
 import { SubstitutionReview, type Substitution } from './SubstitutionReview';
 
 /** Settings → Equipment: the profiles (default, rename, delete) and adding one from a preset. */
@@ -255,8 +256,18 @@ export function EquipmentEditScreen({
       .flatMap((mesocycle) => mesocycle.days)
       .find((day) => day.key === dayKey)?.name.en ?? dayKey;
 
+  // Saved: leaving loses nothing, so the unsaved-changes guard does not ask.
   const done = (saved: 'equipment' | 'plan') =>
-    void navigate({ to: '/settings/equipment', search: { saved } });
+    void navigate({ to: '/settings/equipment', search: { saved }, ignoreBlocker: true });
+  // PWA-12, TD-68 (M6c): a change the user made and has not saved.
+  const base = profileId === 'new' ? created : (stored ?? null);
+  const unsaved = edited !== null && !sameEquipment(edited, base);
+  const guard = (
+    <UnsavedChangesGuard
+      when={unsaved}
+      description={t`Your changes to this equipment are not saved. If you leave now, they are lost.`}
+    />
+  );
 
   const save = async () => {
     if (!draft) return;
@@ -288,6 +299,7 @@ export function EquipmentEditScreen({
   if (review) {
     return (
       <Screen title={t`Review plan changes`}>
+        {guard}
         <SubstitutionReview
           affected={review}
           dayName={dayName}
@@ -301,6 +313,7 @@ export function EquipmentEditScreen({
 
   return (
     <Screen title={profileId === 'new' ? t`New equipment` : t`Edit equipment`}>
+      {guard}
       {draft ? (
         <>
           {error ? <Callout tone="danger">{error}</Callout> : null}

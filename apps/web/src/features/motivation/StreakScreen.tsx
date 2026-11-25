@@ -124,19 +124,19 @@ function StreakContent({ view, reload }: { view: StreakView; reload: () => void 
         <ul className="flex list-disc flex-col gap-1 pl-5">
           <li>
             <Trans>
-              A week is kept when you do the sessions it asks for: your planned sessions, or your
-              weekly goal without a plan. Without either, one session keeps the week.
+              A week is kept when you do the workouts it asks for: your planned workouts, or your
+              weekly goal without a plan. Without either, one workout keeps the week.
             </Trans>
           </li>
           <li>
             <Trans>
-              Sessions on unplanned days count. A partial workout counts once you did at least half
+              Workouts on unplanned days count. A partial workout counts once you did at least half
               of its planned sets.
             </Trans>
           </li>
           <li>
             <Trans>
-              Lighter (deload) weeks count with their planned sessions: rest is part of training.
+              Lighter (deload) weeks count with their planned workouts: rest is part of training.
             </Trans>
           </li>
           <li>
@@ -153,10 +153,10 @@ function StreakContent({ view, reload }: { view: StreakView; reload: () => void 
           </li>
           <li>
             {view.grace ? (
-              <Trans>Your grace is on: a week with one session short still counts.</Trans>
+              <Trans>Your grace is on: a week with one workout short still counts.</Trans>
             ) : (
               <Trans>
-                You can turn on a grace of one session a week in Settings, under Insights.
+                You can turn on a grace of one workout a week in Settings, under Insights.
               </Trans>
             )}
           </li>

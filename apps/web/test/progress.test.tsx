@@ -130,7 +130,7 @@ describe('Progress tab (M4b)', () => {
     // The label in words, never colour alone.
     const label = within(bench).getByTestId('trained-change').textContent;
     expect(label).toMatch(
-      /^(Not enough sessions yet to tell a real change|Within normal day-to-day variation|More than normal day-to-day variation, not confirmed yet|(Very likely|Likely) a real (gain|drop))$/,
+      /^(Not enough workouts yet to tell a real change|Within normal day-to-day variation|More than normal day-to-day variation, not confirmed yet|(Very likely|Likely) a real (gain|drop))$/,
     );
     // Curls logged without an effort rating: an all-sets estimate only, still calibrating, and no
     // strength trend to call a change from.
@@ -142,7 +142,7 @@ describe('Progress tab (M4b)', () => {
       /^Estimated 1-rep max [\d.,]+ kg, still calibrating$/,
     );
     expect(within(curl).getByTestId('trained-change').textContent).toBe(
-      'Not enough sessions yet to tell a real change',
+      'Not enough workouts yet to tell a real change',
     );
     expect(await seriousViolations()).toEqual([]);
 

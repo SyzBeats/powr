@@ -7,7 +7,7 @@
 id: tpl.bb-full-body-5day
 name: { en: Full body ×5 }
 description:
-  en: Five shorter full-body sessions a week. Each muscle is trained on two or three days, so no session has to carry much volume for one muscle.
+  en: Five shorter full-body workouts a week. Each muscle is trained on two or three days, so no workout has to carry much volume for one muscle.
 style: bodybuilding
 daysPerWeek: 5
 split: fullBody

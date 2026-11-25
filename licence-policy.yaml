@@ -14,7 +14,7 @@ allowed:
   - OFL-1.1
   - CC-BY-4.0
   - BlueOak-1.0.0
-  - Python-2.0
+  # Python-2.0 was removed on 2026-11-25 (licence review L-4, product owner): no component used it.
   # Original work of the publisher (artwork such as the generated app icons, content, texts).
   # Approved by product owner Simeon Zimmermann, 2026-11-24 (ADR-0018). Each asset that uses it
   # is listed in assets-inventory.yaml.
@@ -48,6 +48,17 @@ deniedPackages:
     reason: no Sentry (product-owner decision 2026-11-24)
   - package: '@sentry-internal/*'
     reason: no Sentry (product-owner decision 2026-11-24)
+# Programs the publisher runs on its own server (deploy/server-inventory.yaml; licence review
+# L-2, product owner 2026-11-25). They are never distributed, so `allowed` and `denied` above do
+# not apply to them; these licences would bind the publisher merely for running a program as a
+# network service (AGPL), or restrict running it in production (SSPL, BUSL, Elastic, Commons
+# Clause), so a server program under one of them fails the gate until it is reviewed.
+serverDenied:
+  - AGPL-*
+  - SSPL-*
+  - BUSL-*
+  - Elastic-*
+  - Commons-Clause
 # Reviewed exceptions: { package, version, licence, scope, reviewer, approval, date, rationale }.
 # An exception is added only with the product owner's approval, recorded in `approval`.
 exceptions:

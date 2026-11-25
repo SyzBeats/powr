@@ -90,7 +90,7 @@ export function useLabels() {
     value === 'squat' ? t`squat` : value === 'bench' ? t`bench press` : t`deadlift`;
 
   const level = (value: TraineeLevel): string =>
-    value === 'novice' ? t`novice` : value === 'intermediate' ? t`intermediate` : t`advanced`;
+    value === 'novice' ? t`beginner` : value === 'intermediate' ? t`intermediate` : t`advanced`;
 
   const style = (value: TrainingStyle): string =>
     value === 'bodybuilding'
@@ -140,7 +140,7 @@ export function useLabels() {
       case 'rpe':
         return t`effort-based loading (RPE)`;
       case 'linear':
-        return t`linear (a little more weight each session)`;
+        return t`linear (a little more weight each workout)`;
       case 'apre':
         return t`APRE`;
       default:
@@ -199,7 +199,7 @@ export function useLabels() {
       case 'skipped':
         return t`Skipped`;
       case 'merged':
-        return t`Merged into another session`;
+        return t`Merged into another workout`;
       case 'onBreak':
         return t`On break`;
       default:

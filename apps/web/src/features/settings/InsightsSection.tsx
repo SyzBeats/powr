@@ -66,17 +66,17 @@ export function InsightsSection() {
           <Trans>Weekly streak</Trans>
         </h3>
         <CheckRow
-          label={t`Grace: a week with one session short still counts`}
-          description={t`A week without any session never counts. Off by default.`}
+          label={t`Grace: a week with one workout short still counts`}
+          description={t`A week without any workout never counts. Off by default.`}
           checked={grace}
           onChange={(streakGrace) => void save({ streakGrace })}
         />
         <div className="flex flex-col gap-1">
           <span aria-hidden="true" className="px-2 font-medium">
-            <Trans>Weekly session goal without a plan</Trans>
+            <Trans>Weekly workout goal without a plan</Trans>
           </span>
           <Segmented<Target>
-            label={t`Weekly session goal without a plan`}
+            label={t`Weekly workout goal without a plan`}
             value={target === null ? 'none' : (String(Math.min(7, target)) as Target)}
             onChange={(next) =>
               void save({ weeklySessionTarget: next === 'none' ? null : Number(next) })
@@ -91,7 +91,7 @@ export function InsightsSection() {
           />
           <p className="px-2 text-sm text-fg-muted">
             <Trans>
-              Used for weeks without planned sessions. Not set: one session keeps such a week.
+              Used for weeks without planned workouts. Not set: one workout keeps such a week.
             </Trans>
           </p>
         </div>

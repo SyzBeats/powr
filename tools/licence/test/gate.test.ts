@@ -18,6 +18,7 @@ const policy: LicencePolicy = {
   devOnlyAllowed: [],
   deniedPackages: [],
   exceptions: [],
+  serverDenied: ['AGPL-*', 'SSPL-*'],
 };
 
 describe('licence gate over bundled modules', () => {

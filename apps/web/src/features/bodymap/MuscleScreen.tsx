@@ -216,7 +216,7 @@ function VolumeCard({
               <Trans>Still planned</Trans>
             </dt>
             <dd className="font-semibold">
-              <Trans>{sets(row.remaining.fractional)} in your open sessions this week</Trans>
+              <Trans>{sets(row.remaining.fractional)} in your open workouts this week</Trans>
             </dd>
           </>
         ) : null}

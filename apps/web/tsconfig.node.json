@@ -24,6 +24,9 @@
     },
     {
       "path": "../../packages/rules/scripts"
+    },
+    {
+      "path": "../../tools/release-notes"
     }
   ]
 }

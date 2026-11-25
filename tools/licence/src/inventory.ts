@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { parse as parseYaml } from 'yaml';
 
 import { readLicenceDetails, type PackageRef } from './packages.ts';
-import { evaluate, type LicencePolicy, type Verdict } from './policy.ts';
+import { evaluate, evaluateServer, type LicencePolicy, type Verdict } from './policy.ts';
 
 /** What one build (app or service worker) bundled, written by the Vite plugin. */
 export interface BundleReport {
@@ -18,7 +18,8 @@ export interface InventoryEntry {
   readonly licence: string | null;
   readonly chosenLicence: string | null;
   readonly distributed: boolean;
-  readonly kind: 'npm' | 'asset';
+  /** `server`: run by the publisher on its server, never distributed (L-2). */
+  readonly kind: 'npm' | 'asset' | 'server';
   readonly verdict: Verdict['status'];
   readonly reason?: string;
 }
@@ -70,11 +71,28 @@ interface AssetEntry {
   copyright?: string;
 }
 
+interface ServerEntry {
+  name: string;
+  version?: string;
+  licence: string;
+}
+
+/** The programs of deploy/server-inventory.yaml: the server's own and those in the image. */
+export function readServerInventory(file: string): ServerEntry[] {
+  const raw = parseYaml(readFileSync(file, 'utf8')) as {
+    server?: ServerEntry[];
+    image?: { packages?: ServerEntry[] };
+  } | null;
+  return [...(raw?.server ?? []), ...(raw?.image?.packages ?? [])];
+}
+
 /** Evaluates distributed packages and assets (and optionally build-only packages). */
 export function runGate(options: {
   policy: LicencePolicy;
   bundled: readonly PackageRef[];
   assetsInventoryFile?: string;
+  /** deploy/server-inventory.yaml: recorded as `kind: server`, never distributed (L-2). */
+  serverInventoryFile?: string;
   buildOnly?: readonly { name: string; version: string; licence: string | null }[];
 }): GateResult {
   const entries: InventoryEntry[] = [];
@@ -127,6 +145,17 @@ export function runGate(options: {
     }
   }
 
+  if (options.serverInventoryFile && existsSync(options.serverInventoryFile)) {
+    for (const program of readServerInventory(options.serverInventoryFile)) {
+      const version = program.version ?? '-';
+      const verdict = evaluateServer(
+        { name: program.name, version, licence: program.licence },
+        options.policy,
+      );
+      entries.push(toEntry(program.name, version, program.licence, false, 'server', verdict));
+    }
+  }
+
   const distributedKeys = new Set(options.bundled.map((pkg) => `${pkg.name}@${pkg.version}`));
   for (const tool of options.buildOnly ?? []) {
     if (distributedKeys.has(`${tool.name}@${tool.version}`)) continue;
@@ -146,7 +175,7 @@ function toEntry(
   version: string,
   licence: string | null,
   distributed: boolean,
-  kind: 'npm' | 'asset',
+  kind: InventoryEntry['kind'],
   verdict: Verdict,
 ): InventoryEntry {
   return {
@@ -165,7 +194,7 @@ export function formatFailures(failures: readonly InventoryEntry[]): string {
   return failures
     .map(
       (entry) =>
-        `  ✗ ${entry.name}@${entry.version} (${entry.distributed ? 'distributed' : 'build-only'}): ${entry.reason}`,
+        `  ✗ ${entry.name}@${entry.version} (${entry.kind === 'server' ? 'server' : entry.distributed ? 'distributed' : 'build-only'}): ${entry.reason}`,
     )
     .join('\n');
 }

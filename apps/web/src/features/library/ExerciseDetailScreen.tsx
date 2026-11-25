@@ -447,7 +447,7 @@ function HistoryCard({ detail }: { detail: Detail }) {
         <dl className="flex flex-col gap-2" data-testid="exercise-history">
           <div>
             <dt className="text-fg-muted">
-              <Trans>Sessions</Trans>
+              <Trans>Workouts</Trans>
             </dt>
             <dd className="font-semibold tabular">
               {history.firstDate && history.lastDate ? (
@@ -479,7 +479,7 @@ function HistoryCard({ detail }: { detail: Detail }) {
                 {massFromKg(history.e1rmKg, unit, 1)}
                 {history.calibration === 'calibrated' ? null : (
                   <span className="block text-sm font-normal text-fg-muted">
-                    <Trans>Still settling: estimates firm up after a few sessions.</Trans>
+                    <Trans>Still settling: estimates firm up after a few workouts.</Trans>
                   </span>
                 )}
               </dd>
@@ -496,7 +496,7 @@ function HistoryCard({ detail }: { detail: Detail }) {
           {history.bests?.volumeKg ? (
             <div>
               <dt className="text-fg-muted">
-                <Trans>Best session volume</Trans>
+                <Trans>Best workout volume</Trans>
               </dt>
               <dd className="font-semibold tabular">
                 {massFromKg(history.bests.volumeKg, unit, 0)}

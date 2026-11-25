@@ -64,7 +64,7 @@ test.describe('Progress tab (M4b: ANL-02…07, ANL-11)', () => {
       /^Estimated 1-rep max [\d.,]+ (kg|lb)/,
     );
     await expect(benchRow.getByTestId('trained-change')).toHaveText(
-      'Not enough sessions yet to tell a real change',
+      'Not enough workouts yet to tell a real change',
     );
     await checkScreen(page, 'progress');
     await checkReflow(page, 'progress');

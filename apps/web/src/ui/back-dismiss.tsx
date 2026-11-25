@@ -70,19 +70,27 @@ export function useBackDismiss(open: boolean, onClose: () => void): void {
     const takeover = pendingBack !== null && sheetKeyOf(history.location.state) === pendingBack.key;
     if (pendingBack) clearTimeout(pendingBack.timer);
     pendingBack = null;
-    void router.navigate({
-      href: history.location.href,
-      state: (previous) => ({ ...previous, [SHEET_KEY]: key }) as typeof previous,
-      replace: takeover,
-      resetScroll: false,
-    });
-    const index = indexOf(history.location.state);
-    const openedAt = history.location.href;
-    let latest = openedAt;
-    let gone = sheetKeyOf(history.location.state) !== key;
+    // The sheet's entry and what the page put in the URL while it is open. M6c: the entry may
+    // arrive later than the navigate call (with a navigation blocker registered, such as the
+    // unsaved-changes guard, TanStack applies a push after the blocker's answer), so it is taken
+    // when the history reports it.
+    let index: number | null = null;
+    let openedAt = '';
+    let latest = '';
+    let gone = false;
+    const arrived = () => {
+      if (index !== null || sheetKeyOf(history.location.state) !== key) return;
+      index = indexOf(history.location.state);
+      openedAt = history.location.href;
+      latest = openedAt;
+    };
 
     const unsubscribe = history.subscribe(({ location }) => {
       if (gone) return;
+      if (index === null) {
+        arrived();
+        return;
+      }
       const current = indexOf(location.state);
       // The page itself may replace the sheet's entry (filters kept in the URL): still open.
       if (current >= index) {
@@ -98,6 +106,14 @@ export function useBackDismiss(open: boolean, onClose: () => void): void {
         void router.navigate({ href: latest, replace: true, resetScroll: false });
       }
     });
+    void router.navigate({
+      href: history.location.href,
+      state: (previous) => ({ ...previous, [SHEET_KEY]: key }) as typeof previous,
+      replace: takeover,
+      resetScroll: false,
+    });
+    // Without a blocker the entry is there at once.
+    arrived();
 
     return () => {
       unsubscribe();

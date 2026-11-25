@@ -163,7 +163,7 @@ describe('next block (PLN-13, TD-36)', () => {
       await screen.findByRole('button', { name: 'Accept the next block' }, { timeout: 5000 }),
     ).toBeTruthy();
     // The sample plan has 75-minute sessions: the same rule lowers some targets.
-    expect(screen.getByText('Your session time is tight')).toBeTruthy();
+    expect(screen.getByText('Your workout time is tight')).toBeTruthy();
     expect(screen.getByRole('button', { name: 'Why? the time budget' })).toBeTruthy();
     expect(await seriousViolations()).toEqual([]);
   });

@@ -1,7 +1,7 @@
 # ADR-0018: Licence compliance tooling: own inventory from the bundle graph + SPDX policy gate
 
-- Status: Accepted (v0.3, 2026-11-24: own SPDX evaluator; licence exceptions approved; v0.4, 2026-11-24: content entries approved; v0.5, 2026-11-24: package block list with no Sentry (product-owner decision), two build-only packages removed by pnpm `overrides`, see below)
-- Date: 2026-11-23, amended 2026-11-24
+- Status: Accepted (v0.3, 2026-11-24: own SPDX evaluator; licence exceptions approved; v0.4, 2026-11-24: content entries approved; v0.5, 2026-11-24: package block list with no Sentry (product-owner decision), two build-only packages removed by pnpm `overrides`, see below; v0.11, 2026-11-25: copyright extraction, server-side inventory, Python-2.0 removed)
+- Date: 2026-11-23, amended 2026-11-24 and 2026-11-25
 - Related: technical concept §8.21, §8.12; PRD LEG-06, LEG-08, NFR-MNT-08, TC-18, V-04, R-09
 
 ## Context
@@ -74,3 +74,13 @@ The decision stands. v0.5 folds in the M2 tooling (TD-09 native Lingui macro, TD
   Neither is ever loaded: Lighthouse imports `@sentry/node` only with `--enable-error-reporting`, and js-yaml uses argparse only in its own command-line binary. pnpm `overrides` in `pnpm-workspace.yaml` remove both from the install (`'lighthouse>@sentry/node': '-'`, `'js-yaml@5>argparse': '-'`; ADR-0021). There is no exception entry and no allowlist change. For `argparse` the product owner chose this exclusion over allowing `PSF-2.0`. For Sentry, the override keeps Lighthouse's optional error reporting out of the install, and the block list fails the gate if any Sentry package returns through another path.
 
 Source: `IMPLEMENTATION_NOTES.md` (repository root), section "M2 tooling (TD-09, TD-10, TD-12)", and the product-owner decision of 2026-11-24 on Sentry.
+
+## Amendment (v0.11, 2026-11-25)
+
+The decision stands. Product-owner decisions of 2026-11-25 on the licence review's findings (`docs/release/licence-review.md`):
+
+- **Copyright lines (L-1).** A copyright notice is a line that starts with "Copyright", "(c)" or "©" and names a year or a holder; licence boilerplate and template lines are skipped, and a package whose licence file has no notice takes it from its NOTICE file (`copyrightLines` in `tools/licence/src/packages.ts`). Licences of embedded code in a package's `licenses/` folder are appended to its licence text, with their notices (ECharts embeds parts of d3, BSD-3-Clause; L-5). Tests use the real licence files of the five packages that were wrong as fixtures.
+- **Server-side components (L-2).** The programs the publisher runs on its server (Coolify, Traefik and the packages of the `nginx:1.30-alpine` image) are listed in `deploy/server-inventory.yaml` and recorded in `licence-inventory.json` as `kind: server`, `distributed: false`. They are never distributed, so `allowed` and `denied` do not apply to them; a new policy key, `serverDenied` (AGPL, SSPL, BUSL, Elastic, Commons Clause), fails the gate for licences that bind running a program as a network service or restrict running it in production. CI saves each built image's package list (`image-packages.txt`).
+- **Allowlist (L-4).** `Python-2.0` is removed; no component used it.
+
+Source: `IMPLEMENTATION_NOTES.md` (repository root), section "M6c checklist rows and decisions".

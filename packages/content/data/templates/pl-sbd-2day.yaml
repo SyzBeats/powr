@@ -6,7 +6,7 @@
 id: tpl.pl-sbd-2day
 name: { en: 'Full body SBD ×2' }
 description:
-  en: 'Two sessions a week with squat, bench press and deadlift in each, one heavy and one lighter exposure per lift.'
+  en: 'Two workouts a week with squat, bench press and deadlift in each, one heavy and one lighter exposure per lift.'
 style: powerlifting
 daysPerWeek: 2
 split: sbd

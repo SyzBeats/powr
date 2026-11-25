@@ -183,7 +183,7 @@ function LegalSection() {
   );
 }
 
-/** SET-09: version, registry and content versions, the publisher and how to reach them. */
+/** SET-09: version, registry and content versions, what's new, the publisher and how to reach them. */
 function AboutSection() {
   const { t } = useLingui();
   const { rulesVersion, contentVersion } = useRegistryInfo();
@@ -203,6 +203,11 @@ function AboutSection() {
           <Trans>Exercise library {contentVersion}</Trans>
         </li>
       </ul>
+      {/* SET-09, NFR-MNT-07 (M6c): the release notes of every version; the update notice links
+          here too. */}
+      <Link to="/settings/whats-new" className={settingsLinkClass}>
+        <Trans>What's new: the release notes</Trans>
+      </Link>
       {/* PWA-13: Settings → About → Device support (M5z; also linked from Data and backups). */}
       <Link to="/settings/device-support" className={settingsLinkClass}>
         <Trans>Device support: what works on this phone</Trans>

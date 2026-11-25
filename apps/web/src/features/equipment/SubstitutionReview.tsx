@@ -57,7 +57,7 @@ export function SubstitutionReview({
         <p>
           <Trans>
             Pick a replacement for each one. The best match for the same muscles comes first.
-            Changes apply from your next session.
+            Changes apply from your next workout.
           </Trans>
         </p>
       </Callout>

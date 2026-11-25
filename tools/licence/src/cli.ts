@@ -29,14 +29,16 @@ const result = runGate({
   policy: loadPolicy(join(root, 'licence-policy.yaml')),
   bundled,
   assetsInventoryFile: join(root, 'assets-inventory.yaml'),
+  serverInventoryFile: join(root, 'deploy/server-inventory.yaml'),
   buildOnly: listInstalledPackages(),
 });
 
 writeFileSync(join(root, 'licence-inventory.json'), JSON.stringify(result.entries, null, 2) + '\n');
 
 const distributed = result.entries.filter((entry) => entry.distributed).length;
+const server = result.entries.filter((entry) => entry.kind === 'server').length;
 console.log(
-  `Licence inventory: ${distributed} distributed, ${result.entries.length - distributed} build-only -> licence-inventory.json`,
+  `Licence inventory: ${distributed} distributed, ${result.entries.length - distributed - server} build-only, ${server} server-side -> licence-inventory.json`,
 );
 if (result.failures.length > 0) {
   console.error(`Licence gate FAILED (licence-policy.yaml):\n${formatFailures(result.failures)}`);

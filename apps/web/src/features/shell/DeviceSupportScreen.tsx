@@ -260,7 +260,7 @@ function Capabilities({ report }: { report: CapabilityReport }) {
         name={t`App shortcuts`}
         level="unknown"
         status={t`Cannot be checked from the app`}
-        instead={t`After installing, touch and hold the POWR icon: Start today's session, Log bodyweight. Your launcher decides whether it shows them.`}
+        instead={t`After installing, touch and hold the POWR icon: Start today's workout, Log bodyweight. Your launcher decides whether it shows them.`}
         tested={notTested}
       />
     </ul>

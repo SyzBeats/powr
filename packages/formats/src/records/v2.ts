@@ -829,3 +829,15 @@ export const measurementRecordSchema = z
     (entry) => entry.site.startsWith('skinfold') === (entry.unit === 'mm'),
     'Skinfolds are in mm, circumferences in cm or in',
   );
+
+/**
+ * Parts that several records share, named in the published JSON Schemas (`$defs`, written by
+ * `pnpm formats:schemas` into docs/formats/schemas/). Import does not use this list.
+ */
+export const RECORD_PARTS = {
+  prescription: prescriptionSchema,
+  planSlot: planSlotSchema,
+  planDay: planDaySchema,
+  sessionExercise: sessionExerciseSchema,
+  sessionCore: sessionCoreSchema,
+};

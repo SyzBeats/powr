@@ -56,21 +56,21 @@ export const WHY_MESSAGES: { readonly [K in RuleId]: WhyMessage } = {
     full: msg({
       id: 'why.e1rm.baseline',
       message:
-        '{kind, select, oneRepMax {Your known 1-rep max, {e1rm}, is your starting estimated max (e1RM).} other {This set gives a starting estimated 1-rep max (e1RM) of {e1rm}, worked out like any set you log.}} The loads of your first sessions come from it. {old, select, yes {It was lifted {ageDays, plural, one {# day} other {# days}} ago, so POWR refines it from the sets you log.} other {POWR refines it from the sets you log.}}',
+        '{kind, select, oneRepMax {Your known 1-rep max, {e1rm}, is your starting estimated max (e1RM).} other {This set gives a starting estimated 1-rep max (e1RM) of {e1rm}, worked out like any set you log.}} The loads of your first workouts come from it. {old, select, yes {It was lifted {ageDays, plural, one {# day} other {# days}} ago, so POWR refines it from the sets you log.} other {POWR refines it from the sets you log.}}',
     }),
   },
   'e1rm.baseline.none': {
     full: msg({
       id: 'why.e1rm.baseline.none',
       message:
-        'Without a starting point, POWR calibrates: in the first {exposuresMin}–{exposuresMax} sessions with each exercise, you stop with {rirMin}–{rirMax} reps in reserve (RIR) and pick a load you can control. Your estimated max (e1RM) comes from those sets, and the loads follow it from then on.',
+        'Without a starting point, POWR calibrates: in the first {exposuresMin}–{exposuresMax} workouts with each exercise, you stop with {rirMin}–{rirMax} reps in reserve (RIR) and pick a load you can control. Your estimated max (e1RM) comes from those sets, and the loads follow it from then on.',
     }),
   },
   'e1rm.session': {
     full: msg({
       id: 'why.e1rm.session',
       message:
-        '{e1rm, select, none {No set from this session could be used to estimate your 1-rep max (e1RM).} other {Session e1RM: {e1rm}, from the most reliable of {candidates, plural, one {# usable set} other {# usable sets}}. Sets with fewer reps, taken closer to failure, count the most.}}',
+        '{e1rm, select, none {No set from this workout could be used to estimate your 1-rep max (e1RM).} other {Workout e1RM: {e1rm}, from the most reliable of {candidates, plural, one {# usable set} other {# usable sets}}. Sets with fewer reps, taken closer to failure, count the most.}}',
     }),
   },
   'e1rm.loadForTarget': {
@@ -86,28 +86,28 @@ export const WHY_MESSAGES: { readonly [K in RuleId]: WhyMessage } = {
     full: msg({
       id: 'why.trend.series',
       message:
-        'Your strength trend combines {observations, plural, one {# session estimate} other {# session estimates}}, smoothed so one good or bad day does not swing it. How quickly it follows changes is set for {level} lifters.',
+        'Your strength trend combines {observations, plural, one {# workout estimate} other {# workout estimates}}, smoothed so one good or bad day does not swing it. How quickly it follows changes is set for {level} lifters.',
     }),
   },
   'trend.change.insufficientData': {
     full: msg({
       id: 'why.trend.change.insufficientData',
       message:
-        'Not enough data yet to say whether your strength has changed. A few more sessions of this lift will show the trend.',
+        'Not enough data yet to say whether your strength has changed. A few more workouts of this lift will show the trend.',
     }),
   },
   'trend.change.none': {
     full: msg({
       id: 'why.trend.change.none',
       message:
-        'Since {referenceDate}, your estimated max changed by {deltaPct, number}%. {reason, select, unconfirmed {That is more than normal day-to-day variation (about {typicalErrorPct, number}%), but it is not a confirmed change yet. POWR calls it real once the trend is clear enough and the change holds over a few sessions in a row.} other {That is within normal day-to-day variation (about {typicalErrorPct, number}%), so there is no real change yet.}}',
+        'Since {referenceDate}, your estimated max changed by {deltaPct, number}%. {reason, select, unconfirmed {That is more than normal day-to-day variation (about {typicalErrorPct, number}%), but it is not a confirmed change yet. POWR calls it real once the trend is clear enough and the change holds over a few workouts in a row.} other {That is within normal day-to-day variation (about {typicalErrorPct, number}%), so there is no real change yet.}}',
     }),
   },
   'trend.change.likely': {
     full: msg({
       id: 'why.trend.change.likely',
       message:
-        'Since {referenceDate}, your estimated max changed by {deltaPct, number}%, in the same direction over several sessions. {direction, select, down {That is likely a real dip, not day-to-day noise. Dips happen; extra rest or a lighter week often helps.} other {That is likely real progress, beyond day-to-day variation (about {typicalErrorPct, number}%).}}',
+        'Since {referenceDate}, your estimated max changed by {deltaPct, number}%, in the same direction over several workouts. {direction, select, down {That is likely a real dip, not day-to-day noise. Dips happen; extra rest or a lighter week often helps.} other {That is likely real progress, beyond day-to-day variation (about {typicalErrorPct, number}%).}}',
     }),
   },
   'trend.change.veryLikely': {
@@ -187,7 +187,7 @@ export const WHY_MESSAGES: { readonly [K in RuleId]: WhyMessage } = {
     full: msg({
       id: 'why.progression.linear.increase',
       message:
-        'Last session went as planned, so the load goes up by {increment}, from {from} to {to}: the usual step for {level} lifters, rounded up to a load you can set up.',
+        'Last workout went as planned, so the load goes up by {increment}, from {from} to {to}: the usual step for {level} lifters, rounded up to a load you can set up.',
     }),
     simple: msg({
       id: 'why.progression.linear.increase.simple',
@@ -198,7 +198,7 @@ export const WHY_MESSAGES: { readonly [K in RuleId]: WhyMessage } = {
     full: msg({
       id: 'why.progression.linear.retry',
       message:
-        'Not all reps were reached last session, so repeat {load} and try again. That is a normal part of progressing.',
+        'Not all reps were reached last workout, so repeat {load} and try again. That is a normal part of progressing.',
     }),
     simple: msg({
       id: 'why.progression.linear.retry.simple',
@@ -209,19 +209,19 @@ export const WHY_MESSAGES: { readonly [K in RuleId]: WhyMessage } = {
     full: msg({
       id: 'why.progression.linear.stallReset',
       message:
-        '{failedSessions, plural, one {# session} other {# sessions in a row}} missed the target reps at this load, so it resets by {resetPct, number}%, from {from} to {to}, and builds up again from there.',
+        '{failedSessions, plural, one {# workout} other {# workouts in a row}} missed the target reps at this load, so it resets by {resetPct, number}%, from {from} to {to}, and builds up again from there.',
     }),
     simple: msg({
       id: 'why.progression.linear.stallReset.simple',
       message:
-        'A few tough sessions in a row: step back to {to} and build up again. That is a normal part of getting stronger.',
+        'A few tough workouts in a row: step back to {to} and build up again. That is a normal part of getting stronger.',
     }),
   },
   'progression.linear.advancedHold': {
     full: msg({
       id: 'why.progression.linear.advancedHold',
       message:
-        'At the advanced level, the load stays the same from session to session. Progress comes from changes in reps, sets and effort across the block.',
+        'At the advanced level, the load stays the same from workout to workout. Progress comes from changes in reps, sets and effort across the block.',
     }),
   },
   'progression.percent.load': {
@@ -431,24 +431,24 @@ export const WHY_MESSAGES: { readonly [K in RuleId]: WhyMessage } = {
     full: msg({
       id: 'why.volume.sessionCap.within',
       message:
-        '{fractional, number} sets for this muscle in one session, counting partial credit ({direct, number} direct): within the range where each set still pays off well.',
+        '{fractional, number} sets for this muscle in one workout, counting partial credit ({direct, number} direct): within the range where each set still pays off well.',
     }),
     simple: msg({
       id: 'why.volume.sessionCap.within.simple',
       message:
-        '{fractional, number} sets for this muscle in this session: a good amount for one day.',
+        '{fractional, number} sets for this muscle in this workout: a good amount for one day.',
     }),
   },
   'volume.sessionCap.exceeded': {
     full: msg({
       id: 'why.volume.sessionCap.exceeded',
       message:
-        '{fractional, number} sets for this muscle in one session, counting partial credit ({direct, number} direct): above the per-session soft cap, so expect low return per extra set. Consider moving some to another day.',
+        '{fractional, number} sets for this muscle in one workout, counting partial credit ({direct, number} direct): above the per-workout soft cap, so expect low return per extra set. Consider moving some to another day.',
     }),
     simple: msg({
       id: 'why.volume.sessionCap.exceeded.simple',
       message:
-        'That is a lot of sets for one muscle in one session ({fractional, number}). Extra sets add little here; consider another day for some of them.',
+        'That is a lot of sets for one muscle in one workout ({fractional, number}). Extra sets add little here; consider another day for some of them.',
     }),
   },
 
@@ -606,7 +606,7 @@ export const WHY_MESSAGES: { readonly [K in RuleId]: WhyMessage } = {
     full: msg({
       id: 'why.plan.template.default',
       message:
-        '{template} is the standard {style} plan for {days, plural, one {# training day} other {# training days}} a week at your level ({level}).{split, select, fullBody { Each session trains the whole body.} upperLower { Sessions alternate between upper and lower body.} upperLowerPpl { It combines upper and lower body days with push, pull and legs days.} pushPullLegs { Sessions are split into push, pull and legs.} sbd { Every session is built around the squat, bench press and deadlift.} other {}}',
+        '{template} is the standard {style} plan for {days, plural, one {# training day} other {# training days}} a week at your level ({level}).{split, select, fullBody { Each workout trains the whole body.} upperLower { Workouts alternate between upper and lower body.} upperLowerPpl { It combines upper and lower body days with push, pull and legs days.} pushPullLegs { Workouts are split into push, pull and legs.} sbd { Every workout is built around the squat, bench press and deadlift.} other {}}',
     }),
     simple: msg({
       id: 'why.plan.template.default.simple',
@@ -748,7 +748,7 @@ export const WHY_MESSAGES: { readonly [K in RuleId]: WhyMessage } = {
     full: msg({
       id: 'why.plan.volume.target',
       message:
-        '{source, select, priority {{muscle}: {sets, plural, one {# weekly set} other {# weekly sets}}, high in the usual range because it is one of your priorities.} maintenance {{muscle}: {sets, plural, one {# weekly set} other {# weekly sets}}, enough to maintain it, because only optional exercises in this plan train it.} recent {{muscle}: {sets, plural, one {# weekly set} other {# weekly sets}}, starting near your recent {recent, number} and moving gradually towards the usual range.} logged {{muscle}: {sets, plural, one {# weekly set} other {# weekly sets}}, based on what you logged in the last block.} user {{muscle}: {sets, plural, one {# weekly set} other {# weekly sets}}, as you set it.} timeBudget {{muscle}: {sets, plural, one {# weekly set} other {# weekly sets}}, lowered so the plan fits your session time.} other {{muscle}: {sets, plural, one {# weekly set} other {# weekly sets}}, a starting point in the usual range for {level} lifters.}}',
+        '{source, select, priority {{muscle}: {sets, plural, one {# weekly set} other {# weekly sets}}, high in the usual range because it is one of your priorities.} maintenance {{muscle}: {sets, plural, one {# weekly set} other {# weekly sets}}, enough to maintain it, because only optional exercises in this plan train it.} recent {{muscle}: {sets, plural, one {# weekly set} other {# weekly sets}}, starting near your recent {recent, number} and moving gradually towards the usual range.} logged {{muscle}: {sets, plural, one {# weekly set} other {# weekly sets}}, based on what you logged in the last block.} user {{muscle}: {sets, plural, one {# weekly set} other {# weekly sets}}, as you set it.} timeBudget {{muscle}: {sets, plural, one {# weekly set} other {# weekly sets}}, lowered so the plan fits your workout time.} other {{muscle}: {sets, plural, one {# weekly set} other {# weekly sets}}, a starting point in the usual range for {level} lifters.}}',
     }),
     simple: msg({
       id: 'why.plan.volume.target.simple',
@@ -772,19 +772,19 @@ export const WHY_MESSAGES: { readonly [K in RuleId]: WhyMessage } = {
     full: msg({
       id: 'why.plan.volume.sets',
       message:
-        'Sets were added one at a time where they close the biggest gap to the weekly targets ({added, plural, one {# set} other {# sets}} added), within the per-session limits and your session time. {deficit, plural, =0 {Every weekly target is met.} other {Some muscles stay below their target; their warnings say why.}}',
+        'Sets were added one at a time where they close the biggest gap to the weekly targets ({added, plural, one {# set} other {# sets}} added), within the per-workout limits and your workout time. {deficit, plural, =0 {Every weekly target is met.} other {Some muscles stay below their target; their warnings say why.}}',
     }),
     simple: msg({
       id: 'why.plan.volume.sets.simple',
       message:
-        'POWR spread your sets over the week so each muscle gets close to its weekly goal, without overloading any session or running over your time.',
+        'POWR spread your sets over the week so each muscle gets close to its weekly goal, without overloading any workout or running over your time.',
     }),
   },
   'plan.volume.budget': {
     full: msg({
       id: 'why.plan.volume.budget',
       message:
-        "Your session time does not fit every muscle's full weekly target, so {lowered, plural, one {# muscle was} other {# muscles were}} set lower, towards the minimum effective dose. {emphasis, select, priorities {Your priority muscles keep their full target.} other {The plan's main muscles keep their full target.}} {minutes, select, none {To fit every full target, choose 90+ min sessions or add a training day.} other {Sessions of {minutes} min would fit every full target.}}",
+        "Your workout time does not fit every muscle's full weekly target, so {lowered, plural, one {# muscle was} other {# muscles were}} set lower, towards the minimum effective dose. {emphasis, select, priorities {Your priority muscles keep their full target.} other {The plan's main muscles keep their full target.}} {minutes, select, none {To fit every full target, choose 90+ min workouts or add a training day.} other {Workouts of {minutes} min would fit every full target.}}",
     }),
     simple: msg({
       id: 'why.plan.volume.budget.simple',
@@ -819,7 +819,7 @@ export const WHY_MESSAGES: { readonly [K in RuleId]: WhyMessage } = {
     full: msg({
       id: 'why.plan.time.trimmed',
       message:
-        '{action, select, removed {{slot} was left out of {dayKey} to fit your {budget} min sessions.} fewerSets {{slot} on {dayKey} drops to {sets, plural, one {# heavy set} other {# heavy sets}} to fit your {budget} min sessions.} removedForVolume {{slot} was left out of {dayKey} so its time goes to sets for muscles that were short of their weekly target.} other {{dayKey} was shortened to fit your session time.}}',
+        '{action, select, removed {{slot} was left out of {dayKey} to fit your {budget} min workouts.} fewerSets {{slot} on {dayKey} drops to {sets, plural, one {# heavy set} other {# heavy sets}} to fit your {budget} min workouts.} removedForVolume {{slot} was left out of {dayKey} so its time goes to sets for muscles that were short of their weekly target.} other {{dayKey} was shortened to fit your workout time.}}',
     }),
     simple: msg({
       id: 'why.plan.time.trimmed.simple',
@@ -831,7 +831,7 @@ export const WHY_MESSAGES: { readonly [K in RuleId]: WhyMessage } = {
     full: msg({
       id: 'why.plan.schedule.weekdays',
       message:
-        'The days are placed on your training weekdays so that sessions for the same muscles or lifts get enough recovery time in between. {conflicts, plural, =0 {No sessions are too close together.} one {One pair of sessions is closer together than ideal.} other {# pairs of sessions are closer together than ideal.}}',
+        'The days are placed on your training weekdays so that workouts for the same muscles or lifts get enough recovery time in between. {conflicts, plural, =0 {No workouts are too close together.} one {One pair of workouts is closer together than ideal.} other {# pairs of workouts are closer together than ideal.}}',
     }),
     simple: msg({
       id: 'why.plan.schedule.weekdays.simple',
@@ -951,7 +951,7 @@ export const WHY_MESSAGES: { readonly [K in RuleId]: WhyMessage } = {
     full: msg({
       id: 'why.validate.volume.timeBudget',
       message:
-        '{muscle}: target lowered from {full, number} to {target, number} weekly sets so the plan fits your session time; {sets, plural, one {# set is} other {# sets are}} planned. Longer sessions or another training day would allow the full target.',
+        '{muscle}: target lowered from {full, number} to {target, number} weekly sets so the plan fits your workout time; {sets, plural, one {# set is} other {# sets are}} planned. Longer workouts or another training day would allow the full target.',
     }),
     simple: msg({
       id: 'why.validate.volume.timeBudget.simple',
@@ -987,19 +987,19 @@ export const WHY_MESSAGES: { readonly [K in RuleId]: WhyMessage } = {
     full: msg({
       id: 'why.validate.sessionCap.muscle',
       message:
-        '{muscle}: {fractional, number} sets in this session ({direct, number} direct), above the per-session soft cap. Extra sets here bring low expected return; consider moving some to another day.',
+        '{muscle}: {fractional, number} sets in this workout ({direct, number} direct), above the per-workout soft cap. Extra sets here bring low expected return; consider moving some to another day.',
     }),
     simple: msg({
       id: 'why.validate.sessionCap.muscle.simple',
       message:
-        'That is a lot of {muscle} work for one session. Moving some sets to another day would make them count more.',
+        'That is a lot of {muscle} work for one workout. Moving some sets to another day would make them count more.',
     }),
   },
   'validate.sessionCap.lift': {
     full: msg({
       id: 'why.validate.sessionCap.lift',
       message:
-        '{sets, plural, one {# heavy set} other {# heavy sets}} of the {lift} in one session, more than the usual {max}. Extra heavy sets here bring low expected return; consider moving some to another day.',
+        '{sets, plural, one {# heavy set} other {# heavy sets}} of the {lift} in one workout, more than the usual {max}. Extra heavy sets here bring low expected return; consider moving some to another day.',
     }),
     simple: msg({
       id: 'why.validate.sessionCap.lift.simple',
@@ -1058,7 +1058,7 @@ export const WHY_MESSAGES: { readonly [K in RuleId]: WhyMessage } = {
     full: msg({
       id: 'why.validate.time.overBudget',
       message:
-        'This day takes about {minutes} min, more than your {budget} min session time. Fewer sets, a superset or shorter rests can bring it down.',
+        'This day takes about {minutes} min, more than your {budget} min workout time. Fewer sets, a superset or shorter rests can bring it down.',
     }),
     simple: msg({
       id: 'why.validate.time.overBudget.simple',
@@ -1167,7 +1167,7 @@ export const WHY_MESSAGES: { readonly [K in RuleId]: WhyMessage } = {
     full: msg({
       id: 'why.deload.reactive.propose',
       message:
-        'Signs of building fatigue showed up, such as a main lift dipping over several sessions, low readiness or pain flags, so the lighter (deload) week moves to now. It replaces the planned one rather than adding another.',
+        'Signs of building fatigue showed up, such as a main lift dipping over several workouts, low readiness or pain flags, so the lighter (deload) week moves to now. It replaces the planned one rather than adding another.',
     }),
     simple: msg({
       id: 'why.deload.reactive.propose.simple',
@@ -1190,7 +1190,7 @@ export const WHY_MESSAGES: { readonly [K in RuleId]: WhyMessage } = {
     full: msg({
       id: 'why.deload.postponed',
       message:
-        '{allowed, select, yes {The lighter (deload) week moves back by {weeks, plural, one {# week} other {# weeks}}; you train your regular sessions until then. This works once per block.} other {The lighter (deload) week can be postponed only once per block, and it has already been moved or skipped in this block.}}',
+        '{allowed, select, yes {The lighter (deload) week moves back by {weeks, plural, one {# week} other {# weeks}}; you train your regular workouts until then. This works once per block.} other {The lighter (deload) week can be postponed only once per block, and it has already been moved or skipped in this block.}}',
     }),
     simple: msg({
       id: 'why.deload.postponed.simple',
@@ -1202,12 +1202,12 @@ export const WHY_MESSAGES: { readonly [K in RuleId]: WhyMessage } = {
     full: msg({
       id: 'why.deload.skipped',
       message:
-        'The lighter (deload) week is skipped: its {sessions, plural, one {# session is} other {# sessions are}} back to regular training. Fine now and then; the next block plans a lighter week again.',
+        'The lighter (deload) week is skipped: its {sessions, plural, one {# workout is} other {# workouts are}} back to regular training. Fine now and then; the next block plans a lighter week again.',
     }),
     simple: msg({
       id: 'why.deload.skipped.simple',
       message:
-        'You skipped the lighter week, so these sessions are regular ones. That is okay; the next block has one again.',
+        'You skipped the lighter week, so these workouts are regular ones. That is okay; the next block has one again.',
     }),
   },
   'break.return.resume': {
@@ -1226,7 +1226,7 @@ export const WHY_MESSAGES: { readonly [K in RuleId]: WhyMessage } = {
     full: msg({
       id: 'why.break.return.reduce',
       message:
-        'After {daysOff, plural, one {# day} other {# days}} off, the first sessions back use lighter loads, and sometimes fewer sets or more reps in reserve (RIR), building back to your normal over the next weeks.',
+        'After {daysOff, plural, one {# day} other {# days}} off, the first workouts back use lighter loads, and sometimes fewer sets or more reps in reserve (RIR), building back to your normal over the next weeks.',
     }),
     simple: msg({
       id: 'why.break.return.reduce.simple',
@@ -1250,19 +1250,19 @@ export const WHY_MESSAGES: { readonly [K in RuleId]: WhyMessage } = {
     full: msg({
       id: 'why.break.return.recalibrate',
       message:
-        'After {daysOff, plural, one {# day} other {# days}} off, your old numbers may no longer fit. The first sessions measure your strength again with a few reps in reserve (RIR), and the plan builds from there.',
+        'After {daysOff, plural, one {# day} other {# days}} off, your old numbers may no longer fit. The first workouts measure your strength again with a few reps in reserve (RIR), and the plan builds from there.',
     }),
     simple: msg({
       id: 'why.break.return.recalibrate.simple',
       message:
-        'Welcome back! After a long break, the first sessions find your new starting weights. Stop each set with a few reps left in the tank.',
+        'Welcome back! After a long break, the first workouts find your new starting weights. Stop each set with a few reps left in the tank.',
     }),
   },
   'schedule.missed.doToday': {
     full: msg({
       id: 'why.schedule.missed.doToday',
       message:
-        'Life happens. The session from {from} moves to today{shifted, plural, =0 {, and the rest of the week stays as planned.} one {, and # later session moves a day later so you do not train twice on one day.} other {, and # later sessions move later so you do not train twice on one day.}}',
+        'Life happens. The workout from {from} moves to today{shifted, plural, =0 {, and the rest of the week stays as planned.} one {, and # later workout moves a day later so you do not train twice on one day.} other {, and # later workouts move later so you do not train twice on one day.}}',
     }),
     simple: msg({
       id: 'why.schedule.missed.doToday.simple',
@@ -1274,7 +1274,7 @@ export const WHY_MESSAGES: { readonly [K in RuleId]: WhyMessage } = {
     full: msg({
       id: 'why.schedule.missed.skip',
       message:
-        'The session on {date} is marked as skipped, not deleted, so your history stays complete. The plan continues as normal.',
+        'The workout on {date} is marked as skipped, not deleted, so your history stays complete. The plan continues as normal.',
     }),
     simple: msg({
       id: 'why.schedule.missed.skip.simple',
@@ -1285,7 +1285,7 @@ export const WHY_MESSAGES: { readonly [K in RuleId]: WhyMessage } = {
     full: msg({
       id: 'why.schedule.missed.merge',
       message:
-        '{target, select, none {There is no later session in this plan to merge the missed work into. Do it today or skip it.} other {The key exercises of a missed session were added to this one, as far as the per-session limits allow; anything that would overload the day is left out.}}',
+        '{target, select, none {There is no later workout in this plan to merge the missed work into. Do it today or skip it.} other {The key exercises of a missed workout were added to this one, as far as the per-workout limits allow; anything that would overload the day is left out.}}',
     }),
     simple: msg({
       id: 'why.schedule.missed.merge.simple',
@@ -1297,7 +1297,7 @@ export const WHY_MESSAGES: { readonly [K in RuleId]: WhyMessage } = {
     full: msg({
       id: 'why.schedule.moved',
       message:
-        'This session moved from {from} to {to}. If that brings hard sessions for the same muscles close together, a spacing note shows it.',
+        'This workout moved from {from} to {to}. If that brings hard workouts for the same muscles close together, a spacing note shows it.',
     }),
     simple: msg({
       id: 'why.schedule.moved.simple',
@@ -1309,7 +1309,7 @@ export const WHY_MESSAGES: { readonly [K in RuleId]: WhyMessage } = {
     full: msg({
       id: 'why.session.calibration',
       message:
-        '{status, select, uncalibrated {POWR does not know your strength on this exercise yet, so it calibrates: pick a weight you could lift about 12 times and stop with {rirMin}–{rirMax} reps in reserve (RIR). Your estimated 1-rep max (e1RM) comes from these sets.} calibrating {POWR is still calibrating this exercise: stop with {rirMin}–{rirMax} reps in reserve (RIR).{load, select, none {} other { The load, {load}, comes from your sets so far.}}} other {Stop with {rirMin}–{rirMax} reps in reserve (RIR).{load, select, none {} other { The load is {load}.}}}} After {exposuresMin}–{exposuresMax} sessions with this exercise, the loads follow your progress.',
+        '{status, select, uncalibrated {POWR does not know your strength on this exercise yet, so it calibrates: pick a weight you could lift about 12 times and stop with {rirMin}–{rirMax} reps in reserve (RIR). Your estimated 1-rep max (e1RM) comes from these sets.} calibrating {POWR is still calibrating this exercise: stop with {rirMin}–{rirMax} reps in reserve (RIR).{load, select, none {} other { The load, {load}, comes from your sets so far.}}} other {Stop with {rirMin}–{rirMax} reps in reserve (RIR).{load, select, none {} other { The load is {load}.}}}} After {exposuresMin}–{exposuresMax} workouts with this exercise, the loads follow your progress.',
     }),
   },
   'session.lastTime': {
@@ -1330,14 +1330,14 @@ export const WHY_MESSAGES: { readonly [K in RuleId]: WhyMessage } = {
     full: msg({
       id: 'why.session.adjustment.load',
       message:
-        'This session uses {pct}% of your normal working load ({pctMin}–{pctMax}%), so {from} becomes {load}. Lighter days like this are part of training.',
+        'This workout uses {pct}% of your normal working load ({pctMin}–{pctMax}%), so {from} becomes {load}. Lighter days like this are part of training.',
     }),
   },
   'progression.linear.weekHold': {
     full: msg({
       id: 'why.progression.linear.weekHold',
       message:
-        'The load stays at {load} this week: at your level the weight goes up once a week, not every session.',
+        'The load stays at {load} this week: at your level the weight goes up once a week, not every workout.',
     }),
   },
   'pr.rep': {
@@ -1365,28 +1365,28 @@ export const WHY_MESSAGES: { readonly [K in RuleId]: WhyMessage } = {
     full: msg({
       id: 'why.pr.volume',
       message:
-        '{previous, select, none {Volume PR: {value} lifted in total on {exerciseId} in one session.} other {Volume PR: {value} lifted in total on {exerciseId} in one session, more than your best of {previous}.}}',
+        '{previous, select, none {Volume PR: {value} lifted in total on {exerciseId} in one workout.} other {Volume PR: {value} lifted in total on {exerciseId} in one workout, more than your best of {previous}.}}',
     }),
   },
   'pr.firstTime': {
     full: msg({
       id: 'why.pr.firstTime',
       message:
-        'The first time you logged {exerciseId}. From your next session with it, POWR tracks your PRs.',
+        'The first time you logged {exerciseId}. From your next workout with it, POWR tracks your PRs.',
     }),
   },
   'readiness.assessment': {
     full: msg({
       id: 'why.readiness.assessment',
       message:
-        "{flag, select, insufficientData {POWR compares your check-in with your usual once it has {minEntries} check-ins from the last weeks; it has {entries} so far.} low {Your check-in is lower than usual for you (score {composite}). A lighter session is an option.} modify {Your check-in is well below your usual{prsLowDays, plural, =0 {} =1 {} other {, and you have felt under-recovered for # days in a row}}. Consider adjusting today's session.} other {Your check-in is within your usual range.}}{shortNights, plural, =0 {} =1 {} other { Your sleep has been short for # nights in a row.}}",
+        "{flag, select, insufficientData {POWR compares your check-in with your usual once it has {minEntries} check-ins from the last weeks; it has {entries} so far.} low {Your check-in is lower than usual for you (score {composite}). A lighter workout is an option.} modify {Your check-in is well below your usual{prsLowDays, plural, =0 {} =1 {} other {, and you have felt under-recovered for # days in a row}}. Consider adjusting today's workout.} other {Your check-in is within your usual range.}}{shortNights, plural, =0 {} =1 {} other { Your sleep has been short for # nights in a row.}}",
     }),
   },
   'readiness.adjust': {
     full: msg({
       id: 'why.readiness.adjust',
       message:
-        '{action, select, capTopSet {Stop your top sets with {rirAdd, plural, one {# more rep} other {# more reps}} in reserve today.} dropBackoff {Leave out {dropSets, plural, one {# back-off set} other {# back-off sets}} per exercise today.} trimVolume {After a short night before an afternoon or evening session, keep the weights and do {dropSets, plural, one {# set} other {# sets}} fewer per exercise.} easeCompounds {After several short nights, stop the multi-joint lifts with {rirAdd, plural, one {# more rep} other {# more reps}} in reserve.} other {A lighter session is an option today.}} It is your call: nothing changes unless you accept.',
+        '{action, select, capTopSet {Stop your top sets with {rirAdd, plural, one {# more rep} other {# more reps}} in reserve today.} dropBackoff {Leave out {dropSets, plural, one {# back-off set} other {# back-off sets}} per exercise today.} trimVolume {After a short night before an afternoon or evening workout, keep the weights and do {dropSets, plural, one {# set} other {# sets}} fewer per exercise.} easeCompounds {After several short nights, stop the multi-joint lifts with {rirAdd, plural, one {# more rep} other {# more reps}} in reserve.} other {A lighter workout is an option today.}} It is your call: nothing changes unless you accept.',
     }),
   },
   'guardrail.failure': {
@@ -1415,14 +1415,14 @@ export const WHY_MESSAGES: { readonly [K in RuleId]: WhyMessage } = {
     full: msg({
       id: 'why.streak.week',
       message:
-        '{state, select, kept {Week kept: {done} of {target, plural, one {# session} other {# sessions}} done.{deload, select, yes { A lighter (deload) week counts with its planned sessions.} other {}}} graced {Week kept with your grace: {done} of {target, plural, one {# session} other {# sessions}} done.} missed {{done} of {target, plural, one {# session} other {# sessions}} done that week. Your current streak started again; your best streak stays.} paused {A break week: it pauses your streak without breaking it.} pending {This week so far: {done} of {target, plural, one {# session} other {# sessions}}. There is still time.} other {}}{targetSource, select, freestyle { The target is your weekly session goal.} default { Without a plan or a weekly goal, one session keeps the week.} other {}}{breakDays, plural, =0 {} =7 {} one { One day was a break, so the week asks for fewer sessions.} other { # days were a break, so the week asks for fewer sessions.}}',
+        '{state, select, kept {Week kept: {done} of {target, plural, one {# workout} other {# workouts}} done.{deload, select, yes { A lighter (deload) week counts with its planned workouts.} other {}}} graced {Week kept with your grace: {done} of {target, plural, one {# workout} other {# workouts}} done.} missed {{done} of {target, plural, one {# workout} other {# workouts}} done that week. Your current streak started again; your best streak stays.} paused {A break week: it pauses your streak without breaking it.} pending {This week so far: {done} of {target, plural, one {# workout} other {# workouts}}. There is still time.} other {}}{targetSource, select, freestyle { The target is your weekly workout goal.} default { Without a plan or a weekly goal, one workout keeps the week.} other {}}{breakDays, plural, =0 {} =7 {} one { One day was a break, so the week asks for fewer workouts.} other { # days were a break, so the week asks for fewer workouts.}}',
     }),
   },
   'streak.current': {
     full: msg({
       id: 'why.streak.current',
       message:
-        'Your streak counts weeks in a row in which you did your planned sessions: {current, plural, one {# week} other {# weeks}} now, {best, plural, one {# week} other {# weeks}} at best. Breaks and illness pause it{paused, plural, =0 {} one { (# week so far)} other { (# weeks so far)}}; lighter (deload) weeks count like any other.{grace, select, yes { With your grace, a week with one session short still counts.} other {}}',
+        'Your streak counts weeks in a row in which you did your planned workouts: {current, plural, one {# week} other {# weeks}} now, {best, plural, one {# week} other {# weeks}} at best. Breaks and illness pause it{paused, plural, =0 {} one { (# week so far)} other { (# weeks so far)}}; lighter (deload) weeks count like any other.{grace, select, yes { With your grace, a week with one workout short still counts.} other {}}',
     }),
   },
   'volume.target': {
@@ -1450,7 +1450,7 @@ export const WHY_MESSAGES: { readonly [K in RuleId]: WhyMessage } = {
     full: msg({
       id: 'why.progression.pace.ok',
       message:
-        '{insufficient, select, yes {Not enough recent sessions to compare the planned increases with your progress yet ({exposures} so far).} other {Your estimated max keeps up with the planned increases (about {observed, number}% a week against {planned, number}% planned), so the plan keeps adding weight.}}',
+        '{insufficient, select, yes {Not enough recent workouts to compare the planned increases with your progress yet ({exposures} so far).} other {Your estimated max keeps up with the planned increases (about {observed, number}% a week against {planned, number}% planned), so the plan keeps adding weight.}}',
     }),
   },
   'bodyweight.rate.band': {

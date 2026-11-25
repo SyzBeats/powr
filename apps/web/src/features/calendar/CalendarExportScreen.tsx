@@ -139,7 +139,7 @@ export function CalendarExportScreen() {
       <Screen title={t`Add your plan to your calendar`}>
         <Card>
           <p>
-            <Trans>There is no plan yet, so there are no sessions to add.</Trans>
+            <Trans>There is no plan yet, so there are no workouts to add.</Trans>
           </p>
           <Link
             to="/plan/setup/$step"
@@ -179,7 +179,7 @@ export function CalendarExportScreen() {
     <Screen title={t`Add your plan to your calendar`}>
       <p className="text-fg-muted">
         <Trans>
-          POWR makes a calendar file with your planned sessions. Your calendar app adds them and
+          POWR makes a calendar file with your planned workouts. Your calendar app adds them and
           reminds you; nothing is sent anywhere.
         </Trans>
       </p>
@@ -189,8 +189,8 @@ export function CalendarExportScreen() {
           <p data-testid="calendar-changed">
             <Plural
               value={changed.changed}
-              one="# session changed since your last export. Export again to update your calendar."
-              other="# sessions changed since your last export. Export again to update your calendar."
+              one="# workout changed since your last export. Export again to update your calendar."
+              other="# workouts changed since your last export. Export again to update your calendar."
             />
           </p>
         </Callout>
@@ -198,7 +198,7 @@ export function CalendarExportScreen() {
 
       <Card>
         <ChoiceCards
-          legend={t`Which sessions`}
+          legend={t`Which workouts`}
           value={range}
           onChange={(value) => setRange(value)}
           options={[
@@ -227,7 +227,7 @@ export function CalendarExportScreen() {
                   },
                 ]
               : []),
-            { value: 'fixed' as const, label: t`The same time for every session` },
+            { value: 'fixed' as const, label: t`The same time for every workout` },
             {
               value: 'allDay' as const,
               label: t`All-day events`,
@@ -238,7 +238,7 @@ export function CalendarExportScreen() {
         {timeMode === 'allDay' ? null : (
           <Field
             label={
-              timeMode === 'planned' ? t`Time for days without one` : t`Time for every session`
+              timeMode === 'planned' ? t`Time for days without one` : t`Time for every workout`
             }
             type="time"
             value={time}
@@ -320,7 +320,7 @@ function PreviewText({ preview }: { preview: CalendarPreview }) {
     <span className="flex flex-col gap-1">
       <span className="flex items-center gap-2 font-semibold">
         <CalendarPlus aria-hidden="true" className="size-5 shrink-0" />
-        <Plural value={preview.sessions} one="# session" other="# sessions" />
+        <Plural value={preview.sessions} one="# workout" other="# workouts" />
       </span>
       {first && last ? (
         <span>
@@ -333,8 +333,8 @@ function PreviewText({ preview }: { preview: CalendarPreview }) {
         <span>
           <Plural
             value={preview.updates}
-            one="# earlier exported session changed and is updated too."
-            other="# earlier exported sessions changed and are updated too."
+            one="# earlier exported workout changed and is updated too."
+            other="# earlier exported workouts changed and are updated too."
           />
         </span>
       ) : null}
@@ -342,8 +342,8 @@ function PreviewText({ preview }: { preview: CalendarPreview }) {
         <span>
           <Plural
             value={preview.cancelled}
-            one="# session is no longer planned and is cancelled in your calendar."
-            other="# sessions are no longer planned and are cancelled in your calendar."
+            one="# workout is no longer planned and is cancelled in your calendar."
+            other="# workouts are no longer planned and are cancelled in your calendar."
           />
         </span>
       ) : null}
@@ -351,8 +351,8 @@ function PreviewText({ preview }: { preview: CalendarPreview }) {
         <span className="text-fg-muted">
           <Plural
             value={preview.withoutTime}
-            one="# session has no planned start time and uses the time you chose."
-            other="# sessions have no planned start time and use the time you chose."
+            one="# workout has no planned start time and uses the time you chose."
+            other="# workouts have no planned start time and use the time you chose."
           />
         </span>
       ) : null}
@@ -363,9 +363,9 @@ function PreviewText({ preview }: { preview: CalendarPreview }) {
 function PreviewError({ error }: { error: CalendarExportError }) {
   const { t } = useLingui();
   const messages: Record<CalendarExportError['kind'], string> = {
-    noPlan: t`There is no plan yet, so there are no sessions to add.`,
+    noPlan: t`There is no plan yet, so there are no workouts to add.`,
     noMeet: t`No meet date is set. Choose another range.`,
-    nothingToExport: t`No planned sessions in this range. Choose a longer range.`,
+    nothingToExport: t`No planned workouts in this range. Choose a longer range.`,
   };
   return messages[error.kind];
 }

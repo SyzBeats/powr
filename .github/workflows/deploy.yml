@@ -84,6 +84,10 @@ jobs:
       # legal placeholder remains (publisher postal address, legal review). Plain Node, no install.
       - name: Legal release check
         run: pnpm release:check
+      # NFR-SEC-01 (M6c): no production release with a known high or critical advisory in a
+      # production dependency. Reads the lockfile of the tagged commit; no install needed.
+      - name: Dependency audit (production dependencies, high or critical)
+        run: pnpm audit:prod
       - uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
         with:
           registry: ghcr.io

@@ -325,7 +325,7 @@ function MuscleDetail({
               <Trans>Still planned</Trans>
             </dt>
             <dd className="tabular">
-              <Trans>{remainingText} in this week's remaining sessions</Trans>
+              <Trans>{remainingText} in this week's remaining workouts</Trans>
             </dd>
           </>
         ) : null}

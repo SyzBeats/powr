@@ -279,7 +279,7 @@ function E1rmSection({
           unit={unit}
           formatValue={format}
           annotations={annotations}
-          labels={{ trend: t`Trend`, points: t`Each session's estimate` }}
+          labels={{ trend: t`Trend`, points: t`Each workout's estimate` }}
           endDate={todayLocal()}
           onRangeChange={onRangeChange}
           onOpen={onOpen}
@@ -403,16 +403,16 @@ function PerformanceSection({
   const count = values.length;
   const title =
     metric === 'top'
-      ? t`Heaviest set per session`
+      ? t`Heaviest set per workout`
       : metric === 'volume'
-        ? t`Volume load per session`
+        ? t`Volume load per workout`
         : t`Most reps at ${chosenText} or more`;
-  const sessionsText = plural(count, { one: '# session', other: '# sessions' });
+  const sessionsText = plural(count, { one: '# workout', other: '# workouts' });
   const summary =
     count === 0
-      ? t`No sessions for this view yet.`
+      ? t`No workouts for this view yet.`
       : count === 1
-        ? t`${title}: ${lastText} in the one session so far.`
+        ? t`${title}: ${lastText} in the one workout so far.`
         : t`${title}: ${firstText} in the first and ${lastText} in the latest of ${sessionsText} loaded.`;
 
   return (
@@ -454,7 +454,7 @@ function PerformanceSection({
           series={series}
           unit={metric === 'reps' ? t`reps` : unit}
           formatValue={(value) => formatPerformance(metric, value, unit)}
-          labels={{ points: t`Each session` }}
+          labels={{ points: t`Each workout` }}
           endDate={todayLocal()}
           onRangeChange={(preset) => {
             if (preset === 'all') setAll(true);
@@ -464,7 +464,7 @@ function PerformanceSection({
           emptyText={
             metric === 'reps'
               ? t`No working sets with a weight yet.`
-              : t`No sessions with this exercise in this range yet.`
+              : t`No workouts with this exercise in this range yet.`
           }
         />
       )}
@@ -564,7 +564,7 @@ function HistorySection({
           {history.bests?.volumeKg != null ? (
             <>
               <dt className="text-fg-muted">
-                <Trans>Best session volume</Trans>
+                <Trans>Best workout volume</Trans>
               </dt>
               <dd className="font-semibold tabular">
                 {massFromKg(history.bests.volumeKg, unit, 0)}
@@ -578,7 +578,7 @@ function HistorySection({
 
       <Card>
         <h2 className="text-lg font-bold">
-          <Trans>All sessions</Trans>
+          <Trans>All workouts</Trans>
         </h2>
         {history.sessions.length === 0 ? (
           <p className="text-fg-muted">
@@ -593,7 +593,7 @@ function HistorySection({
         )}
         {history.sessions.length > sessionsShown ? (
           <Button onClick={() => setSessionsShown((shown) => shown + 10)}>
-            <Trans>Show more sessions</Trans>
+            <Trans>Show more workouts</Trans>
           </Button>
         ) : null}
       </Card>
@@ -604,7 +604,7 @@ function HistorySection({
         </h2>
         {history.prs.length === 0 ? (
           <p className="text-fg-muted">
-            <Trans>No PRs on this exercise yet. Your first session sets the marks to beat.</Trans>
+            <Trans>No PRs on this exercise yet. Your first workout sets the marks to beat.</Trans>
           </p>
         ) : (
           <ul className="flex flex-col gap-2">

@@ -24,6 +24,7 @@ const policy: LicencePolicy = {
       rationale: 'data file used at build time',
     },
   ],
+  serverDenied: ['AGPL-*', 'SSPL-*', 'BUSL-*'],
 };
 
 const shipped = (licence: string | null, name = 'pkg') => ({

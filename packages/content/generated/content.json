@@ -1,7 +1,7 @@
 {
   "format": 1,
-  "version": "0.3.0+sha.30836840",
-  "hash": "30836840c6117544030600b5023729f8c032ac4ed8bfe9e7d6cfced0ac1ff663",
+  "version": "0.3.0+sha.22d28251",
+  "hash": "22d282516f57e4a0ed12de0de3a421d0a7da4137c2e873701684c969f5ab20b2",
   "muscles": [
     {
       "id": "mu.chest",
@@ -17372,7 +17372,7 @@
         "en": "Full body ×2"
       },
       "description": {
-        "en": "Two full-body sessions a week, each with a squat or hinge, a press, a pull and isolation work."
+        "en": "Two full-body workouts a week, each with a squat or hinge, a press, a pull and isolation work."
       },
       "style": "bodybuilding",
       "daysPerWeek": 2,
@@ -17593,7 +17593,7 @@
         "en": "Full body ×3"
       },
       "description": {
-        "en": "Three full-body sessions a week. Each muscle is trained on at least two days with a mix of compound and isolation work."
+        "en": "Three full-body workouts a week. Each muscle is trained on at least two days with a mix of compound and isolation work."
       },
       "style": "bodybuilding",
       "daysPerWeek": 3,
@@ -17875,7 +17875,7 @@
         "en": "Full body ×4"
       },
       "description": {
-        "en": "Four full-body sessions a week. Each muscle is trained on two or three days, with fewer exercises per session than an upper/lower split."
+        "en": "Four full-body workouts a week. Each muscle is trained on two or three days, with fewer exercises per workout than an upper/lower split."
       },
       "style": "bodybuilding",
       "daysPerWeek": 4,
@@ -18185,7 +18185,7 @@
         "en": "Upper/lower ×2"
       },
       "description": {
-        "en": "Two upper-body and two lower-body sessions a week, so every muscle is trained twice."
+        "en": "Two upper-body and two lower-body workouts a week, so every muscle is trained twice."
       },
       "style": "bodybuilding",
       "daysPerWeek": 4,
@@ -18515,7 +18515,7 @@
         "en": "Full body ×5"
       },
       "description": {
-        "en": "Five shorter full-body sessions a week. Each muscle is trained on two or three days, so no session has to carry much volume for one muscle."
+        "en": "Five shorter full-body workouts a week. Each muscle is trained on two or three days, so no workout has to carry much volume for one muscle."
       },
       "style": "bodybuilding",
       "daysPerWeek": 5,
@@ -19575,7 +19575,7 @@
         "en": "Upper/lower ×3"
       },
       "description": {
-        "en": "Three upper-body and three lower-body sessions a week. Shorter sessions than push/pull/legs, with each muscle trained two or three times."
+        "en": "Three upper-body and three lower-body workouts a week. Shorter workouts than push/pull/legs, with each muscle trained two or three times."
       },
       "style": "bodybuilding",
       "daysPerWeek": 6,
@@ -19941,7 +19941,7 @@
         "en": "Full body SBD ×2"
       },
       "description": {
-        "en": "Two sessions a week with squat, bench press and deadlift in each, one heavy and one lighter exposure per lift."
+        "en": "Two workouts a week with squat, bench press and deadlift in each, one heavy and one lighter exposure per lift."
       },
       "style": "powerlifting",
       "daysPerWeek": 2,
@@ -20525,7 +20525,7 @@
         "en": "SBD 4-day"
       },
       "description": {
-        "en": "Four sessions with squat and deadlift twice and bench press three times a week, each with a heavy and a lighter exposure."
+        "en": "Four workouts with squat and deadlift twice and bench press three times a week, each with a heavy and a lighter exposure."
       },
       "style": "powerlifting",
       "daysPerWeek": 4,
@@ -20887,7 +20887,7 @@
         "en": "SBD 5-day"
       },
       "description": {
-        "en": "Five sessions with squat and bench press three times and deadlift twice a week, plus accessory work for the upper back and arms."
+        "en": "Five workouts with squat and bench press three times and deadlift twice a week, plus accessory work for the upper back and arms."
       },
       "style": "powerlifting",
       "daysPerWeek": 5,
@@ -21297,7 +21297,7 @@
         "en": "SBD 6-day (advanced)"
       },
       "description": {
-        "en": "Six shorter sessions with squat and bench press three times and deadlift twice a week, for advanced lifters."
+        "en": "Six shorter workouts with squat and bench press three times and deadlift twice a week, for advanced lifters."
       },
       "style": "powerlifting",
       "daysPerWeek": 6,
@@ -21693,7 +21693,7 @@
         "en": "Full body ×2 (strength and size)"
       },
       "description": {
-        "en": "Two full-body sessions a week, each opening with heavy competition lifts and finishing with hypertrophy work."
+        "en": "Two full-body workouts a week, each opening with heavy competition lifts and finishing with hypertrophy work."
       },
       "style": "powerbuilding",
       "daysPerWeek": 2,
@@ -21947,7 +21947,7 @@
         "en": "Full body ×3 (strength and size)"
       },
       "description": {
-        "en": "Three full-body sessions a week: each competition lift twice, heavy and light, with hypertrophy work in every session."
+        "en": "Three full-body workouts a week: each competition lift twice, heavy and light, with hypertrophy work in every workout."
       },
       "style": "powerbuilding",
       "daysPerWeek": 3,

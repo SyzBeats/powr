@@ -43,14 +43,22 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Precached assets, cache-first; navigations get the precached app shell (deep links offline).
-registerRoute(new PrecacheRoute(precache));
-registerRoute(new NavigationRoute(precache.createHandlerBoundToURL('/index.html')));
+// The update check's files, network-first (registered before the precache, which also holds
+// changelog.json: M6c's "What's new" then lists a waiting update's notes when online and the
+// installed version's precached notes offline).
 registerRoute(
   ({ url }) =>
     url.origin === self.location.origin &&
     ['/version.json', '/changelog.json'].includes(url.pathname),
   ({ request }) => networkFirst(request),
+);
+// Precached assets, cache-first; navigations get the precached app shell (deep links offline),
+// except the static website copy of the legal texts (TD-71), which the server answers itself.
+registerRoute(new PrecacheRoute(precache));
+registerRoute(
+  new NavigationRoute(precache.createHandlerBoundToURL('/index.html'), {
+    denylist: [/^\/legal-static\//],
+  }),
 );
 
 const armedTimers = new Map<string, () => void>();
@@ -133,7 +141,11 @@ async function networkFirst(request: Request): Promise<Response> {
     if (response.ok) await cache.put(request, response.clone());
     return response;
   } catch {
-    return (await cache.match(request)) ?? Response.error();
+    return (
+      (await cache.match(request)) ??
+      (await precache.matchPrecache(new URL(request.url).pathname)) ??
+      Response.error()
+    );
   }
 }
 

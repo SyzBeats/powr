@@ -21,7 +21,9 @@ const FIXTURES = new URL('../fixtures/backups/', import.meta.url);
 
 /** Every committed backup fixture, by dataVersion (§8.3.4: kept forever, imported in CI). */
 function fixtures(): { version: number; name: string; bytes: Uint8Array }[] {
-  return fs.readdirSync(FIXTURES).flatMap((dir) =>
+  // `v<dataVersion>/` only; `hostile/` holds files import must reject (hostile-fixtures.test.ts).
+  const versions = fs.readdirSync(FIXTURES).filter((dir) => /^v\d+$/.test(dir));
+  return versions.flatMap((dir) =>
     fs.readdirSync(new URL(`${dir}/`, FIXTURES)).map((name) => ({
       version: Number(dir.slice(1)),
       name,

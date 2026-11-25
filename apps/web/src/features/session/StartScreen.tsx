@@ -57,7 +57,7 @@ export function StartScreen({ startToday = false }: { startToday?: boolean }) {
       setError(
         outcome.error.kind === 'activeSession'
           ? t`A workout is already running. Continue it or finish it first.`
-          : t`This session could not be started. Try again.`,
+          : t`This workout could not be started. Try again.`,
       );
     }
   };
@@ -121,7 +121,7 @@ export function StartScreen({ startToday = false }: { startToday?: boolean }) {
             </h2>
             <p className="text-fg-muted">
               <Trans>
-                Nothing is planned for today. You can start a session of this week early.
+                Nothing is planned for today. You can start a workout of this week early.
               </Trans>
             </p>
           </Card>
@@ -257,7 +257,7 @@ function PlannedCard({
               this time.
             </Trans>
           ) : adjustment.kind === 'mergedWork' ? (
-            <Trans>Includes key work from a missed session.</Trans>
+            <Trans>Includes key work from a missed workout.</Trans>
           ) : (
             <Trans>Calibration: start conservatively so POWR can learn your loads.</Trans>
           )}
@@ -267,11 +267,11 @@ function PlannedCard({
         variant={primary ? 'primary' : 'secondary'}
         size={primary ? 'lg' : 'md'}
         disabled={busy}
-        aria-label={primary ? undefined : t`Start session: ${name}, ${date}`}
+        aria-label={primary ? undefined : t`Start workout: ${name}, ${date}`}
         onClick={onStart}
       >
         <Play aria-hidden="true" />
-        <Trans>Start session</Trans>
+        <Trans>Start workout</Trans>
       </Button>
     </Card>
   );

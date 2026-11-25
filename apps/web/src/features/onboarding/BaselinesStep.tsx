@@ -123,7 +123,7 @@ export function BaselinesStep({ draft, update, errors }: StepProps) {
       <p className="text-fg-muted">
         <Trans>
           Optional. If you know a recent set or your 1-rep max for these lifts, POWR works out the
-          loads of your first sessions from it. Skip it, and your first sessions start light while
+          loads of your first workouts from it. Skip it, and your first workouts start light while
           POWR learns what you lift.
         </Trans>
       </p>
@@ -143,7 +143,7 @@ export function BaselinesStep({ draft, update, errors }: StepProps) {
       ) : current.lifts.length === 0 ? (
         <Callout tone="info">
           <Trans>
-            Your plan has no lifts with weights to enter here. Your first sessions start light
+            Your plan has no lifts with weights to enter here. Your first workouts start light
             instead.
           </Trans>
         </Callout>

@@ -185,11 +185,11 @@ export const PARAM_LABELS = {
   }),
   'monitoring.readiness.pmFromHour': msg({
     id: 'params.monitoring.readiness.pmFromHour',
-    message: 'Hour from which a session counts as afternoon',
+    message: 'Hour from which a workout counts as afternoon',
   }),
   'monitoring.readiness.sleep': msg({
     id: 'params.monitoring.readiness.sleep',
-    message: 'Short sleep before a session',
+    message: 'Short sleep before a workout',
   }),
   'monitoring.readiness.thresholds': msg({
     id: 'params.monitoring.readiness.thresholds',
@@ -197,19 +197,19 @@ export const PARAM_LABELS = {
   }),
   'monitoring.spacing': msg({
     id: 'params.monitoring.spacing',
-    message: 'Rest between hard sessions',
+    message: 'Rest between hard workouts',
   }),
   'motivation.streak.defaultWeeklyTarget': msg({
     id: 'params.motivation.streak.defaultWeeklyTarget',
-    message: 'Weekly sessions for a streak without a plan',
+    message: 'Weekly workouts for a streak without a plan',
   }),
   'motivation.streak.graceSessions': msg({
     id: 'params.motivation.streak.graceSessions',
-    message: 'Sessions a week may be short (grace)',
+    message: 'Workouts a week may be short (grace)',
   }),
   'motivation.streak.partialMinShare': msg({
     id: 'params.motivation.streak.partialMinShare',
-    message: 'Share of sets for a partial session to count',
+    message: 'Share of sets for a partial workout to count',
   }),
   'motivation.streak.retroactiveBreakWeeks': msg({
     id: 'params.motivation.streak.retroactiveBreakWeeks',
@@ -221,11 +221,11 @@ export const PARAM_LABELS = {
   }),
   'planning.missed.mergePriorities': msg({
     id: 'params.planning.missed.mergePriorities',
-    message: 'What moves when sessions are merged',
+    message: 'What moves when workouts are merged',
   }),
   'planning.novice.maxWorkingExercises': msg({
     id: 'params.planning.novice.maxWorkingExercises',
-    message: 'Exercises per session for novices',
+    message: 'Exercises per workout for beginners',
   }),
   'planning.rotation.perMuscle': msg({
     id: 'params.planning.rotation.perMuscle',
@@ -233,7 +233,7 @@ export const PARAM_LABELS = {
   }),
   'planning.sessionBudget.tolerancePct': msg({
     id: 'params.planning.sessionBudget.tolerancePct',
-    message: 'Allowed overrun of your session time',
+    message: 'Allowed overrun of your workout time',
   }),
   'planning.slot.sets': msg({ id: 'params.planning.slot.sets', message: 'Sets per exercise' }),
   'planning.strength.accessorySets': msg({
@@ -258,7 +258,7 @@ export const PARAM_LABELS = {
   }),
   'progression.calibration': msg({
     id: 'params.progression.calibration',
-    message: 'First sessions with a new exercise',
+    message: 'First workouts with a new exercise',
   }),
   'progression.calibration.reliableSetWeight': msg({
     id: 'params.progression.calibration.reliableSetWeight',
@@ -290,11 +290,11 @@ export const PARAM_LABELS = {
   }),
   'progression.increment.noviceLowerKg': msg({
     id: 'params.progression.increment.noviceLowerKg',
-    message: 'Weight step for novices, lower body',
+    message: 'Weight step for beginners, lower body',
   }),
   'progression.increment.noviceUpperKg': msg({
     id: 'params.progression.increment.noviceUpperKg',
-    message: 'Weight step for novices, upper body',
+    message: 'Weight step for beginners, upper body',
   }),
   'progression.model.accessory': msg({
     id: 'params.progression.model.accessory',
@@ -310,7 +310,7 @@ export const PARAM_LABELS = {
   }),
   'progression.stall.failedSessions': msg({
     id: 'params.progression.stall.failedSessions',
-    message: 'Missed sessions before a reset',
+    message: 'Missed workouts before a reset',
   }),
   'progression.stall.resetPct': msg({
     id: 'params.progression.stall.resetPct',
@@ -367,7 +367,7 @@ export const PARAM_LABELS = {
   }),
   'session.duration.repSeconds': msg({
     id: 'params.session.duration.repSeconds',
-    message: 'Time per rep for session length',
+    message: 'Time per rep for workout length',
   }),
   'session.duration.transitionSeconds': msg({
     id: 'params.session.duration.transitionSeconds',
@@ -492,11 +492,11 @@ export const PARAM_LABELS = {
   }),
   'volume.frequency.hypertrophyPerMuscle': msg({
     id: 'params.volume.frequency.hypertrophyPerMuscle',
-    message: 'Sessions per week for each muscle',
+    message: 'Workouts per week for each muscle',
   }),
   'volume.frequency.strengthPerLift': msg({
     id: 'params.volume.frequency.strengthPerLift',
-    message: 'Sessions per week for each competition lift',
+    message: 'Workouts per week for each competition lift',
   }),
   'volume.hardSet.highReps': msg({
     id: 'params.volume.hardSet.highReps',
@@ -516,7 +516,7 @@ export const PARAM_LABELS = {
   }),
   'volume.hypertrophy.perSessionSoftCap': msg({
     id: 'params.volume.hypertrophy.perSessionSoftCap',
-    message: 'Useful sets per muscle in one session',
+    message: 'Useful sets per muscle in one workout',
   }),
   'volume.hypertrophy.tiers': msg({
     id: 'params.volume.hypertrophy.tiers',
@@ -560,7 +560,7 @@ export const PARAM_LABELS = {
   }),
   'volume.strength.perSessionHeavySets': msg({
     id: 'params.volume.strength.perSessionHeavySets',
-    message: 'Heavy sets per lift in one session',
+    message: 'Heavy sets per lift in one workout',
   }),
   'volume.strength.tiers': msg({
     id: 'params.volume.strength.tiers',

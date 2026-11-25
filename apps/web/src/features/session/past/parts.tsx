@@ -38,7 +38,7 @@ export function useSummaryWords() {
     const up = change.direction === 'up';
     switch (change.label) {
       case 'insufficientData':
-        return t`Not enough sessions yet to tell a real change`;
+        return t`Not enough workouts yet to tell a real change`;
       case 'none':
         if (change.reason === 'noise') return t`Within normal day-to-day variation`;
         if (change.reason === 'unconfirmed')

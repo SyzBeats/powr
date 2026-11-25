@@ -305,12 +305,12 @@ test.describe('calendar export (M5d: CAL-01…05)', () => {
       page.getByRole('heading', { level: 1, name: 'Add your plan to your calendar' }),
     ).toBeVisible();
     await page.getByRole('radio', { name: 'Next 2 weeks' }).click();
-    await page.getByRole('radio', { name: 'The same time for every session' }).click();
+    await page.getByRole('radio', { name: 'The same time for every workout' }).click();
     await page.getByTestId('calendar-time').fill('18:30');
     await page.getByRole('radio', { name: '30 minutes before' }).click();
     const preview = page.getByTestId('calendar-preview');
-    await expect(preview).toContainText(/\d+ sessions/);
-    const sessions = Number((await preview.textContent())!.match(/(\d+) sessions/)![1]);
+    await expect(preview).toContainText(/\d+ workouts/);
+    const sessions = Number((await preview.textContent())!.match(/(\d+) workouts/)![1]);
     await checkScreen(page, 'calendar-export');
     await checkReflow(page, 'calendar-export');
 

@@ -116,6 +116,33 @@ check(
   '/settings: no SPA fallback',
 );
 
+// The static website copy of the legal texts (LEG-09, TD-71): plain HTML without scripts or
+// inline styles, revalidated, and a 404 (not the app shell) for a page that does not exist.
+for (const path of [
+  '/legal-static/',
+  '/legal-static/imprint.html',
+  '/legal-static/privacy.html',
+  '/legal-static/disclaimer.html',
+  '/legal-static/attributions.html',
+]) {
+  const response = await get(path);
+  const page = await response.text();
+  check(response.status === 200, `${path}: status ${response.status}`);
+  check(
+    response.headers.get('content-type')?.startsWith('text/html') ?? false,
+    `${path}: not HTML`,
+  );
+  check(
+    cacheControl(response) === 'no-cache',
+    `${path}: Cache-Control "${cacheControl(response)}"`,
+  );
+  check(!/<script/i.test(page), `${path}: has a <script>`);
+  check(!/\sstyle=/i.test(page) && !/<style/i.test(page), `${path}: inline style`);
+  check(!page.includes('<div id="root">'), `${path}: served the app shell`);
+}
+const missingLegal = await get('/legal-static/does-not-exist.html');
+check(missingLegal.status === 404, `missing legal page: status ${missingLegal.status}`);
+
 if (failures.length > 0) {
   console.error(`Smoke test FAILED for ${baseUrl} (${failures.length} of ${checks} checks):`);
   for (const failure of failures) console.error(`  ✗ ${failure}`);

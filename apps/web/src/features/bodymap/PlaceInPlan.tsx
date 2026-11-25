@@ -201,7 +201,7 @@ function PlacementPreview({
     }
     announce(
       scope === 'nextSession'
-        ? t`Saved to your plan from the next session: ${choice.label}.`
+        ? t`Saved to your plan from the next workout: ${choice.label}.`
         : t`Saved to your plan from the next block: ${choice.label}.`,
     );
     onSaved();
@@ -254,7 +254,7 @@ function PlacementPreview({
         disabled={saving || value === null}
         onClick={() => void save('nextSession')}
       >
-        <Trans>Save from the next session</Trans>
+        <Trans>Save from the next workout</Trans>
       </Button>
       <Button
         size="lg"

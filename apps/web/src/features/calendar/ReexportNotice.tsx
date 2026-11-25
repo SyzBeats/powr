@@ -48,8 +48,8 @@ export function ReexportNotice() {
         <span>
           <Plural
             value={changed}
-            one="# session changed since you added the plan to your calendar."
-            other="# sessions changed since you added the plan to your calendar."
+            one="# workout changed since you added the plan to your calendar."
+            other="# workouts changed since you added the plan to your calendar."
           />
         </span>
       </p>

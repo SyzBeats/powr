@@ -69,5 +69,8 @@ describe('release check (LEG-09)', () => {
     }
     expect(status).toBe(1);
     expect(stderr).toContain('Release check FAILED: 2 legal placeholder(s) remain');
+    // M6c (NFR-MNT-07): the app version's release notes must be written and reviewed too; the
+    // seed notes of the beta are not reviewed yet.
+    expect(stderr).toContain('Release notes FAILED');
   });
 });

@@ -90,7 +90,7 @@ async function seed(page: Page, options: SeedOptions = {}): Promise<{ summary: s
   let summary: string | null = null;
   if (options.workoutToday) {
     await page.goto('/');
-    await page.getByRole('link', { name: "Start today's session" }).click();
+    await page.getByRole('link', { name: "Start today's workout" }).click();
     await skipCheckIn(page);
     await logSet(page, { weight: 60, reps: 8 });
     await logSet(page, { weight: 60, reps: 8 });
@@ -174,7 +174,7 @@ test.describe('accessibility sweep of every route (M6a)', () => {
     // The workout: start screen, check-in, logging view with the dock, then the summary.
     await visit(page, '/session');
     await page.goto('/');
-    await page.getByRole('link', { name: "Start today's session" }).click();
+    await page.getByRole('link', { name: "Start today's workout" }).click();
     const heading = page.getByRole('heading', { level: 1 });
     await expect(heading).toHaveText(/^(How are you today\?|Workout|Suggested changes for today)$/);
     if ((await heading.textContent()) !== 'Workout') await sweep(page, 'session-check-in');

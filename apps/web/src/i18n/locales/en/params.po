@@ -20,7 +20,7 @@ msgstr "Age of a 1-rep max that gets refined"
 #. js-lingui-explicit-id
 #: src/features/why/params/labels.ts
 msgid "params.planning.sessionBudget.tolerancePct"
-msgstr "Allowed overrun of your session time"
+msgstr "Allowed overrun of your workout time"
 
 #. js-lingui-explicit-id
 #: src/features/why/params/labels.ts
@@ -150,7 +150,7 @@ msgstr "Effort for strength sets"
 #. js-lingui-explicit-id
 #: src/features/why/params/labels.ts
 msgid "params.planning.novice.maxWorkingExercises"
-msgstr "Exercises per session for novices"
+msgstr "Exercises per workout for beginners"
 
 #. js-lingui-explicit-id
 #: src/features/why/params/labels.ts
@@ -180,7 +180,7 @@ msgstr "Fewest weekly sets that still build muscle"
 #. js-lingui-explicit-id
 #: src/features/why/params/labels.ts
 msgid "params.progression.calibration"
-msgstr "First sessions with a new exercise"
+msgstr "First workouts with a new exercise"
 
 #. js-lingui-explicit-id
 #: src/features/why/params/labels.ts
@@ -205,12 +205,12 @@ msgstr "Hard sets that re-check the estimate"
 #. js-lingui-explicit-id
 #: src/features/why/params/labels.ts
 msgid "params.volume.strength.perSessionHeavySets"
-msgstr "Heavy sets per lift in one session"
+msgstr "Heavy sets per lift in one workout"
 
 #. js-lingui-explicit-id
 #: src/features/why/params/labels.ts
 msgid "params.monitoring.readiness.pmFromHour"
-msgstr "Hour from which a session counts as afternoon"
+msgstr "Hour from which a workout counts as afternoon"
 
 #. js-lingui-explicit-id
 #: src/features/why/params/labels.ts
@@ -285,7 +285,7 @@ msgstr "Minimum rest when counting up"
 #. js-lingui-explicit-id
 #: src/features/why/params/labels.ts
 msgid "params.progression.stall.failedSessions"
-msgstr "Missed sessions before a reset"
+msgstr "Missed workouts before a reset"
 
 #. js-lingui-explicit-id
 #: src/features/why/params/labels.ts
@@ -385,7 +385,7 @@ msgstr "Rest after the last warm-up set"
 #. js-lingui-explicit-id
 #: src/features/why/params/labels.ts
 msgid "params.monitoring.spacing"
-msgstr "Rest between hard sessions"
+msgstr "Rest between hard workouts"
 
 #. js-lingui-explicit-id
 #: src/features/why/params/labels.ts
@@ -406,21 +406,6 @@ msgstr "Rest between strength sets"
 #: src/features/why/params/labels.ts
 msgid "params.session.rest.timeSaver"
 msgstr "Rest in time-saver mode"
-
-#. js-lingui-explicit-id
-#: src/features/why/params/labels.ts
-msgid "params.motivation.streak.graceSessions"
-msgstr "Sessions a week may be short (grace)"
-
-#. js-lingui-explicit-id
-#: src/features/why/params/labels.ts
-msgid "params.volume.frequency.strengthPerLift"
-msgstr "Sessions per week for each competition lift"
-
-#. js-lingui-explicit-id
-#: src/features/why/params/labels.ts
-msgid "params.volume.frequency.hypertrophyPerMuscle"
-msgstr "Sessions per week for each muscle"
 
 #. js-lingui-explicit-id
 #: src/features/why/params/labels.ts
@@ -455,12 +440,12 @@ msgstr "Sets without an effort rating count as hard"
 #. js-lingui-explicit-id
 #: src/features/why/params/labels.ts
 msgid "params.motivation.streak.partialMinShare"
-msgstr "Share of sets for a partial session to count"
+msgstr "Share of sets for a partial workout to count"
 
 #. js-lingui-explicit-id
 #: src/features/why/params/labels.ts
 msgid "params.monitoring.readiness.sleep"
-msgstr "Short sleep before a session"
+msgstr "Short sleep before a workout"
 
 #. js-lingui-explicit-id
 #: src/features/why/params/labels.ts
@@ -500,7 +485,7 @@ msgstr "Time for the lowering part of a rep"
 #. js-lingui-explicit-id
 #: src/features/why/params/labels.ts
 msgid "params.session.duration.repSeconds"
-msgstr "Time per rep for session length"
+msgstr "Time per rep for workout length"
 
 #. js-lingui-explicit-id
 #: src/features/why/params/labels.ts
@@ -535,7 +520,7 @@ msgstr "Uncertainty of an assumed effort"
 #. js-lingui-explicit-id
 #: src/features/why/params/labels.ts
 msgid "params.volume.hypertrophy.perSessionSoftCap"
-msgstr "Useful sets per muscle in one session"
+msgstr "Useful sets per muscle in one workout"
 
 #. js-lingui-explicit-id
 #: src/features/why/params/labels.ts
@@ -584,11 +569,6 @@ msgstr "Weekly loss while cutting"
 
 #. js-lingui-explicit-id
 #: src/features/why/params/labels.ts
-msgid "params.motivation.streak.defaultWeeklyTarget"
-msgstr "Weekly sessions for a streak without a plan"
-
-#. js-lingui-explicit-id
-#: src/features/why/params/labels.ts
 msgid "params.volume.puos"
 msgstr "Weekly sets beyond which more shows no clear benefit"
 
@@ -601,6 +581,11 @@ msgstr "Weekly sets per muscle for growth"
 #: src/features/why/params/labels.ts
 msgid "params.progression.increment.intermediatePctPerWeek"
 msgstr "Weekly weight step for intermediates"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.motivation.streak.defaultWeeklyTarget"
+msgstr "Weekly workouts for a streak without a plan"
 
 #. js-lingui-explicit-id
 #: src/features/why/params/labels.ts
@@ -645,12 +630,12 @@ msgstr "Weight of sets without an effort rating"
 #. js-lingui-explicit-id
 #: src/features/why/params/labels.ts
 msgid "params.progression.increment.noviceLowerKg"
-msgstr "Weight step for novices, lower body"
+msgstr "Weight step for beginners, lower body"
 
 #. js-lingui-explicit-id
 #: src/features/why/params/labels.ts
 msgid "params.progression.increment.noviceUpperKg"
-msgstr "Weight step for novices, upper body"
+msgstr "Weight step for beginners, upper body"
 
 #. js-lingui-explicit-id
 #: src/features/why/params/labels.ts
@@ -670,7 +655,7 @@ msgstr "What counts as a heavy strength set"
 #. js-lingui-explicit-id
 #: src/features/why/params/labels.ts
 msgid "params.planning.missed.mergePriorities"
-msgstr "What moves when sessions are merged"
+msgstr "What moves when workouts are merged"
 
 #. js-lingui-explicit-id
 #: src/features/why/params/labels.ts
@@ -716,6 +701,21 @@ msgstr "Wilks coefficients"
 #: src/features/why/params/labels.ts
 msgid "params.scoring.wilks2020.coefficients"
 msgstr "Wilks2020 coefficients"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.motivation.streak.graceSessions"
+msgstr "Workouts a week may be short (grace)"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.volume.frequency.strengthPerLift"
+msgstr "Workouts per week for each competition lift"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.volume.frequency.hypertrophyPerMuscle"
+msgstr "Workouts per week for each muscle"
 
 #. js-lingui-explicit-id
 #: src/features/why/params/labels.ts

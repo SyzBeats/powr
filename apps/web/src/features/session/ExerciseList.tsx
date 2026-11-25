@@ -514,11 +514,11 @@ function SwapSheet({
           value={scope}
           onChange={setScope}
           options={[
-            { value: 'session', label: t`This session only` },
+            { value: 'session', label: t`This workout only` },
             {
               value: 'mesocycle',
               label: t`For the rest of this block`,
-              description: t`Also changes the planned sessions of this block. This cannot be undone.`,
+              description: t`Also changes the planned workouts of this block. This cannot be undone.`,
             },
           ]}
         />

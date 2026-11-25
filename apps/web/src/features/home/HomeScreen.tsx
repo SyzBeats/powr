@@ -219,7 +219,7 @@ function TodayCard() {
           ) : null}
           {!isToday ? (
             <p className="text-sm text-fg-muted">
-              <Trans>Rest is part of training: your muscles grow between sessions.</Trans>
+              <Trans>Rest is part of training: your muscles grow between workouts.</Trans>
             </p>
           ) : null}
         </>
@@ -250,7 +250,7 @@ function TodayCard() {
           search={{ start: 'today' }}
           className={`${linkButtonClass} bg-primary text-on-primary`}
         >
-          <Trans>Start today's session</Trans>
+          <Trans>Start today's workout</Trans>
         </Link>
       ) : null}
       <Link to="/plan" className={`${linkButtonClass} border border-control`}>
@@ -274,7 +274,7 @@ function WeekCard({ view }: { view: HomeView }) {
       </h2>
       <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1">
         <dt className="text-fg-muted">
-          <Trans>Sessions</Trans>
+          <Trans>Workouts</Trans>
         </dt>
         <dd className="font-semibold tabular" data-testid="week-progress">
           {progress ? (
@@ -284,7 +284,7 @@ function WeekCard({ view }: { view: HomeView }) {
               {streakWords.weekState(progress.state)}
             </>
           ) : (
-            <Trans>No sessions yet</Trans>
+            <Trans>No workouts yet</Trans>
           )}
         </dd>
         {view.week.minutes > 0 ? (

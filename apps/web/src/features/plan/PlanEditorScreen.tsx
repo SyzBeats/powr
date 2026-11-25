@@ -20,6 +20,7 @@ import { Button, buttonClass } from '#ui/button';
 import { ChoiceCards } from '#ui/choice';
 import { Card, Screen } from '#ui/screen';
 import { Sheet } from '#ui/sheet';
+import { UnsavedChangesGuard } from '#ui/unsaved-changes';
 
 import { useActivePlan, useCatalog, usePlanning, useProfile } from '../../hooks/use-planning';
 import { useLabels } from '../labels';
@@ -32,7 +33,8 @@ import { DayCard, IssueList, LiftList, VolumeList } from './parts';
  * live after every change, the report's issues offer one-tap fixes (`editsForFix`), warnings can
  * be dismissed (stored on the plan, so they stay dismissed for the same plan state), and saving
  * asks whether the change applies from the next session or the next block. Validation never
- * blocks saving. Every reorder has buttons (no drag-only path, NFR-A11Y-04).
+ * blocks saving. Every reorder has buttons (no drag-only path, NFR-A11Y-04). Leaving with unsaved
+ * edits asks first (PWA-12, TD-68).
  */
 export function PlanEditorScreen() {
   const { t } = useLingui();
@@ -115,7 +117,8 @@ function Editor({ plan, novice }: { plan: Plan; novice: boolean }) {
       planning.savePlanEdit(deps, { planId: plan.id, edits, scope }),
     );
     setSaving(false);
-    if (result.ok) void navigate({ to: '/plan' });
+    // Saved: leaving is not losing anything, so the unsaved-changes guard does not ask.
+    if (result.ok) void navigate({ to: '/plan', ignoreBlocker: true });
   };
   const [asking, setAsking] = useState(false);
   const minutes = (dayKey: string) =>
@@ -126,6 +129,11 @@ function Editor({ plan, novice }: { plan: Plan; novice: boolean }) {
     <WhySimpleContext value={novice}>
       <WhyNamesContext value={{ days }}>
         <Screen title={t`Edit plan`}>
+          {/* PWA-12, TD-68 (M6c): Back, a link or the back gesture asks before edits are lost. */}
+          <UnsavedChangesGuard
+            when={edits.length > 0}
+            description={t`Your changes to the plan are not saved. If you leave now, they are lost.`}
+          />
           <output aria-live="polite" className="sr-only">
             {preview ? summary : ''}
           </output>
@@ -346,7 +354,7 @@ function Editor({ plan, novice }: { plan: Plan; novice: boolean }) {
               disabled={saving}
               onClick={() => void save('nextSession')}
             >
-              <Trans>From the next session</Trans>
+              <Trans>From the next workout</Trans>
             </Button>
             <Button size="lg" disabled={saving} onClick={() => void save('nextMesocycle')}>
               <Trans>From the next block</Trans>

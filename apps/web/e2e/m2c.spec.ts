@@ -146,7 +146,7 @@ test.describe('M2c planning gaps (ONB-08, PLN-02, PLN-08, TD-36)', () => {
     await expect(page.getByRole('heading', { level: 2, name: 'Upper/lower ×2' })).toBeVisible();
     await expect(page.getByText(/^You chose Upper\/lower ×2/)).toBeVisible();
     // 45 minutes: the time budget shows as the usual note and checks (PLN-14).
-    await expect(page.getByText('Your session time is tight')).toBeVisible();
+    await expect(page.getByText('Your workout time is tight')).toBeVisible();
     await checkScreen(page, 'plan-preview-chosen-template');
   });
 
@@ -184,7 +184,7 @@ test.describe('M2c planning gaps (ONB-08, PLN-02, PLN-08, TD-36)', () => {
   test('the next block keeps the time-budget rule at 45 minutes (TD-36)', async ({ page }) => {
     await onboardToPreview(page, { minutes: '45 min' });
     await skipOptionalSteps(page);
-    await expect(page.getByText('Your session time is tight')).toBeVisible();
+    await expect(page.getByText('Your workout time is tight')).toBeVisible();
     await page.getByRole('button', { name: 'Accept plan' }).click();
     await expect(page).toHaveURL(/\/plan$/);
 
@@ -192,7 +192,7 @@ test.describe('M2c planning gaps (ONB-08, PLN-02, PLN-08, TD-36)', () => {
     await expect(page.getByRole('button', { name: 'Accept the next block' })).toBeVisible({
       timeout: 15_000,
     });
-    await expect(page.getByText('Your session time is tight')).toBeVisible();
+    await expect(page.getByText('Your workout time is tight')).toBeVisible();
     await expect(page.getByText(/set lower, towards the minimum effective dose/)).toBeVisible();
     await checkScreen(page, 'plan-next-block-budget');
   });
