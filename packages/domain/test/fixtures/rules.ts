@@ -115,8 +115,13 @@ export const EB_DEFAULTS: ParamValues = {
   'load.trend.processSdPerWeek': { novice: 0.02, intermediate: 0.01, advanced: 0.005 },
   'load.trend.noviceWidening': { weeks: 8, factor: 1.5 },
   'load.trend.typicalErrorCv': { novice: 0.055, intermediate: 0.033, advanced: 0.033 },
-  'load.trend.changeThresholds': { likelyTe: 1, sustainSessions: 2, veryLikelyTe: 2.8 },
-  'load.trend.reference': { weeks: 4, sessions: 3 },
+  'load.trend.changeThresholds': {
+    likelyTe: 1,
+    likelyZ: 1.5,
+    sustainSessions: 3,
+    veryLikelyTe: 2.8,
+  },
+  'load.trend.reference': { weeks: { novice: 4, intermediate: 8, advanced: 8 }, sessions: 3 },
   'load.reanchor.trigger': { maxReps: 3, minRpe: 9 },
   'load.pr.minSetWeight': 0.5,
   'volume.hypertrophy.weeklyBands': {

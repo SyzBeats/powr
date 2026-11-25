@@ -2,12 +2,14 @@ import { Plural, Trans, useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 
 import type { BackupError, DecodedBackup } from '@powr/application/backup';
+import type { InsightsReport } from '@powr/application/insights';
 
 import { Button } from '#ui/button';
 import { Input } from '#ui/input';
 import { Card, Screen } from '#ui/screen';
 
 import { useExportBackup, useImportBackup, useMeta, useStorageStatus } from '../../hooks/use-data';
+import { useInsights } from '../../hooks/use-insights';
 import { formatBytes, formatDateTime } from '../../i18n/format';
 
 export function DataScreen() {
@@ -17,6 +19,7 @@ export function DataScreen() {
       <StorageCard />
       <ExportCard />
       <RestoreCard />
+      <VerifyCard />
     </Screen>
   );
 }
@@ -225,4 +228,56 @@ function BackupErrorMessage({ error }: { error: BackupError }) {
     brokenReference: invalid,
   };
   return messages[error.kind];
+}
+
+/**
+ * "Verify data" (M4b, §8.2.8): rebuilds the derived weeks and the streak from the raw records
+ * (`rebuildInsights`), for when a number looks off. Nothing raw is changed; logging stays usable.
+ */
+function VerifyCard() {
+  const run = useInsights();
+  const [state, setState] = useState<
+    | { readonly kind: 'idle' }
+    | { readonly kind: 'busy' }
+    | { readonly kind: 'done'; readonly report: InsightsReport }
+    | { readonly kind: 'failed' }
+  >({ kind: 'idle' });
+  const verify = async () => {
+    setState({ kind: 'busy' });
+    try {
+      const report = await run((insights, deps) => insights.rebuildInsights(deps));
+      setState({ kind: 'done', report });
+    } catch {
+      setState({ kind: 'failed' });
+    }
+  };
+  return (
+    <Card>
+      <h2 className="text-lg font-semibold">
+        <Trans>Verify data</Trans>
+      </h2>
+      <p className="text-sm text-fg-muted">
+        <Trans>
+          Recalculates your weekly volume, heat map and streak from your logged workouts. Use it if
+          a number looks off. Your workouts are not changed.
+        </Trans>
+      </p>
+      <Button size="lg" disabled={state.kind === 'busy'} onClick={() => void verify()}>
+        <Trans>Verify data</Trans>
+      </Button>
+      <output data-testid="verify-status" className="block empty:hidden">
+        {state.kind === 'busy' ? <Trans>Checking your data…</Trans> : null}
+        {state.kind === 'done' ? (
+          <Plural
+            value={state.report.rebuiltWeeks}
+            one="Done: # week recalculated, and your streak is up to date."
+            other="Done: # weeks recalculated, and your streak is up to date."
+          />
+        ) : null}
+        {state.kind === 'failed' ? (
+          <Trans>That did not work. Your workouts are safe; try again later.</Trans>
+        ) : null}
+      </output>
+    </Card>
+  );
 }

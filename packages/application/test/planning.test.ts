@@ -171,7 +171,7 @@ describe('onboarding (ONB-01, ONB-10, ONB-12)', () => {
   it('stamps the plan with the hashed rules version (TD-31)', async () => {
     const { plan } = await onboarded();
     expect(plan.versions.rules).toBe(testRules.version);
-    expect(plan.versions.rules).toMatch(/^1\.5\.0\+[0-9a-f]{12}$/);
+    expect(plan.versions.rules).toMatch(/^1\.6\.0\+[0-9a-f]{12}$/);
   });
 
   it('"Just let me log" stores the profile without a plan (PLN-15)', async () => {

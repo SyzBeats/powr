@@ -201,21 +201,20 @@
 }
 
 /*
- * MOT-02: the in-session PR card's short scale-in (≤ 600 ms, once). Under reduced motion the
- * base layer zeroes every animation duration, so the card simply appears (NFR-A11Y-08).
+ * MOT-02: the PR cards' short scale-in (≤ 600 ms, once; the session card, the summary's PR card
+ * and a new best streak). Scale only, at full opacity, so the text keeps its contrast while it
+ * moves (M4b). Under reduced motion the base layer zeroes every animation duration, so the card
+ * simply appears (NFR-A11Y-08).
  */
 @keyframes pr-pop {
   0% {
     transform: scale(0.96);
-    opacity: 0.6;
   }
   60% {
     transform: scale(1.02);
-    opacity: 1;
   }
   100% {
     transform: scale(1);
-    opacity: 1;
   }
 }
 

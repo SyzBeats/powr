@@ -2542,9 +2542,9 @@ charts; NFR-PERF-01/06).
   `PerformanceView` and `muscleSeries`.
 - **Product owner:** (1) a _skipped_ planned session still counts as asked for in the streak
   (merging it keeps the week; grace covers one); (2) the four new `verified: false` values above;
-  (3) the strength trend is slow by design (intermediate process noise 1%/week): a steady +3% a
-  week reads "likely real" (≈ +7%) after 8 weeks, "very likely" needs a larger step; review
-  `load.trend.processSdPerWeek` with the evidence base if that is too conservative; (4) whether a
+  (3) the strength trend seemed slow (intermediate process noise 1%/week); **corrected by the
+  calibration below:** a steady +3% a week already read "likely real" at about 4.6 weeks (the
+  "8 weeks" was the fixture length); the real gap was slow gains (+0.5%/week never labelled); (4) whether a
   custom exercise may be a competition lift's variant for the heavy-set count (now: yes, through
   `variantOf`).
 - **Later:** the personal curve fit and correction factor (TD-26); rebuilds in the engine worker
@@ -2906,3 +2906,298 @@ state update landed under a full parallel run).
 - Merge fix: `apps/web/test/timer-extras.test.tsx` waits up to 2.5 s for the lead-in count (it is
   on screen for 3 s); under the full parallel run the first render took longer than the default
   1 s.
+
+## M4b insight screens
+
+Written 2026-11-25 by the M4b work (roadmap A.4 "M4 Insight and motivation", the screens on top of
+M4a's analytics core and M4v's charts and body map), plus the docs pass for M4 as a whole
+(technical concept v0.8, PRD v0.7, ADR-0007/0014/0019 amendments). Status: `pnpm verify` green
+(numbers under "Evidence").
+
+### What landed
+
+| Area                  | Where                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | PRD                    |
+| --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- |
+| Loaders and live data | `src/hooks/use-insights.ts` (`useInsights`, `useInsight`, `useLiveInsight`, `useInsightsWarmup`) and `src/hooks/use-library.ts` (`useLibrary`, `useLibraryQuery`): the two `import()` loaders, one `LAZY_INSIGHTS` disable comment each; `src/hooks/use-load.ts` (`useLoad`, `useLazyLive`: keyed loads that keep the last value, `stale`, while the next loads; `reload()` after writes)                                                                               | §8.19                  |
+| Idle warm-up          | `useInsightsWarmup` in `AppShell`: `ensureInsights()` once per app run, 5 s after the first screen and then in idle time (`requestIdleCallback`, 10 s timeout), never while a workout is active                                                                                                                                                                                                                                                                         | M4a open item          |
+| Routes                | `src/routes/explore/` (`index`, `exercises/{index,$exerciseId,new,edit.$exerciseId}`, `body-map/{index,$muscleId}`), `src/routes/progress/` (`index`, `exercise.$exerciseId`, `compare`, `volume`, `prs`, `calendar`, `scores`, `streak`), `src/routes/body/` (`index`, `log`); search params validated by plain functions (`features/{library,bodymap,progress,body}/search.ts`); the old `/explore` and `/progress` placeholders and `features/placeholder/` are gone | §8.9.1                 |
+| Home                  | `features/home/HomeScreen.tsx` (today or "Rest day" with the next session, this week with the streak and the mini heat map, last workout, recent PRs and "likely real" changes, bodyweight with the sparkline, meet and points, backup indicator), `Sparkline.tsx`                                                                                                                                                                                                      | ANL-01, MOT-03         |
+| Mini heat map         | `ui/body-map/body-map-mini.tsx` (`BodyMapMini`: both views, static, `aria-hidden`), `features/insights/MiniHeatMap.tsx` (lazy via `React.lazy`), `useHeatSentence` (the same in words)                                                                                                                                                                                                                                                                                  | ANL-01, WKT-13, MAP-04 |
+| Shared words          | `features/insights/words.ts` (heat bands, volume statuses and bands, sets, the body map's `muscles` record, streak states and counts)                                                                                                                                                                                                                                                                                                                                   | MOT-10                 |
+| Body map              | `features/bodymap/` (`BodyMapScreen`, `MuscleScreen`, `RankedExercises`, `PlaceInPlan`, `words`, `search`)                                                                                                                                                                                                                                                                                                                                                              | MAP-01…07              |
+| Explore and library   | `features/library/` (`ExploreScreen`, `LibraryScreen`, `ExerciseDetailScreen`, `detail-parts`, `CustomExerciseScreen`, `words`, `search`)                                                                                                                                                                                                                                                                                                                               | EXL-02…05, 07…09       |
+| Progress              | `features/progress/` (`ProgressScreen`, `ExerciseProgressScreen`, `CompareScreen`, `VolumeScreen`, `PrHistoryScreen`, `CalendarScreen`, `ScoresScreen`, `parts`, `words`, `search`)                                                                                                                                                                                                                                                                                     | ANL-02…07, ANL-11      |
+| Bodyweight            | `features/body/` (`BodyScreen` at `/body`, `LogBodyScreen` at `/body/log` and `?what=measurements`, `words`, `search`)                                                                                                                                                                                                                                                                                                                                                  | BOD-01…03              |
+| Streak                | `features/motivation/StreakScreen.tsx` at `/progress/streak` (current and best, this week, the rules in words, recent weeks with "Why?", mark a week as a break)                                                                                                                                                                                                                                                                                                        | MOT-03, MOT-04         |
+| Summary               | `features/session/SummaryScreen.tsx`: "Your week so far" (the session's week from `dWeekly`, mini heat map and sentence), the streak change card (`sessionStreakChange`, new best with the PR scale-in), the PR card with a count and a link to the PR history                                                                                                                                                                                                          | WKT-13, TD-43, MOT-02  |
+| PR celebrations       | Summary and session PR cards both use the CSS `pr-pop` scale-in (≤ 600 ms, zeroed under reduced motion by `app.css`); the session card counts several PRs ("New personal records: 2") and uses the PR accent                                                                                                                                                                                                                                                            | MOT-02                 |
+| Settings              | `features/settings/InsightsSection.tsx` (`#insights`): streak grace, weekly session goal without a plan, measurement sites, points source and division, through `updateInsightPreferences`                                                                                                                                                                                                                                                                              | MOT-03, BOD-03, ANL-07 |
+| Data                  | `features/data/DataScreen.tsx` "Verify data" → `rebuildInsights` with the result in a polite `<output>`                                                                                                                                                                                                                                                                                                                                                                 | §8.2.8                 |
+
+### PRD coverage (requirement → screen or element)
+
+| ID            | Where                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ANL-01        | Home: "Today" with "Start today's session" (one tap) or "Rest day" with the next session and "Rest is part of training"; this week "2 of 3 sessions · In progress", time trained, streak and best; mini heat map with its key and the same in words, "Open the body map"; last workout with its summary; recent PRs (3) and "likely real" changes with the rep-range note; bodyweight trend, rate, band with "Why?", sparkline, "Log bodyweight"; meet countdown and the current total with IPF GL points; backup indicator (no backup or older than 14 days); `refreshing` shown as "Updating your weekly numbers…"                                                                                      |
+| ANL-02        | `/progress/exercise/$id`: `TrendChart` (points, trend and 95 % band, PR stars, likely / very likely markers where a label starts or changes, mesocycle / deload / break annotations also listed in words), "Heavy sets" / "All sets" (`?source`), the chart's range chips (a year of sessions loaded, "All" loads the whole history so M4a's weekly maxima apply beyond a year), the summary sentence for the visible window (a change is called real only when PRG-02 says so), "Why?" on the latest label, the PRG-07 pace note, "Show the sets" sheet with a link to the workout; performance chart (heaviest set, volume load, reps at a chosen weight); `/progress/compare?ids=` up to 3 as % change |
+| ANL-03        | `/progress/volume`: this week / last week / 4-week average (`?mode`), the table of all muscles (hard and direct sets, target band, status icon and words, heat band) equal to `weeklyVolume` (test), a muscle's detail with target source, "Why?", planned sets still to come, contributors, sub-regions and its weekly `VolumeChart`; a chart week opens its contributors; competition-lift heavy sets and tonnage                                                                                                                                                                                                                                                                                       |
+| ANL-04        | Same screen: current e1RM with its 95 % range and source, calibration note, training max (set on the exercise detail), heaviest weight and best volume, rep-max table 1…12+ (load, set, effort, date, estimate), all sessions with their sets (paged), PRs                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| ANL-05        | `/progress/prs`: type (rep, heaviest weight, estimated 1-rep max labelled an estimate, volume) and exercise filters, newest first, 30 a page; each opens its workout summary                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| ANL-06        | `/progress/calendar`: `TrainingCalendar` with the locale week start (a day opens its workout or a sheet of several), the workout list with accent-insensitive search on names and notes, status / origin / with-PR filters, the last 12 months plus "Include older workouts"                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| ANL-07        | `/progress/scores`: source ("Current estimates" / "Heaviest lifted") and division saved to the preferences, missing inputs with links, total, lifts and bodyweight trend, per formula value, best, version ID, sources, "Preliminary coefficients" when unverified, "Legacy" and "informal", "Why?", the points history, the rules version                                                                                                                                                                                                                                                                                                                                                                |
+| ANL-11        | Every chart through M4v's frame (summary, range chips, Earlier/Later, readout, point slider, legend in words, "View as table"); the measurement trends on `/body` too                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| MAP-01        | `/explore/body-map`: `BodyMap` in the full content column (E2E checks 320 px), Front/Back one tap (`?view`), the selected muscle kept when coming back, the six small regions as buttons                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| MAP-02, 03    | Muscle panel `/explore/body-map/$muscleId`: ranked list (`?sort=focus`), role and credit, rating with "Why?" (factors), evidence tag, last performance, "Custom, unrated"; "Include unavailable" with "Not available" and "Needs: …" in words                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| MAP-04        | Heat from `observeWeeklyVolume` with the legend and the week / last week / 4-week toggle (`?mode`); the panel: fractional and direct sets, target band and source, status, "Why?", contributors, the planned remainder in words ("6 more planned")                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| MAP-05        | "Add to today" (added to the workout, to today's planned session, or "Start a workout with it", which starts a freestyle workout like the start screen); "Place in the plan" sheet (a day: add or replace; the new or changed plan checks; save from the next session or the next block); exercise details; history                                                                                                                                                                                                                                                                                                                                                                                       |
+| MAP-06        | "Show as a list" (`?show=list`): `BodyMapList` grouped Front/Back with the same names, values and bands; a row opens the panel                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| MAP-07        | The panel lists the muscle's sub-regions with their sets; each opens its own panel with its own volume, contributors and ranking (shapes not drawn: TD-52)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| EXL-02        | `/explore/exercises`: search on every keystroke, Filters sheet (muscle incl. sub-regions, equipment, movement, mechanics, available only, favourites, custom, include hidden), AND logic, a chip per active filter clearable in one tap and "Clear all", a polite result count; query and filters in the URL                                                                                                                                                                                                                                                                                                                                                                                              |
+| EXL-03        | Detail: cues, muscles with role and evidence explained on tap (`<details>`), the body map with primary cross-hatched, secondary hatched, minor plain and a legend, equipment and what is missing, defaults with rest "Why?", history summary with "Trend and full history"                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| EXL-04        | `/explore/exercises/new` (`?from=` copy) and `/explore/exercises/edit/$id`: every PRD field plus tempo, close variant of a competition lift, cues and the optional rating ("Use my rating in the rankings"); errors at the field and in a focused summary; `ActionBar`; delete confirmed, retired when it has history or is in a plan                                                                                                                                                                                                                                                                                                                                                                     |
+| EXL-05        | Credits and evidence in words, 0.25 labelled "Unvalidated convention"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| EXL-07        | Detail: competition-lift badge, variant of, close variants, substitutes (unavailable ones say so)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| EXL-08        | Detail: favourite, hide from lists, avoid the exercise, avoid its movement pattern (checkboxes), badges in results                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| EXL-09        | Detail "Your setup": up to 12 settings (seat, backrest, pin, handle, grip, stance, rack, safeties, other with a name), a note and the training max in the load unit                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| BOD-01        | Home "Log bodyweight" → the value → Save (3 taps); date and time default to now ("When" opens for a past time); note; guidance on weighing; edit and delete in a sheet on `/body` (delete confirmed); several per day allowed                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| BOD-02        | `/body`: trend (first reading per day), weekly rate (kg or lb and %), the band with "Why?", the rate's "Why?", `BodyweightChart` (trend prominent, weigh-ins de-emphasised), no single-day alert                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| BOD-03        | `/body/log?what=measurements`: the configured sites (Settings → Insights; circumferences by default, skinfolds opt-in) in cm/in (mm for skinfolds) with the measuring protocol; `/body` lists each site with its latest value, 4-week or since-first change and its trend chart                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| MOT-01, 02    | PRs in words on Home, the summary and the PR history; the session and summary PR cards with the short scale-in (static under reduced motion); a new best streak celebrated the same way                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| MOT-03        | Home (current, best, "2 of 3 sessions"), `/progress/streak`, the summary's streak card                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| MOT-04        | `/progress/streak`: the rules in words (breaks pause, a miss resets only the current streak, the best stays), "Mark a week as a break" for the current week and up to four back (errors in words), every week's "Why?"; grace in Settings                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| MOT-10        | Every new text: facts and next steps ("Below your target", "Not kept", "Rest is part of training", "Life happens"-style break offer), no blame, no BMI, no praise for fast loss                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| WKT-13        | Summary: "Your week so far" mini heat map with the week's words, the streak change, plus the existing sets per muscle                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| DAT-08 (part) | Home backup indicator; cadence, dismissal and reminders after a session are M5                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+
+**Not built (and why):** the Progress hub's strength list shows no current e1RM or change per exercise (no bulk use case; one query per row is too costly, TD-55); the dashed planned-remainder overlay and the sub-region shapes on the figure (TD-51, TD-52: said in words, drill-down as a list); the library's filters are single choice per dimension and the custom form cannot create new "one of" equipment groups or pick a substitution group (TD-56); the backup reminder's cadence and dismissal (DAT-08, M5); a profile editor for the scoring reference set (M5; the link goes to the plan set-up).
+
+### Product-owner decisions (2026-11-25) and what they became
+
+1. Body-map artwork approved: used as built (`BodyMap`, `BodyMapList`, the new static `BodyMapMini`).
+2. ECharts and the accessible chart pattern, 3 colours, the large figure with chips: every chart uses M4v's frame; ranges over a year use M4a's `aggregated` weekly maxima (the trend screen loads "all" when the "All" chip is chosen); `BodyMap` gets the whole column on the map screen and the exercise detail.
+3. PRD v0.7 carries M4v's ANL-11 and MAP-01 wording and M4a's MOT-03, MOT-04, BOD-02, ANL-04 and ANL-07 wording, with the changelog row "approved by the product owner on 2026-11-25"; nothing else changed.
+4. Accepted as built: the screens explain the streak rules in words; the grace switch is off by default in Settings → Insights.
+5. The strength-trend noise review runs in parallel: no screen hard-codes a label, a week count or the noise value; the chart summary repeats the domain's label only.
+
+### Decisions and deviations
+
+| Concept / brief says                                                     | What I did                                                                                                                                                                                                                      |
+| ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| MAP-02 "tapping a region opens a panel"                                  | The panel is a route (`/explore/body-map/$muscleId`) with its own h1, Back and deep link: its "Why?" and plan-placement sheets would otherwise stack on a sheet. Back keeps the map's view, list and mode                       |
+| §8.10 "Home sparklines (bodyweight trend, mini volume bars)"             | The bodyweight sparkline only (`Sparkline.tsx`, `aria-hidden`, the words beside it); the week's volume is the mini heat map                                                                                                     |
+| ANL-01 mini heat map "through `import()`"                                | A static two-view figure (`BodyMapMini`, new in `ui/body-map/`), `aria-hidden` with the counts per band in words next to it and a link to the interactive map; lazy via `React.lazy`, so the artwork stays off the startup path |
+| WKT-13 "volume by muscle (mini heat map)"                                | The week of the session with it included, from `dWeekly` (one calculation with the body map); per-session heat would need a different scale. The sets per muscle of the session stay as the list                                |
+| Bodyweight route (§8.9.1 `/body`, `/body/log`)                           | As planned, reached from Home's card and the Progress hub; `?what=measurements` for measurements on the same log screen                                                                                                         |
+| Units before the profile loads                                           | `/body` and `/body/log` wait for the profile, so nothing shows or saves in a default unit (found by the E2E test: en-US defaults to lb)                                                                                         |
+| PR card animation (M3b: Web Animations on the summary, a fade from 60 %) | The CSS `pr-pop` on both cards, scale only at full opacity, so `app.css`'s reduced-motion rule makes both static and text contrast never dips                                                                                   |
+| EXL-03 mini body map                                                     | The full-size `BodyMap` on the detail (a smaller interactive figure would push small regions under 24 px); tapping a muscle opens its panel                                                                                     |
+| Exercise trend "best set"                                                | Charted as the heaviest set per session; the best-e1RM set would repeat the e1RM chart                                                                                                                                          |
+| Search params as state                                                   | Library filters, the map's view/list/mode/sort, the trend source, the volume mode and muscle, the PR filters, the calendar month and the compare IDs live in the URL (Back restores them)                                       |
+| Library filters                                                          | One value per dimension (the domain takes several)                                                                                                                                                                              |
+| "Verify data"                                                            | `rebuildInsights` (derived weeks and the streak); the exercise-derived tables keep their own fingerprints                                                                                                                       |
+| Screenshot names                                                         | The map screen's shots are `explore-body-map*`, because M4v's demo spec writes `body-map-*`                                                                                                                                     |
+
+**Bugs found and fixed on the way:**
+
+- `/body` flashed values in kg, and the log form could save in kg, before the profile (with lb on
+  en-US devices) had loaded; both screens now wait for the profile (found by the E2E test).
+- The PR scale-in (`pr-pop`, M3b) started at 60 % opacity, so the card's text was briefly below
+  4.5:1 (axe caught it on the summary under load); it now scales at full opacity, for the
+  session card, the summary's PR card and a new best streak.
+- A sticky `ActionBar` on the short log forms could cover the note field once the error summary
+  pushed the form down (axe `target-size`); the log forms keep Save and Cancel in the flow.
+- The streak screen's visually hidden heading was clipped under +30 % strings; it is visible now.
+- The idle warm-up first ran right after every mount of the shell, so a derived-data rebuild could
+  compete with the start of a workout (and loaded every component test); it now waits 5 s, runs
+  once per app run and never while a workout is active.
+
+### Evidence
+
+`pnpm verify` green on 2026-11-25 (exit 0): lint (0 errors, 0 warnings), format, token gate (27
+colours; lowest text 4.56, on fills 5.41, UI 3.88, heat map 3.13, chart series 4.10; 636 colour
+utilities in 236 files), knip, catalog check, typecheck, **971 unit and component tests in 93
+files** (944 before; 27 new), build, licence gate (37 distributed, 841 build-only, passed), size
+(**entry JS 182.21 kB gzip** of 186, was 178.71: the 17 new route definitions with their plain
+search validators and the idle warm-up hook; no screen, chart or body-map code in the startup
+chunk; CSS 7.11 kB; service worker 8.96 kB; precache 171 files + sw.js, 951.9 kB; **startup path
+1 script, 0 with Zod**) and **65 E2E tests** (57 before; the 3 opt-in S-4 measurements skipped).
+
+- **Component tests** (Vitest browser mode, real IndexedDB, axe zero serious or critical in each):
+  `test/home.test.tsx` (Home after two workouts: next session, week progress, streak, PRs, the
+  heat sentence and the lazy mini map, backup indicator; Home without a plan; the streak screen
+  with its rules, weeks and a week marked as a break; the summary's week heat map; Settings →
+  Insights saving grace and a site; "Verify data"), `test/body.test.tsx` (the log with its error
+  summary, an implausible value, a decimal comma; the trend, rate and chart table; edit and
+  delete; measurements), `test/library.test.tsx` (4: search, AND filters, chips and Clear all;
+  the detail with marks, setup and training max; the custom form's errors, save and search;
+  copying from bench press), `test/body-map-screen.test.tsx` (5: the panel, the MAP-07
+  drill-down, add to today, the list alternative, the mode toggle), `test/progress.test.tsx` (6:
+  hub; trend with table view, rep maxes and sessions; the volume table equal to `weeklyVolume`
+  and the drill-down; PR filter; calendar search; scores), `test/pseudo-locale-m4.test.tsx` (21
+  routes at +30 % strings and 360 px: no sideways scrolling, nothing clipped or off-screen).
+- **E2E** (production build, CSP with Trusted Types; axe in light and dark and reflow at 320 px
+  and 200 % text on every new screen): `e2e/home.spec.ts` (Home after backdated workouts with
+  the next session, streak, PRs and the mini heat map, then the streak screen; bodyweight logged
+  from Home in three taps, a week of weigh-ins, the trend and its table, measurements; the
+  summary's week heat map and streak change, Settings → Insights, "Verify data"),
+  `e2e/library.spec.ts` (hub, filters, detail, form errors, a custom exercise used in a freestyle
+  workout), `e2e/body-map-screen.spec.ts` (tap → ranked list → add to today → the workout has it,
+  also from a small-region chip and with no workout today; place in the plan, then the plan
+  editor shows it), `e2e/progress.spec.ts` (four backdated workouts, range chips change the
+  window, the table lists the sessions, compare; volume, PRs, calendar and scores).
+
+**Screenshots** (360 × 780, light and dark, `M2B_SCREENS=<dir>`; `*-320px-200pct.png` for
+reflow), handed to the coordinator outside the repository: `home`, `streak`, `body-log`, `body`,
+`body-measurements-log`, `session-summary-week`, `settings-insights`, `data-verify`, `explore`,
+`library`, `library-filtered`, `exercise-detail`, `custom-exercise-form`,
+`custom-exercise-errors`, `explore-body-map`, `explore-body-map-back`, `explore-body-map-list`,
+`muscle-panel`, `muscle-panel-focus`, `muscle-place-in-plan`, `progress`, `exercise-progress`,
+`exercise-progress-table`, `compare`, `volume`, `volume-muscle`, `prs`, `calendar`, `scores`.
+
+### Open items
+
+- **Device (S22, TD-50):** TalkBack on the new screens (the muscle panel and the place-in-plan
+  sheet, the evidence `<details>`, the native date, time and select inputs, the calendar), chart
+  timings with real data.
+- **TD-55…58** (technical concept §11.2): the hub's per-exercise e1RM and label (bulk use case);
+  library multi-select filters and the custom form's equipment groups and substitution group;
+  the backup indicator's cadence and dismissal (DAT-08, M5); the component tests' fixed browser
+  port.
+- "Include unavailable" has no component test (with the commercial-gym preset no chest exercise
+  is unavailable); unknown IDs in `/progress/compare?ids=` are ignored silently.
+- The library has 74 active exercises (PRD A-05 expects 150+ by MVP): a content task.
+- Running the full suite while other agents load the machine, two M4v component tests can time
+  out (`test/body-map.test.tsx` "measures every tap target…", 15 s; `test/timer-extras.test.tsx`
+  the lead-in count); both pass in isolation.In one full run under load,
+  these two and `test/charts.test.tsx` ("moves through the points with the keyboard", 15 s)
+  timed out; the next full run passed all three unchanged (assertions not weakened).
+- Two worktrees running `pnpm test` at once collide on Vitest's browser port 23315 (the app's
+  Vite config makes it strict); locally `--api.port N --browser.api.port M` works (TD-58).
+
+### Doc changes (docs pass for M4)
+
+- **`docs/technical-concept.md` v0.8:** every amendment listed under "M4a analytics core" and
+  "M4v charts, body map and timer extras" folded in (§0, §4, §5.1, §5.3–§5.5, §7.3, §8.2.2,
+  §8.2.8, §8.3.4, §8.7.5, new §8.7.12, §8.8.2, §8.8.7, §8.9.1 routes as built in M4, §8.9.3,
+  §8.9.9, new §8.9.10 insight screens, §8.10 and §8.11 as built with S-4 and S-5, §8.18, §8.19,
+  §8.20, §9, §11.1, §11.2, A.3, A.4, Appendix B); TD-39, TD-43 (remainder → TD-54), TD-44 and
+  TD-48 closed, TD-03 and TD-26 narrowed, TD-32 extended, TD-50…58 added; the product-owner
+  decisions of 2026-11-25; changelog row 0.8.
+- **`docs/PRD.md` v0.7:** ANL-11 and MAP-01 (M4v), MOT-03, MOT-04, BOD-02, ANL-04, ANL-07 (M4a),
+  changelog row approved by the product owner on 2026-11-25; nothing else.
+- **ADRs:** amendments (v0.8) in ADR-0007 (charts: S-4 go, the modular set, no tooltip, the
+  Trusted Types shim, Recharts stays the fallback), ADR-0014 (routes as built in M4) and
+  ADR-0019 (timer extras); the ADR index's status cells.
+
+## M4 trend-label calibration (rules 1.6.0)
+
+Written 2026-11-25 by the trend-noise evidence review the product owner asked for after M4a.
+Result: the process noise per level (`load.trend.processSdPerWeek` novice 2, intermediate 1,
+advanced 0.5 %/week) is supported by the literature and kept (re-sourced); the slow labels came
+from the label rule, which is fixed (technical concept §8.7.5, "v0.8 trend-label calibration").
+
+**Evidence (summary; sources added to `packages/rules/data/sources/load.yaml`):**
+
+- Realistic gains: novice about 1–2 %/week, 3–4 % in the first weeks of a lift (Swinton 2022
+  [MA], quartiles from the preprint, unverified against the published version; Ahtiainen 2003
+  [OBS]; Mattocks 2017 [RCT-U]); trained about 0.2–1 %/week in 8–12-week trials, about
+  0.1–0.3 % long-run (Androulakis-Korakakis 2020 [MA]; Rhea 2003 [MA]); advanced about
+  0.02–0.1 %/week long-run (Solberg 2019 [OBS]; Häkkinen 1988 [OBS]; Latella 2020/2024).
+- Day-to-day noise: tested 1RM 2–3.5 % in trained lifters (Grgic 2020 [SR]), 2–10 % untrained
+  (Levinger 2009 [OBS]); e1RM about 4–5 % for heavy sets near failure (Refalo 2024; Hughes
+  2019), about 7–10 % for typical logged sets (Zourdos 2021; Steele 2017; Nuzzo 2024 [MA]). The
+  registry's 4 % and 9 % are supported.
+- State-space practice: fix observation noise from reliability data, estimate process noise by
+  maximum likelihood when data allow (Durbin & Koopman 2012; Muth 1960); per-person process noise
+  is poorly identifiable and pooled priors predict better with scarce data (Kolossa 2017;
+  Marchal 2025); level-specific priors individualised over time (Hecksteden 2017; Sottas 2007).
+
+**Changes (rules 1.6.0):** `load.trend.reference` weeks by level (novice 4, intermediate 8,
+advanced 8; sessions 3); the first 3 points are never the reference;
+`load.trend.changeThresholds` gains `likelyZ` 1.5 (any claim also beyond 1.5 SD of Δ's own
+uncertainty; first drafted at 1, set to 1.5 by the product owner on 2026-11-25, amended in place
+without a version bump because 1.6.0 was unreleased) and `sustainSessions` 3; the rep-range flag
+falls back to the oldest kept exposures. All POWR design values, `verified: false`.
+
+**Simulation (300 seeded runs, 2 sessions/week; weeks to the first upward claim, median; rules
+1.5.0 → 1.6.0 with `likelyZ` 1 → 1.6.0 with `likelyZ` 1.5, as shipped):** novice typical +2 %/wk
+7.0 → 10.0 → 12.6, +3 % 5.0 → 8.0 → 9.6; intermediate typical +0.5 % never → 19.0 → never, +1 %
+10.0 → 11.6 → 15.0, +3 % 4.6 → 6.0 → 7.0; intermediate heavy +0.5 % 13.0 → 11.0 → 12.0; advanced
+heavy +0.5 % never → 13.0 → 13.6. False claims on flat series within 12 weeks, jitter at the
+typical error: typical sets 10–13 % → 0 % → 0 %; intermediate heavy 17.3 % → 8.7 % → 3.7 %;
+advanced heavy 11.3 % → 4.7 % → 2.7 %. Under stress noise (jitter = the filter's 9 %, closer to
+real logged sets): about 82–87 % → 30–33 % → 6–9 % of flat typical-set series get a claim within
+12 weeks (`likelyZ` 1.28 would have given about 14–16 %). Follow-ups: TD-59…TD-62.
+
+`likelyZ` 1 → 1.5 in full (`trend-calibration.test.ts` snapshot; median weeks to the first upward
+claim, "–" when most runs have none within 26 weeks, with the share claimed by 12 and 26 weeks):
+
+| Level, sets          | Gain/week | `likelyZ` 1         | `likelyZ` 1.5       |
+| -------------------- | --------- | ------------------- | ------------------- |
+| novice typical       | +1 %      | 17.6 (23 % / 75 %)  | – (1 % / 12 %)      |
+| novice typical       | +2 %      | 10.0 (96 % / 100 %) | 12.6 (48 % / 100 %) |
+| novice typical       | +3 %      | 8.0 (100 % / 100 %) | 9.6 (99 % / 100 %)  |
+| novice heavy         | +1 %      | 9.6 (76 % / 100 %)  | 10.0 (73 % / 100 %) |
+| novice heavy         | +2 %      | 6.6 (100 % / 100 %) | 7.0 (100 % / 100 %) |
+| novice heavy         | +3 %      | 5.0 (100 % / 100 %) | 5.6 (100 % / 100 %) |
+| intermediate typical | +0.5 %    | 19.0 (6 % / 90 %)   | – (0 % / 6 %)       |
+| intermediate typical | +1 %      | 11.6 (74 % / 100 %) | 15.0 (10 % / 100 %) |
+| intermediate typical | +3 %      | 6.0 (100 % / 100 %) | 7.0 (100 % / 100 %) |
+| intermediate heavy   | +0.5 %    | 11.0 (60 % / 100 %) | 12.0 (51 % / 100 %) |
+| intermediate heavy   | +1 %      | 7.6 (100 % / 100 %) | 8.3 (100 % / 100 %) |
+| intermediate heavy   | +3 %      | 4.6 (100 % / 100 %) | 4.6 (100 % / 100 %) |
+| advanced typical     | +0.25 %   | – (0 % / 1 %)       | – (0 % / 0 %)       |
+| advanced typical     | +0.5 %    | – (4 % / 44 %)      | – (0 % / 5 %)       |
+| advanced heavy       | +0.25 %   | – (11 % / 45 %)     | – (9 % / 44 %)      |
+| advanced heavy       | +0.5 %    | 13.0 (43 % / 100 %) | 13.6 (39 % / 100 %) |
+
+False claims on flat series, within 12 / 26 weeks:
+
+| Level, sets          | Jitter at the TE, `likelyZ` 1 | `likelyZ` 1.5   | Stress, `likelyZ` 1 | `likelyZ` 1.5   |
+| -------------------- | ----------------------------- | --------------- | ------------------- | --------------- |
+| novice typical       | 0 % / 0 %                     | 0 % / 0 %       | 31.0 % / 43.0 %     | 6.3 % / 11.7 %  |
+| novice heavy         | 16.0 % / 65.0 %               | 11.3 % / 63.7 % | 15.7 % / 25.0 %     | 12.0 % / 22.3 % |
+| intermediate typical | 0 % / 0 %                     | 0 % / 0 %       | 33.3 % / 55.0 %     | 9.0 % / 15.0 %  |
+| intermediate heavy   | 8.7 % / 11.7 %                | 3.7 % / 6.0 %   | 20.7 % / 32.0 %     | 11.0 % / 21.3 % |
+| advanced typical     | 0 % / 0 %                     | 0 % / 0 %       | 30.3 % / 39.7 %     | 7.0 % / 10.3 %  |
+| advanced heavy       | 4.7 % / 5.0 %                 | 2.7 % / 3.0 %   | 11.0 % / 13.7 %     | 7.7 % / 10.3 %  |
+
+What 1.5 costs: intermediate +0.5 %/week on typical sets is no longer labelled within 26 weeks,
+even without noise (at 2 sessions a week 1.5 SD of the change is about 5.3 %, more than the
+8-week gain of 4 %); heavy sets still show it within about 12 weeks. On a steady rise "likely"
+(1.5 to 1.96 SD) is a narrow band, so a fast gain often goes from no label straight to "very
+likely" (the +3 %/week test fixture does, at week 7.5). Novice heavy sets still over-claim under
+jitter at their TE (64 % by week 26): TD-59.
+
+The test's bounds follow: false claims under stress ≤ 12 % (typical sets) and ≤ 15 % (heavy) within
+12 weeks, ≤ 20 % and ≤ 25 % within 26; jitter at the TE ≤ 5 % / 8 % for trained heavy sets and
+≤ 15 % within 12 weeks for novice heavy sets; the speed bounds that moved sit just above the new
+medians (novice typical +2 % ≤ 13 weeks and +3 % ≤ 10, novice heavy +3 % ≤ 6, intermediate
++1 % ≤ 16 typical and ≤ 9 heavy); intermediate +0.5 %/week is asserted on heavy sets (by 26
+weeks in every run) instead of typical sets.
+
+**Product-owner answers after M4b (2026-11-25):**
+
+- The change-label gate is strict ("honesty first"): `likelyZ` 1.5 (rules 1.6.0 amended in
+  place). Under realistic noise it claims a change in about 6–9 % of flat 12-week series of
+  typical sets instead of 30–33 %; slower recognition is accepted (intermediate +1 %/week at
+  about 15 weeks, novice +2 %/week at about 12.6).
+- The startup budget stays 186 KB. M5 moves route search validation into the lazy route chunks
+  to recover headroom (entry JS 182.2 KB now; TD-63).
+- Accepted as built: the muscle panel as a full screen with a deep link, the summary heat map
+  showing the whole week so far, and "Heaviest lifted" as the points-source label.
+- Scheduled for M5: the content pass (library 74 → 150+ exercises, PRD A-05, TD-23; alternative
+  templates, TD-37); TD-55 (per-exercise e1RM on the Progress list), TD-56 (multi-select library
+  filters), TD-57 (backup reminder cadence); the trend follow-ups TD-59, TD-60 and TD-62.
+
+**Test infrastructure after M4 (coordinator, 2026-11-25).** The browser component tests flaked
+under load: in each full run a different real-time test timed out or raced (the body-map pixel
+scan, the chart keyboard slider, the timed-set lead-in, the custom-exercise form). Three changes,
+no assertion weakened:
+
+- `pnpm test` runs the unit projects first (`pnpm test:unit`), then the browser project
+  (`pnpm test:components`), so the 16 unit workers no longer compete with Chromium;
+- the browser project runs one test file at a time (`fileParallelism: false`) with a 30 s test
+  limit (`apps/web/vitest.components.config.ts`); it takes about 63 s instead of about 25 s and
+  passed 4 of 4 consecutive runs (before: 1 failure in about every second run);
+- the body-map pixel scan keeps its own 60 s limit (about 464,000 hit tests).

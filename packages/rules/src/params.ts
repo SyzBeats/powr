@@ -136,10 +136,14 @@ export const PARAM_SCHEMAS = {
   'load.trend.typicalErrorCv': byLevel(z.number().positive().max(0.5)),
   'load.trend.changeThresholds': z.strictObject({
     likelyTe: positive,
+    likelyZ: nonNegative,
     sustainSessions: z.number().int().min(1),
     veryLikelyTe: positive,
   }),
-  'load.trend.reference': z.strictObject({ weeks: positive, sessions: z.number().int().min(1) }),
+  'load.trend.reference': z.strictObject({
+    weeks: byLevel(positive),
+    sessions: z.number().int().min(1),
+  }),
   'load.pr.minSetWeight': fraction,
   'load.reanchor.trigger': z.strictObject({
     maxReps: z.number().int().min(1),

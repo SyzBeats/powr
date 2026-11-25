@@ -124,3 +124,96 @@
   note: >-
     Design values chosen by POWR where the EB gives only a direction (e.g. the set-order decay
     0.85); they ship with verified false.
+
+# Rules 1.6.0: the e1RM trend's process noise, change window and uncertainty gate (PRG-02). Sources
+# found and checked against PubMed or the publisher for the trend calibration of 2026-11-25; the
+# EB does not cite them yet.
+
+- id: src.swinton2022
+  citation: >-
+    Swinton et al. 2022. Interpreting magnitude of
+    change in strength and conditioning: effect size selection, threshold values and Bayesian
+    updating. J Sports Sci 40(18):2047–2054. DOI 10.1080/02640414.2022.2128548.
+  url: https://pubmed.ncbi.nlm.nih.gov/36184114/
+  seeAlso:
+    - https://doi.org/10.51224/SRXIV.11
+  tag: MA
+  status: active
+  note: >-
+    Pooled within-group changes of S&C interventions (mostly 6–12 weeks; 60% untrained samples):
+    maximal strength +14.3% (meta-analytic mean), quartiles 6.0 / 13.6 / 22.7%, i.e. about 1–2% a
+    week. The quartile values were read from the SportRxiv preprint; the published values may
+    differ slightly (verify before hard-coding).
+
+- id: src.ahtiainen2003
+  citation: >-
+    Ahtiainen et al. 2003. Muscle hypertrophy, hormonal adaptations
+    and strength development during strength training in strength-trained and untrained men. Eur J
+    Appl Physiol 89(6):555–563. DOI 10.1007/s00421-003-0833-3.
+  url: https://pubmed.ncbi.nlm.nih.gov/12734759/
+  tag: OBS
+  status: active
+  note: >-
+    Same 21-week programme, 8 men per group (not randomised): maximal isometric leg-extension
+    force +20.9% in untrained men vs +3.9% in strength athletes (about 1.0 vs 0.2% a week).
+
+- id: src.androulakiskorakakis2020
+  citation: >-
+    Androulakis-Korakakis et al. 2020. The minimum effective training dose required to
+    increase 1RM strength in resistance-trained men: a systematic review and meta-analysis. Sports
+    Med 50(4):751–765. DOI 10.1007/s40279-019-01236-0.
+  url: https://pubmed.ncbi.nlm.nih.gov/31797219/
+  tag: MA
+  status: active
+  note: >-
+    Single sets 1–3 times a week for 8–12 weeks in trained men: squat +17.5 kg, bench +8.25 kg
+    (roughly 0.7–1.3% a week at typical baselines; the baselines are an assumption).
+
+- id: src.solberg2019
+  citation: >-
+    Solberg, Hopkins et al. 2019. Peak age and performance progression in world-class
+    weightlifting and powerlifting athletes. Int J Sports Physiol Perform 14(10):1357–1363.
+  url: https://pubmed.ncbi.nlm.nih.gov/30958059/
+  tag: OBS
+  status: active
+  note: >-
+    Powerlifters improved 12% (SD 10%) over the 5 years before peak age, about 2–2.5% a year
+    (about 0.05% a week).
+
+- id: src.kolossa2017
+  citation: >-
+    Kolossa et al. 2017. Performance
+    estimation using the fitness-fatigue model with Kalman filter feedback. Int J Comput Sci Sport
+    16(2):117–129. DOI 10.1515/ijcss-2017-0010.
+  url: https://doi.org/10.1515/ijcss-2017-0010
+  tag: MODEL
+  status: active
+  note: >-
+    Observation noise fixed from measurement reliability; the state (process) noise fitted to
+    data within bounds; with scarce individual data, parameters pooled across athletes predicted
+    better than individual fits.
+
+- id: src.durbin2012
+  citation: >-
+    Durbin & Koopman 2012. Time Series Analysis by State Space Methods, 2nd edition. Oxford
+    University Press. DOI 10.1093/acprof:oso/9780199641178.001.0001.
+  url: https://doi.org/10.1093/acprof:oso/9780199641178.001.0001
+  tag: MODEL
+  status: active
+  note: >-
+    The local-level model: the signal-to-noise ratio of process and observation variance sets the
+    steady-state gain (equivalent to exponential smoothing); the variances are estimated by
+    maximum likelihood when enough data exist; the filter's posterior variance is the uncertainty
+    of the level.
+
+- id: src.stephenshemingway2020
+  citation: >-
+    Stephens Hemingway et al. 2020. The effects of measurement error and
+    testing frequency on the fitness-fatigue model applied to resistance training: a simulation
+    approach. Int J Sports Sci Coach 15(1):60–71. DOI 10.1177/1747954119887721.
+  url: https://doi.org/10.1177/1747954119887721
+  tag: MODEL
+  status: active
+  note: >-
+    In 16-week simulations of intermediate and advanced lifters, a measurement CV above about 4%
+    made the model's predictions unsatisfactory, worse with less frequent testing.

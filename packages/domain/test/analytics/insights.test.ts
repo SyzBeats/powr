@@ -96,13 +96,24 @@ describe('e1RM series and the "likely real" labels (ANL-02, PRG-02)', () => {
     expect(
       labels(flat.points).filter((label) => label === 'likely' || label === 'veryLikely'),
     ).toEqual([]);
-    // +3% a week for 8 weeks: the smoothed trend (which lags, intermediate process noise 1% per
-    // week) rises about 7% against the point four weeks back: beyond 1 TE (3.3%), sustained.
-    const rising = history(Array.from({ length: 16 }, (_, i) => 100 * 1.03 ** (i / 2)));
+    // +0.9% a week for 24 weeks of typical sets (σ 9%; a trained lifter's good block): the
+    // smoothed trend (which lags, intermediate process noise 1% per week) rises about 5.5–6.8%
+    // against its reference (rules 1.6.0: 8 weeks back for intermediates, else the oldest point
+    // after the first three): beyond 1 TE (3.3%) and 1.5 SD of its own uncertainty (likelyZ 1.5)
+    // for three sessions, short of 1.96 SD. "Likely real" from week 17.
+    const rising = history(Array.from({ length: 48 }, (_, i) => 100 * 1.009 ** (i / 2)));
     const last = rising.points.at(-1)!.change!;
     expect(last).toMatchObject({ label: 'likely', direction: 'up', repRange: false });
     expect(last.deltaPct).toBeGreaterThan(3.3);
     expect(last.deltaPct).toBeLessThan(2.8 * 3.3);
+    expect(labels(rising.points).indexOf('likely')).toBe(34);
+    // +3% a week (M4a's example): "very likely" (beyond 1.96 SD) from week 7.5. With likelyZ 1.5
+    // a steady rise this fast is beyond 1.96 SD by the time it has held beyond 1.5 SD for three
+    // sessions, so no "likely" comes first (with likelyZ 1: "likely" from week 6).
+    const fast = history(Array.from({ length: 16 }, (_, i) => 100 * 1.03 ** (i / 2)));
+    expect(fast.points.at(-1)!.change).toMatchObject({ label: 'veryLikely', direction: 'up' });
+    expect(labels(fast.points).indexOf('veryLikely')).toBe(15);
+    expect(labels(fast.points)).not.toContain('likely');
     // A 30% step held over ten sessions becomes "very likely real" (beyond 2.8 TE).
     const step = history([
       ...Array.from({ length: 8 }, () => 100),
@@ -118,13 +129,15 @@ describe('e1RM series and the "likely real" labels (ANL-02, PRG-02)', () => {
   });
 
   it('flags a change that coincides with a rep-range shift as possibly a rep-range effect (TD-26)', () => {
-    // Ten sessions of 6s at 100 kg (e1RM 124 kg), then doubles at 120 kg (e1RM 130.8 kg): the
-    // strength trend rises 5.5% while the typical reps drop by 4.
+    // Sixteen sessions of 6s at 100 kg (e1RM 124 kg), then doubles at 125 kg (e1RM 136.2 kg): the
+    // strength trend rises 8.4% while the typical reps drop by 4. (Rules 1.6.0, likelyZ 1.5: a
+    // step needs a well-smoothed reference and seven sessions to beat 1.5 SD of the trend's own
+    // uncertainty; doubles at 120 kg, +5.5%, no longer do within eight.)
     const loads = [
-      ...Array.from({ length: 10 }, () => 100),
-      ...Array.from({ length: 6 }, () => 120),
+      ...Array.from({ length: 16 }, () => 100),
+      ...Array.from({ length: 8 }, () => 125),
     ];
-    const shifted = history(loads, 0, 1, 3, (index) => (index < 10 ? 6 : 2));
+    const shifted = history(loads, 0, 1, 3, (index) => (index < 16 ? 6 : 2));
     const real = shifted.points.filter(
       (point) => point.change?.label === 'likely' || point.change?.label === 'veryLikely',
     );
@@ -141,6 +154,17 @@ describe('e1RM series and the "likely real" labels (ANL-02, PRG-02)', () => {
         RULES,
       ).value,
     ).toMatchObject({ shifted: false, medianBefore: 9.5, medianNow: 8.5 });
+    // Samples that start after the reference date (the session engine keeps its latest 12; the
+    // 8-week window of rules 1.6.0 can reach past them): the oldest before the latest stand in.
+    const kept = [8, 8, 8, 3, 3].map((medianReps, i) => ({
+      localDate: addDays('2026-03-02' as LocalDate, i * 4),
+      medianReps,
+    }));
+    expect(repRangeShift(kept, '2026-01-05' as LocalDate, RULES).value).toMatchObject({
+      shifted: true,
+      medianBefore: 8,
+      medianNow: 3,
+    });
   });
 
   it('claims a change only beyond one typical error, for any series (property)', () => {
@@ -212,7 +236,10 @@ describe('e1RM series and the "likely real" labels (ANL-02, PRG-02)', () => {
     expect(last.trend!.lowKg).toBeLessThan(last.trend!.e1rmKg);
     expect(last.trend!.highKg).toBeGreaterThan(last.trend!.e1rmKg);
     expect(series.summary.deltaPct).toBeGreaterThan(0);
-    expect(series.latest?.value.label).toBe('likely');
+    // +3% a week over 8 weeks: beyond 2.8 TE against the 8-week reference (rules 1.6.0). The label
+    // rebuilt from the stored bands equals the one the session engine stored.
+    expect(series.latest?.value.label).toBe('veryLikely');
+    expect(series.latest?.value.label).toBe(built.points.at(-1)!.change!.label);
     const weekly = weeklyMaxima(series.points, 1);
     expect(weekly.length).toBeLessThan(series.points.length);
     expect(weekly.every((point) => point.rawKg !== null)).toBe(true);

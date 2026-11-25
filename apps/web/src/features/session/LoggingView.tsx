@@ -222,10 +222,14 @@ function Celebration() {
       data-testid="pr-celebration"
       className="flex animate-[pr-pop_600ms_ease-out] items-start gap-3 rounded-2xl border-2 border-success bg-surface p-3"
     >
-      <Trophy aria-hidden="true" className="mt-0.5 size-6 shrink-0 text-success" />
+      <Trophy aria-hidden="true" className="mt-0.5 size-6 shrink-0 text-pr-accent" />
       <div className="flex min-w-0 flex-1 flex-col gap-1">
         <p className="font-bold">
-          <Trans>New personal record</Trans>
+          {prs.length === 1 ? (
+            <Trans>New personal record</Trans>
+          ) : (
+            <Trans>New personal records: {prs.length}</Trans>
+          )}
         </p>
         <ul className="text-sm">
           {prs.map((pr) => (

@@ -2,8 +2,9 @@
  * `@powr/domain/trend`: the noise-aware e1RM trend (PRG-02, technical concept §8.7.5; EB §Load ›
  * Real change). A local-level Kalman filter on ln(e1RM) per exercise, fed one observation per
  * session (run it twice: strength sets only, and all sets), and change labels that compare the
- * smoothed change with the typical error: "likely real" above 1 TE for consecutive sessions,
- * "very likely real" above 2.8 TE or when its 95% interval excludes zero.
+ * smoothed change over a window by trainee level with the typical error and with its own
+ * uncertainty: "likely real" beyond both for consecutive sessions, "very likely real" beyond both
+ * and above 2.8 TE or when its 95% interval excludes zero.
  */
 import type { SetE1rm } from '../e1rm';
 import { explained, quantity, type Explained } from '../explain';
@@ -174,7 +175,7 @@ export function labelChange(
     rules['load.trend.reference'],
   ];
   const now = Math.min(at, points.length - 1);
-  const current = deltaAt(points, now, rules);
+  const current = deltaAt(points, now, level, rules);
   if (current === null) {
     return explained(
       {
@@ -192,19 +193,23 @@ export function labelChange(
 
   const sign = Math.sign(current.delta);
   const size = Math.abs(current.delta);
-  // Never a claim within one typical error (the noise, EB §Load › Real change); beyond it, 2.8 TE
-  // or a 95% interval of the change that excludes zero makes it "very likely" (M4a: the interval
-  // alone no longer labels a change smaller than 1 TE).
-  const beyondNoise = size > thresholds.likelyTe * te;
+  // Never a claim within the noise: beyond one typical error (the day-to-day noise, EB §Load ›
+  // Real change; M4a) and beyond `likelyZ` standard deviations of the change's own uncertainty
+  // (rules 1.6.0: early, sparse or noisy data, where the smoothed values themselves still carry
+  // more than a typical error). Beyond that, 2.8 TE or a 95% interval of the change that excludes
+  // zero makes it "very likely".
+  const beyondNoise = (delta: number, sd: number) =>
+    Math.abs(delta) > thresholds.likelyTe * te && Math.abs(delta) > thresholds.likelyZ * sd;
   const veryLikely =
-    beyondNoise && (size > thresholds.veryLikelyTe * te || size > Z95 * current.sd);
+    beyondNoise(current.delta, current.sd) &&
+    (size > thresholds.veryLikelyTe * te || size > Z95 * current.sd);
   let sustained = sign !== 0;
   for (let k = 0; k < thresholds.sustainSessions && sustained; k++) {
-    const earlier = deltaAt(points, now - k, rules);
+    const earlier = deltaAt(points, now - k, level, rules);
     sustained =
       earlier !== null &&
       Math.sign(earlier.delta) === sign &&
-      Math.abs(earlier.delta) > thresholds.likelyTe * te;
+      beyondNoise(earlier.delta, earlier.sd);
   }
   const label = veryLikely ? 'veryLikely' : sustained ? 'likely' : 'none';
   const value: ChangeLabel = {
@@ -227,29 +232,32 @@ export function labelChange(
 }
 
 /**
- * The change of point `index` against its reference: the smoothed value 4 weeks or 3 sessions
- * earlier, whichever is older (registry `load.trend.reference`).
+ * The change of point `index` against its reference (registry `load.trend.reference`): the
+ * smoothed value `weeks[level]` weeks or `sessions` sessions earlier, whichever is older. The
+ * series' first `sessions` points never serve as the reference (the first is one raw session, the
+ * next few are barely smoothed); while the series is shorter than the window, its oldest point
+ * after them does (rules 1.6.0).
  */
 function deltaAt(
   points: readonly TrendPoint[],
   index: number,
+  level: TraineeLevel,
   rules: RuleSlice<'load.trend.reference'>,
 ): { delta: number; sd: number; reference: TrendPoint } | null {
   const point = points[index];
   if (point === undefined) return null;
   const { weeks, sessions } = rules['load.trend.reference'].value;
+  const latest = index - sessions;
+  if (latest < sessions) return null;
   let byWeeks = -1;
   for (let j = index - 1; j >= 0; j--) {
     const candidate = points[j];
-    if (candidate && daysBetween(candidate.localDate, point.localDate) >= weeks * 7) {
+    if (candidate && daysBetween(candidate.localDate, point.localDate) >= weeks[level] * 7) {
       byWeeks = j;
       break;
     }
   }
-  const bySessions = index - sessions;
-  const candidates = [byWeeks, bySessions].filter((j) => j >= 0);
-  if (candidates.length === 0) return null;
-  const reference = points[Math.min(...candidates)];
+  const reference = points[byWeeks < 0 ? sessions : Math.max(sessions, Math.min(byWeeks, latest))];
   if (reference === undefined) return null;
   return {
     delta: point.logMean - reference.logMean,
@@ -277,8 +285,9 @@ export interface RepRangeShift {
  * PRG-02, TD-26 (EB §Load › e1RM drift): an e1RM change that coincides with a change of the
  * typical rep range (a hypertrophy block followed by a strength block) is possibly an artefact of
  * the load–rep curve, not a strength change. Compares the median reps of the latest `recentCount`
- * exposures with the up to three exposures on or before the change's reference date; a shift of
- * at least `load.trend.repRangeShift` reps is flagged.
+ * exposures with the up to three exposures on or before the change's reference date (or, when the
+ * samples start after it, the three oldest before the latest); a shift of at least
+ * `load.trend.repRangeShift` reps is flagged.
  */
 export function repRangeShift(
   samples: readonly RepRangeSample[],
@@ -292,13 +301,18 @@ export function repRangeShift(
       sample.medianReps !== null,
   );
   const now = withReps.slice(-recentCount).map((sample) => sample.medianReps);
-  const before =
+  const onOrBefore =
+    referenceDate === null ? [] : withReps.filter((sample) => sample.localDate <= referenceDate);
+  // The session engine keeps only its latest exposures; when none reaches back to the reference
+  // date (rules 1.6.0: the window is 8 weeks for trained lifters), the oldest kept ones before the
+  // latest stand in, so a shift inside the kept span is still flagged.
+  const before = (
     referenceDate === null
       ? []
-      : withReps
-          .filter((sample) => sample.localDate <= referenceDate)
-          .slice(-3)
-          .map((sample) => sample.medianReps);
+      : onOrBefore.length > 0
+        ? onOrBefore.slice(-3)
+        : withReps.slice(0, Math.max(0, withReps.length - recentCount)).slice(0, 3)
+  ).map((sample) => sample.medianReps);
   const medianNow = median(now);
   const medianBefore = median(before);
   const shift =

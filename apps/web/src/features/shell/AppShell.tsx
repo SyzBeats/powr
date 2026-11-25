@@ -5,6 +5,7 @@ import { lazy, Suspense } from 'react';
 
 import { LiveAnnouncer } from '#ui/announcer';
 
+import { useInsightsWarmup } from '../../hooks/use-insights';
 import { useActiveSession } from '../../hooks/use-session';
 import { BottomNav } from './BottomNav';
 import { UpdateBanner } from './UpdateBanner';
@@ -24,6 +25,9 @@ export function AppShell() {
     select: (state) => state.location.pathname.startsWith('/onboarding'),
   });
   const session = useActiveSession();
+  // M4b: the derived weeks and the streak catch up once, in idle time after the first screen,
+  // never during a workout.
+  useInsightsWarmup(session.loaded && !session.value);
   return (
     <div className="flex min-h-dvh flex-col">
       <header className="sticky top-0 z-10 border-b border-border bg-bg pt-safe">

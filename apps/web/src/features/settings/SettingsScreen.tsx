@@ -14,6 +14,7 @@ import { useSetTheme, useThemePreference } from '../../hooks/use-settings';
 import { localeWeekStart } from '../../i18n/format';
 import { useLabels } from '../labels';
 import { AlertsSection } from './AlertsSection';
+import { InsightsSection } from './InsightsSection';
 import { WorkoutSection } from './WorkoutSection';
 
 const DebugTools = lazy(() => import('../debug/DebugTools'));
@@ -72,6 +73,8 @@ export function SettingsScreen() {
       <Suspense fallback={null}>
         <AlertsSection />
       </Suspense>
+
+      <InsightsSection />
 
       <Card className="gap-1">
         <Link to="/settings/equipment" className={linkClass}>

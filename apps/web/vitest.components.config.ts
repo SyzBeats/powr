@@ -20,6 +20,13 @@ export default mergeConfig(
       name: 'components',
       include: ['test/**/*.test.tsx'],
       setupFiles: ['./test/setup.ts'],
+      // Browser tests (charts, the body-map pixel scan, real-time timers) share the CPU with the
+      // unit project when `pnpm test` runs both; 2–5 s in isolation, they exceeded the 15 s
+      // default under that load (and CI runners have fewer cores). 30 s keeps them meaningful.
+      testTimeout: 30_000,
+      // One test file at a time: in parallel tabs, real-time tests (timers, the lead-in, form
+      // flows with live queries) raced each other for the CPU and a different one flaked each run.
+      fileParallelism: false,
       browser: {
         enabled: true,
         provider: playwright(),

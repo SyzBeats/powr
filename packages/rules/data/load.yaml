@@ -295,14 +295,32 @@
 - id: load.trend.processSdPerWeek
   value: { novice: 0.02, intermediate: 0.01, advanced: 0.005 }
   unit: fraction
-  evidence: [INF]
-  sources: [src.powr-technical-concept, src.powr-eb-progression]
-  ebRef: 'technical concept §8.7.5 (trend.processSdPctPerWeek by level); EB §Progression › Classification'
+  evidence: [MA, OBS, MODEL, INF]
+  sources:
+    - src.swinton2022
+    - src.androulakiskorakakis2020
+    - src.ahtiainen2003
+    - src.solberg2019
+    - src.mcmaster2013
+    - src.kolossa2017
+    - src.durbin2012
+    - src.powr-eb-progression
+    - src.powr-technical-concept
+  ebRef: 'technical concept §8.7.5 (trend.processSdPctPerWeek by level); EB §Progression › Realistic strength progress, › Classification'
   verified: false
   userOverridable: false
   note: >-
-    Weekly random-walk SD of ln(e1RM), scaled to the EB's slope bands (novice ≥ 1%/week,
-    intermediate 0.25–1%, advanced < 0.25%). A POWR design value; calibrate against real logs.
+    Weekly random-walk SD of ln(e1RM), the prior for how fast a lifter's true e1RM moves: about the
+    top of each level's weekly rate (novice 1–2%, up to 3–4% in the first weeks of a lift;
+    trained 0.2–1% in 8–12-week trials; advanced 0.02–0.1% long-run, with real swings of a few
+    percent around peaking, fatigue and breaks). Rules 1.6.0 re-checked the values against the
+    literature and a seeded simulation (packages/domain/test/reference/trend-calibration.test.ts)
+    and kept them: with the uncertainty gate of load.trend.changeThresholds, 1.5–2 times these
+    values labelled real gains at most a week sooner but doubled the false claims on heavy sets;
+    the slow labels came from the 4-week window (now load.trend.reference). The state-space
+    literature fixes the observation noise from reliability data and estimates the process noise
+    per person by maximum likelihood once enough data exist (proposed as a later step). A POWR
+    design value.
 
 - id: load.trend.noviceWidening
   value: { weeks: 8, factor: 1.5 }
@@ -324,24 +342,56 @@
   userOverridable: false
 
 - id: load.trend.changeThresholds
-  value: { likelyTe: 1, sustainSessions: 2, veryLikelyTe: 2.8 }
+  value: { likelyTe: 1, likelyZ: 1.5, sustainSessions: 3, veryLikelyTe: 2.8 }
   unit: mixed
   guard: { sustainSessions: { min: 2, max: 3 } }
-  evidence: [SR, INF]
-  sources: [src.hopkins2000, src.grgic2020, src.powr-eb-load]
-  ebRef: 'EB §Defaults › Load ("likely real" > 1 TE for ≥ 2–3 sessions; "very likely" > 2.8 TE)'
-  verified: true
-  userOverridable: false
-
-- id: load.trend.reference
-  value: { weeks: 4, sessions: 3 }
-  unit: mixed
-  evidence: [INF]
-  sources: [src.powr-technical-concept]
-  ebRef: 'technical concept §8.7.5 (reference 4 weeks or 3 sessions earlier, whichever is older)'
+  evidence: [SR, MODEL, INF]
+  sources:
+    - src.hopkins2000
+    - src.grgic2020
+    - src.durbin2012
+    - src.stephenshemingway2020
+    - src.powr-eb-load
+  ebRef: 'EB §Defaults › Load ("likely real" > 1 TE for ≥ 2–3 sessions; "very likely" > 2.8 TE or its credible interval excludes zero)'
   verified: false
   userOverridable: false
-  note: 'A POWR design value; the EB says only that a change must hold for 2–3 sessions.'
+  note: >-
+    Any claim needs the smoothed change beyond likelyTe typical errors (EB) and, rules 1.6.0,
+    beyond likelyZ standard deviations of its own uncertainty (the filter's variances of both
+    points, which ignore their positive covariance and so overstate it). The TE rule alone assumes
+    the smoothed values are much more precise than one TE; with session e1RMs as noisy as the
+    filter assumes (9% for typical sets), it claimed a change in over 80% of flat 12-week series.
+    likelyZ 1.5 is the product owner's choice of 2026-11-25 (strict, honesty first): under that
+    realistic noise, likelyZ 1 still claimed a change in about 30–33% of flat 12-week series of
+    typical sets, 1.5 in about 6–9%, at the cost of slower recognition of real gains (median
+    weeks to a claim on typical sets: intermediate +1% a week 11.6 → 15, novice +2% a week 10 →
+    12.6). likelyZ and sustainSessions 3 (the EB's upper end) are POWR design values from the
+    seeded simulation (packages/domain/test/reference/trend-calibration.test.ts).
+
+- id: load.trend.reference
+  value: { weeks: { novice: 4, intermediate: 8, advanced: 8 }, sessions: 3 }
+  unit: mixed
+  evidence: [MA, OBS, INF]
+  sources:
+    - src.swinton2022
+    - src.ahtiainen2003
+    - src.solberg2019
+    - src.grgic2020
+    - src.powr-eb-progression
+    - src.powr-technical-concept
+  ebRef: 'technical concept §8.7.5 (reference weeks or 3 sessions earlier, whichever is older); EB §Progression › Classification (slope over the last 8–12 weeks)'
+  verified: false
+  userOverridable: false
+  note: >-
+    Rules 1.6.0: the window is by level. A label compares the change over the window with one TE,
+    so a steady gain g a week can only show once g × weeks > TE: with 4 weeks for everyone,
+    trained lifters needed more than 0.83% a week (3.3% / 4) and a realistic intermediate 0.5% a
+    week was never labelled. 8 weeks lets 0.5% a week show (4% > 3.3%); novices keep 4 weeks
+    (5.5% / 4 = 1.4% a week, below their usual 1–2%) so stalls and dips still show quickly. The
+    EB classifies by the slope over 8–12 weeks; advanced stays at 8 because the session engine
+    keeps the last 30 trend points (12 weeks at 3 sessions a week would need 39). The series'
+    first `sessions` points are never the reference (barely smoothed); while a series is shorter
+    than the window its oldest point after them is. A POWR design value.
 
 - id: load.reanchor.trigger
   value: { maxReps: 3, minRpe: 9 }

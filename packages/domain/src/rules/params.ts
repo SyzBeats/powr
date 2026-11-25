@@ -89,10 +89,21 @@ export interface HeavySetRule {
 export interface ChangeThresholds {
   /** "Likely real": the change exceeds this many typical errors… */
   readonly likelyTe: number;
+  /** …and this many standard deviations of its own uncertainty (any claim, rules 1.6.0)… */
+  readonly likelyZ: number;
   /** …and keeps its sign for this many consecutive sessions. */
   readonly sustainSessions: number;
   /** "Very likely real": the change exceeds this many typical errors. */
   readonly veryLikelyTe: number;
+}
+
+/**
+ * The reference of a change label (PRG-02): the smoothed value `weeks[level]` weeks or `sessions`
+ * sessions earlier, whichever is older, never one of the series' first `sessions` points.
+ */
+export interface TrendReference {
+  readonly weeks: ByLevel<number>;
+  readonly sessions: number;
 }
 
 // --- Volume, frequency, load and effort (EB §Defaults › Volume) ----------------------------
@@ -422,7 +433,7 @@ export interface ParamValues {
   'load.trend.noviceWidening': { readonly weeks: number; readonly factor: number };
   'load.trend.typicalErrorCv': ByLevel<number>;
   'load.trend.changeThresholds': ChangeThresholds;
-  'load.trend.reference': { readonly weeks: number; readonly sessions: number };
+  'load.trend.reference': TrendReference;
   'load.reanchor.trigger': { readonly maxReps: number; readonly minRpe: number };
   /** MOT-01: e1RM PRs come only from sets the e1RM pipeline weighs at least this much (R-07). */
   'load.pr.minSetWeight': number;

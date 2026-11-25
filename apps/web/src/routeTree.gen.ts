@@ -11,12 +11,13 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DataRouteImport } from './routes/data'
-import { Route as ExploreRouteImport } from './routes/explore'
-import { Route as ProgressRouteImport } from './routes/progress'
+import { Route as BodyIndexRouteImport } from './routes/body/index'
+import { Route as BodyLogRouteImport } from './routes/body/log'
 import { Route as DebugAlertsRouteImport } from './routes/debug/alerts'
 import { Route as DebugBodyMapRouteImport } from './routes/debug/body-map'
 import { Route as DebugCapabilitiesRouteImport } from './routes/debug/capabilities'
 import { Route as DebugChartsRouteImport } from './routes/debug/charts'
+import { Route as ExploreIndexRouteImport } from './routes/explore/index'
 import { Route as LegalDisclaimerRouteImport } from './routes/legal/disclaimer'
 import { Route as LegalPrivacyRouteImport } from './routes/legal/privacy'
 import { Route as OnboardingIndexRouteImport } from './routes/onboarding/index'
@@ -24,15 +25,29 @@ import { Route as OnboardingStepRouteImport } from './routes/onboarding/$step'
 import { Route as PlanIndexRouteImport } from './routes/plan/index'
 import { Route as PlanEditRouteImport } from './routes/plan/edit'
 import { Route as PlanNextRouteImport } from './routes/plan/next'
+import { Route as ProgressIndexRouteImport } from './routes/progress/index'
+import { Route as ProgressCalendarRouteImport } from './routes/progress/calendar'
+import { Route as ProgressCompareRouteImport } from './routes/progress/compare'
+import { Route as ProgressPrsRouteImport } from './routes/progress/prs'
+import { Route as ProgressScoresRouteImport } from './routes/progress/scores'
+import { Route as ProgressStreakRouteImport } from './routes/progress/streak'
+import { Route as ProgressVolumeRouteImport } from './routes/progress/volume'
 import { Route as SessionIndexRouteImport } from './routes/session/index'
 import { Route as SettingsIndexRouteImport } from './routes/settings/index'
+import { Route as ExploreBodyMapIndexRouteImport } from './routes/explore/body-map/index'
+import { Route as ExploreBodyMapMuscleIdRouteImport } from './routes/explore/body-map/$muscleId'
+import { Route as ExploreExercisesIndexRouteImport } from './routes/explore/exercises/index'
+import { Route as ExploreExercisesExerciseIdRouteImport } from './routes/explore/exercises/$exerciseId'
+import { Route as ExploreExercisesNewRouteImport } from './routes/explore/exercises/new'
 import { Route as PlanSetupStepRouteImport } from './routes/plan/setup/$step'
+import { Route as ProgressExerciseExerciseIdRouteImport } from './routes/progress/exercise.$exerciseId'
 import { Route as SessionPastIndexRouteImport } from './routes/session/past/index'
 import { Route as SessionPastSessionIdRouteImport } from './routes/session/past/$sessionId'
 import { Route as SessionPastNewRouteImport } from './routes/session/past/new'
 import { Route as SessionSummarySessionIdRouteImport } from './routes/session/summary.$sessionId'
 import { Route as SettingsEquipmentIndexRouteImport } from './routes/settings/equipment/index'
 import { Route as SettingsEquipmentProfileIdRouteImport } from './routes/settings/equipment/$profileId'
+import { Route as ExploreExercisesEditExerciseIdRouteImport } from './routes/explore/exercises/edit.$exerciseId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -44,14 +59,14 @@ const DataRoute = DataRouteImport.update({
   path: '/data',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ExploreRoute = ExploreRouteImport.update({
-  id: '/explore',
-  path: '/explore',
+const BodyIndexRoute = BodyIndexRouteImport.update({
+  id: '/body/',
+  path: '/body/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ProgressRoute = ProgressRouteImport.update({
-  id: '/progress',
-  path: '/progress',
+const BodyLogRoute = BodyLogRouteImport.update({
+  id: '/body/log',
+  path: '/body/log',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DebugAlertsRoute = DebugAlertsRouteImport.update({
@@ -72,6 +87,11 @@ const DebugCapabilitiesRoute = DebugCapabilitiesRouteImport.update({
 const DebugChartsRoute = DebugChartsRouteImport.update({
   id: '/debug/charts',
   path: '/debug/charts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExploreIndexRoute = ExploreIndexRouteImport.update({
+  id: '/explore/',
+  path: '/explore/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LegalDisclaimerRoute = LegalDisclaimerRouteImport.update({
@@ -109,6 +129,41 @@ const PlanNextRoute = PlanNextRouteImport.update({
   path: '/plan/next',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProgressIndexRoute = ProgressIndexRouteImport.update({
+  id: '/progress/',
+  path: '/progress/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProgressCalendarRoute = ProgressCalendarRouteImport.update({
+  id: '/progress/calendar',
+  path: '/progress/calendar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProgressCompareRoute = ProgressCompareRouteImport.update({
+  id: '/progress/compare',
+  path: '/progress/compare',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProgressPrsRoute = ProgressPrsRouteImport.update({
+  id: '/progress/prs',
+  path: '/progress/prs',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProgressScoresRoute = ProgressScoresRouteImport.update({
+  id: '/progress/scores',
+  path: '/progress/scores',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProgressStreakRoute = ProgressStreakRouteImport.update({
+  id: '/progress/streak',
+  path: '/progress/streak',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProgressVolumeRoute = ProgressVolumeRouteImport.update({
+  id: '/progress/volume',
+  path: '/progress/volume',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SessionIndexRoute = SessionIndexRouteImport.update({
   id: '/session/',
   path: '/session/',
@@ -119,11 +174,43 @@ const SettingsIndexRoute = SettingsIndexRouteImport.update({
   path: '/settings/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ExploreBodyMapIndexRoute = ExploreBodyMapIndexRouteImport.update({
+  id: '/explore/body-map/',
+  path: '/explore/body-map/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExploreBodyMapMuscleIdRoute = ExploreBodyMapMuscleIdRouteImport.update({
+  id: '/explore/body-map/$muscleId',
+  path: '/explore/body-map/$muscleId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExploreExercisesIndexRoute = ExploreExercisesIndexRouteImport.update({
+  id: '/explore/exercises/',
+  path: '/explore/exercises/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExploreExercisesExerciseIdRoute =
+  ExploreExercisesExerciseIdRouteImport.update({
+    id: '/explore/exercises/$exerciseId',
+    path: '/explore/exercises/$exerciseId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ExploreExercisesNewRoute = ExploreExercisesNewRouteImport.update({
+  id: '/explore/exercises/new',
+  path: '/explore/exercises/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PlanSetupStepRoute = PlanSetupStepRouteImport.update({
   id: '/plan/setup/$step',
   path: '/plan/setup/$step',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProgressExerciseExerciseIdRoute =
+  ProgressExerciseExerciseIdRouteImport.update({
+    id: '/progress/exercise/$exerciseId',
+    path: '/progress/exercise/$exerciseId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const SessionPastIndexRoute = SessionPastIndexRouteImport.update({
   id: '/session/past/',
   path: '/session/past/',
@@ -155,12 +242,17 @@ const SettingsEquipmentProfileIdRoute =
     path: '/settings/equipment/$profileId',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ExploreExercisesEditExerciseIdRoute =
+  ExploreExercisesEditExerciseIdRouteImport.update({
+    id: '/explore/exercises/edit/$exerciseId',
+    path: '/explore/exercises/edit/$exerciseId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/data': typeof DataRoute
-  '/explore': typeof ExploreRoute
-  '/progress': typeof ProgressRoute
+  '/body/log': typeof BodyLogRoute
   '/debug/alerts': typeof DebugAlertsRoute
   '/debug/body-map': typeof DebugBodyMapRoute
   '/debug/capabilities': typeof DebugCapabilitiesRoute
@@ -170,23 +262,38 @@ export interface FileRoutesByFullPath {
   '/onboarding/$step': typeof OnboardingStepRoute
   '/plan/edit': typeof PlanEditRoute
   '/plan/next': typeof PlanNextRoute
+  '/progress/calendar': typeof ProgressCalendarRoute
+  '/progress/compare': typeof ProgressCompareRoute
+  '/progress/prs': typeof ProgressPrsRoute
+  '/progress/scores': typeof ProgressScoresRoute
+  '/progress/streak': typeof ProgressStreakRoute
+  '/progress/volume': typeof ProgressVolumeRoute
+  '/body/': typeof BodyIndexRoute
+  '/explore/': typeof ExploreIndexRoute
   '/onboarding/': typeof OnboardingIndexRoute
   '/plan/': typeof PlanIndexRoute
+  '/progress/': typeof ProgressIndexRoute
   '/session/': typeof SessionIndexRoute
   '/settings/': typeof SettingsIndexRoute
+  '/explore/body-map/$muscleId': typeof ExploreBodyMapMuscleIdRoute
+  '/explore/exercises/$exerciseId': typeof ExploreExercisesExerciseIdRoute
+  '/explore/exercises/new': typeof ExploreExercisesNewRoute
   '/plan/setup/$step': typeof PlanSetupStepRoute
+  '/progress/exercise/$exerciseId': typeof ProgressExerciseExerciseIdRoute
   '/session/past/$sessionId': typeof SessionPastSessionIdRoute
   '/session/past/new': typeof SessionPastNewRoute
   '/session/summary/$sessionId': typeof SessionSummarySessionIdRoute
   '/settings/equipment/$profileId': typeof SettingsEquipmentProfileIdRoute
+  '/explore/body-map/': typeof ExploreBodyMapIndexRoute
+  '/explore/exercises/': typeof ExploreExercisesIndexRoute
   '/session/past/': typeof SessionPastIndexRoute
   '/settings/equipment/': typeof SettingsEquipmentIndexRoute
+  '/explore/exercises/edit/$exerciseId': typeof ExploreExercisesEditExerciseIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/data': typeof DataRoute
-  '/explore': typeof ExploreRoute
-  '/progress': typeof ProgressRoute
+  '/body/log': typeof BodyLogRoute
   '/debug/alerts': typeof DebugAlertsRoute
   '/debug/body-map': typeof DebugBodyMapRoute
   '/debug/capabilities': typeof DebugCapabilitiesRoute
@@ -196,24 +303,39 @@ export interface FileRoutesByTo {
   '/onboarding/$step': typeof OnboardingStepRoute
   '/plan/edit': typeof PlanEditRoute
   '/plan/next': typeof PlanNextRoute
+  '/progress/calendar': typeof ProgressCalendarRoute
+  '/progress/compare': typeof ProgressCompareRoute
+  '/progress/prs': typeof ProgressPrsRoute
+  '/progress/scores': typeof ProgressScoresRoute
+  '/progress/streak': typeof ProgressStreakRoute
+  '/progress/volume': typeof ProgressVolumeRoute
+  '/body': typeof BodyIndexRoute
+  '/explore': typeof ExploreIndexRoute
   '/onboarding': typeof OnboardingIndexRoute
   '/plan': typeof PlanIndexRoute
+  '/progress': typeof ProgressIndexRoute
   '/session': typeof SessionIndexRoute
   '/settings': typeof SettingsIndexRoute
+  '/explore/body-map/$muscleId': typeof ExploreBodyMapMuscleIdRoute
+  '/explore/exercises/$exerciseId': typeof ExploreExercisesExerciseIdRoute
+  '/explore/exercises/new': typeof ExploreExercisesNewRoute
   '/plan/setup/$step': typeof PlanSetupStepRoute
+  '/progress/exercise/$exerciseId': typeof ProgressExerciseExerciseIdRoute
   '/session/past/$sessionId': typeof SessionPastSessionIdRoute
   '/session/past/new': typeof SessionPastNewRoute
   '/session/summary/$sessionId': typeof SessionSummarySessionIdRoute
   '/settings/equipment/$profileId': typeof SettingsEquipmentProfileIdRoute
+  '/explore/body-map': typeof ExploreBodyMapIndexRoute
+  '/explore/exercises': typeof ExploreExercisesIndexRoute
   '/session/past': typeof SessionPastIndexRoute
   '/settings/equipment': typeof SettingsEquipmentIndexRoute
+  '/explore/exercises/edit/$exerciseId': typeof ExploreExercisesEditExerciseIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/data': typeof DataRoute
-  '/explore': typeof ExploreRoute
-  '/progress': typeof ProgressRoute
+  '/body/log': typeof BodyLogRoute
   '/debug/alerts': typeof DebugAlertsRoute
   '/debug/body-map': typeof DebugBodyMapRoute
   '/debug/capabilities': typeof DebugCapabilitiesRoute
@@ -223,25 +345,40 @@ export interface FileRoutesById {
   '/onboarding/$step': typeof OnboardingStepRoute
   '/plan/edit': typeof PlanEditRoute
   '/plan/next': typeof PlanNextRoute
+  '/progress/calendar': typeof ProgressCalendarRoute
+  '/progress/compare': typeof ProgressCompareRoute
+  '/progress/prs': typeof ProgressPrsRoute
+  '/progress/scores': typeof ProgressScoresRoute
+  '/progress/streak': typeof ProgressStreakRoute
+  '/progress/volume': typeof ProgressVolumeRoute
+  '/body/': typeof BodyIndexRoute
+  '/explore/': typeof ExploreIndexRoute
   '/onboarding/': typeof OnboardingIndexRoute
   '/plan/': typeof PlanIndexRoute
+  '/progress/': typeof ProgressIndexRoute
   '/session/': typeof SessionIndexRoute
   '/settings/': typeof SettingsIndexRoute
+  '/explore/body-map/$muscleId': typeof ExploreBodyMapMuscleIdRoute
+  '/explore/exercises/$exerciseId': typeof ExploreExercisesExerciseIdRoute
+  '/explore/exercises/new': typeof ExploreExercisesNewRoute
   '/plan/setup/$step': typeof PlanSetupStepRoute
+  '/progress/exercise/$exerciseId': typeof ProgressExerciseExerciseIdRoute
   '/session/past/$sessionId': typeof SessionPastSessionIdRoute
   '/session/past/new': typeof SessionPastNewRoute
   '/session/summary/$sessionId': typeof SessionSummarySessionIdRoute
   '/settings/equipment/$profileId': typeof SettingsEquipmentProfileIdRoute
+  '/explore/body-map/': typeof ExploreBodyMapIndexRoute
+  '/explore/exercises/': typeof ExploreExercisesIndexRoute
   '/session/past/': typeof SessionPastIndexRoute
   '/settings/equipment/': typeof SettingsEquipmentIndexRoute
+  '/explore/exercises/edit/$exerciseId': typeof ExploreExercisesEditExerciseIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/data'
-    | '/explore'
-    | '/progress'
+    | '/body/log'
     | '/debug/alerts'
     | '/debug/body-map'
     | '/debug/capabilities'
@@ -251,23 +388,38 @@ export interface FileRouteTypes {
     | '/onboarding/$step'
     | '/plan/edit'
     | '/plan/next'
+    | '/progress/calendar'
+    | '/progress/compare'
+    | '/progress/prs'
+    | '/progress/scores'
+    | '/progress/streak'
+    | '/progress/volume'
+    | '/body/'
+    | '/explore/'
     | '/onboarding/'
     | '/plan/'
+    | '/progress/'
     | '/session/'
     | '/settings/'
+    | '/explore/body-map/$muscleId'
+    | '/explore/exercises/$exerciseId'
+    | '/explore/exercises/new'
     | '/plan/setup/$step'
+    | '/progress/exercise/$exerciseId'
     | '/session/past/$sessionId'
     | '/session/past/new'
     | '/session/summary/$sessionId'
     | '/settings/equipment/$profileId'
+    | '/explore/body-map/'
+    | '/explore/exercises/'
     | '/session/past/'
     | '/settings/equipment/'
+    | '/explore/exercises/edit/$exerciseId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/data'
-    | '/explore'
-    | '/progress'
+    | '/body/log'
     | '/debug/alerts'
     | '/debug/body-map'
     | '/debug/capabilities'
@@ -277,23 +429,38 @@ export interface FileRouteTypes {
     | '/onboarding/$step'
     | '/plan/edit'
     | '/plan/next'
+    | '/progress/calendar'
+    | '/progress/compare'
+    | '/progress/prs'
+    | '/progress/scores'
+    | '/progress/streak'
+    | '/progress/volume'
+    | '/body'
+    | '/explore'
     | '/onboarding'
     | '/plan'
+    | '/progress'
     | '/session'
     | '/settings'
+    | '/explore/body-map/$muscleId'
+    | '/explore/exercises/$exerciseId'
+    | '/explore/exercises/new'
     | '/plan/setup/$step'
+    | '/progress/exercise/$exerciseId'
     | '/session/past/$sessionId'
     | '/session/past/new'
     | '/session/summary/$sessionId'
     | '/settings/equipment/$profileId'
+    | '/explore/body-map'
+    | '/explore/exercises'
     | '/session/past'
     | '/settings/equipment'
+    | '/explore/exercises/edit/$exerciseId'
   id:
     | '__root__'
     | '/'
     | '/data'
-    | '/explore'
-    | '/progress'
+    | '/body/log'
     | '/debug/alerts'
     | '/debug/body-map'
     | '/debug/capabilities'
@@ -303,24 +470,39 @@ export interface FileRouteTypes {
     | '/onboarding/$step'
     | '/plan/edit'
     | '/plan/next'
+    | '/progress/calendar'
+    | '/progress/compare'
+    | '/progress/prs'
+    | '/progress/scores'
+    | '/progress/streak'
+    | '/progress/volume'
+    | '/body/'
+    | '/explore/'
     | '/onboarding/'
     | '/plan/'
+    | '/progress/'
     | '/session/'
     | '/settings/'
+    | '/explore/body-map/$muscleId'
+    | '/explore/exercises/$exerciseId'
+    | '/explore/exercises/new'
     | '/plan/setup/$step'
+    | '/progress/exercise/$exerciseId'
     | '/session/past/$sessionId'
     | '/session/past/new'
     | '/session/summary/$sessionId'
     | '/settings/equipment/$profileId'
+    | '/explore/body-map/'
+    | '/explore/exercises/'
     | '/session/past/'
     | '/settings/equipment/'
+    | '/explore/exercises/edit/$exerciseId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DataRoute: typeof DataRoute
-  ExploreRoute: typeof ExploreRoute
-  ProgressRoute: typeof ProgressRoute
+  BodyLogRoute: typeof BodyLogRoute
   DebugAlertsRoute: typeof DebugAlertsRoute
   DebugBodyMapRoute: typeof DebugBodyMapRoute
   DebugCapabilitiesRoute: typeof DebugCapabilitiesRoute
@@ -330,17 +512,33 @@ export interface RootRouteChildren {
   OnboardingStepRoute: typeof OnboardingStepRoute
   PlanEditRoute: typeof PlanEditRoute
   PlanNextRoute: typeof PlanNextRoute
+  ProgressCalendarRoute: typeof ProgressCalendarRoute
+  ProgressCompareRoute: typeof ProgressCompareRoute
+  ProgressPrsRoute: typeof ProgressPrsRoute
+  ProgressScoresRoute: typeof ProgressScoresRoute
+  ProgressStreakRoute: typeof ProgressStreakRoute
+  ProgressVolumeRoute: typeof ProgressVolumeRoute
+  BodyIndexRoute: typeof BodyIndexRoute
+  ExploreIndexRoute: typeof ExploreIndexRoute
   OnboardingIndexRoute: typeof OnboardingIndexRoute
   PlanIndexRoute: typeof PlanIndexRoute
+  ProgressIndexRoute: typeof ProgressIndexRoute
   SessionIndexRoute: typeof SessionIndexRoute
   SettingsIndexRoute: typeof SettingsIndexRoute
+  ExploreBodyMapMuscleIdRoute: typeof ExploreBodyMapMuscleIdRoute
+  ExploreExercisesExerciseIdRoute: typeof ExploreExercisesExerciseIdRoute
+  ExploreExercisesNewRoute: typeof ExploreExercisesNewRoute
   PlanSetupStepRoute: typeof PlanSetupStepRoute
+  ProgressExerciseExerciseIdRoute: typeof ProgressExerciseExerciseIdRoute
   SessionPastSessionIdRoute: typeof SessionPastSessionIdRoute
   SessionPastNewRoute: typeof SessionPastNewRoute
   SessionSummarySessionIdRoute: typeof SessionSummarySessionIdRoute
   SettingsEquipmentProfileIdRoute: typeof SettingsEquipmentProfileIdRoute
+  ExploreBodyMapIndexRoute: typeof ExploreBodyMapIndexRoute
+  ExploreExercisesIndexRoute: typeof ExploreExercisesIndexRoute
   SessionPastIndexRoute: typeof SessionPastIndexRoute
   SettingsEquipmentIndexRoute: typeof SettingsEquipmentIndexRoute
+  ExploreExercisesEditExerciseIdRoute: typeof ExploreExercisesEditExerciseIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -359,18 +557,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DataRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/explore': {
-      id: '/explore'
-      path: '/explore'
-      fullPath: '/explore'
-      preLoaderRoute: typeof ExploreRouteImport
+    '/body/': {
+      id: '/body/'
+      path: '/body'
+      fullPath: '/body/'
+      preLoaderRoute: typeof BodyIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/progress': {
-      id: '/progress'
-      path: '/progress'
-      fullPath: '/progress'
-      preLoaderRoute: typeof ProgressRouteImport
+    '/body/log': {
+      id: '/body/log'
+      path: '/body/log'
+      fullPath: '/body/log'
+      preLoaderRoute: typeof BodyLogRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/debug/alerts': {
@@ -399,6 +597,13 @@ declare module '@tanstack/react-router' {
       path: '/debug/charts'
       fullPath: '/debug/charts'
       preLoaderRoute: typeof DebugChartsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/explore/': {
+      id: '/explore/'
+      path: '/explore'
+      fullPath: '/explore/'
+      preLoaderRoute: typeof ExploreIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/legal/disclaimer': {
@@ -450,6 +655,55 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PlanNextRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/progress/': {
+      id: '/progress/'
+      path: '/progress'
+      fullPath: '/progress/'
+      preLoaderRoute: typeof ProgressIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/progress/calendar': {
+      id: '/progress/calendar'
+      path: '/progress/calendar'
+      fullPath: '/progress/calendar'
+      preLoaderRoute: typeof ProgressCalendarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/progress/compare': {
+      id: '/progress/compare'
+      path: '/progress/compare'
+      fullPath: '/progress/compare'
+      preLoaderRoute: typeof ProgressCompareRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/progress/prs': {
+      id: '/progress/prs'
+      path: '/progress/prs'
+      fullPath: '/progress/prs'
+      preLoaderRoute: typeof ProgressPrsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/progress/scores': {
+      id: '/progress/scores'
+      path: '/progress/scores'
+      fullPath: '/progress/scores'
+      preLoaderRoute: typeof ProgressScoresRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/progress/streak': {
+      id: '/progress/streak'
+      path: '/progress/streak'
+      fullPath: '/progress/streak'
+      preLoaderRoute: typeof ProgressStreakRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/progress/volume': {
+      id: '/progress/volume'
+      path: '/progress/volume'
+      fullPath: '/progress/volume'
+      preLoaderRoute: typeof ProgressVolumeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/session/': {
       id: '/session/'
       path: '/session'
@@ -464,11 +718,53 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/explore/body-map/': {
+      id: '/explore/body-map/'
+      path: '/explore/body-map'
+      fullPath: '/explore/body-map/'
+      preLoaderRoute: typeof ExploreBodyMapIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/explore/body-map/$muscleId': {
+      id: '/explore/body-map/$muscleId'
+      path: '/explore/body-map/$muscleId'
+      fullPath: '/explore/body-map/$muscleId'
+      preLoaderRoute: typeof ExploreBodyMapMuscleIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/explore/exercises/': {
+      id: '/explore/exercises/'
+      path: '/explore/exercises'
+      fullPath: '/explore/exercises/'
+      preLoaderRoute: typeof ExploreExercisesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/explore/exercises/$exerciseId': {
+      id: '/explore/exercises/$exerciseId'
+      path: '/explore/exercises/$exerciseId'
+      fullPath: '/explore/exercises/$exerciseId'
+      preLoaderRoute: typeof ExploreExercisesExerciseIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/explore/exercises/new': {
+      id: '/explore/exercises/new'
+      path: '/explore/exercises/new'
+      fullPath: '/explore/exercises/new'
+      preLoaderRoute: typeof ExploreExercisesNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/plan/setup/$step': {
       id: '/plan/setup/$step'
       path: '/plan/setup/$step'
       fullPath: '/plan/setup/$step'
       preLoaderRoute: typeof PlanSetupStepRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/progress/exercise/$exerciseId': {
+      id: '/progress/exercise/$exerciseId'
+      path: '/progress/exercise/$exerciseId'
+      fullPath: '/progress/exercise/$exerciseId'
+      preLoaderRoute: typeof ProgressExerciseExerciseIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/session/past/': {
@@ -513,14 +809,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsEquipmentProfileIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/explore/exercises/edit/$exerciseId': {
+      id: '/explore/exercises/edit/$exerciseId'
+      path: '/explore/exercises/edit/$exerciseId'
+      fullPath: '/explore/exercises/edit/$exerciseId'
+      preLoaderRoute: typeof ExploreExercisesEditExerciseIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DataRoute: DataRoute,
-  ExploreRoute: ExploreRoute,
-  ProgressRoute: ProgressRoute,
+  BodyLogRoute: BodyLogRoute,
   DebugAlertsRoute: DebugAlertsRoute,
   DebugBodyMapRoute: DebugBodyMapRoute,
   DebugCapabilitiesRoute: DebugCapabilitiesRoute,
@@ -530,17 +832,33 @@ const rootRouteChildren: RootRouteChildren = {
   OnboardingStepRoute: OnboardingStepRoute,
   PlanEditRoute: PlanEditRoute,
   PlanNextRoute: PlanNextRoute,
+  ProgressCalendarRoute: ProgressCalendarRoute,
+  ProgressCompareRoute: ProgressCompareRoute,
+  ProgressPrsRoute: ProgressPrsRoute,
+  ProgressScoresRoute: ProgressScoresRoute,
+  ProgressStreakRoute: ProgressStreakRoute,
+  ProgressVolumeRoute: ProgressVolumeRoute,
+  BodyIndexRoute: BodyIndexRoute,
+  ExploreIndexRoute: ExploreIndexRoute,
   OnboardingIndexRoute: OnboardingIndexRoute,
   PlanIndexRoute: PlanIndexRoute,
+  ProgressIndexRoute: ProgressIndexRoute,
   SessionIndexRoute: SessionIndexRoute,
   SettingsIndexRoute: SettingsIndexRoute,
+  ExploreBodyMapMuscleIdRoute: ExploreBodyMapMuscleIdRoute,
+  ExploreExercisesExerciseIdRoute: ExploreExercisesExerciseIdRoute,
+  ExploreExercisesNewRoute: ExploreExercisesNewRoute,
   PlanSetupStepRoute: PlanSetupStepRoute,
+  ProgressExerciseExerciseIdRoute: ProgressExerciseExerciseIdRoute,
   SessionPastSessionIdRoute: SessionPastSessionIdRoute,
   SessionPastNewRoute: SessionPastNewRoute,
   SessionSummarySessionIdRoute: SessionSummarySessionIdRoute,
   SettingsEquipmentProfileIdRoute: SettingsEquipmentProfileIdRoute,
+  ExploreBodyMapIndexRoute: ExploreBodyMapIndexRoute,
+  ExploreExercisesIndexRoute: ExploreExercisesIndexRoute,
   SessionPastIndexRoute: SessionPastIndexRoute,
   SettingsEquipmentIndexRoute: SettingsEquipmentIndexRoute,
+  ExploreExercisesEditExerciseIdRoute: ExploreExercisesEditExerciseIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

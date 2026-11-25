@@ -308,7 +308,9 @@ describe('BodyMap', () => {
       }
     }
     expect(problems).toEqual([]);
-  });
+    // Hit-tests every pixel of both views (about 464,000 elementFromPoint calls): CPU-bound, so it
+    // gets its own limit instead of the 15 s default when the browser project shares the CPU.
+  }, 60_000);
 });
 
 describe('BodyMapList (MAP-06)', () => {

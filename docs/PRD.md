@@ -7,9 +7,9 @@
 | Field | Value |
 |---|---|
 | Title | POWR (working title): Product Requirements Document |
-| Version | 0.6 |
-| Date | 2026-11-23 |
-| Status | Draft v0.6. All open questions resolved on 2026-11-23 (§11.1). Only validation tasks remain (§11.2). Baseline for the technical concept. |
+| Version | 0.7 |
+| Date | 2026-11-25 |
+| Status | Draft v0.7. All open questions resolved on 2026-11-23 (§11.1). Only validation tasks remain (§11.2). Baseline for the technical concept. |
 | Owner / publisher | Simeon Zimmermann, SZ WEB DEVELOPMENT, Switzerland (product owner and publisher). Drafted by the requirements agent. |
 | Audience | Product owner, the technical-concept author, designers, testers |
 | Sources | (1) User braindump `app.requirements.md`. (2) User answers to clarification questions (2026-11-23); these are authoritative and override the braindump where it is ambiguous. (3) Evidence base `reports/Strength and hypertrophy evidence base.md` (consolidated report, "EB"), backed by the six files in `research_notes/Strength and hypertrophy evidence base/`. (4) Platform documentation checked on 2026-11-23 (Appendix C). (5) User decisions on all open questions and publisher details, 2026-11-23 (§11.1). |
@@ -26,6 +26,7 @@
 | 0.4 | 2026-11-24 | PLN-14: time-budget rule (priority muscles keep their full target, the others fall back towards about 4 weekly sets; also for next-block proposals) with reason and fixes. EQP-02 and ONB-06: Custom (empty) opens the equipment checklist first; an empty list gives a bodyweight-only plan with the reason. Both approved by the product owner on 2026-11-24 (M2b). |
 | 0.5 | 2026-11-24 | ONB-08: the main lifts are the competition lifts (powerlifting, powerbuilding) or the plan's primary compound lifts (bodybuilding), at most four, each showing its estimated 1RM. PLN-02: the override lists every template of the style and says whether it fits days and level. Both approved by the product owner on 2026-11-24 (M2c). |
 | 0.6 | 2026-11-25 | TMR-12: the compact timer shows the rest or set timer, otherwise the session clock, for the whole session. WKT-03: half-step RIR is shown with the chips' label and entered in the set details. SET-03: pre-alert timing 5, 10 or 15 s, default 10 s. All approved by the product owner on 2026-11-25 (M3b). |
+| 0.7 | 2026-11-25 | ANL-11: time axes support pinch-zoom with range chips and Earlier/Later buttons (instead of a range slider). MAP-01: a small region gets its own button below the figure (instead of a list fallback). MOT-03: without a plan or a weekly target, one session keeps the week. MOT-04: a skipped planned session still counts toward the week's target; merging it into another session keeps the week. BOD-02: the rate band for maintaining is ±0.25 %BW/week. ANL-04: the training max is a per-exercise value the user sets. ANL-07: a tested 1RM is the heaviest load lifted for at least one rep. Wording from the M4 implementation; all approved by the product owner on 2026-11-25 |
 
 ---
 
@@ -370,7 +371,7 @@ Exercises may get illustrations or short animations in v1.x. Decided (OQ-08, re-
 
 **MAP-01 · Interactive front and back body map** · Must · MVP
 The app shows an anatomical figure with front and back views. The muscle groups of the taxonomy in §7.2 are individually tappable regions. Tapping a region selects it, highlights it and opens its exercise list (MAP-02).
-- Front/back toggle is one tap. Tapped regions show a clear selected state. Each region's tap target is ≥ 44×44 CSS px, or a list fallback is offered for small regions (MAP-06).
+- Front/back toggle is one tap. Tapped regions show a clear selected state. Each region's tap target is ≥ 44×44 CSS px, or a button for it is offered below the figure (small regions; the full list alternative is MAP-06).
 - The figure follows the light/dark theme with contrast meeting NFR-A11Y-05.
 
 **MAP-02 · Muscle → ranked exercise list** · Must · MVP
@@ -887,7 +888,7 @@ A weekly chart shows fractional and direct hard sets per muscle against the targ
 - Values match the body-map heat map (MAP-04) and the plan editor (PLN-09) exactly. All three use one calculation.
 
 **ANL-04 · Exercise history and rep-max table** · Must · MVP
-Per exercise: all sessions with their sets; best sets; a rep-max table (best load for 1–12+ reps, with dates); and the current e1RM and training max.
+Per exercise: all sessions with their sets; best sets; a rep-max table (best load for 1–12+ reps, with dates); and the current e1RM and training max (a per-exercise value the user sets).
 
 **ANL-05 · PR history** · Must · MVP
 A chronological, filterable list of all PRs by type (MOT-01) and exercise. Tapping a PR opens the session where it happened.
@@ -896,7 +897,7 @@ A chronological, filterable list of all PRs by type (MOT-01) and exercise. Tappi
 A month view marks completed, partial, missed, planned, deload and break days. It also offers a session list with search and filters. Tapping a day opens its session.
 
 **ANL-07 · Powerlifting scores** · Should · MVP
-For the best competition-lift total (from tested 1RMs or current e1RMs, user choice) and for each lift, the app computes **IPF GL Points** (official IPF 2020+), **DOTS**, and Wilks and Wilks2020 (labelled "legacy"), plus an allometric index (kg / BW^0.67), using the current bodyweight trend.
+For the best competition-lift total (from tested 1RMs, the heaviest load lifted for at least one rep, or current e1RMs, user choice) and for each lift, the app computes **IPF GL Points** (official IPF 2020+), **DOTS**, and Wilks and Wilks2020 (labelled "legacy"), plus an allometric index (kg / BW^0.67), using the current bodyweight trend.
 - Coefficient sets are selected by sex reference × division (classic/equipped) × event (3-lift/bench-only). The app uses kg internally, applies the documented bodyweight clamps, and floors IPF and GL at 0. Single-lift Wilks/DOTS are labelled "informal".
 - **Reference vectors** (± 0.01) are automated tests, for example: male 83 kg, total 700 kg, classic → Wilks 467.25, Wilks2020 561.15, DOTS 472.56, GL 96.90. Female 63 kg, total 400 kg → Wilks 429.58, Wilks2020 511.45, DOTS 430.21, GL 87.51. All test vectors in `EB §Scoring › Allometric & examples`, plus the official/OpenPowerlifting test values listed in `EB §Scoring` (for example Wilks M 100 kg / 1000 kg → 608.58907; IPF Points M classic 93 kg / 777.5 kg → 741.32; GL M equipped 92.04 kg / 1035 kg → 112.85), must pass (NFR-MNT-02).
 - A points history chart follows the e1RM/bodyweight history.
@@ -920,7 +921,7 @@ Per lift and muscle per week: volume load (Σ reps × kg), relative volume load 
 
 **ANL-11 · Chart interaction and accessibility standard** · Must · MVP
 All charts:
-- support tap-for-tooltip, range presets, pinch-zoom or a range slider on time axes, and smooth transitions (respecting reduced motion);
+- support tap-for-tooltip, range presets, pinch-zoom with range chips and Earlier/Later buttons on time axes, and smooth transitions (respecting reduced motion);
 - render correctly in light and dark themes with color-blind-safe palettes;
 - never rely on color alone (also markers or labels);
 - offer a "view as table" alternative and a one-sentence text summary for screen readers, for example "Squat e1RM rose 4% over 12 weeks".
@@ -953,12 +954,13 @@ A detected PR triggers an in-session celebration: an animation with haptics and 
 A streak counts consecutive "kept" training weeks. **No daily streaks.**
 - A week (starting on the user's week-start day) is **kept** if completed sessions ≥ planned sessions for that week. The user can enable a grace of 1 missed session per week (Assumption A-07).
 - Sessions done on unscheduled days count. Deload weeks count with their planned sessions. Partial sessions count if ≥ 50% of planned working sets were done.
-- In freestyle mode, the user sets a weekly session target that is used instead of the plan.
+- In freestyle mode, the user sets a weekly session target that is used instead of the plan. Without a plan or a weekly target, one session keeps the week.
 - Home shows the current streak, best streak, and this week's progress (for example 2/4).
 
 **MOT-04 · Streak fairness rules** · Must · MVP
 Planned breaks and illness (PLN-12) **pause** the streak: they neither keep nor break it. A missed week resets the current streak to 0 but keeps the best streak. Editing or backdating sessions recomputes streaks.
 - The user can retroactively mark a past week as a break, at most 4 weeks back.
+- A skipped planned session still counts toward the week's target; merging it into another session keeps the week.
 
 **MOT-05 · Achievements** · Should · v1.x
 A catalog of achievements (§7.5) is unlocked from local data. It includes:
@@ -1002,7 +1004,7 @@ The user can log bodyweight in ≤ 3 taps from Home or an app shortcut (PWA-05),
 
 **BOD-02 · Weight trend and rate** · Must · MVP
 The app computes a smoothed trend with a daily exponential moving average (α 0.1 by default; 0.1–0.15 when cutting, 0.05–0.1 on slow bulks). Missed days are handled with α_eff = 1 − (1 − α)^Δdays. The trend starts from the mean of the first 3–7 weigh-ins. Single readings deviating more than 2–2.5% from the trend are winsorized.
-- The weekly rate (kg/week and %BW/week) comes from a regression over the last 14–28 days.
+- The weekly rate (kg/week and %BW/week) comes from a regression over the last 14–28 days. When maintaining, the rate band shown is ±0.25 %BW/week.
 - The chart shows the trend line prominently, raw dots de-emphasized, and the weekly rate. There are no alerts based on a single day's weight.
 - Unit tests cover the EMA with gaps and outliers (NFR-MNT-02).
 - *Ref:* `EB §Nutrition › Trend smoothing`, `EB §Defaults › Nutrition`, `EB §Gaps #20`.

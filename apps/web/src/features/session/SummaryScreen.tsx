@@ -1,9 +1,9 @@
 import { Plural, Trans, useLingui } from '@lingui/react/macro';
 import { Link } from '@tanstack/react-router';
-import { CalendarClock, Trophy } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { CalendarClock, ChevronRight, Flame, Trophy } from 'lucide-react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 
-import type { SessionId } from '@powr/domain';
+import type { LocalDate, SessionId } from '@powr/domain';
 import type { SessionSummary } from '@powr/domain/session';
 
 import { announce } from '#ui/announcer';
@@ -11,14 +11,31 @@ import { Badge, Callout } from '#ui/badge';
 import { Button, buttonClass } from '#ui/button';
 import { Card, Screen } from '#ui/screen';
 
+import { useInsight } from '../../hooks/use-insights';
 import { usePlanning } from '../../hooks/use-planning';
 import { useSessionUseCases } from '../../hooks/use-workout';
-import { formatMinutes, formatTime } from '../../i18n/format';
+import {
+  formatLocalDate,
+  formatMinutes,
+  formatTime,
+  todayLocal,
+  addLocalDays,
+} from '../../i18n/format';
+import { useHeatSentence, useStreakWords } from '../insights/words';
 import { useLabels } from '../labels';
 import { WhyButton } from '../why/WhySheet';
 import { useSummaryWords } from './past/parts';
 import { useSessionUi } from './session-ui';
 import { massFromKg, useLoadUnit, useSessionWords } from './words';
+
+/** The body-map artwork stays off the startup path: the mini heat map is its own chunk. */
+const MiniHeatMap = lazy(() => import('../insights/MiniHeatMap'));
+
+/** The calendar day a session started on, in the zone it was logged in (no Temporal here). */
+function sessionDay(summary: SessionSummary): string {
+  const { epochMs, offsetMin } = summary.startedAt;
+  return new Date(epochMs + offsetMin * 60_000).toISOString().slice(0, 10);
+}
 
 /**
  * WKT-13 and MOT-02: the summary of a finished (or partial) session: duration, sets done
@@ -140,6 +157,10 @@ function SummaryContent({ summary }: { summary: SessionSummary }) {
 
       {summary.prs.length > 0 ? <PrCard summary={summary} /> : null}
 
+      {summary.countsForStreak ? <StreakChangeCard sessionId={summary.sessionId} /> : null}
+
+      <WeekHeatCard day={sessionDay(summary)} />
+
       {summary.firstTimes.length > 0 ? (
         <Card>
           <h2 className="text-lg font-semibold">
@@ -259,37 +280,30 @@ function SummaryContent({ summary }: { summary: SessionSummary }) {
 }
 
 /**
- * MOT-02: the PRs of the session, one line each, with a short scale-and-glow on the card (Web
- * Animations API, ≤ 600 ms). Under reduced motion the card is static (NFR-A11Y-08).
+ * MOT-02: the PRs of the session, one line each, with the same short scale-in as the in-session
+ * card (`pr-pop`, ≤ 600 ms, once). Under reduced motion the base styles zero every animation
+ * duration, so the card is static (NFR-A11Y-08).
  */
 function PrCard({ summary }: { summary: SessionSummary }) {
   const words = useSessionWords();
   const unit = useLoadUnit();
-  const card = useRef<HTMLElement>(null);
-  useEffect(() => {
-    const element = card.current;
-    if (!element || matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
-    const animation = element.animate(
-      [
-        { transform: 'scale(0.96)', opacity: 0.6 },
-        { transform: 'scale(1.02)', opacity: 1, offset: 0.6 },
-        { transform: 'scale(1)', opacity: 1 },
-      ],
-      { duration: 600, easing: 'ease-out' },
-    );
-    return () => animation.cancel();
-  }, []);
   return (
     <section
-      ref={card}
       aria-labelledby="summary-prs"
       data-testid="summary-prs"
-      className="flex flex-col gap-3 rounded-2xl border-2 border-control bg-surface p-4"
+      className="flex animate-[pr-pop_600ms_ease-out] flex-col gap-3 rounded-2xl border-2 border-control bg-surface p-4"
     >
       <h2 id="summary-prs" className="flex items-center gap-2 text-lg font-semibold">
         <Trophy aria-hidden="true" className="size-6 text-pr-accent" />
         <Trans>New personal records</Trans>
       </h2>
+      <p className="text-fg-muted">
+        <Plural
+          value={summary.prs.length}
+          one="# record in this workout. Well earned."
+          other="# records in this workout. Well earned."
+        />
+      </p>
       <ul className="flex flex-col gap-2">
         {summary.prs.map((pr) => (
           <li key={pr.id} className="flex items-start gap-2">
@@ -298,8 +312,95 @@ function PrCard({ summary }: { summary: SessionSummary }) {
           </li>
         ))}
       </ul>
+      <Link to="/progress/prs" className={buttonClass({ size: 'lg' })}>
+        <Trans>All personal records</Trans>
+        <ChevronRight aria-hidden="true" className="size-5" />
+      </Link>
     </section>
   );
+}
+
+/**
+ * MOT-02/03 (WKT-13 "adherence impact on the weekly streak"): what this workout did to the
+ * streak, independent of whether the post-finish rebuild has run (`sessionStreakChange`); a new
+ * best streak gets the PR card's short scale-in, static under reduced motion.
+ */
+function StreakChangeCard({ sessionId }: { sessionId: SessionId }) {
+  const streakWords = useStreakWords();
+  const change = useInsight(`streak-change:${sessionId}`, (insights, deps) =>
+    insights.sessionStreakChange(deps, sessionId),
+  );
+  if (!change.loaded || change.value === null) return null;
+  const { current, newBest } = change.value;
+  const weeks = streakWords.weeks(current);
+  return (
+    <section
+      aria-labelledby="summary-streak"
+      data-testid="summary-streak"
+      className={
+        newBest
+          ? 'flex animate-[pr-pop_600ms_ease-out] flex-col gap-2 rounded-2xl border-2 border-control bg-surface p-4'
+          : 'flex flex-col gap-2 rounded-2xl bg-surface p-4'
+      }
+    >
+      <h2 id="summary-streak" className="flex items-center gap-2 text-lg font-semibold">
+        <Flame aria-hidden="true" className="size-6 text-pr-accent" />
+        {newBest ? (
+          <Trans>New best streak: {weeks}</Trans>
+        ) : (
+          <Trans>Week kept: {weeks} in a row</Trans>
+        )}
+      </h2>
+      <p>
+        {newBest ? (
+          <Trans>This workout kept your week and set your longest streak yet.</Trans>
+        ) : (
+          <Trans>This workout kept your week. Your streak grew to {weeks}.</Trans>
+        )}
+      </p>
+      <Link to="/progress/streak" className={buttonClass({ size: 'lg' })}>
+        <Trans>Your streak</Trans>
+        <ChevronRight aria-hidden="true" className="size-5" />
+      </Link>
+    </section>
+  );
+}
+
+/**
+ * WKT-13 "volume by muscle (mini heat map)": the week of this workout with it included, from the
+ * same derived weeks as the body map (one calculation, ANL-03); the list below has this
+ * workout's own sets per muscle.
+ */
+function WeekHeatCard({ day }: { day: string }) {
+  const { t } = useLingui();
+  const sentence = useHeatSentence();
+  const week = useInsight(`summary-week:${day}`, (insights, deps) =>
+    insights.weeklyVolume(deps, { mode: 'week', date: day as LocalDate }),
+  );
+  if (!week.loaded) return null;
+  const rows = week.value.rows;
+  const current =
+    week.value.weekStart <= todayLocal() && todayLocal() < nextWeek(week.value.weekStart);
+  const from = formatLocalDate(week.value.weekStart, 'long');
+  return (
+    <Card>
+      <h2 className="text-lg font-semibold">
+        {current ? <Trans>Your week so far</Trans> : <Trans>The week of {from}</Trans>}
+      </h2>
+      <Suspense fallback={null}>
+        <MiniHeatMap rows={rows} legendTitle={t`Heat map key`} />
+      </Suspense>
+      <p data-testid="summary-heat-summary">{sentence(rows)}</p>
+      <Link to="/explore/body-map" className={buttonClass({ size: 'lg' })}>
+        <Trans>Open the body map</Trans>
+        <ChevronRight aria-hidden="true" className="size-5" />
+      </Link>
+    </Card>
+  );
+}
+
+function nextWeek(weekStart: string): string {
+  return addLocalDays(weekStart, 7);
 }
 
 /** PRG-12: after a finish, the reactive-deload proposal with its reasons, if any. */

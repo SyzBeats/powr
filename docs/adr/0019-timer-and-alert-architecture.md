@@ -1,6 +1,6 @@
 # ADR-0019: Timer and alert architecture
 
-- Status: Accepted (calibrated by device spike S-1 / V-01; v0.2, 2026-11-24: audio keep-alive decided OQ-T3 = B; amended v0.7: implemented in M3, matrix empty until S-1)
+- Status: Accepted (calibrated by device spike S-1 / V-01; v0.2, 2026-11-24: audio keep-alive decided OQ-T3 = B; amended v0.7: implemented in M3, matrix empty until S-1; amended v0.8: metronome and set-timer lead-in in M4v)
 - Date: 2026-11-23
 - Related: technical concept §8.8, §6.2; PRD TMR-04…06, PWA-06…08, SET-04, C-10, NG-13, NG-14, OQ-01, R-01, V-01, V-07, TC-03
 
@@ -54,3 +54,14 @@ The decision stands and is implemented (M3t, wired to the session screens in M3b
 - **Status today:** S-1 has not run, so the matrix is empty and every browser shows "Limited (best effort)" (technical concept TD-38).
 
 Source: `IMPLEMENTATION_NOTES.md` (repository root), sections "M3t timers and alerts" and "M3b session screens".
+
+## Amendment (v0.8, 2026-11-25)
+
+The decision stands. M4v added the timer extras to the lazy timer kit (technical concept §8.8.7; TD-39 and TD-48 closed):
+
+- **Metronome (TMR-10):** tempo beats scheduled 450 ms ahead on the Web Audio clock (`audio.schedule(cue, volume, delayMs)` with the new cues `tempoLower`, `tempoLift`, `tempoPause`, `tempoTick`), vibration at phase starts only; it stops when the page is hidden, after 5 minutes, and on stop, confirm, skip or a set change, and runs nothing while stopped (NFR-PERF-10). **Decision (product owner, 2026-11-25):** it follows the Alerts sound, volume and vibration settings and counts no reps (an own sound choice and a rep count are TD-53).
+- **Set timer (TMR-09):** an optional 3-2-1 lead-in (the `countdown` cue, page state only) and an optional automatic stop at the target after the end alert has fired, so "Time is up" always sounds first.
+- **Defaults (product owner, 2026-11-25):** the three switches (`alerts.setTimerLeadIn`, `alerts.setTimerAutoStop`, `alerts.tempoCues`) are off by default; absent fields mean off.
+- **Still open:** the metronome's timing and distinguishable vibrations on the S22 in Chrome and Samsung Internet (TD-50), and S-1 itself (TD-38).
+
+Source: `IMPLEMENTATION_NOTES.md` (repository root), section "M4v charts, body map and timer extras".

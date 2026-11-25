@@ -32,6 +32,10 @@ Lightweight MADR format: context, options considered (with a weighted matrix whe
 - ADR-0005 (the session reducer lives in `@powr/domain/session`; the use cases are the lazy `@powr/application/session`; the app's effect runner runs the platform effects), 0006 (derived writes strict too; version 2 amended again; development databases cleared once; transaction scopes are async functions), 0019 (implemented; the alert code loaded on first use, entry JS 177.34 KB with one first-wave script; alert defaults with a 5/10/15 s pre-alert; device-test records and protocol locations; matrix empty until S-1) and 0020 (the session engine; derived rebuilds on the main thread; design values accepted by the product owner).
 - No ADR was superseded; titles are unchanged.
 
+**v0.8 (2026-11-25).** After M4 (analytics core, charts, body map and timer extras, insight screens), the implementation and the product-owner decisions of 2026-11-25 were folded in. Each affected ADR gets an "Amendment (v0.8, 2026-11-25)" section:
+- ADR-0007 (spike S-4 go: chunk 174.0 KB gzip, the timings, the weekly aggregation and the S22 run as conditions; the modular set with `GridSimpleComponent`; the accessible chart pattern without the ECharts tooltip; colours from the tokens; the Trusted Types host shim), 0014 (plain-function search params; the M4 routes; the body map's muscle panel as a route) and 0019 (the metronome and the set-timer lead-in in the lazy timer kit; the new switches off by default).
+- No ADR was superseded; titles are unchanged.
+
 | ADR | Title | Decision | Runner-up | Status |
 |---|---|---|---|---|
 | [0001](0001-repository-structure-pnpm-monorepo.md) | Repository structure and boundary enforcement | pnpm-workspace monorepo; boundaries via pnpm isolation + TypeScript project references + oxlint `no-restricted-imports` overrides + architecture test | Single app with lint-enforced folders | Accepted (revised v0.2, amended v0.3, v0.4) |
@@ -40,18 +44,18 @@ Lightweight MADR format: context, options considered (with a weighted matrix whe
 | [0004](0004-styling-and-design-tokens.md) | Styling and design tokens | Tailwind CSS v4 + CSS-variable tokens; class sorting by oxfmt | CSS Modules + CSS variables | Accepted (amended v0.5) |
 | [0005](0005-state-management.md) | State management | Dexie `liveQuery` + Zustand + URL state + pure session reducer | Dexie `liveQuery` + Jotai | Accepted (amended v0.7) |
 | [0006](0006-indexeddb-library-and-persistence.md) | IndexedDB library and persistence model | Dexie 4, strict durability, separate auxiliary DBs, photos as IDB Blobs | SQLite WASM on OPFS | Accepted (photos revisited after S-3; amended v0.3, v0.5, v0.7) |
-| [0007](0007-charts.md) | Charts | Apache ECharts 6 (modular, lazy) + own SVG sparklines | Recharts 3 | Accepted (confirm in S-4) |
+| [0007](0007-charts.md) | Charts | Apache ECharts 6 (modular, lazy) + own SVG sparklines | Recharts 3 | Accepted (amended v0.8: S-4 go; S22 run open) |
 | [0008](0008-pwa-tooling-and-service-worker-strategy.md) | PWA tooling and service-worker strategy | vite-plugin-pwa `injectManifest` + Workbox precaching; prompt-only updates; install gate | Serwist | Accepted (amended v0.3) |
 | [0009](0009-validation-schema-library.md) | Validation / schema library | Zod 4 (JIT-less), never on the startup path | Valibot | Accepted (amended v0.3, v0.4) |
 | [0010](0010-testing-stack.md) | Testing stack | Vitest 5, fast-check, Testing Library, Playwright, axe-core | Jest + Cypress | Accepted (amended v0.3, v0.5) |
 | [0011](0011-hosting.md) | Hosting | **Hetzner Cloud VPS (Nuremberg, Germany) + self-hosted Coolify 4.7**; Traefik + Let's Encrypt; own nginx image; GitHub Actions → GHCR → Coolify webhook | Cloudflare Pages | Accepted (product-owner decision 2026-11-24; rewritten v0.2) |
 | [0012](0012-rules-registry.md) | Rules registry | YAML tables + Zod schema → versioned JSON; layered overrides | TypeScript constant tables | Accepted (amended v0.4) |
 | [0013](0013-backup-file-format.md) | Backup file format | ZIP + manifest + SHA-256 + shared migration chain | Single JSON file | Accepted (resolved 2026-11-24: A; amended v0.3, v0.4) |
-| [0014](0014-router.md) | Router | TanStack Router | React Router 8 | Accepted |
+| [0014](0014-router.md) | Router | TanStack Router | React Router 8 | Accepted (amended v0.8) |
 | [0015](0015-date-and-time-handling.md) | Date and time handling | Temporal via `temporal-polyfill` | date-fns 4 + `@date-fns/tz` | Accepted |
 | [0016](0016-internationalisation.md) | Internationalisation | Lingui 6 + `Intl`; oxlint `react/jsx-no-literals` + catalog check | i18next | Accepted (revised v0.2, amended v0.3, v0.5, v0.6) |
 | [0017](0017-lint-and-format.md) | Lint and format: oxlint + oxfmt | **oxlint 1.95** (type-aware via oxlint-tsgolint) + **oxfmt 0.80** (beta); Prettier removed | ESLint 10 + typescript-eslint + Prettier 3 | Accepted (product-owner decision 2026-11-24; rewritten v0.2, amended v0.3, v0.5, v0.6) |
 | [0018](0018-licence-compliance-tooling.md) | Licence compliance tooling | Own inventory from the bundle graph + SPDX gate | `rollup-plugin-license` | Accepted (amended v0.3: licence exceptions approved by the product owner; v0.4: content entries approved; v0.5: no Sentry, package block list) |
-| [0019](0019-timer-and-alert-architecture.md) | Timer and alert architecture | Timestamp timers; multi-path best-effort hidden alerts; honest status; audio keep-alive tested in S-1, opt-in Labs only if it clearly works | Visible-only alerts | Accepted (calibrated by S-1; amended v0.7) |
+| [0019](0019-timer-and-alert-architecture.md) | Timer and alert architecture | Timestamp timers; multi-path best-effort hidden alerts; honest status; audio keep-alive tested in S-1, opt-in Labs only if it clearly works | Visible-only alerts | Accepted (calibrated by S-1; amended v0.7, v0.8) |
 | [0020](0020-calculation-engine-design.md) | Calculation engine design | Pure functional core with injected rules and explanation traces | Generic rules-engine library | Accepted (amended v0.4, v0.5, v0.7) |
 | [0021](0021-package-manager.md) | Package manager | pnpm 12 | Bun | Accepted (resolved 2026-11-24: A; amended v0.3, v0.5) |
