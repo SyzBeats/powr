@@ -132,6 +132,6 @@ test.describe('backup (WP0.6, DAT-05/06)', () => {
     await page.getByTestId('restore-file').setInputFiles(await download.path());
     await page.getByTestId('restore-confirm').fill('REPLACE');
     await page.getByRole('button', { name: 'Replace all data' }).click();
-    await expect(page.getByTestId('restore-status')).toHaveText('Restored. 1 sets imported.');
+    await expect(page.getByTestId('restore-status')).toHaveText('Restored. 1 set imported.');
   });
 });

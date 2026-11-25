@@ -60,7 +60,7 @@ describe('plan preview with "Why?" (ONB-10, PRG-09)', () => {
       container,
       <PlanPreviewView preview={preview} equipment={sampleAnswers(container).equipment} novice />,
     );
-    expect(screen.getAllByText(/reps left/).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/\d reps? left/).length).toBeGreaterThan(0);
   });
 });
 

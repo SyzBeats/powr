@@ -150,7 +150,7 @@ export function PastSessionEditor({ sessionId }: { sessionId: SessionId }) {
               <Trans>This workout was not found. It may have been deleted.</Trans>
             </p>
             <Link to="/session/past" className={buttonClass({ size: 'lg' })}>
-              <Trans>Back to past sessions</Trans>
+              <Trans>Back to past workouts</Trans>
             </Link>
           </Card>
         )}

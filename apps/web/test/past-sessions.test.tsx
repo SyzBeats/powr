@@ -55,7 +55,7 @@ describe('past sessions (WKT-15)', () => {
     const id = await benchSession(container, 100);
     renderRoute(container, '/session/past');
 
-    expect(await screen.findByRole('heading', { level: 1, name: 'Past sessions' })).toBeTruthy();
+    expect(await screen.findByRole('heading', { level: 1, name: 'Past workouts' })).toBeTruthy();
     const list = await screen.findByTestId('past-sessions');
     const rows = within(list).getAllByRole('link');
     expect(rows).toHaveLength(2);

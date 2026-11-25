@@ -193,7 +193,7 @@ test.describe('M2c planning gaps (ONB-08, PLN-02, PLN-08, TD-36)', () => {
       timeout: 15_000,
     });
     await expect(page.getByText('Your session time is tight')).toBeVisible();
-    await expect(page.getByText(/set lower, toward the minimum effective dose/)).toBeVisible();
+    await expect(page.getByText(/set lower, towards the minimum effective dose/)).toBeVisible();
     await checkScreen(page, 'plan-next-block-budget');
   });
 });

@@ -27,9 +27,9 @@ describe('changing one onboarding answer (SET-08)', () => {
     const user = userEvent.setup();
     renderRoute(container, '/settings/profile/body');
     const year = await screen.findByRole('textbox', { name: 'Birth year' });
-    // Settings has its own units and body-weight log: the editor leaves them out.
+    // Settings has its own units and bodyweight log: the editor leaves them out.
     expect(screen.queryByRole('group', { name: 'Weights in' })).toBeNull();
-    expect(screen.queryByRole('textbox', { name: /Body weight/ })).toBeNull();
+    expect(screen.queryByRole('textbox', { name: /Bodyweight/ })).toBeNull();
     expect(await seriousViolations()).toEqual([]);
     await user.type(year, '1990');
     await user.click(screen.getByRole('button', { name: 'Save' }));

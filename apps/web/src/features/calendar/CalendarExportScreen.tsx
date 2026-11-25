@@ -422,7 +422,7 @@ function ImportGuide({ headingRef }: { headingRef: RefObject<HTMLHeadingElement 
         <Trans>
           Exporting again updates the same events in calendar apps that support it. Some apps add a
           second copy instead: then delete the old events, for example by searching your calendar
-          for “POWR”.
+          for "POWR".
         </Trans>
       </p>
     </Card>

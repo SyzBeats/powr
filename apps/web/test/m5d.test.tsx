@@ -24,7 +24,12 @@ import {
  */
 
 afterEach(() => {
-  useAppUi.setState({ installPrompt: null, updateAvailable: false, wipe: null });
+  useAppUi.setState({
+    installPrompt: null,
+    updateAvailable: false,
+    updateDeferred: false,
+    wipe: null,
+  });
   vi.restoreAllMocks();
 });
 

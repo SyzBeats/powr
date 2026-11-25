@@ -11,9 +11,10 @@ interface SafetySnapshot {
   at: string;
 }
 
-const KEEP = 2;
-
-/** `powr-safety`: the latest safety snapshots taken before imports and migrations (§8.2.1). */
+/**
+ * `powr-safety`: the safety snapshots taken before imports and migrations (§8.2.1). Which copies
+ * stay is the application's rule (`pruneSafetyCopies`, TD-67), not the store's.
+ */
 class SafetyDb extends Dexie {
   declare snapshots: Table<SafetySnapshot, number>;
 
@@ -33,15 +34,11 @@ export function createSafetySnapshots(): SafetySnapshots & { wipe(): Promise<voi
     /** "Delete all data" (DAT-13): deletes `powr-safety`; the instance stays closed. */
     wipe: () => db.delete(),
     async save(snapshot) {
-      await db.transaction('rw', db.snapshots, async () => {
-        await db.snapshots.add({
-          fileName: snapshot.fileName,
-          bytes: snapshot.bytes,
-          reason: snapshot.reason,
-          at: toIsoWithOffset(snapshot.at),
-        });
-        const ids = await db.snapshots.orderBy('id').primaryKeys();
-        await db.snapshots.bulkDelete(ids.slice(0, Math.max(0, ids.length - KEEP)));
+      await db.snapshots.add({
+        fileName: snapshot.fileName,
+        bytes: snapshot.bytes,
+        reason: snapshot.reason,
+        at: toIsoWithOffset(snapshot.at),
       });
     },
     async list() {

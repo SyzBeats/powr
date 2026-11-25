@@ -1,4 +1,4 @@
-import { Trans, useLingui } from '@lingui/react/macro';
+import { Plural, Trans, useLingui } from '@lingui/react/macro';
 import { useState, type ReactNode } from 'react';
 
 import {
@@ -74,11 +74,11 @@ export function GoalStep({ draft, update, errors }: StepProps) {
       <ErrorText>{errors['style']}</ErrorText>
       <details className="rounded-2xl bg-surface p-3">
         <summary className="min-h-target-min cursor-pointer font-semibold">
-          <Trans>Body-weight goal (optional)</Trans>
+          <Trans>Bodyweight goal (optional)</Trans>
         </summary>
         <div className="pt-3">
           <ChoiceCards
-            legend={t`Are you trying to change your body weight?`}
+            legend={t`Are you trying to change your bodyweight?`}
             value={draft.phase ?? null}
             onChange={(phase) => update({ phase })}
             options={BODY_PHASES.map((phase) => ({ value: phase, label: labels.phase(phase) }))}
@@ -136,8 +136,8 @@ export function ExperienceStep({ draft, update, errors }: StepProps) {
         <p className="pt-2">
           <Trans>
             RIR ("reps in reserve") is how many more reps you could have done when you stopped a
-            set. 2 RIR means two more were possible. RPE (rate of perceived exertion) says the same
-            on a 1–10 scale: RPE 8 equals 2 RIR. POWR asks in plain words if you are new to it.
+            set. 2 RIR means two more were possible. RPE (rating of perceived exertion) says the
+            same on a 1–10 scale: RPE 8 equals 2 RIR. POWR asks in plain words if you are new to it.
           </Trans>
         </p>
       </details>
@@ -180,7 +180,7 @@ export function ScheduleStep({ draft, update, errors, weekStart }: StepProps) {
           options={days.map((day) => ({ value: String(day), label: labels.weekday(day) }))}
         />
         <p className="text-sm text-fg-muted" aria-live="polite">
-          <Trans>{schedule.weekdays.length} days selected</Trans>
+          <Plural value={schedule.weekdays.length} one="# day selected" other="# days selected" />
         </p>
         <ErrorText>{errors['weekdays']}</ErrorText>
       </div>
@@ -267,7 +267,7 @@ export function BodyStep({ draft, update, errors, inSettings = false }: StepProp
       <Card className="gap-4">
         <p className="text-fg-muted">
           <Trans>
-            Optional. Used for strength scores and body-weight trends; it stays on this phone.
+            Optional. Used for strength scores and bodyweight trends; it stays on this phone.
           </Trans>
         </p>
         <ChoiceCards<SexOption>
@@ -314,7 +314,7 @@ export function BodyStep({ draft, update, errors, inSettings = false }: StepProp
         />
         {inSettings ? null : (
           <DecimalField
-            label={t`Body weight`}
+            label={t`Bodyweight`}
             suffix={units.bodyweight}
             value={draft.bodyweight?.value ?? null}
             error={errors['bodyweight']}

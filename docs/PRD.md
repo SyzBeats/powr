@@ -7,9 +7,9 @@
 | Field | Value |
 |---|---|
 | Title | POWR (working title): Product Requirements Document |
-| Version | 0.7 |
+| Version | 0.8 |
 | Date | 2026-11-25 |
-| Status | Draft v0.7. All open questions resolved on 2026-11-23 (§11.1). Only validation tasks remain (§11.2). Baseline for the technical concept. |
+| Status | Draft v0.8. All open questions resolved on 2026-11-23 (§11.1). Only validation tasks remain (§11.2). Baseline for the technical concept. |
 | Owner / publisher | Simeon Zimmermann, SZ WEB DEVELOPMENT, Switzerland (product owner and publisher). Drafted by the requirements agent. |
 | Audience | Product owner, the technical-concept author, designers, testers |
 | Sources | (1) User braindump `app.requirements.md`. (2) User answers to clarification questions (2026-11-23); these are authoritative and override the braindump where it is ambiguous. (3) Evidence base `reports/Strength and hypertrophy evidence base.md` (consolidated report, "EB"), backed by the six files in `research_notes/Strength and hypertrophy evidence base/`. (4) Platform documentation checked on 2026-11-23 (Appendix C). (5) User decisions on all open questions and publisher details, 2026-11-23 (§11.1). |
@@ -27,6 +27,7 @@
 | 0.5 | 2026-11-24 | ONB-08: the main lifts are the competition lifts (powerlifting, powerbuilding) or the plan's primary compound lifts (bodybuilding), at most four, each showing its estimated 1RM. PLN-02: the override lists every template of the style and says whether it fits days and level. Both approved by the product owner on 2026-11-24 (M2c). |
 | 0.6 | 2026-11-25 | TMR-12: the compact timer shows the rest or set timer, otherwise the session clock, for the whole session. WKT-03: half-step RIR is shown with the chips' label and entered in the set details. SET-03: pre-alert timing 5, 10 or 15 s, default 10 s. All approved by the product owner on 2026-11-25 (M3b). |
 | 0.7 | 2026-11-25 | ANL-11: time axes support pinch-zoom with range chips and Earlier/Later buttons (instead of a range slider). MAP-01: a small region gets its own button below the figure (instead of a list fallback). MOT-03: without a plan or a weekly target, one session keeps the week. MOT-04: a skipped planned session still counts toward the week's target; merging it into another session keeps the week. BOD-02: the rate band for maintaining is ±0.25 %BW/week. ANL-04: the training max is a per-exercise value the user sets. ANL-07: a tested 1RM is the heaviest load lifted for at least one rep. Wording from the M4 implementation; all approved by the product owner on 2026-11-25 |
+| 0.8 | 2026-11-25 | A-05 and EXL-01: met with 190 exercises; every display group except the optional tibialis has at least 2 exercises crediting it ≥ 0.5 under every preset with equipment; the §7.1 pattern "carry" has no exercise yet. PLN-02: bodybuilding 4 days "Upper/Lower ×2 or Full body ×4", 6 days "Push/Pull/Legs ×2 or Upper/Lower ×3"; powerlifting and powerbuilding without alternatives for now. PLN-05 and MAP-03: among exercises with equal scores, the standard variant of a movement ranks first. PWA-05: the two shortcuts built ("Start today's workout", "Log bodyweight"). DAT-08: "Remind me later" hides a due reminder for 3 days. DAT-13: a confirmation screen ("All data deleted") precedes the first run. CAL-02: the start-time choice at export includes all-day events. SET-05: RPE or RIR display and entry (records keep RIR), RIR entry by one tap per value or in half steps. SET-08: update the current plan from next week or keep it; only an answer that changes the plan asks; the new plan is shown before anything is stored. SET-09: contact by e-mail (`tools@sz-development.com`). LEG-09: a release check blocks production until the postal address is provided. Wording from the M5 implementation; all approved by the product owner on 2026-11-25 Also §8.6: the contact e-mail given by the product owner (tools@sz-development.com). |
 
 ---
 
@@ -323,6 +324,7 @@ The user can add a custom equipment item (name, optional load details) and refer
 The app ships a curated library (content requirements in §7.1), with at least 150 exercises at MVP (Assumption A-05). Every major muscle group must be trainable with at least 2 exercises under every gym preset.
 - Content validation test: every exercise has a muscle mapping, equipment requirements, movement pattern, mechanics (compound or isolation), load type and default rep-range class. The build fails otherwise.
 - Coverage test: for each preset in EQP-02 and each body-map muscle group (§7.2), at least 2 available exercises credit that muscle ≥ 0.5.
+- Status (content 0.3.0): met with 190 exercises. Every display group except the optional tibialis has at least 2 exercises crediting it ≥ 0.5 under every preset with equipment. The §7.1 movement pattern "carry" has no exercise yet (technical concept TD-65).
 
 **EXL-02 · Browse, search and filter** · Must · MVP
 The user can browse the library and filter by muscle, equipment, movement pattern, mechanics and "available only". They can also search by name and synonyms.
@@ -383,7 +385,7 @@ Selecting a muscle lists exercises that credit it, **filtered to the active equi
 **MAP-03 · Transparent ranking model** · Must · MVP
 Ranking uses documented, data-driven criteria. Decided (OQ-09 = A, 2026-11-23): a transparent composite score with an explanation on tap, plus a separate "Focus" sort.
 - **Focus:** primary credit first, then the selected muscle's share of the exercise's total credit (more isolated = higher).
-- **Effectiveness:** a composite of (a) credit for the muscle, (b) evidence strength of the mapping (H > EMG > C), (c) whether the exercise loads the muscle at long lengths (stretch emphasis, `EB §Session › ROM`, `EB §Session › Exercise selection`), (d) suitability for progressive overload (stable, loadable), and (e) sub-region coverage. Weights are configurable data (PRG-18). Ties are broken by the user's favorites and history.
+- **Effectiveness:** a composite of (a) credit for the muscle, (b) evidence strength of the mapping (H > EMG > C), (c) whether the exercise loads the muscle at long lengths (stretch emphasis, `EB §Session › ROM`, `EB §Session › Exercise selection`), (d) suitability for progressive overload (stable, loadable), and (e) sub-region coverage. Weights are configurable data (PRG-18). Ties are broken by the user's favorites and history. Among exercises still tied, the standard variant of a movement ranks first (for example the dumbbell shoulder press before the Arnold press).
 - Tapping the rating shows the contributing factors in plain language, for example "Seated leg curl: primary for hamstrings; trains them in a stretched position (hypertrophy study evidence)".
 - *Ref:* `EB §Session › Exercise selection`, `EB §Session › Mapping`, `EB §Session › ROM`.
 
@@ -432,13 +434,14 @@ The generator picks a split appropriate to style and days per week, and the user
 |---|---|---|---|
 | 2 | Full body ×2 | Full body SBD ×2 | Full body ×2 |
 | 3 | Full body ×3 | SBD ×3 (heavy/light/moderate) | Full body ×3 |
-| 4 | Upper/Lower ×2 | SBD 4-day (each lift 2×+) | Upper/Lower (strength + hypertrophy days) |
+| 4 | Upper/Lower ×2 or Full body ×4 | SBD 4-day (each lift 2×+) | Upper/Lower (strength + hypertrophy days) |
 | 5 | Upper/Lower + PPL hybrid or Full body ×5 | SBD 5-day | UL + PPL hybrid |
-| 6 | Push/Pull/Legs ×2 | SBD 6-day (advanced) | PPL ×2 with strength days |
+| 6 | Push/Pull/Legs ×2 or Upper/Lower ×3 | SBD 6-day (advanced) | PPL ×2 with strength days |
 
 - Powerlifting templates use a block/phase structure with within-week undulation (heavy/moderate/light days) by default. Bodybuilding templates may use any model; the default is double progression (`EB §Progression › Periodization`).
 - Novices get fewer exercises per session (≤ 5 working exercises) and the simplest progression (PRG-06 or PRG-04).
 - The override lists every template of the user's style and says whether it fits the training days and level; a template for other days asks the user to change the days.
+- Where a cell names two splits ("… or …"), the first is the default and the second an alternative in the override. Powerlifting and powerbuilding have no alternatives for now.
 
 **PLN-03 · Weekly volume targets per muscle** · Must · MVP
 Each muscle has a weekly target band in fractional hard sets.
@@ -464,6 +467,7 @@ The generator selects exercises by:
 - **Stretch-position preference** among comparable options.
 - **Competition lifts:** they stay in every block for strength styles, and variation goes into accessory slots.
 - **Stability:** the exercise selection is fixed within a mesocycle, and 1–2 exercises per muscle are rotated between mesocycles (PLN-13). Random variation is only available as an opt-in "variety mode".
+- **Ties:** among exercises with equal scores, the standard variant of a movement ranks first (for example the dumbbell shoulder press before the Arnold press).
 - *Ref:* `EB §Session › Exercise selection`, `EB §Session › ROM`, `EB §Defaults › Session`.
 
 **PLN-06 · Exercise ordering** · Must · MVP
@@ -1074,7 +1078,7 @@ The user can export planned sessions for a chosen range (rest of the current wee
 **CAL-02 · Event content** · Should · MVP
 Each event contains:
 - a title, for example "POWR · Upper A (Week 3)";
-- a start time (the user's preferred time per weekday, or a time chosen at export, or all-day);
+- a start time chosen at export: the user's preferred time per weekday (with a time for days without one), the same time for every session, or all-day events;
 - the estimated duration (PLN-14);
 - a description listing the main exercises and set counts;
 - an optional reminder alarm (VALARM: none, 15 min, 30 min, 1 h, 2 h before), which the calendar app will handle.
@@ -1132,7 +1136,7 @@ The backup format is versioned. Every app version imports all earlier backup for
 - Automated migration tests run for every historical format version (NFR-MNT-03).
 
 **DAT-08 · Backup reminders** · Must · MVP
-The app tracks the date of the last successful export. It shows in-app reminders when the backup is older than the configured cadence (default 14 days, choices 7/14/30 days or off), or after N new sessions (default 8). Reminders appear on Home and after finishing a session, and are dismissible.
+The app tracks the date of the last successful export. It shows in-app reminders when the backup is older than the configured cadence (default 14 days, choices 7/14/30 days or off), or after N new sessions (default 8). Reminders appear on Home and after finishing a session, and are dismissible: "Remind me later" hides a due reminder for 3 days.
 - Reminders are in-app, because scheduled local notifications are not reliably available to PWAs (§9.1 P-01).
 - If persistent storage is not granted, the default cadence becomes 7 days.
 
@@ -1149,7 +1153,7 @@ The user can export the training log (one row per set) and the bodyweight log as
 Import of training history from common logger CSV exports (formats to be selected). Imported history seeds e1RMs and starting volume (ONB-04, PLN-03).
 
 **DAT-13 · Delete data** · Must · MVP
-The user can delete individual records (sessions, entries, photos) and **delete all data**. Deleting everything needs typed or two-step confirmation, removes all app storage including caches of user data, and returns the app to first-run onboarding.
+The user can delete individual records (sessions, entries, photos) and **delete all data**. Deleting everything needs typed or two-step confirmation, removes all app storage including caches of user data, and returns the app to first-run onboarding. A confirmation screen ("All data deleted") precedes the first run.
 - Afterwards, inspecting the app's site storage shows no remaining user records.
 
 **DAT-14 · Migration on app updates** · Must · MVP
@@ -1176,7 +1180,7 @@ The user can edit rest defaults per context (TMR-02), auto-start on/off, count-u
 Settings for sound on/off and volume, vibration on/off, optional voice cues (Could), notification permission status and a request button, and the "alerts while screen is locked" capability status (TMR-06). The honest status note is required by the OQ-01 decision.
 
 **SET-05 · Training preferences** · Must · MVP
-- RPE or RIR display; RIR input style (simple chips or decimals).
+- RPE or RIR display and entry (RPE = 10 − RIR; records keep RIR); RIR entry by one tap per value (0–4, 5+) or in half steps.
 - Default prescription mode for main lifts and for accessories.
 - e1RM equation (advanced; Wathan default).
 - Deload frequency.
@@ -1192,10 +1196,10 @@ Entry point to the equipment profiles and inventories (EQP-01…07).
 Per-muscle volume targets, muscle-mapping overrides (EXL-06), technique credit values, readiness thresholds, and an optional MEV/MAV/MRV overlay (labelled heuristic). Every advanced value shows its evidence default and can be reset.
 
 **SET-08 · Profile and plan regeneration** · Must · MVP
-The user can edit any onboarding answer and choose whether to apply it to the current plan (regenerate from next week or next mesocycle) or only to future plans.
+The user can edit any onboarding answer and choose whether to update the current plan from the start of next week (this week stays as planned) or keep it; experience, priorities, exercises to avoid and the reference set then reach the next block's proposal, style and training days the next plan. Only an answer that changes the plan asks; the new plan is shown before anything is stored.
 
 **SET-09 · Privacy, legal, about** · Must · MVP
-In-app access to the privacy notice (LEG-02), health disclaimer (LEG-01), evidence and sources page (LEG-05), the "Open-source licences / attributions" screen (LEG-06), publisher identification (LEG-09), app version, changelog (NFR-MNT-07) and contact/feedback route.
+In-app access to the privacy notice (LEG-02), health disclaimer (LEG-01), evidence and sources page (LEG-05), the "Open-source licences / attributions" screen (LEG-06), publisher identification (LEG-09), app version, changelog (NFR-MNT-07) and a contact and feedback route by e-mail (`tools@sz-development.com`).
 
 **SET-10 · Workout display** · Must · MVP
 - Keep screen on during workouts (default on, PWA-06).
@@ -1226,7 +1230,7 @@ When a new version is available, the app shows a non-blocking "Update available"
 - Test: deploy version N+1 while a session is in progress on N. The session continues on N, and the update applies after the session ends and the user accepts.
 
 **PWA-05 · App shortcuts** · Should · MVP **[feasibility]**
-Long-pressing the home-screen icon offers shortcuts: "Start today's workout", "Log bodyweight", "Quick timer" (TMR-15, when available) and "Last workout summary". Each shortcut opens directly to its screen, offline.
+Long-pressing the home-screen icon offers shortcuts. The MVP ships two: "Start today's workout" and "Log bodyweight". "Quick timer" follows with TMR-15, and "Last workout summary" later. Each shortcut opens directly to its screen, offline.
 
 **PWA-06 · Screen Wake Lock during workouts** · Must · MVP **[feasibility]**
 While a session is active and the workout screen is visible, the app keeps the screen on (default on, SET-10). It re-acquires the lock when returning to the app and releases it when the session ends, the user turns it off, or the app is hidden. If unsupported, the setting shows "Not supported on this browser".
@@ -1301,7 +1305,7 @@ The app is free and closed source (decided, OQ-04; C-09). Every third-party comp
 - The inventory is a release artifact and is the source for the attributions screen (LEG-06).
 
 **LEG-09 · Publisher identification (imprint)** · Must · MVP
-The website that serves the app and the in-app About screen identify the publisher: **Simeon Zimmermann, SZ WEB DEVELOPMENT, Switzerland**, with a postal contact address and e-mail (to be provided). The privacy notice (LEG-02) names the same publisher as the responsible party.
+The website that serves the app and the in-app About screen identify the publisher: **Simeon Zimmermann, SZ WEB DEVELOPMENT, Switzerland**, with a postal contact address (a release check blocks production until it is provided) and e-mail. The privacy notice (LEG-02) names the same publisher as the responsible party.
 - The exact content legally required is to be confirmed in legal review (§8.6, V-06). That covers Swiss requirements, and any EU requirements because the app is publicly available to EU users.
 - The publisher information is available offline in the app.
 
@@ -1432,7 +1436,7 @@ All performance budgets are measured on a Samsung Galaxy S22 with current stable
 | Guidance | 3–6 original execution cues, ROM cue, safety note where relevant; media reference (none in MVP; v1.x per OQ-08 decision and LEG-08) |
 | Ranking inputs | Effectiveness factors per muscle (MAP-03), evidence-graded |
 
-- **MVP size:** ≥ 150 exercises (Assumption A-05). Coverage: every body-map muscle group has ≥ 2 exercises crediting it ≥ 0.5 under every gym preset (EXL-01).
+- **MVP size:** ≥ 150 exercises (Assumption A-05). Coverage: every body-map muscle group has ≥ 2 exercises crediting it ≥ 0.5 under every gym preset (EXL-01). Met with 190 exercises (content 0.3.0; see EXL-01).
 - **Mapping defaults:** start from the evidence table in `EB §Session › Mapping`. Examples: squat does not credit hamstrings; rows credit elbow flexors 0.5; seated leg curl is preferred for hamstrings. Rows with "C" (convention) evidence are labelled in the UI.
 
 ### 7.2 Muscle taxonomy for the body map
@@ -1587,7 +1591,7 @@ Minimum age is 16 (decided, OQ-10; C-15), confirmed at onboarding (LEG-03), with
 
 ### 8.6 Publisher and imprint
 
-- **Publisher:** Simeon Zimmermann, SZ WEB DEVELOPMENT, Switzerland. The website and the app identify both the person and the trading name, as given here (LEG-09). A postal contact address and e-mail are to be provided.
+- **Publisher:** Simeon Zimmermann, SZ WEB DEVELOPMENT, Switzerland. The website and the app identify both the person and the trading name, as given here (LEG-09). Contact e-mail: tools@sz-development.com. The postal contact address is still to be provided; a release check blocks production until it is (LEG-09).
 - **Imprint requirements** are to be confirmed in legal review (V-06). This covers Swiss requirements for identifying the provider of an online offer, and any EU member-state requirements because the app is publicly available to EU users.
 - **Privacy framework** (§8.2): revFADP/nDSG as primary; GDPR applicability for EU users to be confirmed in legal review.
 
@@ -1638,7 +1642,7 @@ Minimum age is 16 (decided, OQ-10; C-15), confirmed at onboarding (LEG-03), with
 | A-02 | One local profile per installation | Data model, UI | — |
 | A-03 | Sessions are scheduled on fixed weekdays, with flexible rescheduling (not a pure rolling A/B/C sequence) | Scheduling, streak, calendar export | — |
 | A-04 | Minimum age 16; under-18 restrictions on nutrition and cut features | Legal, onboarding | Resolved → C-15 |
-| A-05 | MVP exercise library ≥ 150 exercises, text cues only | Content effort | Confirmed (OQ-08) |
+| A-05 | MVP exercise library ≥ 150 exercises, text cues only | Content effort | Confirmed (OQ-08); met with 190 exercises (EXL-01) |
 | A-06 | MVP restore is replace-all (no merge) | Import complexity | — |
 | A-07 | A week is "kept" if completed ≥ planned sessions; optional grace of 1 session | Motivation mechanics | — |
 | A-08 | Programming targets raw/classic lifters; equipped only for scoring | PL scope | — |

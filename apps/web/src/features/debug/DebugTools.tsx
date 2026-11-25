@@ -51,6 +51,12 @@ export default function DebugTools() {
         >
           Charts (S-4)
         </Link>
+        <Link
+          to="/debug/perf"
+          className="flex min-h-target items-center font-semibold text-primary"
+        >
+          Performance (reference dataset)
+        </Link>
         <Button onClick={() => void diagnostics.exportToFile()}>Export diagnostics</Button>
         <Button variant="danger" onClick={() => void diagnostics.resetAppFiles()}>
           Reset app files (keeps data)

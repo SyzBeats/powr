@@ -1,13 +1,60 @@
 import type { Deps } from '../deps';
-import type { SafetySnapshotInfo } from '../ports';
+import type { Clock, SafetySnapshotInfo, SafetySnapshots } from '../ports';
 import { err, ok, type Result } from '../result';
 
 /**
- * Safety copies (§8.2.1, TD-14): the backups POWR took by itself before a restore replaced the
- * data and before a data update (migration). Listed in Data and backups with save and delete;
- * never deleted silently except by the rotation that keeps the latest two.
+ * Safety copies (§8.2.1, TD-14, TD-67): the backups POWR took by itself before a restore replaced
+ * the data and before a data update (migration). Listed in Data and backups with save and delete.
+ *
+ * Pruning (TD-67, M6a): the latest two copies are always kept, and so is every copy younger than
+ * 30 days, however many there are; only a copy that is neither is deleted. A copy taken before a
+ * restore therefore stays at least 30 days, and there are never fewer than two. Pruning runs after
+ * each new copy and when Data and backups lists them, never during a workout's writes.
  */
-export function listSafetyCopies(deps: Deps): Promise<SafetySnapshotInfo[]> {
+export const SAFETY_COPIES = {
+  /** The newest copies kept whatever their age. */
+  keepLatest: 2,
+  /** Copies younger than this are kept too. */
+  keepDays: 30,
+} as const;
+
+const DAY_MS = 86_400_000;
+
+/**
+ * The IDs of the copies to delete at `nowEpochMs`. Pure. Newest first by time, then by ID (the
+ * store's insertion order); a copy whose time cannot be read counts as new, so it is kept.
+ */
+export function safetyCopiesToPrune(
+  copies: readonly Pick<SafetySnapshotInfo, 'id' | 'at'>[],
+  nowEpochMs: number,
+): number[] {
+  const dated = copies.map((copy) => {
+    const at = Date.parse(copy.at);
+    return { id: copy.id, at: Number.isNaN(at) ? Number.POSITIVE_INFINITY : at };
+  });
+  const newestFirst = dated.toSorted((a, b) => b.at - a.at || b.id - a.id);
+  const cutoff = nowEpochMs - SAFETY_COPIES.keepDays * DAY_MS;
+  return newestFirst
+    .slice(SAFETY_COPIES.keepLatest)
+    .filter((copy) => copy.at < cutoff)
+    .map((copy) => copy.id);
+}
+
+/** Deletes the copies the rule above lets go; returns their IDs. */
+export async function pruneSafetyCopies(env: {
+  readonly safety: SafetySnapshots;
+  readonly clock: Clock;
+}): Promise<number[]> {
+  const ids = safetyCopiesToPrune(await env.safety.list(), env.clock.now().epochMs);
+  for (const id of ids) await env.safety.delete(id);
+  return ids;
+}
+
+/** The stored copies, newest first, after pruning the ones the rule lets go (TD-67). */
+export async function listSafetyCopies(
+  deps: Pick<Deps, 'safety' | 'clock'>,
+): Promise<SafetySnapshotInfo[]> {
+  await pruneSafetyCopies(deps);
   return deps.safety.list();
 }
 

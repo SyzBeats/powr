@@ -1,3 +1,4 @@
+import { plural } from '@lingui/core/macro';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useNavigate } from '@tanstack/react-router';
 import { Check, CircleAlert, Layers, Trophy, X } from 'lucide-react';
@@ -294,7 +295,7 @@ function Hints() {
                 );
               }}
             >
-              <Trans>Don't show this hint again</Trans>
+              <Trans>Do not show this hint again</Trans>
             </Button>
           </div>
         </Callout>
@@ -693,7 +694,9 @@ function usePrescriptionText(): (value: SetSuggestion) => string | null {
     if (load) parts.push(load);
     if (value.repRange) {
       const [low, high] = value.repRange;
-      parts.push(low === high ? t`${low} reps` : t`${low}–${high} reps`);
+      parts.push(
+        low === high ? plural(low, { one: '# rep', other: '# reps' }) : t`${low}–${high} reps`,
+      );
     }
     if (value.durationS !== null) {
       const seconds = value.durationS;

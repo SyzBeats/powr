@@ -222,7 +222,8 @@ function ActivePlan({
             <h2 id="week-heading" className="text-xl font-bold">
               <Trans>Week of {formatLocalDate(shown, 'long')}</Trans>
             </h2>
-            <div className="flex gap-2">
+            {/* M6a: wraps at 320 px with 200% text (WCAG 1.4.10) instead of running off screen. */}
+            <div className="flex flex-wrap gap-2">
               <Button
                 size="icon"
                 aria-label={t`Previous week`}
@@ -623,7 +624,7 @@ function BreakCard({ onChanged }: { onChanged: (outcome: Outcome) => void }) {
               )
             }
           >
-            <Trans>I'm back: end the break</Trans>
+            <Trans>I am back: end the break</Trans>
           </Button>
         </>
       ) : starting ? (
@@ -782,7 +783,7 @@ function DeloadCard({
       {check ? (
         <div className="flex flex-col gap-2">
           <div>
-            <WhyButton why={check.why} subject={t`the deload check`} />
+            <WhyButton why={check.why} subject={t`the lighter-week check`} />
           </div>
           {check.propose && check.week !== null ? (
             <Button

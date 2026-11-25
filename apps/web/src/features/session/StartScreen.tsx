@@ -14,7 +14,7 @@ import { useActivePlan, usePlannedSessions } from '../../hooks/use-planning';
 import { useSessionUseCases } from '../../hooks/use-workout';
 import { addLocalDays, formatLocalDate, todayLocal } from '../../i18n/format';
 import { useLabels } from '../labels';
-import { UpdateFirstOffer } from '../shell/UpdateFirstOffer';
+import { UpdateFirstOffer, useUpdateFirst } from '../shell/UpdateFirstOffer';
 import { useSessionCommands } from './commands';
 
 /**
@@ -68,21 +68,34 @@ export function StartScreen({ startToday = false }: { startToday?: boolean }) {
 
   // WKT-01 one tap from Home: start today's session once, then drop the parameter (a reload or
   // Back never starts a second one; without a session today the start screen just shows).
+  // TD-64: with an update waiting (the manifest shortcut, or Home before the update was known),
+  // the offer comes first and "Start without updating" starts today's session.
   const navigate = useNavigate();
   const autoStarted = useRef(false);
   const todayId = todays[0]?.id ?? null;
+  const updateFirst = useUpdateFirst();
+  const [heldStart, setHeldStart] = useState<PlannedSession['id'] | null>(null);
   useEffect(() => {
     if (!startToday || !week.loaded || autoStarted.current) return;
     autoStarted.current = true;
     void navigate({ to: '/session', search: {}, replace: true });
+    if (!todayId) return;
     // After this effect (the start sets the busy state): an external trigger, like a tap.
-    if (todayId) queueMicrotask(() => void begin({ kind: 'planned', plannedSessionId: todayId }));
+    queueMicrotask(() =>
+      updateFirst.show
+        ? setHeldStart(todayId)
+        : void begin({ kind: 'planned', plannedSessionId: todayId }),
+    );
   });
 
   return (
     <Screen title={t`Start a workout`}>
       {/* TD-14 (M5d): a waiting update is offered before the workout, never during it. */}
-      <UpdateFirstOffer />
+      <UpdateFirstOffer
+        onDecline={
+          heldStart ? () => void begin({ kind: 'planned', plannedSessionId: heldStart }) : undefined
+        }
+      />
       {error ? (
         <Callout tone="danger" title={t`Not started`}>
           <p>{error}</p>
@@ -198,7 +211,7 @@ export function StartScreen({ startToday = false }: { startToday?: boolean }) {
 
       <Link to="/session/past" className={buttonClass({ variant: 'ghost' }, 'justify-start')}>
         <History aria-hidden="true" />
-        <Trans>Past sessions</Trans>
+        <Trans>Past workouts</Trans>
       </Link>
     </Screen>
   );

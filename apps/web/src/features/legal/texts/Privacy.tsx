@@ -46,7 +46,7 @@ export function PrivacyText() {
             </Trans>
           </li>
           <li>
-            <Trans>body weight and body measurements you log;</Trans>
+            <Trans>bodyweight and body measurements you log;</Trans>
           </li>
           <li>
             <Trans>check-ins (sleep, energy, soreness) and pain notes;</Trans>

@@ -36,7 +36,7 @@ export function PastSessionsScreen() {
   }, [run]);
 
   return (
-    <Screen title={t`Past sessions`}>
+    <Screen title={t`Past workouts`}>
       <Link to="/session/past/new" className={buttonClass({ variant: 'primary', size: 'lg' })}>
         <Trans>Log a past workout</Trans>
       </Link>

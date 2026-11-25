@@ -92,6 +92,9 @@ test.describe('workout session (M3b)', () => {
   test('planned session: one tap per set, rest starts by itself, "Rest over", finish with a PR', async ({
     page,
   }) => {
+    // Eleven axe scans in two themes and reflow checks: 25–38 s under the parallel run (M6a saw
+    // it pass 30 s), so a heavy test's limit like the library's.
+    test.setTimeout(90_000);
     await page.clock.install({ time: MONDAY });
     await withPlan(page);
     await checkScreen(page, 'session-start');

@@ -13,6 +13,14 @@ function loadChartRuntime(): Promise<typeof RuntimeModule> {
   return runtime;
 }
 
+/**
+ * Loads the chart chunk before the first chart needs it (M6a): the Progress hub asks in idle
+ * time, so opening an exercise does not wait for ECharts to download and compile.
+ */
+export function preloadCharts(): void {
+  void loadChartRuntime();
+}
+
 /** Performance entry names (§8.19 "marks around setOption"; spike S-4 reads them). */
 export const CHART_MEASURES = {
   render: 'powr-chart-render',

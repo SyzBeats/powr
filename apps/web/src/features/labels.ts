@@ -176,7 +176,7 @@ export function useLabels() {
   const breakReason = (value: BreakReason): string => {
     switch (value) {
       case 'vacation':
-        return t`Vacation`;
+        return t`Holiday`;
       case 'illness':
         return t`Illness`;
       case 'injury':

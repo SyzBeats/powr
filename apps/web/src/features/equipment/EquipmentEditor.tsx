@@ -61,7 +61,9 @@ export function EquipmentEditor({
           maxLength={120}
           onChange={(event) => onChange({ ...profile, name: event.target.value })}
           error={
-            profile.name.trim() === '' ? t`Give this equipment a name, e.g. "Home gym".` : undefined
+            profile.name.trim() === ''
+              ? t`Give this equipment a name, for example "Home gym".`
+              : undefined
           }
         />
       ) : null}
@@ -82,7 +84,7 @@ export function EquipmentEditor({
         <Field
           label={<span className="sr-only">{t`Search equipment`}</span>}
           type="search"
-          placeholder={t`Search, e.g. hex bar`}
+          placeholder={t`Search, for example hex bar`}
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           className="[&_input]:pl-10"
@@ -214,7 +216,7 @@ function LoadDetails({
           </h3>
           <WeightList
             label={t`Dumbbell weights`}
-            hint={t`Separate the weights with commas, e.g. 2.5, 5, 7.5, 10.`}
+            hint={t`Separate the weights with commas, for example 2.5, 5, 7.5, 10.`}
             unit={unit}
             weights={dumbbellWeights(profile.dumbbells)}
             onChange={(weights) =>
@@ -231,7 +233,7 @@ function LoadDetails({
           </h3>
           <WeightList
             label={t`Kettlebell weights`}
-            hint={t`Separate the weights with commas, e.g. 8, 12, 16.`}
+            hint={t`Separate the weights with commas, for example 8, 12, 16.`}
             unit={unit}
             weights={profile.kettlebells}
             onChange={(kettlebells) => onChange({ ...profile, kettlebells })}
@@ -459,7 +461,7 @@ function BandEditor({
         <Field
           className="min-w-32 flex-1"
           label={t`Band label`}
-          placeholder={t`e.g. Red, light`}
+          placeholder={t`For example red, light`}
           value={label}
           maxLength={60}
           onChange={(event) => setLabel(event.target.value)}
@@ -492,7 +494,8 @@ function CustomItems({
       </h3>
       <p className="text-sm text-fg-muted">
         <Trans>
-          Anything not in the list, e.g. a specific machine. Custom exercises can use it later.
+          Anything not in the list, for example a specific machine. Custom exercises can use it
+          later.
         </Trans>
       </p>
       <ul className="flex flex-col gap-1">

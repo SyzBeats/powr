@@ -47,7 +47,46 @@ export interface TrendQuery {
   readonly source?: SeriesSource;
 }
 
-async function loadExercise(deps: Deps, ctx: InsightsContext, exerciseId: ExerciseId) {
+type LoadedExercise = Awaited<ReturnType<typeof readExercise>>;
+
+/** Loads still running, per container and exercise (M6a). */
+const running = new WeakMap<Deps, Map<ExerciseId, Promise<ExerciseData>>>();
+
+interface ExerciseData {
+  readonly ctx: InsightsContext;
+  readonly loaded: LoadedExercise;
+}
+
+/**
+ * The context and one exercise's records for the single-exercise views. The exercise screens
+ * open its history, trend and performance at the same moment (M6a: three full reads of five years
+ * of sets before); callers that start in the same task while a load for the exercise is still
+ * running share it. No write can commit inside that task, so a shared load is exactly what each
+ * caller would have read; a finished load, or one from an earlier task, is never reused.
+ */
+function exerciseData(deps: Deps, exerciseId: ExerciseId): Promise<ExerciseData> {
+  let loads = running.get(deps);
+  if (!loads) {
+    loads = new Map();
+    running.set(deps, loads);
+  }
+  const known = loads.get(exerciseId);
+  if (known) return known;
+  const load = (async () => {
+    const ctx = await insightsContext(deps);
+    return { ctx, loaded: await readExercise(deps, ctx, exerciseId) };
+  })();
+  const table = loads;
+  const forget = () => {
+    if (table.get(exerciseId) === load) table.delete(exerciseId);
+  };
+  table.set(exerciseId, load);
+  setTimeout(forget, 0);
+  load.then(forget, forget);
+  return load;
+}
+
+async function readExercise(deps: Deps, ctx: InsightsContext, exerciseId: ExerciseId) {
   await ensureDerived(deps, ctx.prepared, [exerciseId]);
   return deps.uow.read(
     ['dExerciseState', 'dSessionE1rm', 'dPrs', 'sets', 'sessions', 'plans', 'breaks'],
@@ -70,7 +109,7 @@ async function loadExercise(deps: Deps, ctx: InsightsContext, exerciseId: Exerci
 /** The exercise's exposures (finished and partial sessions, in date order). */
 function exposures(
   sets: readonly LoggedSet[],
-  sessions: Awaited<ReturnType<typeof loadExercise>>['sessions'],
+  sessions: LoadedExercise['sessions'],
 ): ExposureSets[] {
   const counted = sessions
     .filter((session) => session.status === 'finished' || session.status === 'partial')
@@ -104,8 +143,7 @@ function medianRepsBySession(list: readonly ExposureSets[]): Map<SessionId, numb
 
 /** ANL-02: one exercise's e1RM chart data for a range and source. */
 export async function exerciseTrend(deps: Deps, query: TrendQuery): Promise<ExerciseTrendView> {
-  const ctx = await insightsContext(deps);
-  const loaded = await loadExercise(deps, ctx, query.exerciseId);
+  const { ctx, loaded } = await exerciseData(deps, query.exerciseId);
   const from = rangeStart(query.range ?? '12w', ctx.today);
   const list = exposures(loaded.sets, loaded.sessions);
   const rules = ctx.prepared.rules(query.exerciseId);
@@ -198,8 +236,7 @@ export async function exercisePerformance(
     readonly loadKg?: number;
   },
 ): Promise<PerformanceView> {
-  const ctx = await insightsContext(deps);
-  const loaded = await loadExercise(deps, ctx, query.exerciseId);
+  const { ctx, loaded } = await exerciseData(deps, query.exerciseId);
   const from = rangeStart(query.range ?? '12w', ctx.today);
   const list = exposures(loaded.sets, loaded.sessions).filter(
     (exposure) => from === null || exposure.localDate >= from,
@@ -265,11 +302,11 @@ export async function progressionAdvice(deps: Deps): Promise<readonly Progressio
 /** The sets of one exercise grouped per session, newest first (ANL-04 "all sessions"). */
 export function sessionsOf(
   sets: readonly LoggedSet[],
-  sessions: Awaited<ReturnType<typeof loadExercise>>['sessions'],
+  sessions: LoadedExercise['sessions'],
 ): ExposureSets[] {
   return exposures(sets, sessions)
     .map((exposure) => ({ ...exposure, sets: sortSets(exposure.sets) }))
     .toReversed();
 }
 
-export { loadExercise };
+export { exerciseData };

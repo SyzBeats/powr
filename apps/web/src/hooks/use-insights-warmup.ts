@@ -26,8 +26,11 @@ export function useInsightsWarmup(enabled: boolean): void {
     const work = () => {
       if (warmedUp.has(deps)) return;
       warmedUp.add(deps);
+      const started = performance.now();
       loadInsights()
         .then((insights) => insights.ensureInsights(deps))
+        // §8.19: how long the idle check of the whole history took (DevTools, /debug/perf).
+        .then(() => performance.measure('powr-insights-warmup', { start: started }))
         .catch((error: unknown) => {
           queueMicrotask(() => {
             throw error;

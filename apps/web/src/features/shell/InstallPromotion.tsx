@@ -85,7 +85,7 @@ export function InstallPromotion() {
             </Trans>
           </li>
           <li>
-            <Trans>Tap “Add page to”, then “Home screen”.</Trans>
+            <Trans>Tap "Add page to", then "Home screen".</Trans>
           </li>
           <li>
             <Trans>Open POWR from the new icon.</Trans>

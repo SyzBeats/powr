@@ -1,4 +1,4 @@
-import { Trans, useLingui } from '@lingui/react/macro';
+import { Plural, Trans, useLingui } from '@lingui/react/macro';
 import { useNavigate } from '@tanstack/react-router';
 import { Circle, CircleCheck, CircleSlash, Ellipsis, Trophy } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -810,9 +810,11 @@ export function SessionActions({ view }: { view: SessionView }) {
         >
           {pending > 0 ? (
             <p>
-              <Trans>
-                {pending} planned sets are not done. Finish anyway, or mark the workout as partial.
-              </Trans>
+              <Plural
+                value={pending}
+                one="# planned set is not done. Finish anyway, or mark the workout as partial."
+                other="# planned sets are not done. Finish anyway, or mark the workout as partial."
+              />
             </p>
           ) : (
             <p>

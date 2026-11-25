@@ -141,6 +141,69 @@ describe('exercise summaries for the Progress hub (TD-55)', () => {
     expect(await exerciseSummaries(test.deps)).toEqual(before);
   });
 
+  it('lists the exercises of quick-logged sets and of sets logged before a swap (M6a)', async () => {
+    const test = createTestDeps();
+    await logPast(test, -3, [{ exerciseId: BENCH, loads: [80, 80] }]);
+    // A workout whose bench slot was swapped to the squat after one bench set, and an M0 quick
+    // log without slots: their sets name exercises the slots do not.
+    const swapped = test.data().sessions[0]!;
+    const date = day(test, -1);
+    const sets = test.data().sets;
+    await test.deps.uow.write(['sessions', 'sets'], async (repos) => {
+      await repos.sessions.put({
+        ...swapped,
+        id: 'swapped' as typeof swapped.id,
+        localDate: date,
+        exercises: swapped.exercises.map((slot) => ({
+          ...slot,
+          exerciseId: SQUAT,
+          substitutedFrom: { exerciseId: BENCH, scope: 'session' as const },
+        })),
+      });
+      await repos.sets.put({
+        ...sets[0]!,
+        id: 'swapped-1' as never,
+        sessionId: 'swapped' as never,
+        localDate: date,
+      });
+      await repos.sessions.put({
+        ...swapped,
+        id: 'quick' as typeof swapped.id,
+        localDate: date,
+        exercises: [],
+      });
+      await repos.sets.put({
+        ...sets[0]!,
+        id: 'quick-1' as never,
+        sessionId: 'quick' as never,
+        exerciseId: CURL,
+        localDate: date,
+      });
+    });
+    const summaries = await exerciseSummaries(test.deps);
+    const sessionsOf = Object.fromEntries(summaries.map((entry) => [entry.exerciseId, entry]));
+    expect(sessionsOf[BENCH]).toMatchObject({ sessions: 2, lastDate: date });
+    expect(sessionsOf[SQUAT]).toMatchObject({ sessions: 1, lastDate: date });
+    expect(sessionsOf[CURL]).toMatchObject({ sessions: 1, lastDate: date });
+  });
+
+  it('the views of one exercise opened together read its records once (M6a)', async () => {
+    const test = createTestDeps();
+    await history(test);
+    const alone = await exerciseTrend(test.deps, { exerciseId: BENCH, range: 'all' });
+    const counted = countingDeps(test.deps);
+    const [, , trend] = await Promise.all([
+      exerciseHistory(counted.deps, BENCH),
+      exerciseTrend(counted.deps, { exerciseId: BENCH }),
+      exerciseTrend(counted.deps, { exerciseId: BENCH, range: 'all' }),
+    ]);
+    expect(counted.calls.get('sets.byExercise')).toBe(1);
+    expect(trend).toEqual(alone);
+    // A finished load is never reused: the next view reads again.
+    await exerciseTrend(counted.deps, { exerciseId: BENCH });
+    expect(counted.calls.get('sets.byExercise')).toBe(2);
+  });
+
   it('reads in bulk: the same reads for one or four exercises, never one query per row', async () => {
     const one = createTestDeps();
     await logPast(one, -1, [{ exerciseId: BENCH, loads: [80, 80] }]);

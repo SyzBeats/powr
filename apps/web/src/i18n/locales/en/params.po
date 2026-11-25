@@ -30,22 +30,22 @@ msgstr "Assumed reps in reserve without a rating"
 #. js-lingui-explicit-id
 #: src/features/why/params/labels.ts
 msgid "params.scoring.allometric.exponent"
-msgstr "Body-weight exponent for relative strength"
+msgstr "Bodyweight exponent for relative strength"
 
 #. js-lingui-explicit-id
 #: src/features/why/params/labels.ts
 msgid "params.scoring.dots.bodyweightClampKg"
-msgstr "Body-weight limits for DOTS"
+msgstr "Bodyweight limits for DOTS"
 
 #. js-lingui-explicit-id
 #: src/features/why/params/labels.ts
 msgid "params.scoring.wilks.bodyweightClampKg"
-msgstr "Body-weight limits for Wilks"
+msgstr "Bodyweight limits for Wilks"
 
 #. js-lingui-explicit-id
 #: src/features/why/params/labels.ts
 msgid "params.scoring.wilks2020.bodyweightClampKg"
-msgstr "Body-weight limits for Wilks2020"
+msgstr "Bodyweight limits for Wilks2020"
 
 #. js-lingui-explicit-id
 #: src/features/why/params/labels.ts
@@ -150,7 +150,7 @@ msgstr "Effort for strength sets"
 #. js-lingui-explicit-id
 #: src/features/why/params/labels.ts
 msgid "params.planning.novice.maxWorkingExercises"
-msgstr "Exercises per session for beginners"
+msgstr "Exercises per session for novices"
 
 #. js-lingui-explicit-id
 #: src/features/why/params/labels.ts
@@ -270,12 +270,12 @@ msgstr "Limit for unusual weigh-ins"
 #. js-lingui-explicit-id
 #: src/features/why/params/labels.ts
 msgid "params.scoring.ipfGl.minBodyweightKg"
-msgstr "Lowest body weight for IPF GL points"
+msgstr "Lowest bodyweight for IPF GL Points"
 
 #. js-lingui-explicit-id
 #: src/features/why/params/labels.ts
 msgid "params.scoring.ipfPoints.minBodyweightKg"
-msgstr "Lowest body weight for IPF Points"
+msgstr "Lowest bodyweight for IPF Points"
 
 #. js-lingui-explicit-id
 #: src/features/why/params/labels.ts
@@ -480,7 +480,7 @@ msgstr "Smallest plate per side"
 #. js-lingui-explicit-id
 #: src/features/why/params/labels.ts
 msgid "params.bodyweight.trend.alphaPerDay"
-msgstr "Smoothing of the body-weight trend"
+msgstr "Smoothing of the bodyweight trend"
 
 #. js-lingui-explicit-id
 #: src/features/why/params/labels.ts
@@ -645,12 +645,12 @@ msgstr "Weight of sets without an effort rating"
 #. js-lingui-explicit-id
 #: src/features/why/params/labels.ts
 msgid "params.progression.increment.noviceLowerKg"
-msgstr "Weight step for beginners, lower body"
+msgstr "Weight step for novices, lower body"
 
 #. js-lingui-explicit-id
 #: src/features/why/params/labels.ts
 msgid "params.progression.increment.noviceUpperKg"
-msgstr "Weight step for beginners, upper body"
+msgstr "Weight step for novices, upper body"
 
 #. js-lingui-explicit-id
 #: src/features/why/params/labels.ts

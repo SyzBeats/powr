@@ -4076,3 +4076,508 @@ M6 (a timing margin under load, not seen before).
   paragraph and status cells.
 - **`deploy/runbook.md` §2:** the repository variable `PUBLIC_ORIGIN`.
 - **`docs/PRD.md`:** not edited.
+
+## M6a quality audits
+
+Written 2026-11-25 by the M6a work (the code side of M6: the accessibility sweep, the performance
+audit with the reference dataset, the copy and tone review, TD-64, TD-67 and the E2E flakes; M6b
+wrote the release-readiness docs in parallel). Status: `pnpm verify` green (numbers under
+"Evidence"). Nothing committed; the product owner commits. `docs/**` not edited (M6b's); the doc
+amendments are listed at the end.
+
+### What landed
+
+| Area                 | Where                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Accessibility sweep  | `apps/web/e2e/a11y.spec.ts` (every route with realistic data, both themes) and `apps/web/e2e/a11y.ts` (target sizes after WCAG 2.5.8 with its spacing and inline exceptions, the 48 px / 8 px check of NFR-A11Y-02, names from Chromium's accessibility tree, the page title); fixes in `PlanScreen.tsx`, `RestPanel.tsx`, `ui/screen.tsx` (`context`), `OnboardingFlow.tsx`, `ProfileAnswerScreen.tsx`                                                     |
+| Reference dataset    | `@powr/application/reference` (`referenceHistory`, `addReferenceHistory`): M4a's generator moved out of `test/perf.test.ts`, extended to A-11 (weigh-ins, breaks, a lighter week every fifth, exercise slots like logged workouts) and shared by the M4a engine test, the browser and the S22; `/debug/perf` (`features/debug/PerfTools.tsx`, debug builds only) loads it into the real IndexedDB and lists this page load's paint timings and POWR's marks |
+| Performance audit    | `apps/web/e2e/perf.spec.ts` (opt-in, `POWR_PERF=1 pnpm e2e perf`); marks `powr-home-interactive` (`HomeScreen.tsx`), `powr-set-commit` (`session/commands.ts`), `powr-insights-warmup` (`hooks/use-insights-warmup.ts`); fixes in `insights/summaries.ts`, `insights/trends.ts`, `insights/history.ts`, `ui/charts/echart.tsx` (`preloadCharts`), `ProgressScreen.tsx`                                                                                      |
+| Copy and tone review | 152 messages in the source and the three catalogs (54 boot, 80 "Why?", 8 legal, 10 parameter labels); the tests that name them                                                                                                                                                                                                                                                                                                                              |
+| TD-64                | `features/shell/UpdateFirstOffer.tsx` (`useUpdateFirst`, `level`, `startWithout`, `onDecline`), `HomeScreen.tsx` (the offer in the start card), `StartScreen.tsx` (the shortcut's start waits for the choice), `app/ui-store.ts` (`updateDeferred`), `hooks/use-app.ts` (`deferUpdate`); `test/m6a.test.tsx`                                                                                                                                                |
+| TD-67                | `@powr/application/data` (`SAFETY_COPIES`, `safetyCopiesToPrune`, `pruneSafetyCopies`; `listSafetyCopies` prunes first), `usecases/backup.ts` (prunes after each new copy), `infrastructure/db/safety-db.ts` (no rotation of its own), the sentence in Data and backups; `packages/application/test/m6a.test.ts`, `infrastructure/db/safety-db.test.ts`                                                                                                     |
+| Flakes               | `e2e/session.spec.ts`, `e2e/body-map-screen.spec.ts` (90 s limits for two heavy tests); the sweep's own data comes from `/debug/perf` instead of slow UI logging                                                                                                                                                                                                                                                                                            |
+
+### Accessibility sweep (NFR-A11Y-01…07, WCAG 2.2 AA)
+
+**What the spec does.** `e2e/a11y.spec.ts` builds realistic data the way a user has it: onboarded
+with a plan that has a session today (the clock is a Sunday morning, the first day of the week of
+the en-US profile, so a new plan starts that day), six weeks of history from `/debug/perf` (about
+20 workouts with slots, PRs and trend points, 42 daily weigh-ins, a two-week break), a workout
+finished today and a custom exercise. Then it visits **every route**: the first run (welcome, the
+five legal pages before onboarding, every onboarding step, the preview, a not-found URL); Home;
+`/plan`, `/plan/edit`, `/plan/next`, `/plan/calendar`, `/plan/setup/$step`; `/session` (start
+screen, check-in, the logging view, the logging view while resting, the summary), `/session/past`,
+`/session/past/new`, `/session/past/$sessionId`; the eight Progress routes; Explore, the library,
+an exercise, the custom-exercise form, a custom exercise and its edit form, the body map and a
+muscle; `/body`, `/body/log`, `/data`, Settings, device support, equipment and an equipment
+profile, per-exercise choices, rest times, the six `/settings/profile/$answer` pages and the five
+legal pages. On each screen, in its loaded state:
+
+- axe (WCAG 2.0/2.1/2.2 A and AA tags) in light and dark: no serious or critical violation;
+- a name on every control (buttons, links, fields, choices, sliders, tabs, options, dialogs, radio
+  groups) from Chromium's accessibility tree (CDP `Accessibility.getFullAXTree`);
+- WCAG 2.5.8 target size: every target ≥ 24 × 24 CSS px, or a 24 px circle on it touches no other
+  target, or a link inside a sentence; a visually hidden input counts by its label;
+- the page title "<screen> · POWR" (2.4.2), and in one more test **no title shared by two routes**;
+- reflow at 320 CSS px with 200% text (1.4.4, 1.4.10): nothing wider than the viewport, no
+  horizontal scrolling.
+
+In the workout, the dock ("Log this set") is checked against NFR-A11Y-02 twice, logging and while
+resting: every control ≥ 48 × 48 CSS px and ≥ 8 px from the next. A first test checks the checks
+on a synthetic page (two touching 16 px buttons fail, a link in a sentence and a lone small button
+pass, an empty button has no name, the 48 px and 8 px rules), so a check that silently passes
+everything would fail. The debug routes (developer harnesses, not in release builds) are not swept.
+
+**Findings and fixes:**
+
+| Where                                                                     | Finding                                                                                                                                                                                                                             | Fix                                                                                                                                                |
+| ------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Plan (`/plan`)                                                            | WCAG 1.4.10: the week navigation (previous, "This week", next) ran off the screen at 320 px with 200% text (the 48 px targets are 3 rem, so 96 px each); the page then scrolled sideways. No earlier test checked reflow on `/plan` | The row wraps (`flex-wrap`)                                                                                                                        |
+| Workout, resting                                                          | WCAG 1.4.10: the four rest controls (−15, +15, restart, skip) in one row ran off the screen at 320 px with 200% text                                                                                                                | The row wraps into two rows of large targets                                                                                                       |
+| New plan (`/plan/setup/$step`) and Settings (`/settings/profile/$answer`) | WCAG 2.4.2 (the brief's "a unique page title per route"): "Your goal · POWR", "Your experience · POWR" and so on were the titles of three different routes (first run, a new plan, one answer in Settings)                          | `Screen` takes an optional `context` for the page title only: "Your goal · Set up a plan · POWR", "Your goal · Settings · POWR"; the headings stay |
+| Everything else                                                           | No serious or critical axe issue in either theme, no unnamed control, no target under 24 px, the dock at 48 px and 8 px apart in both states, no other overflow                                                                     | —                                                                                                                                                  |
+
+**For the manual TalkBack pass on the S22 (what the automated checks cannot judge):**
+
+- Focus and reading order on every route: the h1 takes focus after navigation and TalkBack reads
+  it; the bottom navigation comes last; sheets trap focus, Back closes them and focus returns.
+- Live announcements: the rest timer (polite, not flooding; "Rest over"), "Set N logged", "Workout
+  resumed", the PR celebration, the copy/export status lines, the error summaries that take focus
+  (onboarding, custom exercise, one answer in Settings, past workout).
+- Group labels that read as the start of a sentence with their choice: "Show the sets of" (body
+  map, muscle) and "Points history of" (Scores); whether "Show the sets of, This week" sounds
+  right or needs a full label.
+- Buttons whose visible text is short and whose name is longer ("Remove", "Show", "Repeat",
+  "Edit", "Delete…" with the item in the name, 2.5.3 label in name): that voice access and TalkBack
+  match them.
+- The body map: regions by swipe with their names and statuses, the list alternative, the small
+  regions' chips (QS-10).
+- The charts: the point slider with TalkBack's swipe up and down (aria-valuetext), the table view.
+- The dock: the steppers with their hints, the RIR/RPE chips' names, the numeric keypad, the
+  "larger controls" setting (56 px) with real fingers.
+- Home's start card with an update waiting (TD-64): the offer is an h3 inside "Today"; that the
+  order "Update first", then "Start without updating" is clear.
+- Android font size at maximum plus display size large (the CSS check scales only the root font);
+  the safe areas and the keyboard over fields.
+- Contrast in gym light, reduced motion (celebrations), the notifications on the lock screen.
+
+### Performance audit (NFR-PERF-01…08, §8.19, QS-02, QS-09, QS-16)
+
+**Reference dataset.** The concept's `tools/dataset` (a ZIP for import) was not built; M4a's
+generator went into the package `@powr/application/reference` instead, so the engine test, the
+browser and the S22 use the same records. Defaults are PRD A-11: 270 weeks with five two-week
+breaks, five workouts a week (push, pull, legs, upper, lower; six exercises with 31 working sets),
+a lighter week every fifth training week, loads rising about 25 % over five years, 1,800 daily
+weigh-ins with a yearly bulk and cut, every workout with its exercise slots and planned sets like a
+logged one. Up to yesterday, so today stays free: **1,297 workouts, 40,207 sets, 1,800 weigh-ins,
+5 breaks**. `addReferenceHistory` reads every raw table and writes them back with the history
+through the restore's replace-all transaction (the profile, plan and settings stay; derived tables
+are rebuilt on use; a second load replaces the first). `/debug/perf` (debug builds: dev, beta, E2E)
+has "Add the reference history" (1.7 s on the dev machine) and "Add a short history" (six weeks,
+for the sweep), and lists this page load's paint timings and `powr-*` marks, for the S22.
+
+**How measured.** `POWR_PERF=1 pnpm e2e perf` (after `pnpm build`): Chromium headless on
+Playwright's Pixel 7 profile (360 × 780, DPR 3, touch), the production build with its service
+worker and the production CSP, the real IndexedDB, CPU throttled 4× through CDP
+(`POWR_PERF_CPU`). An onboarded user (bodybuilding, three days) gets the reference history; Home is
+opened once (the weekly numbers are rebuilt) and Progress once (every exercise derived). Then seven
+runs, each in a new page of the same browser context (installed app files, a "warm browser, cold
+app" start; the S22's cold process start is a device measurement): first contentful paint and
+`powr-home-interactive` (the first Home with its data), then Progress, an exercise with its chart
+(the squat, five years), Explore, the body map, the library and a search, each from the tap inside
+the page to the first frame with the data (a `MutationObserver`, no Playwright round trip). Then the
+squat's eight sets in a workout (from the tap to the next frame, to `powr-set-commit` and to the
+logged row), "Verify data" three times and a backup export. Medians and p75 (nearest rank). The
+machine is a 16-core desktop that ran other worktrees' tests at the same time, so the numbers carry
+noise of about ±10 %; the S22 numbers are the device pass (TD-50).
+
+**Results (ms, median / p75, CPU 4×):**
+
+| Measure                                                     | Budget                          | Before         | After         |
+| ----------------------------------------------------------- | ------------------------------- | -------------- | ------------- |
+| Cold start: first contentful paint                          | ≤ 1,000 (NFR-PERF-01)           | 328 / 364      | 324 / 388     |
+| Cold start: Home interactive (`powr-home-interactive`)      | ≤ 2,000 (NFR-PERF-01)           | 620 / 694      | 648 / 726     |
+| Progress hub (the list with every e1RM and label)           | navigation ≤ 300 (NFR-PERF-04)¹ | 944 / 961      | **619 / 633** |
+| An exercise with its chart (squat, five years)              | chart ≤ 500 (NFR-PERF-05)¹      | 1,494 / 1,531  | **711 / 730** |
+| Explore                                                     | ≤ 300                           | 160 / 178      | 175 / 203     |
+| Body map with this week                                     | ≤ 300                           | 251 / 291      | 255 / 278     |
+| Library list                                                | ≤ 300                           | 188 / 233      | 189 / 200     |
+| Library search ("row")                                      | ≤ 100 interaction               | 127 / 128      | 125 / 129     |
+| Set confirm: tap to the next frame (visual feedback)        | ≤ 100 (NFR-PERF-03)             | 11 / 14        | 6 / 8         |
+| Set confirm: tap to the durable commit (`powr-set-commit`)  | ≤ 500 (NFR-PERF-03)             | 118 / 119      | 114 / 115     |
+| Set confirm: tap to the logged row                          | —                               | 254 / 255      | 252 / 258     |
+| "Verify data" (a full rebuild of 270 weeks)                 | —²                              | 3,033 / 3,191  | 3,182 / 3,255 |
+| Backup export (reference dataset)                           | ≤ 10,000 (NFR-PERF-08)          | 5,092          | 5,315         |
+| Idle check of the derived weeks 5 s after start             | —                               | (not measured) | 382           |
+| Once after loading the dataset (1×): Home's weekly numbers  | —                               | 3,961          | 2,389³        |
+| Once after loading the dataset (1×): every exercise derived | ≤ 2,000 per edit (NFR-PERF-06)² | 4,191          | 3,476³        |
+
+¹ The screen itself (its h1, links and "Loading…") is there at once; the number is the time to the
+data. ² NFR-PERF-06 is for one edit (QS-13, rebuilt per exercise); these rebuild everything, once
+after a restore or on request, without blocking. ³ One run each, unchanged code: noise. No click
+on the workout screen took 16 ms or more in the Event Timing API (Chromium reports from 16 ms).
+
+**Hot spots found and fixed:**
+
+1. **The Progress hub read a year of sets** (about 8,000) only to list which exercises were trained
+   (TD-55's bulk summaries). A logged workout lists its exercises (the session core, past workouts
+   and their edits add a slot for every exercise with sets), so the hub now reads the sessions and
+   only the sets of sessions without slots (M0 quick logs, old imports) or with a swapped slot (sets
+   logged before a swap name the earlier exercise). Same results (a new test with a swapped slot and
+   a quick log), 944 → 619 ms.
+2. **One exercise's screen read its whole history three times.** History, trend and performance
+   each loaded the context (profile, plan, settings, 1,800 weigh-ins) and every set, session, point
+   and PR of the exercise. Views of the same exercise that start in the same task now share one load
+   (`exerciseData`): no write can commit inside a task, so the shared load is what each would have
+   read, and a finished load is never reused (test: three views, one read; the next view reads
+   again).
+3. **The chart chunk (ECharts, 174 kB gzip) loaded on the first chart.** The Progress hub asks for
+   it in idle time (`preloadCharts`, `requestIdleCallback` with a 3 s timeout), so the tap on an
+   exercise does not wait for it. 2 and 3 together: 1,494 → 711 ms. Startup is unchanged (the start
+   screen still never fetches ECharts, the S-4 E2E check).
+
+**Measured and left (within budget), with the lever for each:**
+
+- Every set confirm runs `prepare()` twice (the dispatch and the live session view), and each reads
+  all weigh-ins (1,800) and recomputes the bodyweight trend and its fingerprint. Durable commit
+  114 ms, the logged row 252 ms at 4× (budget 500). Lever: keep the weigh-ins and their trend in
+  memory, invalidated by Dexie's `storagemutated` event.
+- The Progress hub reads every e1RM point (`dSessionE1rm`, about 7,800) for the latest change label
+  of each exercise. Lever: read a window of the last weeks and fall back to the whole series only
+  when the label's reference is outside it (a domain helper next to `deltaAt`).
+- The idle warm-up (`useInsightsWarmup`) checks every week of the history 5 s after each start
+  (all sessions and `dWeekly` records): 382 ms of idle time at 4×. Lever: check the recent weeks and
+  those of changed planned sessions only.
+- "Verify data" reads the sets of each session with its own request (1,297 requests). Lever: one
+  ranged read per batch of weeks.
+
+### Copy and tone review (MOT-10, LEG-07, NFR-USE-03, NFR-USE-07)
+
+Every English message was read: `messages.po` (2,487 messages, of which 233 are "Why?" texts),
+`legal.po` (131) and `params.po` (143), plus the notification and timer-alert texts (they are
+catalog messages in `hooks/use-timers.ts`, `hooks/use-timed-set.ts` and
+`hooks/use-alert-settings.ts`), the manifest's name, description and shortcuts and
+`index.html`'s description. **Changed: 152 messages** (54 in the boot catalog, 80 "Why?" texts,
+8 in `legal.po`, 10 in `params.po`). No text was found that shames, diagnoses, predicts injury,
+promises results or nags about missed sessions; the changes are about consistency, grammar and a
+few absolute claims.
+
+**Spelling: British, with -ise.** Counted in the catalogs before the review: favourite 5,
+licence 5, metre 1, programme 1, prioritise 2, practise 3, travelling 1, "any more" 7 against no
+American forms except "toward" (11 against 2 "towards"), "Vacation" (1, next to "Going on
+holiday") and "rate of perceived exertion". "Winsorized" is only an ICU argument name, not
+shown. Full forms, not contractions: the UI used 78 full forms against 5 contractions and the
+legal texts none; only the "Why?" texts used contractions (about 90).
+
+**Glossary (one word per concept):**
+
+| Concept                     | Term                                                                                                      | Not                                 |
+| --------------------------- | --------------------------------------------------------------------------------------------------------- | ----------------------------------- |
+| What the user does and logs | workout (start, finish, log, edit, past workouts)                                                         | session                             |
+| A day in the plan           | session (planned session, today's session, missed session); also the unit of per-session statistics       | workout                             |
+| The lighter week of a block | lighter week; "(deload)" after it where the technical term helps                                          | deload week, deload alone           |
+| A group of training weeks   | block                                                                                                     | mesocycle (only in technical texts) |
+| Effort                      | reps in reserve (RIR), RPE (rating of perceived exertion); "reps left in the tank" in the simple texts    | rate of perceived exertion          |
+| Estimated max               | estimated 1-rep max (e1RM)                                                                                | —                                   |
+| The body's weight           | bodyweight (one word, also as an adjective: bodyweight trend)                                             | body weight, body-weight            |
+| One reading                 | weigh-in                                                                                                  | —                                   |
+| Training level              | novice, intermediate, advanced (the level labels)                                                         | beginners                           |
+| The app as the actor        | POWR ("POWR picked …"); "we" only for the publisher in the legal texts and the onboarding privacy summary | we                                  |
+| The device                  | this phone (the UI); the legal texts keep "this device" (legal review)                                    | —                                   |
+| Points formula              | IPF GL Points, IPF Points (proper names)                                                                  | IPF GL points                       |
+| Examples                    | for example                                                                                               | e.g.                                |
+| Quotes                      | straight quotes and apostrophes (the catalog's majority: 30 against 5)                                    | “ ” ’                               |
+
+**Changes in the boot catalog (`messages.po`, 54):**
+
+| Message                                                                                                                                                                                                         | Problem                                                      | Fix                                                         |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ | ----------------------------------------------------------- |
+| "Restored. {sets} sets imported." (`DataScreen`)                                                                                                                                                                | "Restored. 1 sets imported." (an E2E test expected it)       | Plural: "Restored. 1 set imported."                         |
+| "Drop {sets} back-off set(s)" (`CheckIn`)                                                                                                                                                                       | "set(s)"                                                     | Plural: "Drop 1 back-off set" / "Drop 2 back-off sets"      |
+| "{pending} planned sets are not done. …" (`ExerciseList`)                                                                                                                                                       | "1 planned sets are not done"                                | Plural ("1 planned set is not done")                        |
+| "{sets} back-off set fewer", "Top sets {rir} rep easier", "Compound lifts {rir} rep easier" (`past/parts`)                                                                                                      | "2 back-off set fewer", "2 rep easier"                       | Plurals                                                     |
+| "{0} days selected" (onboarding), "{0} items" (equipment list)                                                                                                                                                  | "1 days selected", "1 items"                                 | Plurals                                                     |
+| "{from} reps in reserve" (`effort.ts`: the dock, the plan, past sets), "{value} reps left" (novice prescriptions), "{low} reps" (library, set targets), "{reps} reps" (body map's last time)                    | "1 reps in reserve", "1 reps left", "1 reps"                 | Plurals for a single value; ranges keep "1–2 reps"          |
+| "Are you trying to change your body weight?", "Body-weight goal (optional)", "Body weight" (field and units), "Check your birth year and body weight.", "Enter your body weight as …", "… body-weight trends …" | Two spellings of one term (27 "bodyweight" elsewhere)        | "bodyweight"                                                |
+| "… counts toward …", "… count toward …", "… does not count toward …" (6)                                                                                                                                        | American "toward"                                            | "towards"                                                   |
+| "e.g." in the equipment editor (6) and the birth-year error                                                                                                                                                     | Abbreviation; the catalog says "for example" elsewhere       | "for example"                                               |
+| "“POWR”", "“Add page to”", "“Home screen”", "“Install app”", "today’s" (calendar, install card, device support)                                                                                                 | Typographic quotes in 5 messages, straight ones in 30        | Straight quotes and apostrophe                              |
+| "… the date can't be in the future … if you're not sure.", "A plan that doesn't fit …", "I'm back: end the break", "Don't show this hint again"                                                                 | Contractions (the UI uses full forms)                        | "cannot", "you are", "does not", "I am back", "Do not show" |
+| "Past sessions" (title, Progress and Start links), "Back to past sessions"                                                                                                                                      | The list of logged workouts called sessions                  | "Past workouts", "Back to past workouts"                    |
+| "Vacation" (break reason)                                                                                                                                                                                       | American word; the Plan screen says "Going on holiday"       | "Holiday"                                                   |
+| "Heaviest lifts done" (Settings → Insights)                                                                                                                                                                     | The same option is "Heaviest lifted" on the Scores screen    | "Heaviest lifted" (the accepted label)                      |
+| "IPF GL points {0}" (Home)                                                                                                                                                                                      | Proper name written two ways ("IPF Points")                  | "IPF GL Points"                                             |
+| "the deload check" ("Why?" button on the Plan screen)                                                                                                                                                           | Jargon alone                                                 | "the lighter-week check"                                    |
+| "… lighter work on bad days." (check-in, Settings → Workout)                                                                                                                                                    | "Bad" judges the day; How POWR decides says "a low day"      | "low days"                                                  |
+| "Lighter (deload) weeks count …: rest is training."                                                                                                                                                             | Overstated; Home says "Rest is part of training"             | "rest is part of training."                                 |
+| "RPE (rate of perceived exertion)"                                                                                                                                                                              | Wrong expansion                                              | "rating of perceived exertion"                              |
+| "Alerts while screen is locked:"                                                                                                                                                                                | Missing article (Device support says "while the screen …")   | "Alerts while the screen is locked:"                        |
+| "Storage use: not reported by this browser."                                                                                                                                                                    | Status value in lower case (others: "Storage protected: No") | "Storage use: Not reported by this browser."                |
+| "Not set. Set it in the exercise details"                                                                                                                                                                       | Second sentence without a full stop                          | Full stop                                                   |
+| "Answer it in the plan set-up"                                                                                                                                                                                  | "set-up"; the noun is "setup" elsewhere                      | "plan setup"                                                |
+
+**Changes in the "Why?" texts (80):**
+
+| Message                                                                                                                                                                                                                                                                                          | Problem                                                                                                                                 | Fix                                                                                                      |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| About 70 texts with "can't", "doesn't", "don't", "isn't", "it's", "that's", "there's", "you're", "you've", "they'd"                                                                                                                                                                              | Contractions; the rest of the app uses full forms                                                                                       | Full forms                                                                                               |
+| `why.loading.round.simple`, `why.deload.reactive.propose.simple`, `why.progression.double.noHistory.simple`, `why.plan.schedule.weekdays.simple`, `why.plan.template.default.simple`, `why.plan.volume.sets.simple`, `why.progression.level.trainingAge.simple`, `why.plan.template.none.simple` | "we picked", "we suggest", "we'll build", "We arranged", "We spread", "We set", "We don't have": the app speaks as POWR everywhere else | "POWR picked", "POWR suggests", "POWR builds", "POWR arranged", "POWR spread", "POWR set", "POWR has no" |
+| `why.deload.week` ("deloads are part of training"), `why.streak.current` ("deload weeks"), `why.streak.week` ("A deload week"), `why.validate.deload.missing` ("Add the deload week")                                                                                                            | The technical term alone                                                                                                                | "lighter weeks", "lighter (deload) weeks", "A lighter (deload) week", "Add the lighter week"             |
+| `why.session.fixed`, `why.volume.notHardSet` (both), `why.volume.setCredit`, `why.plan.volume.target`, `why.plan.volume.budget`                                                                                                                                                                  | "toward"                                                                                                                                | "towards"                                                                                                |
+| `why.guardrail.failure`: "… and gives no extra strength."                                                                                                                                                                                                                                        | Absolute claim                                                                                                                          | "… and usually adds no extra strength."                                                                  |
+| `why.guardrail.slowReps`: "Reps slower than {limit} seconds build no more muscle"                                                                                                                                                                                                                | Absolute claim                                                                                                                          | "… do not seem to build more muscle"                                                                     |
+| `why.readiness.assessment`: "You have slept short for # nights in a row."                                                                                                                                                                                                                        | Unidiomatic                                                                                                                             | "Your sleep has been short for # nights in a row."                                                       |
+| `why.scoring.ipfGl`: "IPF GL points"                                                                                                                                                                                                                                                             | Proper name                                                                                                                             | "IPF GL Points"                                                                                          |
+
+**Changes in `legal.po` (8, spelling and terms only, no change in substance):** "Nutrition and
+body weight", "Body-weight goals …" (2), "Body-weight trend", "… across body weights", "body
+weight and body measurements you log" → "bodyweight"; "beginners" (2, How POWR decides) →
+"novices". The legal versions (`features/legal/versions.ts`) stay: spelling is not a change in
+substance, so nobody is asked to acknowledge again.
+
+**Changes in `params.po` (10):** "Body-weight …" and "body weight" (8) → "Bodyweight",
+"bodyweight"; "for beginners" (3) → "for novices"; "IPF GL points" → "IPF GL Points".
+
+**Tests updated for the new texts:** `e2e/backup.spec.ts` ("Restored. 1 set imported."),
+`e2e/m2c.spec.ts` ("towards the minimum effective dose"), `e2e/past-sessions.spec.ts` ("Past
+workouts"), `test/onboarding.test.tsx` and `test/profile-edit.test.tsx` ("Bodyweight"),
+`test/alerts.test.tsx` ("Alerts while the screen is locked:"), `test/progress.test.tsx` and
+`test/past-sessions.test.tsx` ("Past workouts"), `test/plan.test.tsx` (`/\d reps? left/`, so a
+single "1 rep left" also counts). No assertion was loosened otherwise.
+
+**Not reviewed:** the exercise content (`packages/content/data/**`: names, cues, muscle names;
+content is its own review), the citations (bibliographic data), the debug pages (developer
+tools, English only, not in production builds), and the content of the legal texts (the legal
+review, M6b's packet).
+
+**Open decisions for the product owner:**
+
+- **Workout and session.** The rule above is applied where it was clearly broken ("Past
+  sessions"). Everything else already follows it; the per-session statistics ("Volume load per
+  session", "Each session's estimate") keep "session" as the unit.
+- **"Novice" or "beginner".** The review follows the level labels ("novice"); "beginner" is
+  plainer. Changing it means the level label, the "Why?" texts and the parameter labels together.
+- **"This device" in the legal texts and the onboarding privacy summary,** "this phone"
+  everywhere else: left to the legal review.
+- **Straight or typographic quotes.** Straight quotes were the majority and stay; typographic
+  quotes throughout would be one sweeping change.
+- **"Welcome back!"** in three "Why?" texts (after a break) are the only exclamation marks in the
+  app; kept as a greeting.
+
+### TD-64: the update before the one-tap start
+
+Home's start card offers a waiting update the way the start screen does (TD-14): with an update
+waiting and no workout running, "Today" shows "Update before you start?" (an h3 in the card) with
+"Update first" and, in place of the one-tap "Start today's session", the link "Start without
+updating" (it starts today's session as before). Choosing it sets `updateDeferred` in the UI store
+for this page, so the start screen does not ask again; the banner still offers the update and the
+update gate still never applies one during a workout. The manifest shortcut and any
+`/session?start=today` that arrives while an update is waiting no longer start at once: the start
+screen shows the offer, and "Start without updating" starts today's session. Without an update the
+one-tap start is unchanged. A shortcut launch whose waiting update is only found after the start
+(the registration resolves after the first render) still starts at once; the update then waits for
+the end of the workout (QS-04). Tests: `test/m6a.test.tsx` (Home's offer with axe, "Update first",
+the deferred start with the check-in; the shortcut start waiting, then starting; no offer without an
+update); `test/m5d.test.tsx` unchanged but for the store reset.
+
+### TD-67: safety copies are pruned
+
+Rule (`SAFETY_COPIES`): **the latest two copies are always kept, and so is every copy younger than
+30 days; only a copy that is neither is deleted.** A copy taken before a restore therefore stays at
+least 30 days, there are never fewer than two, and a copy whose time cannot be read is kept.
+Pruning runs after each new copy (before a restore, before a data update) and when Data and
+backups lists them; a failed prune only leaves a copy more. The store (`powr-safety`) no longer
+rotates by itself; the rule lives in the application (`safetyCopiesToPrune`, pure). Data and
+backups says it: "It keeps the latest two copies and any from the last 30 days, and deletes older
+ones by itself." Before, the store kept exactly the latest two, so a second restore on the same day
+deleted the copy from before the first. Not built: deleting a copy "after a newer regular backup"
+(§8.2.1): POWR cannot know whether the user kept that file. Tests: the pure rule (the latest two at
+any age, any number of young copies, the 30-day boundary kept, time before ID, unreadable times kept),
+a restore pruning the old copies beyond the latest two, the list pruning by the clock, and the real
+`powr-safety` store with the data-update guard (fake-indexeddb).
+
+### E2E flakes
+
+- **Before any change** the baseline `pnpm verify` stopped at the E2E stage with two timeouts of
+  the default 30 s: `session.spec.ts` "planned session: one tap per set …" (37.8 s, inside an axe
+  scan) and `body-map-screen.spec.ts` "tap a muscle → ranked list …" (35.3 s). Both run a workout
+  and then 9 and 11 axe-and-reflow checks in two themes; under eight parallel workers they take
+  25–38 s. Cause: genuinely heavy tests on the default limit (the machine also ran other worktrees'
+  tests). Fix: 90 s for these two, like `library.spec.ts`; no assertion changed.
+- The new sweep adds seven tests of 20–45 s to the parallel run; its data comes from `/debug/perf`
+  in about 2 s instead of logging workouts through the UI, so it stays under the limits it sets
+  (240–300 s per group, generous for the heaviest).
+- `alerts.spec.ts` variant B (M5z's note: no "Rest over" within 6 s once): passed in the baseline
+  run and in both full runs after the changes; nothing to fix without a failure to study.
+
+### Decisions and deviations
+
+| Brief or concept says                                                  | What I did                                                                                                                                                                                                                                                 |
+| ---------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| The reference dataset from `tools/dataset` as a backup ZIP (§8.19)     | A package entry (`@powr/application/reference`) and a debug page that writes it into the real database: the same records for the engine test, the E2E spec and the S22, no file to keep in step. A ZIP for the S22 is one "Export backup" after loading it |
+| "Reuse M4a's perf generator"                                           | Moved, not copied: `test/perf.test.ts` calls it with M4a's shape (260 weeks, four days, six sets, no weigh-ins or breaks) and asserts the same counts                                                                                                      |
+| Cold start "on the S22, installed, in airplane mode"                   | A new page in the warm browser context with the app files cached by the service worker; the process start of an installed app is the device pass                                                                                                           |
+| A unique page title per route                                          | A `context` for the page title of the two flows that repeat the first run's headings; the visible h1 stays the same everywhere                                                                                                                             |
+| TD-67 "keep the latest two plus any younger than 30 days, or per §8.2" | The brief's rule; §8.2.1's "after a newer regular backup" is not built (POWR cannot know that the file was kept)                                                                                                                                           |
+| TD-64 "Home's one-tap start also offers a waiting update"              | On Home and, for the shortcut, on the start screen; "Start without updating" holds for the page                                                                                                                                                            |
+| Fix every flake properly                                               | Two heavy tests got 90 s (their own work, not a race); the sweep seeds its data through `/debug/perf` so that it does not add slow UI setup to the parallel run                                                                                            |
+| Copy: legal texts only typo and consistency fixes                      | Spelling and terms only (bodyweight, novices); `features/legal/versions.ts` unchanged, so nobody is asked to acknowledge again                                                                                                                             |
+
+### Evidence
+
+`pnpm verify` green on 2026-11-25 (exit 0): lint (0 errors, 0 warnings), format, token gate, knip,
+catalog check, typecheck, **1,051 unit tests in 88 files** (1,039 before) and **126 component
+tests in 23 files** (123 before), build, licence gate, size (**entry JS 178.13 kB** gzip of 186,
+was 177.98: the update flag and its setter, the warm-up's measure and the page-title context;
+**1 first-wave script, 0 with Zod**; CSS 7.33 kB; service worker 9.56 kB; precache 217 files +
+`sw.js`, 1,078.1 kB) and **85 E2E tests** (78 before; 4 opt-in skipped: the three S-4
+measurements and the perf spec). The baseline `pnpm verify` before any change: everything green
+but two E2E timeouts (see "E2E flakes").
+
+- **Unit:** `packages/application/test/m6a.test.ts` (9: the pruning rule, a restore and the list
+  pruning, the reference dataset's size, determinism and breaks, adding and replacing it),
+  `summaries.test.ts` (+2: the exercises of quick logs and of sets logged before a swap; one shared
+  load for the views of one exercise), `apps/web/src/infrastructure/db/safety-db.test.ts` (1: the
+  real `powr-safety` store with the guard and the list); `perf.test.ts` uses the shared generator.
+- **Component:** `test/m6a.test.tsx` (3: Home's offer with axe, "Update first", the deferred
+  start; the shortcut's start waiting for the choice; no offer without an update).
+- **E2E:** `e2e/a11y.spec.ts` (7: the check of the checks, the first run, Home/plan/workout with
+  the dock at 48 px, Progress, Explore, body/data/settings/legal, the page titles of every route);
+  `e2e/perf.spec.ts` (opt-in); the two 90 s limits. A second full `pnpm e2e` right after: 85 passed, 4 skipped, no flake
+  (alerts variant B included; it passed both runs).
+- **Perf runs:** before and after as in the table, logs in the coordinator's scratchpad
+  (`m6a-perf-before.log`, `m6a-perf-after.log`).
+
+### Open items and decisions for the product owner
+
+- **Copy:** "workout" for what the user does and logs, "session" for a planned day (applied where
+  broken); "novice" or the plainer "beginner"; "this device" in the legal texts (legal review);
+  straight quotes; "Welcome back!" (see the copy review above).
+- **TD-67:** the rule as built keeps every copy of the last 30 days, so several restores in a month
+  keep several full copies (each the size of a backup). Accept, or cap the number (for example at
+  five) with the oldest young copy going first.
+- **Performance:** the four levers above (weigh-ins per set confirm, the hub's full points read,
+  the idle warm-up, "Verify data"'s per-session reads) are within budget on this machine; decide
+  after the S22 numbers (TD-50) whether any is needed for the MVP.
+- **S22 pass:** cold start, set confirm, Progress and the chart with the reference dataset
+  (`/debug/perf` in a beta build, then remote DevTools or the page's own list); the TalkBack list
+  above.
+
+### Doc amendments for M6b or the coordinator (`docs/**` not edited)
+
+- **Technical concept §8.2.1:** `powr-safety` row and the v0.9 paragraph: safety copies are pruned
+  by the rule "the latest two, plus every copy younger than 30 days" after each new copy and when
+  Data and backups lists them (`pruneSafetyCopies`, `@powr/application/data`); the store does not
+  rotate; no deletion after a newer regular backup. TD-67 closed.
+- **§6.3 rule 2 (v0.9 paragraph), §8.9.11:** Home's start card offers the waiting update
+  ("Update first" / "Start without updating"), the shortcut's start waits for the choice; the
+  choice holds for the page (`updateDeferred`). TD-64 closed.
+- **§8.14:** the M6a sweep (`e2e/a11y.spec.ts`: every route, both themes, axe, names from the
+  accessibility tree, WCAG 2.5.8 targets with the spacing exception, the dock at 48 px and 8 px,
+  unique page titles, reflow); `Screen`'s `context` for page titles; the TalkBack list.
+- **§8.19:** the reference dataset as built (`@powr/application/reference`, `/debug/perf`; no
+  `tools/dataset`), the marks `powr-home-interactive`, `powr-set-commit`, `powr-insights-warmup`,
+  the opt-in perf spec and the M6a numbers; the chart chunk preloaded on the Progress hub; entry
+  JS 178.13 KB (1 first-wave script, 0 with Zod).
+- **§8.20:** the sweep in `pnpm verify`, the perf spec opt-in (`POWR_PERF=1`), the 90 s limits.
+- **§11.2:** TD-64 and TD-67 closed; new items for the four measured levers (weigh-ins per set
+  confirm, the hub's points read, the idle warm-up, "Verify data"); TD-50 (S22 timings) now has the
+  dataset and the page to run them.
+- **PRD (proposals, not edited):** NFR-USE-03/MOT-10: the glossary of the copy review as the content
+  style guide's term list (MOT-10 names the style guide as a design deliverable); DAT-06/§8.2.1
+  wording for the safety-copy rule.
+
+## M6b release readiness docs
+
+Written 2026-11-25 by the M6b work: the release-readiness documents before the MVP release
+(documentation only; no app code changed). The agent-side hardening M6a ran in parallel and owns
+`apps/**` and `packages/**`. Nothing committed; the product owner commits.
+
+### What landed
+
+| Document                                        | What it is                                                                                                                                                                                                                                                                    |
+| ----------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `docs/PRD.md` v0.8                              | The M5 wording approved by the product owner on 2026-11-25 (below); version, status and a changelog row; nothing else changed                                                                                                                                                 |
+| `docs/release/checklist.md`                     | The MVP release checklist: one row per PRD §10.3 exit criterion (evidence, owner, status), the known Must gaps and Should deferrals, the deploy and launch steps, the technical-concept items due before release, status counts and sign-off                                  |
+| `docs/release/legal-review-packet.md`           | V-05/V-06: every legal text with its route and source file, who sees what, the data flows (device, files, network, hosting chain), 18 statements to check, the placeholders, the trademark check, 26 questions, and the current wording verbatim (Appendix A). No conclusions |
+| `docs/release/licence-review.md`                | V-04: how the gate works, the inventory (878 components: 37 distributed = 31 npm + 6 own-work assets, 841 build-only), every shipped package with its licence and copyright, the NOTICE texts (ECharts, Dexie), the Sentry block and argparse exclusion, four findings        |
+| `docs/release/content-review.md`                | One table of every content judgement call (J-01…J-12), the full 86-exercise standard-variant list by pattern (SV-01…SV-22, notable choices in bold) and the open gaps (G-01…G-03: carry, tibialis, timed exercises)                                                           |
+| `docs/release/usability-test-plan.md`           | M1–M4 and M13: success criteria, participants (n ≥ 8, both styles and sexes), setting, ten tasks, the script, the observation template, the analysis                                                                                                                          |
+| `docs/device-tests/TalkBack-protocol.md`        | The TalkBack items of the M2b, M2c, M3t, M3b, M4v, M4b, M5d, M5s notes, S-2 and §8.14 as one ordered checklist in 23 screens, with a results template                                                                                                                         |
+| `docs/device-tests/S22-performance-protocol.md` | Cold start, set confirmation, charts, body map and the other NFR-PERF budgets on the S22 with the reference dataset; generic where M6a's perf spec is not merged yet                                                                                                          |
+| `docs/device-tests/README.md`                   | Index of the device protocols (S-1, S-2, S-6, TalkBack, performance, S-8, offline), the order to run them, the S-8 steps, the M9 offline checklist and how results feed back                                                                                                  |
+| `docs/technical-concept.md` v0.10               | §0 version and status, a changelog row, the M6 status paragraph in Appendix A.4 and TD-66 "after S-2"; no section that M6a may report on was touched                                                                                                                          |
+
+**PRD v0.8 (product-owner decisions of 2026-11-25):** A-05 and EXL-01 met with 190 exercises
+(EXL-01 status bullet, §7.1, the A-05 row); PLN-02 table: bodybuilding 4 days "Upper/Lower ×2 or
+Full body ×4", 6 days "Push/Pull/Legs ×2 or Upper/Lower ×3", plus a bullet that the second split is
+an alternative and powerlifting and powerbuilding have none for now; PLN-05 and MAP-03: the standard
+variant ranks first among equal scores; PWA-05: the two shortcuts built; DAT-08: "Remind me later"
+for 3 days; DAT-13: the "All data deleted" screen before the first run; CAL-02: the start-time
+choice at export includes all-day events; SET-05: RPE or RIR display and entry (records keep RIR),
+one tap per value or half steps; SET-08: update from next week or keep, only plan-changing answers
+ask, the new plan shown first; SET-09: contact by e-mail (`tools@sz-development.com`); LEG-09: a
+release check blocks production until the postal address is provided.
+
+### Found while writing (no code changed)
+
+- **Attributions copyright lines (licence review L-1):** `tools/licence/src/packages.ts` keeps every
+  licence-text line that starts with "Copyright" or "(c)", so the attributions screen shows Apache
+  licence boilerplate and template lines ("Copyright {yyyy} {name of copyright owner}") as the
+  copyright of class-variance-authority, dexie and echarts, and one licence-text line each for
+  @floating-ui/utils and lucide-react. The NOTICE and licence texts are complete. Release checklist
+  row EC-17.
+- **Server-side components** (Coolify, Traefik, nginx, Alpine) are not in `licence-inventory.json`,
+  although technical concept Appendix B says they are recorded as `distributed: false` (L-2).
+- **LEG-06 "credits data sources":** the scoring and study sources are cited in "How POWR decides"
+  and the "Why?" sheets, not on the attributions screen (L-3). `Python-2.0` is allowed but unused
+  (L-4).
+- **Must gaps listed in the checklist:** PWA-12 unsaved-edit prompts (TD-68), the changelog and
+  release notes (TD-20), the static website copy of the legal texts (TD-71), the backup format
+  document (TD-22), no `pnpm audit --prod` step (NFR-SEC-01), the 200 randomized kills (TD-13), the
+  LEG-07 copy review.
+- **Not built, promised by the concept:** the reference-dataset generator `tools/dataset` (§8.19;
+  the performance protocol waits for a dataset file), the `home-interactive` mark (§8.19), the
+  "Verify it yourself" page and the release checksums (§8.18), the "POWR has moved" beta banner
+  (§7.8; only needed if beta testers keep data).
+- **PRD §8.6** still says "A postal contact address and e-mail are to be provided", although the
+  e-mail is now decided; left unchanged ("change nothing else"), for the next PRD pass.
+- **The baseline `pnpm verify` run** (before any M6b file existed beyond the PRD) stopped at the
+  E2E step with two 30 s timeouts (`body-map-screen.spec.ts` "tap a muscle → … add to today",
+  `session.spec.ts` "planned session: one tap per set …") while the machine's load average was
+  about 32 (parallel agents); everything before E2E was green. See "Evidence" for the final run.
+
+### Release checklist status (2026-11-25)
+
+52 rows: **3 done**, **14 pending a device test**, **23 pending the product owner**, **12 pending an
+agent**. Of the 18 exit-criterion rows: 2 done, 7 device, 7 product owner, 2 agent.
+
+### Open questions for the product owner
+
+1. The content decisions in `docs/release/content-review.md` (J-01…J-12, SV-01…SV-22, G-01…G-03).
+2. The Should deferrals S-01 (LEG-04 until after the legal review) and S-02 (image sharing with
+   MOT-09 in v1.2).
+3. Licence findings L-2 (add the server components to the inventory, or amend the concept), L-3
+   (citations enough for LEG-06?) and L-4 (keep `Python-2.0`?).
+4. T-10: build the "Verify it yourself" page and the release checksums for the MVP, or defer them.
+5. D-11: is the "POWR has moved" banner needed for the beta testers?
+6. D-03: confirm the data-processing agreement with Hetzner.
+
+### Evidence
+
+- `pnpm format:check` passes (`docs/**` is excluded from oxfmt; this section is formatted).
+- `pnpm verify` on the final state, 2026-11-25: **exit 0** (load average about 2): lint, format,
+  token gate, knip, catalog check, typecheck, 1,039 unit and 123 component tests, build, licence gate
+  (37 distributed, 841 build-only), size (entry JS 177.98 kB gzip of 186; precache 213 files +
+  `sw.js`, 1,072.5 kB) and 78 E2E tests (3 opt-in skipped). The two E2E tests that timed out in the
+  baseline run under load passed.
+- Every relative link and anchor in the new documents resolves (checked with a script).
+
+### Suggested commit (no attribution)
+
+One commit, or two:
+
+1. `docs: PRD v0.8 with the M5 wording approved on 2026-11-25` — `docs/PRD.md`.
+2. `docs: M6b release-readiness documents and technical concept v0.10` — `docs/release/*`,
+   `docs/device-tests/TalkBack-protocol.md`, `docs/device-tests/S22-performance-protocol.md`,
+   `docs/device-tests/README.md`, `docs/technical-concept.md`, `IMPLEMENTATION_NOTES.md`.

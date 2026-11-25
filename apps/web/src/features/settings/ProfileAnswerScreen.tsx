@@ -99,7 +99,7 @@ function AnswerEditor({ answer }: { answer: ProfileAnswer }) {
 
   if (!stored) {
     return (
-      <Screen title={title}>
+      <Screen title={title} context={t`Settings`}>
         <p className="text-fg-muted">
           <Trans>Loading…</Trans>
         </p>
@@ -170,7 +170,7 @@ function AnswerEditor({ answer }: { answer: ProfileAnswer }) {
   const props: StepProps = { draft, update, errors, weekStart, inSettings: true };
   return (
     <WhySimpleContext value={novice}>
-      <Screen title={title}>
+      <Screen title={title} context={t`Settings`}>
         {Object.keys(errors).length > 0 ? (
           <div ref={summary} tabIndex={-1} role="alert" className="outline-none">
             <Callout tone="danger" title={t`Please check your answers`}>

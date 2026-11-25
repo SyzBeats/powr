@@ -10,6 +10,7 @@ import {
   type RawSnapshot,
 } from '@powr/formats/backup';
 
+import { pruneSafetyCopies } from '../data/safety';
 import type { Deps } from '../deps';
 import {
   DERIVED_TABLE_NAMES,
@@ -87,6 +88,8 @@ export async function applyImport(deps: Deps, backup: DecodedBackup): Promise<Im
     reason: 'import',
     at: deps.clock.now(),
   });
+  // TD-67: older copies beyond the rule go; a failed prune only leaves one more copy.
+  await pruneSafetyCopies(deps).catch(() => []);
 
   // Derived tables are cleared with the raw data (rebuilt from it on use, §8.2.8 "Import").
   await deps.uow.write([...RAW_TABLE_NAMES, ...DERIVED_TABLE_NAMES], (repos) =>
@@ -130,6 +133,7 @@ export async function snapshotBeforeUpgrade(
     reason: 'migration',
     at: env.clock.now(),
   });
+  await pruneSafetyCopies(env).catch(() => []);
   return { fileName: encoded.fileName, bytes: encoded.bytes.length };
 }
 

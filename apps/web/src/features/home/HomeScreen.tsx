@@ -10,7 +10,7 @@ import {
   TrendingUp,
   Trophy,
 } from 'lucide-react';
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 
 import type { Deps } from '@powr/application';
 import type { HomeView } from '@powr/application/insights';
@@ -32,6 +32,7 @@ import { useLabels } from '../labels';
 import { useSummaryWords } from '../session/past/parts';
 import { massFromKg, useLoadUnit, useSessionWords } from '../session/words';
 import { InstallPromotion } from '../shell/InstallPromotion';
+import { UpdateFirstOffer, useUpdateFirst } from '../shell/UpdateFirstOffer';
 import { WhyButton } from '../why/WhySheet';
 import { Sparkline } from './Sparkline';
 
@@ -52,6 +53,9 @@ function formatSignedPercent(value: number): string {
   return `${shown}%`;
 }
 
+/** Set once per page load: the first Home with its data (NFR-PERF-01, §8.19). */
+let homeMarked = false;
+
 /**
  * ANL-01 Home: today's session (or "Rest day" with the next one) as a one-tap start, this
  * week's progress and streak (MOT-03) with the mini heat map (MAP-04), the last workout, recent
@@ -66,6 +70,12 @@ export function HomeScreen() {
   const offlineReady = useOfflineReady();
   const home = useLiveInsight('home', openHome);
   const view = home.loaded ? home.value : null;
+  const hasView = view !== null;
+  useEffect(() => {
+    if (!hasView || homeMarked) return;
+    homeMarked = true;
+    performance.mark('powr-home-interactive');
+  }, [hasView]);
 
   return (
     <Screen title={t`Home`}>
@@ -138,6 +148,7 @@ function ActiveSessionCard({ session }: { session: Session }) {
  */
 function TodayCard() {
   const plan = useActivePlan();
+  const updateFirst = useUpdateFirst();
   const today = todayLocal();
   const sessions = usePlannedSessions(today as LocalDate, addLocalDays(today, 21) as LocalDate);
   if (!plan.loaded) return null;
@@ -217,7 +228,22 @@ function TodayCard() {
           <Trans>Nothing planned in the next three weeks.</Trans>
         </p>
       )}
-      {isToday ? (
+      {isToday && updateFirst.show ? (
+        // TD-64: a waiting update is offered before the one-tap start, never during a workout.
+        <UpdateFirstOffer
+          level={3}
+          startWithout={
+            <Link
+              to="/session"
+              search={{ start: 'today' }}
+              onClick={updateFirst.defer}
+              className={`${linkButtonClass} border border-control`}
+            >
+              <Trans>Start without updating</Trans>
+            </Link>
+          }
+        />
+      ) : isToday ? (
         // WKT-01: today's planned session in one tap (the session route starts it).
         <Link
           to="/session"
@@ -376,7 +402,7 @@ function RecentProgressCard({ view }: { view: HomeView }) {
       {prs.length === 0 && changes.length === 0 ? (
         <p className="text-fg-muted">
           <Trans>
-            Personal records and real strength changes show here. Every logged set counts toward
+            Personal records and real strength changes show here. Every logged set counts towards
             them.
           </Trans>
         </p>
@@ -519,7 +545,7 @@ function MeetCard({ view }: { view: HomeView }) {
           {gl !== null ? (
             <span className="block text-fg-muted">
               <Trans>
-                IPF GL points{' '}
+                IPF GL Points{' '}
                 {new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format(gl)}
               </Trans>
             </span>

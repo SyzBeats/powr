@@ -153,7 +153,7 @@ export function HowPowrDecidesText({ parameters }: { parameters: Promise<RuleSet
       <Section id="nutrition" title={<Trans>Nutrition targets</Trans>}>
         <p>
           <Trans>
-            POWR does not set calorie or protein targets in this version. Body-weight goals only
+            POWR does not set calorie or protein targets in this version. Bodyweight goals only
             describe the weekly change that research considers sensible.
           </Trans>
         </p>
@@ -303,7 +303,7 @@ function AreaTitle({ area }: { area: Area }): ReactNode {
     case 'monitoring':
       return <Trans>Check-ins and readiness</Trans>;
     case 'bodyweight':
-      return <Trans>Body-weight trend</Trans>;
+      return <Trans>Bodyweight trend</Trans>;
     case 'scoring':
       return <Trans>Powerlifting points</Trans>;
     case 'motivation':
@@ -331,16 +331,16 @@ function AreaText({ area }: { area: Area }): ReactNode {
         <Trans>
           Volume is counted as hard sets per muscle per week: sets close to failure count fully, and
           an exercise counts fully for its main muscles and in part for helping muscles. Weekly
-          targets sit inside a range from research, with fewer sets for beginners and more for
-          muscles you chose as priorities.
+          targets sit inside a range from research, with fewer sets for novices and more for muscles
+          you chose as priorities.
         </Trans>
       );
     case 'progression':
       return (
         <Trans>
           Assistance exercises add reps until the top of the range, then a small weight step (double
-          progression). Main lifts use your estimated 1-rep max and the target effort; beginners add
-          a fixed step each session. Steps follow your equipment and your level.
+          progression). Main lifts use your estimated 1-rep max and the target effort; novices add a
+          fixed step each session. Steps follow your equipment and your level.
         </Trans>
       );
     case 'deload':
@@ -397,8 +397,8 @@ function AreaText({ area }: { area: Area }): ReactNode {
     case 'scoring':
       return (
         <Trans>
-          Points such as IPF GL and DOTS compare totals across body weights. They are worked out
-          from the official formulas.
+          Points such as IPF GL and DOTS compare totals across bodyweights. They are worked out from
+          the official formulas.
         </Trans>
       );
     case 'motivation':

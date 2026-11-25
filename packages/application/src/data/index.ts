@@ -18,4 +18,11 @@ export {
   type BackupReminderReason,
   type BackupReminderState,
 } from './reminder';
-export { deleteSafetyCopy, listSafetyCopies, saveSafetyCopy } from './safety';
+export {
+  SAFETY_COPIES,
+  deleteSafetyCopy,
+  listSafetyCopies,
+  pruneSafetyCopies,
+  safetyCopiesToPrune,
+  saveSafetyCopy,
+} from './safety';

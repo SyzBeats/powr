@@ -1,4 +1,4 @@
-import { Trans, useLingui } from '@lingui/react/macro';
+import { Plural, Trans, useLingui } from '@lingui/react/macro';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { Plus, Star } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -74,7 +74,7 @@ export function EquipmentListScreen({ saved }: { saved?: 'equipment' | 'plan' | 
                 ) : null}
               </div>
               <p className="text-fg-muted">
-                <Trans>{itemCount(profile)} items</Trans>
+                <Plural value={itemCount(profile)} one="# item" other="# items" />
                 {plan.loaded && plan.value?.equipmentProfileId === profile.id ? (
                   <>
                     {' · '}

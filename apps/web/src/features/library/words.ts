@@ -1,3 +1,4 @@
+import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 
 import type {
@@ -146,8 +147,8 @@ export function useLibraryWords() {
     const name = labels.muscle(muscle.muscle);
     if (muscle.credit === 0) {
       return muscle.evidence === 'H'
-        ? t`${exercise} does not count toward ${name}: studies that measured muscle growth found no meaningful growth there.`
-        : t`${exercise} does not count toward ${name}.`;
+        ? t`${exercise} does not count towards ${name}: studies that measured muscle growth found no meaningful growth there.`
+        : t`${exercise} does not count towards ${name}.`;
     }
     switch (muscle.evidence) {
       case 'H':
@@ -204,7 +205,9 @@ export function useLibraryWords() {
   const reps = (range: readonly [number, number]): string => {
     const low = formatNumber(range[0], 0);
     const high = formatNumber(range[1], 0);
-    return range[0] === range[1] ? t`${low} reps` : t`${low}–${high} reps`;
+    return range[0] === range[1]
+      ? plural(range[0], { one: '# rep', other: '# reps' })
+      : t`${low}–${high} reps`;
   };
 
   /** EXL-04: what is wrong with a field of the custom-exercise form and how to fix it. */
@@ -270,7 +273,7 @@ export function useLibraryWords() {
           case 'unknownCurve':
             return t`Choose a load curve.`;
           case 'bodyweightFlag':
-            return t`Bodyweight can count toward the load only for bodyweight exercises.`;
+            return t`Bodyweight can count towards the load only for bodyweight exercises.`;
           case 'increment':
             return t`Enter a weight step above 0 and at most 50 kg (110 lb).`;
           default:

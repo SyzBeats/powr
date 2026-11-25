@@ -17,6 +17,7 @@ import { Route as DebugAlertsRouteImport } from './routes/debug/alerts'
 import { Route as DebugBodyMapRouteImport } from './routes/debug/body-map'
 import { Route as DebugCapabilitiesRouteImport } from './routes/debug/capabilities'
 import { Route as DebugChartsRouteImport } from './routes/debug/charts'
+import { Route as DebugPerfRouteImport } from './routes/debug/perf'
 import { Route as ExploreIndexRouteImport } from './routes/explore/index'
 import { Route as LegalPageRouteImport } from './routes/legal/$page'
 import { Route as OnboardingIndexRouteImport } from './routes/onboarding/index'
@@ -91,6 +92,11 @@ const DebugCapabilitiesRoute = DebugCapabilitiesRouteImport.update({
 const DebugChartsRoute = DebugChartsRouteImport.update({
   id: '/debug/charts',
   path: '/debug/charts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DebugPerfRoute = DebugPerfRouteImport.update({
+  id: '/debug/perf',
+  path: '/debug/perf',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ExploreIndexRoute = ExploreIndexRouteImport.update({
@@ -281,6 +287,7 @@ export interface FileRoutesByFullPath {
   '/debug/body-map': typeof DebugBodyMapRoute
   '/debug/capabilities': typeof DebugCapabilitiesRoute
   '/debug/charts': typeof DebugChartsRoute
+  '/debug/perf': typeof DebugPerfRoute
   '/legal/$page': typeof LegalPageRoute
   '/onboarding/$step': typeof OnboardingStepRoute
   '/plan/calendar': typeof PlanCalendarRoute
@@ -326,6 +333,7 @@ export interface FileRoutesByTo {
   '/debug/body-map': typeof DebugBodyMapRoute
   '/debug/capabilities': typeof DebugCapabilitiesRoute
   '/debug/charts': typeof DebugChartsRoute
+  '/debug/perf': typeof DebugPerfRoute
   '/legal/$page': typeof LegalPageRoute
   '/onboarding/$step': typeof OnboardingStepRoute
   '/plan/calendar': typeof PlanCalendarRoute
@@ -372,6 +380,7 @@ export interface FileRoutesById {
   '/debug/body-map': typeof DebugBodyMapRoute
   '/debug/capabilities': typeof DebugCapabilitiesRoute
   '/debug/charts': typeof DebugChartsRoute
+  '/debug/perf': typeof DebugPerfRoute
   '/legal/$page': typeof LegalPageRoute
   '/onboarding/$step': typeof OnboardingStepRoute
   '/plan/calendar': typeof PlanCalendarRoute
@@ -419,6 +428,7 @@ export interface FileRouteTypes {
     | '/debug/body-map'
     | '/debug/capabilities'
     | '/debug/charts'
+    | '/debug/perf'
     | '/legal/$page'
     | '/onboarding/$step'
     | '/plan/calendar'
@@ -464,6 +474,7 @@ export interface FileRouteTypes {
     | '/debug/body-map'
     | '/debug/capabilities'
     | '/debug/charts'
+    | '/debug/perf'
     | '/legal/$page'
     | '/onboarding/$step'
     | '/plan/calendar'
@@ -509,6 +520,7 @@ export interface FileRouteTypes {
     | '/debug/body-map'
     | '/debug/capabilities'
     | '/debug/charts'
+    | '/debug/perf'
     | '/legal/$page'
     | '/onboarding/$step'
     | '/plan/calendar'
@@ -555,6 +567,7 @@ export interface RootRouteChildren {
   DebugBodyMapRoute: typeof DebugBodyMapRoute
   DebugCapabilitiesRoute: typeof DebugCapabilitiesRoute
   DebugChartsRoute: typeof DebugChartsRoute
+  DebugPerfRoute: typeof DebugPerfRoute
   LegalPageRoute: typeof LegalPageRoute
   OnboardingStepRoute: typeof OnboardingStepRoute
   PlanCalendarRoute: typeof PlanCalendarRoute
@@ -649,6 +662,13 @@ declare module '@tanstack/react-router' {
       path: '/debug/charts'
       fullPath: '/debug/charts'
       preLoaderRoute: typeof DebugChartsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/debug/perf': {
+      id: '/debug/perf'
+      path: '/debug/perf'
+      fullPath: '/debug/perf'
+      preLoaderRoute: typeof DebugPerfRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/explore/': {
@@ -907,6 +927,7 @@ const rootRouteChildren: RootRouteChildren = {
   DebugBodyMapRoute: DebugBodyMapRoute,
   DebugCapabilitiesRoute: DebugCapabilitiesRoute,
   DebugChartsRoute: DebugChartsRoute,
+  DebugPerfRoute: DebugPerfRoute,
   LegalPageRoute: LegalPageRoute,
   OnboardingStepRoute: OnboardingStepRoute,
   PlanCalendarRoute: PlanCalendarRoute,

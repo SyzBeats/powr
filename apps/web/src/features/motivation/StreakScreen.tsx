@@ -136,7 +136,7 @@ function StreakContent({ view, reload }: { view: StreakView; reload: () => void 
           </li>
           <li>
             <Trans>
-              Lighter (deload) weeks count with their planned sessions: rest is training.
+              Lighter (deload) weeks count with their planned sessions: rest is part of training.
             </Trans>
           </li>
           <li>

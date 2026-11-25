@@ -549,7 +549,7 @@ function HistorySection({
                 params={{ exerciseId: id }}
                 className="inline-flex min-h-target items-center font-semibold text-info underline underline-offset-4"
               >
-                <Trans>Not set. Set it in the exercise details</Trans>
+                <Trans>Not set. Set it in the exercise details.</Trans>
               </Link>
             )}
           </dd>

@@ -36,7 +36,7 @@ msgid "All of it stays in your browser's storage on this device, for this app on
 msgstr ""
 
 #: src/features/legal/texts/HowPowrDecides.tsx
-msgid "Assistance exercises add reps until the top of the range, then a small weight step (double progression). Main lifts use your estimated 1-rep max and the target effort; beginners add a fixed step each session. Steps follow your equipment and your level."
+msgid "Assistance exercises add reps until the top of the range, then a small weight step (double progression). Main lifts use your estimated 1-rep max and the target effort; novices add a fixed step each session. Steps follow your equipment and your level."
 msgstr ""
 
 #: src/features/legal/texts/Privacy.tsx
@@ -56,15 +56,15 @@ msgid "Before you start"
 msgstr ""
 
 #: src/features/legal/texts/Privacy.tsx
-msgid "body weight and body measurements you log;"
+msgid "bodyweight and body measurements you log;"
 msgstr ""
 
 #: src/features/legal/texts/Disclaimer.tsx
-msgid "Body-weight goals and nutrition guidance are estimates for healthy adults. They are not suitable for people with an eating disorder or a history of one, during pregnancy or breastfeeding, or for anyone under 18. For people under 18, POWR limits these features."
+msgid "Bodyweight goals and nutrition guidance are estimates for healthy adults. They are not suitable for people with an eating disorder or a history of one, during pregnancy or breastfeeding, or for anyone under 18. For people under 18, POWR limits these features."
 msgstr ""
 
 #: src/features/legal/texts/HowPowrDecides.tsx
-msgid "Body-weight trend"
+msgid "Bodyweight trend"
 msgstr ""
 
 #: src/features/legal/texts/HowPowrDecides.tsx
@@ -188,7 +188,7 @@ msgid "Notifications: only for rest-timer alerts, and only after you allow them.
 msgstr ""
 
 #: src/features/legal/texts/Disclaimer.tsx
-msgid "Nutrition and body weight"
+msgid "Nutrition and bodyweight"
 msgstr ""
 
 #: src/features/legal/texts/HowPowrDecides.tsx
@@ -220,7 +220,7 @@ msgid "Permissions"
 msgstr ""
 
 #: src/features/legal/texts/HowPowrDecides.tsx
-msgid "Points such as IPF GL and DOTS compare totals across body weights. They are worked out from the official formulas."
+msgid "Points such as IPF GL and DOTS compare totals across bodyweights. They are worked out from the official formulas."
 msgstr ""
 
 #: src/features/legal/texts/parts.tsx
@@ -236,7 +236,7 @@ msgid "POWR does not diagnose anything and does not predict injuries. It describ
 msgstr ""
 
 #: src/features/legal/texts/HowPowrDecides.tsx
-msgid "POWR does not set calorie or protein targets in this version. Body-weight goals only describe the weekly change that research considers sensible."
+msgid "POWR does not set calorie or protein targets in this version. Bodyweight goals only describe the weekly change that research considers sensible."
 msgstr ""
 
 #: src/features/legal/texts/Privacy.tsx
@@ -433,7 +433,7 @@ msgid "Versions in this app"
 msgstr ""
 
 #: src/features/legal/texts/HowPowrDecides.tsx
-msgid "Volume is counted as hard sets per muscle per week: sets close to failure count fully, and an exercise counts fully for its main muscles and in part for helping muscles. Weekly targets sit inside a range from research, with fewer sets for beginners and more for muscles you chose as priorities."
+msgid "Volume is counted as hard sets per muscle per week: sets close to failure count fully, and an exercise counts fully for its main muscles and in part for helping muscles. Weekly targets sit inside a range from research, with fewer sets for novices and more for muscles you chose as priorities."
 msgstr ""
 
 #: src/features/legal/texts/Disclaimer.tsx

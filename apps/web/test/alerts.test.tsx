@@ -77,7 +77,7 @@ describe('Settings → Alerts (SET-03, SET-04, SET-10, TMR-06)', () => {
     );
 
     const status = await screen.findByTestId('locked-status');
-    await waitFor(() => expect(status.textContent).toContain('Alerts while screen is locked:'));
+    await waitFor(() => expect(status.textContent).toContain('Alerts while the screen is locked:'));
     await waitFor(() => expect(status.textContent).toContain('Limited'));
     expect(status.textContent).toContain('Allow notifications so POWR can tell you');
     expect(screen.getByTestId('notification-permission').textContent).toBe(

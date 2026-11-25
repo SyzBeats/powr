@@ -402,7 +402,7 @@ function CustomExerciseForm({
         <FieldError message={fieldError('mechanics')} />
         <Select
           label={t`A close variant of (optional)`}
-          hint={t`For powerlifting: its sets then count toward that lift's heavy sets.`}
+          hint={t`For powerlifting: its sets then count towards that lift's heavy sets.`}
           value={form.variantOf}
           onChange={(value) => set({ variantOf: value as ExerciseId | '' })}
           error={fieldError('variantOf')}
@@ -514,7 +514,7 @@ function CustomExerciseForm({
         </Select>
         {bodyweightType ? (
           <CheckRow
-            label={t`Bodyweight counts toward the load`}
+            label={t`Bodyweight counts towards the load`}
             description={t`For pull-ups and dips: the 1-rep max estimate adds your bodyweight.`}
             checked={form.bodyweightLoaded}
             onChange={(bodyweightLoaded) => set({ bodyweightLoaded })}

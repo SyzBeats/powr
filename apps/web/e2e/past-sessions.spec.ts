@@ -48,7 +48,7 @@ test.describe('past sessions (WKT-15)', () => {
   }) => {
     await skipOnboarding(page);
     await page.goto('/session/past');
-    await expect(page.getByRole('heading', { level: 1, name: 'Past sessions' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: 'Past workouts' })).toBeVisible();
     await expect(page.getByText('No finished workouts in the last year yet.')).toBeVisible();
     await checkScreen(page, 'past-sessions-empty');
 

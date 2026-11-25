@@ -13,7 +13,14 @@ export function useDebugMode(): boolean {
 export function useAppUpdate() {
   const { serviceWorker } = useContainer();
   const updateAvailable = useAppUi((state) => state.updateAvailable);
-  return { updateAvailable, applyUpdate: () => serviceWorker.applyUpdate() };
+  const updateDeferred = useAppUi((state) => state.updateDeferred);
+  return {
+    updateAvailable,
+    updateDeferred,
+    applyUpdate: () => serviceWorker.applyUpdate(),
+    /** TD-64: "Start without updating"; the banner still offers the update after the workout. */
+    deferUpdate: () => useAppUi.setState({ updateDeferred: true }),
+  };
 }
 
 export function usePlatform() {

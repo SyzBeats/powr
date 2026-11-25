@@ -83,7 +83,7 @@ export function WorkoutSection() {
 
       <CheckRow
         label={t`Check-in before a workout`}
-        description={t`Sleep, energy and soreness in under 30 seconds; it can suggest lighter work on bad days.`}
+        description={t`Sleep, energy and soreness in under 30 seconds; it can suggest lighter work on low days.`}
         checked={preferences.readinessCheckIn}
         onChange={(readinessCheckIn) => save({ readinessCheckIn })}
       />

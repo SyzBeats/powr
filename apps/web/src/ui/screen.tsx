@@ -16,17 +16,23 @@ import { cn } from '#ui/cn';
  */
 export function Screen({
   title,
+  context,
   children,
   className,
 }: {
   title: string;
+  /**
+   * M6a (WCAG 2.4.2): the flow a screen belongs to when its heading repeats elsewhere ("Your goal"
+   * in the first run, in a new plan and in Settings), so every route has a page title of its own.
+   */
+  context?: string | undefined;
   children: ReactNode;
   className?: string;
 }) {
   const { t } = useLingui();
   const heading = useRef<HTMLHeadingElement>(null);
   const shownTitle = useRef(title);
-  const pageTitle = t`${title} · POWR`;
+  const pageTitle = context ? t`${title} · ${context} · POWR` : t`${title} · POWR`;
   useEffect(() => {
     heading.current?.focus({ preventScroll: true });
   }, []);

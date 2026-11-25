@@ -106,10 +106,10 @@ export function DisclaimerText() {
         </p>
       </Section>
 
-      <Section title={<Trans>Nutrition and body weight</Trans>}>
+      <Section title={<Trans>Nutrition and bodyweight</Trans>}>
         <p>
           <Trans>
-            Body-weight goals and nutrition guidance are estimates for healthy adults. They are not
+            Bodyweight goals and nutrition guidance are estimates for healthy adults. They are not
             suitable for people with an eating disorder or a history of one, during pregnancy or
             breastfeeding, or for anyone under 18. For people under 18, POWR limits these features.
           </Trans>

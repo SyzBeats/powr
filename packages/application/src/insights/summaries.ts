@@ -68,18 +68,24 @@ export async function exerciseSummaries(
 ): Promise<readonly ExerciseSummary[]> {
   const ctx = await insightsContext(deps);
   const from = query.from ?? addDays(ctx.today, -DEFAULT_DAYS);
-  const raw = await deps.uow.read(['sessions', 'sets'], async (repos) => ({
-    sessions: (await repos.sessions.inRange(from, ALL_TO)).filter(
+  // M6a: a logged workout lists its exercises (the session core, past workouts and their edits
+  // add a slot for every exercise with sets; a set's exercise is its slot's), so only sessions
+  // without slots (M0 quick logs, old imports) and those with a swapped slot (sets logged before
+  // a swap name the earlier exercise) need their sets read; a year of sets no longer is.
+  const raw = await deps.uow.read(['sessions', 'sets'], async (repos) => {
+    const sessions = (await repos.sessions.inRange(from, ALL_TO)).filter(
       (session) => session.status === 'finished' || session.status === 'partial',
-    ),
-    sets: await repos.sets.inRange(from, ALL_TO),
-  }));
-  const setsBySession = new Map<SessionId, LoggedSet[]>();
-  for (const set of raw.sets) {
-    const list = setsBySession.get(set.sessionId) ?? [];
-    list.push(set);
-    setsBySession.set(set.sessionId, list);
-  }
+    );
+    const setsBySession = new Map<SessionId, readonly LoggedSet[]>();
+    for (const session of sessions)
+      if (
+        session.exercises.length === 0 ||
+        session.exercises.some((slot) => slot.substitutedFrom !== undefined)
+      )
+        setsBySession.set(session.id, await repos.sets.bySession(session.id));
+    return { sessions, setsBySession };
+  });
+  const { setsBySession } = raw;
   const only = query.exerciseIds ? new Set(query.exerciseIds) : null;
   const trained = new Map<ExerciseId, { sessions: number; lastDate: LocalDate }>();
   for (const session of raw.sessions) {

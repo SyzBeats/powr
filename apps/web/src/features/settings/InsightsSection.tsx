@@ -126,7 +126,7 @@ export function InsightsSection() {
             onChange={(next) => void save({ scoreSource: next })}
             options={[
               { value: 'e1rm', label: t`Current estimates` },
-              { value: 'tested', label: t`Heaviest lifts done` },
+              { value: 'tested', label: t`Heaviest lifted` },
             ]}
           />
         </div>

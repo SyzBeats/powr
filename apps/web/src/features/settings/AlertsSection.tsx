@@ -126,7 +126,7 @@ const TONE: Record<AlertLevel, Tone> = {
   'not-supported': 'danger',
 };
 
-/** "Alerts while screen is locked: …" with the reason, never more than device tests showed. */
+/** "Alerts while the screen is locked: …" with the reason, never more than device tests showed. */
 function LockedStatus({ status }: { status: AlertStatusReport }) {
   const { t } = useLingui();
   const label =
@@ -140,7 +140,7 @@ function LockedStatus({ status }: { status: AlertStatusReport }) {
   return (
     <div data-testid="locked-status" className="flex flex-col gap-2">
       <p className="flex flex-wrap items-center gap-2 font-medium">
-        <Trans>Alerts while screen is locked:</Trans>
+        <Trans>Alerts while the screen is locked:</Trans>
         <Badge tone={TONE[status.level]}>{label}</Badge>
       </p>
       <p className="text-sm text-fg-muted">

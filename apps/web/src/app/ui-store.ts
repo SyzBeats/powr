@@ -16,6 +16,8 @@ export type WipeState =
 interface AppUiState {
   offlineReady: boolean;
   updateAvailable: boolean;
+  /** "Start without updating" was chosen in this page: no further offer before a workout (TD-64). */
+  updateDeferred: boolean;
   debug: boolean;
   /** The deferred install prompt, null until the browser offers one (PWA-02, §6.7 step 4). */
   installPrompt: DeferredInstallPrompt | null;
@@ -29,6 +31,7 @@ interface AppUiState {
 export const useAppUi = create<AppUiState>(() => ({
   offlineReady: false,
   updateAvailable: false,
+  updateDeferred: false,
   debug: false,
   installPrompt: null,
   installed: false,

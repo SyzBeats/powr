@@ -1,3 +1,4 @@
+import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 
 import { useTrainingPreferences } from '../../hooks/use-settings';
@@ -38,7 +39,9 @@ export function useEffortWords() {
     }
     const from = number(low);
     const to = number(high);
-    return low === high ? t`${from} reps in reserve` : t`${from}–${to} reps in reserve`;
+    return low === high
+      ? plural(low, { one: '# rep in reserve', other: '# reps in reserve' })
+      : t`${from}–${to} reps in reserve`;
   };
 
   /** A plan's short form: "RIR 1–2" or "RPE 8–9". */

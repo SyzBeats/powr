@@ -34,6 +34,9 @@ async function firstRanked(page: Page) {
  */
 test.describe('body map screens (M4b: MAP-01…07)', () => {
   test('tap a muscle → ranked list → add to today → the workout has it', async ({ page }) => {
+    // A workout, then nine axe-and-reflow checks in two themes: 25–36 s under the parallel run
+    // (M6a saw it pass 30 s), so a heavy test's limit like the library's.
+    test.setTimeout(90_000);
     await skipOnboarding(page);
     await startEmptyWorkout(page);
     await addExercise(page, 'Barbell bench press');

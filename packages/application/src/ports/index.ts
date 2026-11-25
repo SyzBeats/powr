@@ -320,7 +320,10 @@ export interface SafetySnapshotInfo {
   readonly size: number;
 }
 
-/** Keeps the latest safety snapshots taken before imports and migrations (`powr-safety`). */
+/**
+ * The safety snapshots taken before imports and migrations (`powr-safety`); the application prunes
+ * them (`pruneSafetyCopies`, TD-67).
+ */
 export interface SafetySnapshots {
   save(snapshot: {
     fileName: string;

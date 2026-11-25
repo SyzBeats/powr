@@ -149,10 +149,10 @@ function Capabilities({ report }: { report: CapabilityReport }) {
           install.installed
             ? t`POWR runs as its own app.`
             : install.samsung
-              ? t`In Samsung Internet: menu, then “Add page to”, then “Home screen”.`
+              ? t`In Samsung Internet: menu, then "Add page to", then "Home screen".`
               : install.available
                 ? t`Install it to open POWR like any app.`
-                : t`The browser decides when to offer it; its menu may have “Install app” or “Add to Home screen”.`
+                : t`The browser decides when to offer it; its menu may have "Install app" or "Add to Home screen".`
         }
         tested={notTested}
         action={
@@ -260,7 +260,7 @@ function Capabilities({ report }: { report: CapabilityReport }) {
         name={t`App shortcuts`}
         level="unknown"
         status={t`Cannot be checked from the app`}
-        instead={t`After installing, touch and hold the POWR icon: Start today’s session, Log bodyweight. Your launcher decides whether it shows them.`}
+        instead={t`After installing, touch and hold the POWR icon: Start today's session, Log bodyweight. Your launcher decides whether it shows them.`}
         tested={notTested}
       />
     </ul>

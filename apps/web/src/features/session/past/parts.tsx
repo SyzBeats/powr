@@ -1,3 +1,4 @@
+import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 
 import type { LoggedSet, SessionChange } from '@powr/domain';
@@ -55,20 +56,25 @@ export function useSummaryWords() {
   /** RDY-03 and PRG-13 changes the user accepted for the session. */
   const change = (accepted: SessionChange): string => {
     switch (accepted.kind) {
-      case 'capTopSet': {
-        const rir = formatNumber(accepted.rirAdd ?? 1, 1);
-        return t`Top sets ${rir} rep easier (readiness)`;
-      }
+      case 'capTopSet':
+        return plural(accepted.rirAdd ?? 1, {
+          one: 'Top sets # rep easier (readiness)',
+          other: 'Top sets # reps easier (readiness)',
+        });
       case 'dropBackoff': {
         const sets = accepted.dropSets ?? 1;
-        return t`${sets} back-off set fewer (readiness)`;
+        return plural(sets, {
+          one: '# back-off set fewer (readiness)',
+          other: '# back-off sets fewer (readiness)',
+        });
       }
       case 'trimVolume':
         return t`One working set fewer per exercise (short sleep)`;
-      case 'easeCompounds': {
-        const rir = formatNumber(accepted.rirAdd ?? 1, 1);
-        return t`Compound lifts ${rir} rep easier (short sleep)`;
-      }
+      case 'easeCompounds':
+        return plural(accepted.rirAdd ?? 1, {
+          one: 'Compound lifts # rep easier (short sleep)',
+          other: 'Compound lifts # reps easier (short sleep)',
+        });
       case 'returnFromBreak': {
         const days = accepted.daysOff ?? 0;
         return t`Eased back in after ${days} days off`;

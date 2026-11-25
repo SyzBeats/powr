@@ -120,6 +120,8 @@ export function useSessionCommands() {
     const outcome = await run((session, deps) => session.dispatch(deps, event));
     if (outcome.ok && event.type === 'CONFIRM_SET') {
       log('info', 'set.logged', { commitMs: Math.round(performance.now() - startedAt) });
+      // NFR-PERF-03: the tap to the durable commit, for DevTools, /debug/perf and the perf spec.
+      performance.measure('powr-set-commit', { start: startedAt });
       const hints = outcome.value.result.hints;
       // The "Workout resumed" banner has done its job once the user logs on (WKT-14).
       useSessionUi.setState({ celebration: null, hints, resumed: null });

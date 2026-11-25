@@ -106,7 +106,8 @@ export function RestPanel({
         </p>
         {aside}
       </div>
-      <div className="flex gap-2">
+      {/* M6a: four 48 px controls wrap to two rows with 200% text at 320 px (WCAG 1.4.10). */}
+      <div className="flex flex-wrap gap-2">
         <button
           type="button"
           aria-label={t`−15 seconds`}

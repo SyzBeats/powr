@@ -21,7 +21,10 @@ export function usePrescriptionText(novice: boolean) {
   const effort = (rir: readonly [number, number]) => {
     const value = range(rir);
     if (effortWords.scale === 'rpe') return effortWords.short(rir[0], rir[1]);
-    return novice ? t`${value} reps left` : t`RIR ${value}`;
+    if (!novice) return t`RIR ${value}`;
+    return rir[0] === rir[1]
+      ? plural(rir[0], { one: '# rep left', other: '# reps left' })
+      : t`${value} reps left`;
   };
   return (prescription: Prescription): string => {
     switch (prescription.mode) {

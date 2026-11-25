@@ -28,7 +28,7 @@ export const PARAM_LABELS = {
   }),
   'bodyweight.trend.alphaPerDay': msg({
     id: 'params.bodyweight.trend.alphaPerDay',
-    message: 'Smoothing of the body-weight trend',
+    message: 'Smoothing of the bodyweight trend',
   }),
   'bodyweight.trend.initialWeighIns': msg({
     id: 'params.bodyweight.trend.initialWeighIns',
@@ -225,7 +225,7 @@ export const PARAM_LABELS = {
   }),
   'planning.novice.maxWorkingExercises': msg({
     id: 'params.planning.novice.maxWorkingExercises',
-    message: 'Exercises per session for beginners',
+    message: 'Exercises per session for novices',
   }),
   'planning.rotation.perMuscle': msg({
     id: 'params.planning.rotation.perMuscle',
@@ -290,11 +290,11 @@ export const PARAM_LABELS = {
   }),
   'progression.increment.noviceLowerKg': msg({
     id: 'params.progression.increment.noviceLowerKg',
-    message: 'Weight step for beginners, lower body',
+    message: 'Weight step for novices, lower body',
   }),
   'progression.increment.noviceUpperKg': msg({
     id: 'params.progression.increment.noviceUpperKg',
-    message: 'Weight step for beginners, upper body',
+    message: 'Weight step for novices, upper body',
   }),
   'progression.model.accessory': msg({
     id: 'params.progression.model.accessory',
@@ -322,12 +322,12 @@ export const PARAM_LABELS = {
   }),
   'scoring.allometric.exponent': msg({
     id: 'params.scoring.allometric.exponent',
-    message: 'Body-weight exponent for relative strength',
+    message: 'Bodyweight exponent for relative strength',
   }),
   'scoring.display': msg({ id: 'params.scoring.display', message: 'Points formulas shown' }),
   'scoring.dots.bodyweightClampKg': msg({
     id: 'params.scoring.dots.bodyweightClampKg',
-    message: 'Body-weight limits for DOTS',
+    message: 'Bodyweight limits for DOTS',
   }),
   'scoring.dots.coefficients': msg({
     id: 'params.scoring.dots.coefficients',
@@ -339,7 +339,7 @@ export const PARAM_LABELS = {
   }),
   'scoring.ipfGl.minBodyweightKg': msg({
     id: 'params.scoring.ipfGl.minBodyweightKg',
-    message: 'Lowest body weight for IPF GL points',
+    message: 'Lowest bodyweight for IPF GL Points',
   }),
   'scoring.ipfPoints.coefficients': msg({
     id: 'params.scoring.ipfPoints.coefficients',
@@ -347,11 +347,11 @@ export const PARAM_LABELS = {
   }),
   'scoring.ipfPoints.minBodyweightKg': msg({
     id: 'params.scoring.ipfPoints.minBodyweightKg',
-    message: 'Lowest body weight for IPF Points',
+    message: 'Lowest bodyweight for IPF Points',
   }),
   'scoring.wilks.bodyweightClampKg': msg({
     id: 'params.scoring.wilks.bodyweightClampKg',
-    message: 'Body-weight limits for Wilks',
+    message: 'Bodyweight limits for Wilks',
   }),
   'scoring.wilks.coefficients': msg({
     id: 'params.scoring.wilks.coefficients',
@@ -359,7 +359,7 @@ export const PARAM_LABELS = {
   }),
   'scoring.wilks2020.bodyweightClampKg': msg({
     id: 'params.scoring.wilks2020.bodyweightClampKg',
-    message: 'Body-weight limits for Wilks2020',
+    message: 'Bodyweight limits for Wilks2020',
   }),
   'scoring.wilks2020.coefficients': msg({
     id: 'params.scoring.wilks2020.coefficients',

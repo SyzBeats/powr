@@ -82,7 +82,7 @@ describe('onboarding steps (ONB-01…07)', () => {
     renderRoute(container, '/onboarding/body');
     expect(await screen.findByRole('heading', { level: 1, name: 'Units and body' })).toBeTruthy();
     const height = screen.getByRole<HTMLInputElement>('textbox', { name: 'Height' });
-    const bodyweight = screen.getByRole<HTMLInputElement>('textbox', { name: 'Body weight' });
+    const bodyweight = screen.getByRole<HTMLInputElement>('textbox', { name: 'Bodyweight' });
     await userEvent.type(height, '180.5');
     await userEvent.type(bodyweight, '80,5');
     expect(height.value).toBe('180.5');

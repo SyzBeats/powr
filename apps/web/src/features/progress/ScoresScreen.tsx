@@ -120,7 +120,7 @@ function Missing({ view }: { view: ScoreBoardView }) {
                 params={{ step: 'body' }}
                 className="inline-flex min-h-target items-center font-semibold text-info underline underline-offset-4"
               >
-                <Trans>Answer it in the plan set-up</Trans>
+                <Trans>Answer it in the plan setup</Trans>
               </Link>
             ) : (
               <Link

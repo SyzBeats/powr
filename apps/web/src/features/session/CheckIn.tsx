@@ -1,3 +1,4 @@
+import { plural } from '@lingui/core/macro';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 
@@ -84,7 +85,7 @@ export function ReadinessCheckIn({ view }: { view: SessionView }) {
     <Screen title={t`How are you today?`}>
       <p className="text-fg-muted">
         <Trans>
-          A quick check-in helps POWR suggest lighter work on bad days. Every question is optional.
+          A quick check-in helps POWR suggest lighter work on low days. Every question is optional.
         </Trans>
       </p>
       {error ? <Callout tone="danger">{error}</Callout> : null}
@@ -201,7 +202,7 @@ export function Proposals({
         return t`Compound lifts one rep easier (+1 rep in reserve)`;
       case 'dropBackoff': {
         const sets = change.dropSets ?? 1;
-        return t`Drop ${sets} back-off set(s)`;
+        return plural(sets, { one: 'Drop # back-off set', other: 'Drop # back-off sets' });
       }
       case 'trimVolume':
         return t`One working set fewer per exercise`;

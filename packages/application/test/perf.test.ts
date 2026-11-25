@@ -2,16 +2,13 @@ import { describe, expect, it } from 'vitest';
 
 import { builtInContent } from '@powr/content/built-in';
 import {
-  SESSION_DEFAULTS,
   addDays,
-  makeInstantTz,
   weekStartOf,
   type ExerciseId,
   type LocalDate,
   type LoggedSet,
   type Session,
   type SessionId,
-  type SetId,
 } from '@powr/domain';
 import { buildWeek, e1rmSeries, volumeRows } from '@powr/domain/analytics';
 import { emptyExerciseState, exposuresOf, rebuildExerciseState } from '@powr/domain/session';
@@ -19,6 +16,7 @@ import { computeStreak } from '@powr/domain/streaks';
 import { emptyRawTables } from '@powr/formats';
 
 import { ensureInsights, exerciseTrend, homeView, weeklyVolume } from '../src/insights';
+import { referenceHistory } from '../src/reference';
 import { ensureDerived } from '../src/session';
 import { prepare } from '../src/session/context';
 import { createTestDeps, testRules } from './fakes';
@@ -35,86 +33,28 @@ const env =
  * here are loose ceilings for CI machines, the S22 measurement is a device-test item.
  */
 
-const DAYS = [
-  [
-    'ex.barbell-back-squat',
-    'ex.barbell-bench-press',
-    'ex.seated-cable-row',
-    'ex.dumbbell-lateral-raise',
-    'ex.dumbbell-curl',
-    'ex.cable-triceps-pressdown',
-  ],
-  [
-    'ex.barbell-deadlift',
-    'ex.barbell-overhead-press',
-    'ex.lat-pulldown',
-    'ex.leg-extension',
-    'ex.seated-leg-curl',
-    'ex.standing-calf-raise',
-  ],
-  [
-    'ex.barbell-back-squat',
-    'ex.incline-dumbbell-press',
-    'ex.one-arm-dumbbell-row',
-    'ex.cable-lateral-raise',
-    'ex.hammer-curl',
-    'ex.overhead-cable-triceps-extension',
-  ],
-  [
-    'ex.barbell-romanian-deadlift',
-    'ex.barbell-bench-press',
-    'ex.pull-up',
-    'ex.leg-press',
-    'ex.cable-fly',
-    'ex.barbell-hip-thrust',
-  ],
-] as const;
 const WEEKS = 260;
 const TODAY = '2026-11-23' as LocalDate;
 const START = addDays(TODAY, -7 * WEEKS);
 const ZONE = 'Europe/Zurich';
 
+/**
+ * M4a's shape of the reference generator (`@powr/application/reference`, shared with the browser
+ * since M6a): 260 full weeks up to the Sunday before TODAY, 4 sessions a week, 6 exercises × 6
+ * working sets, no breaks or weigh-ins.
+ */
 function synthetic() {
-  const tables = emptyRawTables();
-  let setCount = 0;
-  for (let week = 0; week < WEEKS; week++) {
-    for (let day = 0; day < 4; day++) {
-      const localDate = addDays(START, week * 7 + [0, 1, 3, 4][day]!);
-      const started = Date.parse(`${localDate}T17:00:00Z`);
-      const id = `s-${week}-${day}` as SessionId;
-      const session: Session = {
-        id,
-        localDate,
-        startedAt: makeInstantTz(started, ZONE),
-        endedAt: makeInstantTz(started + 75 * 60_000, ZONE),
-        status: 'finished',
-        versions: { engine: 'perf', rules: 'perf', content: 'perf' },
-        ...SESSION_DEFAULTS,
-      };
-      tables.sessions.push(session);
-      DAYS[day]!.forEach((exerciseId, order) => {
-        const base = 40 + order * 10 + week * 0.15;
-        for (let n = 0; n < 6; n++) {
-          const set: LoggedSet = {
-            id: `${id}-${order}-${n}` as SetId,
-            sessionId: id,
-            exerciseId: exerciseId as ExerciseId,
-            index: n,
-            type: 'working',
-            load: { value: Math.round((base + ((week + n) % 3) * 2.5) * 4) / 4, unit: 'kg' },
-            reps: 5 + ((week + day + n) % 6),
-            effort: { rir: 1 + ((n + week) % 3), source: 'entered' },
-            state: 'done',
-            performedAt: makeInstantTz(started + (order * 6 + n) * 180_000, ZONE),
-            localDate,
-          };
-          tables.sets.push(set);
-          setCount++;
-        }
-      });
-    }
-  }
-  return { tables, setCount };
+  const history = referenceHistory({
+    end: addDays(TODAY, -1),
+    zone: ZONE,
+    weeks: WEEKS,
+    daysPerWeek: 4,
+    setsPerExercise: [6],
+    weighIns: 0,
+    breaks: 0,
+  });
+  const tables = { ...emptyRawTables(), sessions: history.sessions, sets: history.sets };
+  return { tables, setCount: history.sets.length };
 }
 
 const report = (label: string, ms: number) => {

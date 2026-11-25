@@ -209,6 +209,8 @@ export function OnboardingFlow({
     else showErrors(fieldErrors(result.error.fields));
   };
 
+  // The page titles of a new plan's steps name the flow: the first run has the same headings.
+  const context = mode === 'replan' ? t`Set up a plan` : undefined;
   const header = (
     <StepHeader
       mode={mode}
@@ -281,7 +283,7 @@ export function OnboardingFlow({
       );
     case 'goal':
       return (
-        <Screen title={t`Your goal`}>
+        <Screen title={t`Your goal`} context={context}>
           {header}
           {errorSummary}
           <GoalStep {...props} />
@@ -290,7 +292,7 @@ export function OnboardingFlow({
       );
     case 'experience':
       return (
-        <Screen title={t`Your experience`}>
+        <Screen title={t`Your experience`} context={context}>
           {header}
           {errorSummary}
           <ExperienceStep {...props} />
@@ -299,7 +301,7 @@ export function OnboardingFlow({
       );
     case 'schedule':
       return (
-        <Screen title={t`Your week`}>
+        <Screen title={t`Your week`} context={context}>
           {header}
           {errorSummary}
           <ScheduleStep {...props} />
@@ -308,7 +310,7 @@ export function OnboardingFlow({
       );
     case 'body':
       return (
-        <Screen title={t`Units and body`}>
+        <Screen title={t`Units and body`} context={context}>
           {header}
           {errorSummary}
           <BodyStep {...props} />
@@ -317,7 +319,7 @@ export function OnboardingFlow({
       );
     case 'equipment':
       return (
-        <Screen title={t`Your equipment`}>
+        <Screen title={t`Your equipment`} context={context}>
           {header}
           {errorSummary}
           <EquipmentStep {...props} onPicked={(equipment) => void advance({ equipment })} />
@@ -326,7 +328,7 @@ export function OnboardingFlow({
       );
     case 'priorities':
       return (
-        <Screen title={t`Priorities`}>
+        <Screen title={t`Priorities`} context={context}>
           {header}
           {errorSummary}
           <PrioritiesStep {...props} />
@@ -336,7 +338,7 @@ export function OnboardingFlow({
     case 'baselines':
       return (
         <WhySimpleContext value={novice}>
-          <Screen title={t`Your current lifts`}>
+          <Screen title={t`Your current lifts`} context={context}>
             {header}
             {errorSummary}
             <BaselinesStep {...props} />
@@ -611,7 +613,7 @@ function PreviewStep({
   ) : null;
 
   return (
-    <Screen title={t`Your plan`}>
+    <Screen title={t`Your plan`} context={mode === 'replan' ? t`Set up a plan` : undefined}>
       {header}
       {!equipment ? (
         <Callout tone="warning" title={t`Equipment missing`}>
@@ -732,7 +734,7 @@ export function useStepValidation() {
             t`${name}: enter the reps as a whole number from 1 to ${MAX_BASELINE_REPS}.`;
         if (problems.includes('date'))
           errors[baselineErrorKey(exerciseId, 'date')] =
-            t`${name}: the date can't be in the future. Leave it empty if you're not sure.`;
+            t`${name}: the date cannot be in the future. Leave it empty if you are not sure.`;
       }
     }
     if (step === 'goal' && !draft.style) errors['style'] = t`Choose what you want from training.`;
@@ -751,9 +753,9 @@ export function useStepValidation() {
     if (step === 'body') {
       const year = draft.birthYear;
       if (year !== undefined && year !== null && (year < 1900 || year > 2100))
-        errors['birthYear'] = t`Enter a four-digit year, e.g. 1990, or leave it empty.`;
+        errors['birthYear'] = t`Enter a four-digit year, for example 1990, or leave it empty.`;
       if (draft.bodyweight && !(draft.bodyweight.value > 0))
-        errors['bodyweight'] = t`Enter your body weight as a positive number, or leave it empty.`;
+        errors['bodyweight'] = t`Enter your bodyweight as a positive number, or leave it empty.`;
     }
     if (step === 'equipment' && !draft.equipment)
       errors['equipment'] = t`Choose where you train, or start from an empty list.`;
@@ -774,7 +776,7 @@ export function useFieldErrors() {
             : step === 'equipment'
               ? t`Give your equipment a name.`
               : step === 'body'
-                ? t`Check your birth year and body weight.`
+                ? t`Check your birth year and bodyweight.`
                 : step === 'priorities'
                   ? t`Pick at most three priority muscles.`
                   : step === 'baselines'

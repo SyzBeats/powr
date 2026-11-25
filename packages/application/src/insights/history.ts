@@ -21,7 +21,7 @@ import {
 import type { Deps } from '../deps';
 import { sessionExerciseIds } from '../ports';
 import { ALL_FROM, ALL_TO, insightsContext } from './context';
-import { loadExercise, sessionsOf } from './trends';
+import { exerciseData, sessionsOf } from './trends';
 
 /*
  * History (ANL-04, ANL-05, ANL-06): an exercise's sessions with their sets, its rep-max table,
@@ -57,8 +57,7 @@ export async function exerciseHistory(
 ): Promise<ExerciseHistoryView | null> {
   const exercise = deps.content.exercise(exerciseId);
   if (!exercise) return null;
-  const ctx = await insightsContext(deps);
-  const loaded = await loadExercise(deps, ctx, exerciseId);
+  const { ctx, loaded } = await exerciseData(deps, exerciseId);
   const userData = await deps.uow.read(['exerciseUserData'], (repos) =>
     repos.exerciseUserData.get(exerciseId),
   );

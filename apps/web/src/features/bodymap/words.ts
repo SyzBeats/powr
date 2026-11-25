@@ -1,3 +1,4 @@
+import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 
 import type { RankedExercise } from '@powr/domain/analytics';
@@ -88,7 +89,7 @@ export function useBodyMapWords() {
       .map((set) => {
         const load = massText(set.load);
         const reps = set.reps ?? 0;
-        return load ? t`${load} × ${reps}` : t`${reps} reps`;
+        return load ? t`${load} × ${reps}` : plural(reps, { one: '# rep', other: '# reps' });
       })
       .join(', ');
     return sets ? t`Last time (${date}): ${sets}` : t`Last time: ${date}`;

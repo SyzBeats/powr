@@ -40,10 +40,10 @@ export function UnitsSection() {
       </div>
       <div className="flex flex-col gap-1">
         <span aria-hidden="true" className="px-2 font-medium">
-          <Trans>Body weight</Trans>
+          <Trans>Bodyweight</Trans>
         </span>
         <Segmented<MassUnit>
-          label={t`Body weight`}
+          label={t`Bodyweight`}
           value={units.bodyweight}
           onChange={(bodyweight) => save({ ...units, bodyweight })}
           options={mass}

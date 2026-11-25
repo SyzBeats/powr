@@ -72,7 +72,7 @@ export function TemplateChooser({
         open={open}
         onOpenChange={setOpen}
         title={t`Choose a plan`}
-        description={t`Plans for ${labels.style(answers.style)}. A plan that doesn't fit your days, level, equipment or session time says why in the preview.`}
+        description={t`Plans for ${labels.style(answers.style)}. A plan that does not fit your days, level, equipment or session time says why in the preview.`}
         closeLabel={t`Close`}
       >
         {choices === null ? (

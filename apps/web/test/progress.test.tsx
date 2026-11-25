@@ -67,7 +67,7 @@ async function benchHistory(container: Container): Promise<void> {
 }
 
 describe('Progress tab (M4b)', () => {
-  it('the hub lists the trained exercises and every analytics screen, Past sessions included', async () => {
+  it('the hub lists the trained exercises and every analytics screen, Past workouts included', async () => {
     const container = await createTestContainer();
     await onboarded(container);
     await logPast(container, -3, BENCH, 80);
@@ -82,7 +82,7 @@ describe('Progress tab (M4b)', () => {
       /Weekly streak/,
       /Bodyweight and measurements/,
       /Powerlifting scores/,
-      /Past sessions/,
+      /Past workouts/,
     ]) {
       expect(within(nav).getByRole('link', { name })).toBeTruthy();
     }

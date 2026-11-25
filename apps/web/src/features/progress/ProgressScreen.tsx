@@ -17,13 +17,14 @@ import {
   TrendingUp,
   Trophy,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import type { ExerciseSummary } from '@powr/application/insights';
 import type { LocalDate } from '@powr/domain';
 import type { ChangeLabel } from '@powr/domain/trend';
 
 import { Button } from '#ui/button';
+import { preloadCharts } from '#ui/charts/echart';
 import { Card, Screen } from '#ui/screen';
 
 import { useInsight } from '../../hooks/use-insights';
@@ -115,7 +116,7 @@ export function ProgressScreen() {
             <Link to="/session/past" className={rowClass}>
               <RowContent
                 icon={History}
-                title={t`Past sessions`}
+                title={t`Past workouts`}
                 hint={t`Edit a workout or log one for a past date`}
               />
             </Link>
@@ -130,6 +131,12 @@ export function ProgressScreen() {
 /** TD-55: the trained exercises with their current estimate and the trend's latest label. */
 function TrainedExercises() {
   const [showAll, setShowAll] = useState(false);
+  // M6a: every row opens a chart; its chunk loads in idle time, not on the tap.
+  useEffect(() => {
+    if (!('requestIdleCallback' in window)) return undefined;
+    const handle = window.requestIdleCallback(preloadCharts, { timeout: 3000 });
+    return () => window.cancelIdleCallback(handle);
+  }, []);
   const from = addLocalDays(todayLocal(), -365) as LocalDate;
   const summaries = useInsight(`trained:${from}`, (insights, deps) =>
     insights.exerciseSummaries(deps, { from }),
