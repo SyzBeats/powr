@@ -1,4 +1,5 @@
 import { controllerBuild, expect, skipOnboarding, test, waitForOfflineReady } from './fixtures';
+import { addExercise, finishWorkout, logSet, startEmptyWorkout } from './session';
 
 /**
  * QS-04 / PWA-04: version N+1 is deployed while a workout runs on N. The install gate keeps N
@@ -19,8 +20,9 @@ test('never updates during a workout; offers and applies the update afterwards',
 
   // Start a workout on N.
   await page.getByRole('navigation', { name: 'Main' }).getByRole('link', { name: 'Train' }).click();
-  await page.getByRole('button', { name: 'Confirm set' }).click();
-  await expect(page.getByTestId('session-sets').getByRole('listitem')).toHaveCount(1);
+  await startEmptyWorkout(page);
+  await addExercise(page, 'Barbell back squat');
+  await logSet(page, { weight: 100, reps: 5 });
 
   // Deploy N+1 and let the browser find it, as on a navigation or periodic update check.
   server!.deployNextVersion();
@@ -49,7 +51,7 @@ test('never updates during a workout; offers and applies the update afterwards',
   await expect(page.getByTestId('update-banner')).toHaveCount(0);
 
   // Finishing the workout releases the gate and checks for the update again.
-  await page.getByRole('button', { name: 'Finish workout' }).click();
+  await finishWorkout(page);
   const banner = page.getByTestId('update-banner');
   await expect(banner).toHaveText('A new version of POWR is ready.', { timeout: 15_000 });
   expect(await controllerBuild(page)).toBe(buildN);
@@ -79,7 +81,9 @@ test('shows the update but keeps it disabled while a workout is active', async (
   await expect(page.getByTestId('update-banner')).toBeVisible({ timeout: 15_000 });
 
   await page.getByRole('navigation', { name: 'Main' }).getByRole('link', { name: 'Train' }).click();
-  await page.getByRole('button', { name: 'Confirm set' }).click();
+  await startEmptyWorkout(page);
+  await addExercise(page, 'Barbell back squat');
+  await logSet(page, { weight: 100, reps: 5 });
   await expect(page.getByTestId('update-banner')).toHaveText(
     'A new version is ready. Finish your workout to update.',
   );

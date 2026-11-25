@@ -1,6 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { Link } from '@tanstack/react-router';
 import { CalendarDays, ChartLine, Compass, Dumbbell, House, type LucideIcon } from 'lucide-react';
+import { useEffect, useRef } from 'react';
 
 interface NavItem {
   readonly to: '/' | '/plan' | '/session' | '/explore' | '/progress';
@@ -9,9 +10,26 @@ interface NavItem {
   readonly primary?: boolean;
 }
 
-/** Five tabs with the Train action in the thumb-friendly centre (§8.9.4). */
+/**
+ * Five tabs with the Train action in the thumb-friendly centre (§8.9.4). Publishes its measured
+ * height as `--bottom-nav-height` (through the CSSOM, which the CSP allows), so the session dock
+ * and the mini timer sit right above it at any text size.
+ */
 export function BottomNav() {
   const { t } = useLingui();
+  const nav = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const element = nav.current;
+    const root = document.documentElement;
+    const observer = new ResizeObserver(() => {
+      root.style.setProperty('--bottom-nav-height', `${element?.offsetHeight ?? 0}px`);
+    });
+    if (element) observer.observe(element);
+    return () => {
+      observer.disconnect();
+      root.style.removeProperty('--bottom-nav-height');
+    };
+  }, []);
   const items: NavItem[] = [
     { to: '/', label: t`Home`, icon: House },
     { to: '/plan', label: t`Plan`, icon: CalendarDays },
@@ -21,6 +39,7 @@ export function BottomNav() {
   ];
   return (
     <nav
+      ref={nav}
       aria-label={t`Main`}
       className="fixed inset-x-0 bottom-0 z-10 border-t border-border bg-surface pb-safe"
     >

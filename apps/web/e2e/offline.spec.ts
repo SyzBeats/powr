@@ -1,4 +1,5 @@
 import { expect, skipOnboarding, test, waitForOfflineReady } from './fixtures';
+import { addExercise, logSet, startEmptyWorkout } from './session';
 
 test.describe('offline (WP0.4, PWA-03)', () => {
   test('after the service worker installs, the app reloads and works offline', async ({
@@ -25,10 +26,11 @@ test.describe('offline (WP0.4, PWA-03)', () => {
       .getByRole('navigation', { name: 'Main' })
       .getByRole('link', { name: 'Train' })
       .click();
-    // The exercise library is a lazy chunk (TD-17), precached like every other chunk.
-    await page.getByRole('radio', { name: 'Seated leg curl' }).check();
-    await page.getByRole('button', { name: 'Confirm set' }).click();
-    await expect(page.getByTestId('log-status')).toContainText('Saved');
+    // The exercise library, the session use cases and the timer kit are lazy chunks (TD-17,
+    // M3b), precached like every other chunk.
+    await startEmptyWorkout(page);
+    await addExercise(page, 'Seated leg curl');
+    await logSet(page, { weight: 30, reps: 10 });
     await expect(page.getByTestId('session-sets')).toContainText('Seated leg curl');
   });
 

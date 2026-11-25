@@ -13,7 +13,6 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as DataRouteImport } from './routes/data'
 import { Route as ExploreRouteImport } from './routes/explore'
 import { Route as ProgressRouteImport } from './routes/progress'
-import { Route as SessionRouteImport } from './routes/session'
 import { Route as DebugAlertsRouteImport } from './routes/debug/alerts'
 import { Route as DebugCapabilitiesRouteImport } from './routes/debug/capabilities'
 import { Route as LegalDisclaimerRouteImport } from './routes/legal/disclaimer'
@@ -23,8 +22,13 @@ import { Route as OnboardingStepRouteImport } from './routes/onboarding/$step'
 import { Route as PlanIndexRouteImport } from './routes/plan/index'
 import { Route as PlanEditRouteImport } from './routes/plan/edit'
 import { Route as PlanNextRouteImport } from './routes/plan/next'
+import { Route as SessionIndexRouteImport } from './routes/session/index'
 import { Route as SettingsIndexRouteImport } from './routes/settings/index'
 import { Route as PlanSetupStepRouteImport } from './routes/plan/setup/$step'
+import { Route as SessionPastIndexRouteImport } from './routes/session/past/index'
+import { Route as SessionPastSessionIdRouteImport } from './routes/session/past/$sessionId'
+import { Route as SessionPastNewRouteImport } from './routes/session/past/new'
+import { Route as SessionSummarySessionIdRouteImport } from './routes/session/summary.$sessionId'
 import { Route as SettingsEquipmentIndexRouteImport } from './routes/settings/equipment/index'
 import { Route as SettingsEquipmentProfileIdRouteImport } from './routes/settings/equipment/$profileId'
 
@@ -46,11 +50,6 @@ const ExploreRoute = ExploreRouteImport.update({
 const ProgressRoute = ProgressRouteImport.update({
   id: '/progress',
   path: '/progress',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SessionRoute = SessionRouteImport.update({
-  id: '/session',
-  path: '/session',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DebugAlertsRoute = DebugAlertsRouteImport.update({
@@ -98,6 +97,11 @@ const PlanNextRoute = PlanNextRouteImport.update({
   path: '/plan/next',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SessionIndexRoute = SessionIndexRouteImport.update({
+  id: '/session/',
+  path: '/session/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SettingsIndexRoute = SettingsIndexRouteImport.update({
   id: '/settings/',
   path: '/settings/',
@@ -106,6 +110,26 @@ const SettingsIndexRoute = SettingsIndexRouteImport.update({
 const PlanSetupStepRoute = PlanSetupStepRouteImport.update({
   id: '/plan/setup/$step',
   path: '/plan/setup/$step',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SessionPastIndexRoute = SessionPastIndexRouteImport.update({
+  id: '/session/past/',
+  path: '/session/past/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SessionPastSessionIdRoute = SessionPastSessionIdRouteImport.update({
+  id: '/session/past/$sessionId',
+  path: '/session/past/$sessionId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SessionPastNewRoute = SessionPastNewRouteImport.update({
+  id: '/session/past/new',
+  path: '/session/past/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SessionSummarySessionIdRoute = SessionSummarySessionIdRouteImport.update({
+  id: '/session/summary/$sessionId',
+  path: '/session/summary/$sessionId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SettingsEquipmentIndexRoute = SettingsEquipmentIndexRouteImport.update({
@@ -125,7 +149,6 @@ export interface FileRoutesByFullPath {
   '/data': typeof DataRoute
   '/explore': typeof ExploreRoute
   '/progress': typeof ProgressRoute
-  '/session': typeof SessionRoute
   '/debug/alerts': typeof DebugAlertsRoute
   '/debug/capabilities': typeof DebugCapabilitiesRoute
   '/legal/disclaimer': typeof LegalDisclaimerRoute
@@ -135,9 +158,14 @@ export interface FileRoutesByFullPath {
   '/plan/next': typeof PlanNextRoute
   '/onboarding/': typeof OnboardingIndexRoute
   '/plan/': typeof PlanIndexRoute
+  '/session/': typeof SessionIndexRoute
   '/settings/': typeof SettingsIndexRoute
   '/plan/setup/$step': typeof PlanSetupStepRoute
+  '/session/past/$sessionId': typeof SessionPastSessionIdRoute
+  '/session/past/new': typeof SessionPastNewRoute
+  '/session/summary/$sessionId': typeof SessionSummarySessionIdRoute
   '/settings/equipment/$profileId': typeof SettingsEquipmentProfileIdRoute
+  '/session/past/': typeof SessionPastIndexRoute
   '/settings/equipment/': typeof SettingsEquipmentIndexRoute
 }
 export interface FileRoutesByTo {
@@ -145,7 +173,6 @@ export interface FileRoutesByTo {
   '/data': typeof DataRoute
   '/explore': typeof ExploreRoute
   '/progress': typeof ProgressRoute
-  '/session': typeof SessionRoute
   '/debug/alerts': typeof DebugAlertsRoute
   '/debug/capabilities': typeof DebugCapabilitiesRoute
   '/legal/disclaimer': typeof LegalDisclaimerRoute
@@ -155,9 +182,14 @@ export interface FileRoutesByTo {
   '/plan/next': typeof PlanNextRoute
   '/onboarding': typeof OnboardingIndexRoute
   '/plan': typeof PlanIndexRoute
+  '/session': typeof SessionIndexRoute
   '/settings': typeof SettingsIndexRoute
   '/plan/setup/$step': typeof PlanSetupStepRoute
+  '/session/past/$sessionId': typeof SessionPastSessionIdRoute
+  '/session/past/new': typeof SessionPastNewRoute
+  '/session/summary/$sessionId': typeof SessionSummarySessionIdRoute
   '/settings/equipment/$profileId': typeof SettingsEquipmentProfileIdRoute
+  '/session/past': typeof SessionPastIndexRoute
   '/settings/equipment': typeof SettingsEquipmentIndexRoute
 }
 export interface FileRoutesById {
@@ -166,7 +198,6 @@ export interface FileRoutesById {
   '/data': typeof DataRoute
   '/explore': typeof ExploreRoute
   '/progress': typeof ProgressRoute
-  '/session': typeof SessionRoute
   '/debug/alerts': typeof DebugAlertsRoute
   '/debug/capabilities': typeof DebugCapabilitiesRoute
   '/legal/disclaimer': typeof LegalDisclaimerRoute
@@ -176,9 +207,14 @@ export interface FileRoutesById {
   '/plan/next': typeof PlanNextRoute
   '/onboarding/': typeof OnboardingIndexRoute
   '/plan/': typeof PlanIndexRoute
+  '/session/': typeof SessionIndexRoute
   '/settings/': typeof SettingsIndexRoute
   '/plan/setup/$step': typeof PlanSetupStepRoute
+  '/session/past/$sessionId': typeof SessionPastSessionIdRoute
+  '/session/past/new': typeof SessionPastNewRoute
+  '/session/summary/$sessionId': typeof SessionSummarySessionIdRoute
   '/settings/equipment/$profileId': typeof SettingsEquipmentProfileIdRoute
+  '/session/past/': typeof SessionPastIndexRoute
   '/settings/equipment/': typeof SettingsEquipmentIndexRoute
 }
 export interface FileRouteTypes {
@@ -188,7 +224,6 @@ export interface FileRouteTypes {
     | '/data'
     | '/explore'
     | '/progress'
-    | '/session'
     | '/debug/alerts'
     | '/debug/capabilities'
     | '/legal/disclaimer'
@@ -198,9 +233,14 @@ export interface FileRouteTypes {
     | '/plan/next'
     | '/onboarding/'
     | '/plan/'
+    | '/session/'
     | '/settings/'
     | '/plan/setup/$step'
+    | '/session/past/$sessionId'
+    | '/session/past/new'
+    | '/session/summary/$sessionId'
     | '/settings/equipment/$profileId'
+    | '/session/past/'
     | '/settings/equipment/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -208,7 +248,6 @@ export interface FileRouteTypes {
     | '/data'
     | '/explore'
     | '/progress'
-    | '/session'
     | '/debug/alerts'
     | '/debug/capabilities'
     | '/legal/disclaimer'
@@ -218,9 +257,14 @@ export interface FileRouteTypes {
     | '/plan/next'
     | '/onboarding'
     | '/plan'
+    | '/session'
     | '/settings'
     | '/plan/setup/$step'
+    | '/session/past/$sessionId'
+    | '/session/past/new'
+    | '/session/summary/$sessionId'
     | '/settings/equipment/$profileId'
+    | '/session/past'
     | '/settings/equipment'
   id:
     | '__root__'
@@ -228,7 +272,6 @@ export interface FileRouteTypes {
     | '/data'
     | '/explore'
     | '/progress'
-    | '/session'
     | '/debug/alerts'
     | '/debug/capabilities'
     | '/legal/disclaimer'
@@ -238,9 +281,14 @@ export interface FileRouteTypes {
     | '/plan/next'
     | '/onboarding/'
     | '/plan/'
+    | '/session/'
     | '/settings/'
     | '/plan/setup/$step'
+    | '/session/past/$sessionId'
+    | '/session/past/new'
+    | '/session/summary/$sessionId'
     | '/settings/equipment/$profileId'
+    | '/session/past/'
     | '/settings/equipment/'
   fileRoutesById: FileRoutesById
 }
@@ -249,7 +297,6 @@ export interface RootRouteChildren {
   DataRoute: typeof DataRoute
   ExploreRoute: typeof ExploreRoute
   ProgressRoute: typeof ProgressRoute
-  SessionRoute: typeof SessionRoute
   DebugAlertsRoute: typeof DebugAlertsRoute
   DebugCapabilitiesRoute: typeof DebugCapabilitiesRoute
   LegalDisclaimerRoute: typeof LegalDisclaimerRoute
@@ -259,9 +306,14 @@ export interface RootRouteChildren {
   PlanNextRoute: typeof PlanNextRoute
   OnboardingIndexRoute: typeof OnboardingIndexRoute
   PlanIndexRoute: typeof PlanIndexRoute
+  SessionIndexRoute: typeof SessionIndexRoute
   SettingsIndexRoute: typeof SettingsIndexRoute
   PlanSetupStepRoute: typeof PlanSetupStepRoute
+  SessionPastSessionIdRoute: typeof SessionPastSessionIdRoute
+  SessionPastNewRoute: typeof SessionPastNewRoute
+  SessionSummarySessionIdRoute: typeof SessionSummarySessionIdRoute
   SettingsEquipmentProfileIdRoute: typeof SettingsEquipmentProfileIdRoute
+  SessionPastIndexRoute: typeof SessionPastIndexRoute
   SettingsEquipmentIndexRoute: typeof SettingsEquipmentIndexRoute
 }
 
@@ -293,13 +345,6 @@ declare module '@tanstack/react-router' {
       path: '/progress'
       fullPath: '/progress'
       preLoaderRoute: typeof ProgressRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/session': {
-      id: '/session'
-      path: '/session'
-      fullPath: '/session'
-      preLoaderRoute: typeof SessionRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/debug/alerts': {
@@ -365,6 +410,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PlanNextRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/session/': {
+      id: '/session/'
+      path: '/session'
+      fullPath: '/session/'
+      preLoaderRoute: typeof SessionIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/settings/': {
       id: '/settings/'
       path: '/settings'
@@ -377,6 +429,34 @@ declare module '@tanstack/react-router' {
       path: '/plan/setup/$step'
       fullPath: '/plan/setup/$step'
       preLoaderRoute: typeof PlanSetupStepRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/session/past/': {
+      id: '/session/past/'
+      path: '/session/past'
+      fullPath: '/session/past/'
+      preLoaderRoute: typeof SessionPastIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/session/past/$sessionId': {
+      id: '/session/past/$sessionId'
+      path: '/session/past/$sessionId'
+      fullPath: '/session/past/$sessionId'
+      preLoaderRoute: typeof SessionPastSessionIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/session/past/new': {
+      id: '/session/past/new'
+      path: '/session/past/new'
+      fullPath: '/session/past/new'
+      preLoaderRoute: typeof SessionPastNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/session/summary/$sessionId': {
+      id: '/session/summary/$sessionId'
+      path: '/session/summary/$sessionId'
+      fullPath: '/session/summary/$sessionId'
+      preLoaderRoute: typeof SessionSummarySessionIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/settings/equipment/': {
@@ -401,7 +481,6 @@ const rootRouteChildren: RootRouteChildren = {
   DataRoute: DataRoute,
   ExploreRoute: ExploreRoute,
   ProgressRoute: ProgressRoute,
-  SessionRoute: SessionRoute,
   DebugAlertsRoute: DebugAlertsRoute,
   DebugCapabilitiesRoute: DebugCapabilitiesRoute,
   LegalDisclaimerRoute: LegalDisclaimerRoute,
@@ -411,9 +490,14 @@ const rootRouteChildren: RootRouteChildren = {
   PlanNextRoute: PlanNextRoute,
   OnboardingIndexRoute: OnboardingIndexRoute,
   PlanIndexRoute: PlanIndexRoute,
+  SessionIndexRoute: SessionIndexRoute,
   SettingsIndexRoute: SettingsIndexRoute,
   PlanSetupStepRoute: PlanSetupStepRoute,
+  SessionPastSessionIdRoute: SessionPastSessionIdRoute,
+  SessionPastNewRoute: SessionPastNewRoute,
+  SessionSummarySessionIdRoute: SessionSummarySessionIdRoute,
   SettingsEquipmentProfileIdRoute: SettingsEquipmentProfileIdRoute,
+  SessionPastIndexRoute: SessionPastIndexRoute,
   SettingsEquipmentIndexRoute: SettingsEquipmentIndexRoute,
 }
 export const routeTree = rootRouteImport

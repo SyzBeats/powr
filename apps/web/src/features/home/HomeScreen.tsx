@@ -129,6 +129,16 @@ function NextPlannedCard() {
           <Trans>Nothing planned in the next three weeks.</Trans>
         </p>
       )}
+      {next && next.localDate === today ? (
+        // WKT-01: today's planned session in one tap (the session route starts it).
+        <Link
+          to="/session"
+          search={{ start: 'today' }}
+          className={`${linkButtonClass} bg-primary text-on-primary`}
+        >
+          <Trans>Start today's session</Trans>
+        </Link>
+      ) : null}
       <Link to="/plan" className={`${linkButtonClass} border border-control`}>
         <Trans>Open the plan</Trans>
       </Link>

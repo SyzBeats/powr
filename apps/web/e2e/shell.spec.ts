@@ -27,7 +27,7 @@ test.describe('app shell (WP0.3)', () => {
 
     await nav.getByRole('link', { name: 'Train' }).click();
     await expect(page).toHaveURL(/\/session$/);
-    await expect(page.getByRole('heading', { level: 1, name: 'Log a set' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: 'Start a workout' })).toBeVisible();
   });
 
   test('switches light, dark and system theme without reload and keeps it before first paint', async ({
@@ -109,7 +109,7 @@ test.describe('app shell (WP0.3)', () => {
     // The manifest shortcut's URL; unknown parameters are ignored.
     for (const path of ['/session?source=shortcut', '/session?utm=x']) {
       await page.goto(path);
-      await expect(page.getByRole('heading', { level: 1, name: 'Log a set' })).toBeVisible();
+      await expect(page.getByRole('heading', { level: 1, name: 'Start a workout' })).toBeVisible();
     }
     // An invalid value goes to the route error boundary, as with the earlier Zod schema.
     await page.goto('/session?source=elsewhere');

@@ -11,14 +11,15 @@ import type {
   TimerState,
   WakeLockStatus,
 } from '../app/container';
-import { useContainer } from '../app/container-context';
 import { formatDurationLong, formatTime } from '../i18n/format';
 import { useAlertSettings, useWakeLockStatus } from './use-alert-settings';
+import { useTimerKit } from './use-timer-kit';
 
 /*
  * Timers and alerts for screens (technical concept §8.8; M3t). The session screen (M3b) wires the
  * session core's timer (M3a: `TimerState` in the session record) to these hooks; see
- * IMPLEMENTATION_NOTES.md, "M3t timers and alerts".
+ * IMPLEMENTATION_NOTES.md, "M3t timers and alerts". The kit behind them is a lazy chunk (M3b):
+ * every hook here suspends until it is loaded, so use them inside a `<Suspense>`.
  */
 export type {
   AlertEvent,
@@ -34,14 +35,14 @@ export type {
  * when the page becomes visible again. `now` freezes the display at that epoch (no ticking).
  */
 export function useTimerDisplay(timer: TimerState | null, now?: number): TimerDisplay {
-  const { timers } = useContainer().platform;
+  const timers = useTimerKit();
   const store = useMemo(() => timers.displayStore(timer, now), [timers, timer, now]);
   return useSyncExternalStore(store.subscribe, store.getSnapshot);
 }
 
 /** Creates and resumes the audio context; call it in the "Start session" tap (§8.8.2). */
 export function useUnlockAudio(): () => Promise<boolean> {
-  const { audio } = useContainer().platform;
+  const { audio } = useTimerKit();
   return useCallback(() => audio.unlock(), [audio]);
 }
 
@@ -51,7 +52,7 @@ export function useUnlockAudio(): () => Promise<boolean> {
  * turns false (finish, discard), the component unmounts or the setting is switched off.
  */
 export function useScreenWakeLock(active: boolean): WakeLockStatus {
-  const { screenWake } = useContainer().platform.timers;
+  const { screenWake } = useTimerKit();
   const { keepScreenOn, loaded } = useAlertSettings();
   useEffect(() => {
     if (loaded) screenWake.setEnabled(keepScreenOn);
@@ -93,7 +94,7 @@ export function useTimerAlerts(
   timer: TimerState | null,
   options: { readonly url?: string } = {},
 ): { readonly endedWhileHidden: boolean } {
-  const { restAlerts, labs } = useContainer().platform.timers;
+  const { restAlerts, labs } = useTimerKit();
   const settings = useAlertSettings();
   const texts = useRestAlertTexts();
   const announcement = useAnnouncement();
@@ -104,6 +105,7 @@ export function useTimerAlerts(
     volume: settings.volume,
     vibration: settings.vibration,
     preAlert: settings.preAlert,
+    preAlertMs: settings.preAlertSeconds * 1000,
     countdown: settings.countdown,
     restingNotice: settings.restingNotice,
     keepAlive,
@@ -151,8 +153,10 @@ function useAnnouncement(): (event: Exclude<AlertEvent, { type: 'disarmed' }>) =
             ? t`Rest started, minimum ${duration}`
             : t`Rest started, ${duration}`;
         }
-        case 'pre-alert':
-          return t`10 seconds left`;
+        case 'pre-alert': {
+          const duration = formatDurationLong(event.remainingMs);
+          return t`${duration} left`;
+        }
         case 'end':
           // Fired while hidden: announced when the user is back ('visible').
           if (event.hidden) return null;

@@ -1,6 +1,6 @@
 # ADR-0020: Calculation engine design: pure functional core with injected rules and explanation traces
 
-- Status: Accepted (v0.4, 2026-11-24: engine as built in M1; curve class of the competition squat and deadlift, see below; amended v0.5)
+- Status: Accepted (v0.4, 2026-11-24: engine as built in M1; curve class of the competition squat and deadlift, see below; amended v0.5, v0.7)
 - Date: 2026-11-23, amended 2026-11-24
 - Related: technical concept §8.7, §8.6; PRD PRG-01…18, PRG-09, PLN-01, NFR-MNT-01/02, NFR-REL-03, TC-05, TC-15, §7.8; EB Conclusion
 
@@ -56,3 +56,12 @@ The decision stands, with one deviation and two product-owner decisions (technic
 - **Explanations:** every `RuleId` has an English message, and a coverage test keeps it so (TD-28).
 
 Source: `IMPLEMENTATION_NOTES.md` (repository root), sections "M2a planning core" and "M2b screens".
+
+## Amendment (v0.7, 2026-11-24)
+
+The decision stands. M3a added the session engine as the domain subpath `@powr/domain/session` (technical concept §8.7.5, §8.7.7, §8.7.11): set suggestions with "Why?" in a fixed order (fixed values, in-session autoregulation, the progression model from the history, calibration, load for target, deload and return-from-break percentages), every load through the rounding service; the calibration state machine; PR detection; readiness and its proposals; return from break per lift; guardrails. Rules 1.4.0 (133 parameters, 34 `verified: false`).
+
+- **Deviation:** the derived-data rebuilds (finish, past edits, backdating, stale states) run as a per-exercise full rebuild on the main thread in the lazy session chunk, not in the engine worker, which does not exist yet (TD-32, extended).
+- **Decisions (product owner, 2026-11-24), accepted as built:** no e1RM PR from a set without entered effort, while its load × reps can set rep, load and volume PRs (E-1); rep PRs as the n-rep max; `load.pr.minSetWeight` and `progression.calibration.reliableSetWeight` at 0.5 and the noon cut-off for a "PM session" (all `verified: false`); the deload load in the middle of 85–100%; the readiness proposal sizes; the WKT-03 plausibility limits (3× the e1RM, 100 reps) as code constants rather than registry rows.
+
+Source: `IMPLEMENTATION_NOTES.md` (repository root), section "M3a session core".

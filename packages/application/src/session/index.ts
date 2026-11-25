@@ -9,11 +9,14 @@ export { ensureDerived, rebuildExercises } from './derived';
 export {
   deletePastSession,
   editPastSession,
+  listPastSessions,
   logPastSession,
+  pastSessionDetail,
   previewPastEdit,
   type PastSessionError,
+  type PastSessionSummary,
 } from './past';
-export { observeActiveSession, substitutionOptions } from './view';
+export { loadImplements, observeActiveSession, substitutionOptions } from './view';
 export {
   discardWorkout,
   dispatch,

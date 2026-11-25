@@ -16,7 +16,9 @@ msgid "\"Resting until\" notification"
 msgstr ""
 
 #. placeholder {0}: day.slots.length
+#. placeholder {0}: session.slots.length
 #: src/features/plan/parts.tsx
+#: src/features/session/StartScreen.tsx
 msgid "{0, plural, one {# exercise} other {# exercises}}"
 msgstr ""
 
@@ -28,6 +30,11 @@ msgstr ""
 #. placeholder {0}: missed.length
 #: src/features/plan/PlanScreen.tsx
 msgid "{0, plural, one {# missed session} other {# missed sessions}}"
+msgstr ""
+
+#. placeholder {0}: entry.doneSets
+#: src/features/session/past/PastSessionsScreen.tsx
+msgid "{0, plural, one {# set} other {# sets}}"
 msgstr ""
 
 #. placeholder {0}: fix.sets
@@ -154,6 +161,10 @@ msgstr ""
 msgid "why.plan.lift.unavailable.simple"
 msgstr ""
 
+#: src/features/session/SummaryScreen.tsx
+msgid "{before} → {after}"
+msgstr ""
+
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.validate.order.lift"
@@ -161,6 +172,10 @@ msgstr ""
 
 #: src/features/home/HomeScreen.tsx
 msgid "{count, plural, one {# set logged} other {# sets logged}}"
+msgstr ""
+
+#: src/features/session/past/PastSessionEditor.tsx
+msgid "{date}, {started}"
 msgstr ""
 
 #. js-lingui-explicit-id
@@ -171,6 +186,22 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.plan.duration.simple"
+msgstr ""
+
+#: src/features/session/SummaryScreen.tsx
+msgid "{done, plural, one {# set logged} other {# sets logged}}"
+msgstr ""
+
+#: src/features/session/ExerciseList.tsx
+msgid "{done} of {total} sets done"
+msgstr ""
+
+#: src/features/session/SummaryScreen.tsx
+msgid "{doneWorking} of {plannedWorking} planned sets"
+msgstr ""
+
+#: src/features/session/SummaryScreen.tsx
+msgid "{duration} ({started}–{ended})"
 msgstr ""
 
 #: src/hooks/use-timers.ts
@@ -261,6 +292,14 @@ msgstr ""
 msgid "why.e1rm.loadForTarget"
 msgstr ""
 
+#: src/features/session/past/parts.tsx
+msgid "{load} × {reps}"
+msgstr ""
+
+#: src/features/session/past/parts.tsx
+msgid "{load} for {seconds} s"
+msgstr ""
+
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.plan.slot.kept"
@@ -271,6 +310,18 @@ msgstr ""
 msgid "why.plan.slot.kept.simple"
 msgstr ""
 
+#: src/features/session/LoggingView.tsx
+msgid "{low} reps"
+msgstr ""
+
+#: src/features/session/LoggingView.tsx
+msgid "{low}–{high} reps"
+msgstr ""
+
+#: src/features/session/ExerciseList.tsx
+msgid "{main} @ RIR {rir}"
+msgstr ""
+
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.session.lastTime"
@@ -279,6 +330,10 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.plan.prescription"
+msgstr ""
+
+#: src/features/session/StartScreen.tsx
+msgid "{more, plural, one {and # more} other {and # more}}"
 msgstr ""
 
 #. js-lingui-explicit-id
@@ -356,8 +411,28 @@ msgstr ""
 msgid "why.plan.next.volume"
 msgstr ""
 
+#: src/features/session/loads.tsx
+msgid "{name} × {count}"
+msgstr ""
+
+#: src/features/session/words.ts
+msgid "{name} done."
+msgstr ""
+
 #: src/features/plan/PlanScreen.tsx
 msgid "{name}, planned {date}"
+msgstr ""
+
+#: src/features/session/words.ts
+msgid "{name}, set {number} logged."
+msgstr ""
+
+#: src/features/session/words.ts
+msgid "{name}, set {number} skipped."
+msgstr ""
+
+#: src/features/session/past/LogPastSessionScreen.tsx
+msgid "{name}, set {number}: {message}"
 msgstr ""
 
 #: src/features/plan/PlanEditorScreen.tsx
@@ -381,6 +456,10 @@ msgstr ""
 msgid "why.progression.percent.load"
 msgstr ""
 
+#: src/features/session/ExerciseList.tsx
+msgid "{pending} planned sets are not done. Finish anyway, or mark the workout as partial."
+msgstr ""
+
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.pr.load"
@@ -394,6 +473,10 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.pr.volume"
+msgstr ""
+
+#: src/features/session/LoggingView.tsx
+msgid "{range} reps in reserve"
 msgstr ""
 
 #. js-lingui-explicit-id
@@ -446,6 +529,10 @@ msgstr ""
 msgid "why.plan.slot.rotated.simple"
 msgstr ""
 
+#: src/features/session/LoggingView.tsx
+msgid "{reps} reps is more than 100. Is that right?"
+msgstr ""
+
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.plan.prescription.simple"
@@ -464,6 +551,14 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.validate.coverage"
+msgstr ""
+
+#: src/features/settings/AlertsSection.tsx
+msgid "{seconds} s"
+msgstr ""
+
+#: src/features/session/LoggingView.tsx
+msgid "{seconds} seconds"
 msgstr ""
 
 #. js-lingui-explicit-id
@@ -499,6 +594,10 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.validate.sessionCap.lift"
+msgstr ""
+
+#: src/features/session/SummaryScreen.tsx
+msgid "{sets, plural, one {# set} other {# sets}}"
 msgstr ""
 
 #. js-lingui-explicit-id
@@ -551,6 +650,10 @@ msgstr ""
 msgid "{sets} × {reps} reps at {pct}%"
 msgstr ""
 
+#: src/features/session/past/parts.tsx
+msgid "{sets} back-off set fewer (readiness)"
+msgstr ""
+
 #: src/features/plan/parts.tsx
 msgid "{sets} heavy sets on {sessions} days"
 msgstr ""
@@ -565,6 +668,14 @@ msgstr ""
 
 #: src/features/plan/parts.tsx
 msgid "{sets} sets a week"
+msgstr ""
+
+#: src/features/session/past/PastSessionsScreen.tsx
+msgid "{shown} and {more} more"
+msgstr ""
+
+#: src/features/session/SummaryScreen.tsx
+msgid "{skipped, plural, one {# set} other {# sets}}"
 msgstr ""
 
 #. js-lingui-explicit-id
@@ -612,6 +723,10 @@ msgstr ""
 msgid "why.schedule.missed.merge.simple"
 msgstr ""
 
+#: src/features/session/loads.tsx
+msgid "{target} cannot be loaded with your plates."
+msgstr ""
+
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.volume.setCredit"
@@ -630,6 +745,10 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.plan.template.default"
+msgstr ""
+
+#: src/features/session/LoggingView.tsx
+msgid "{time} is now the rest for {name}."
 msgstr ""
 
 #: src/ui/screen.tsx
@@ -689,6 +808,10 @@ msgstr ""
 msgid "{value} reps left"
 msgstr ""
 
+#: src/features/session/past/parts.tsx
+msgid "{values} · RIR {rir}"
+msgstr ""
+
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.plan.slot.exercise"
@@ -702,17 +825,49 @@ msgstr ""
 msgid "{weeks} weeks of training, then a lighter week"
 msgstr ""
 
-#: src/features/session/LogSetScreen.tsx
-msgid "{weight} {unit} × {reps} · {time}"
-msgstr ""
-
 #. placeholder {0}: plate.pairs
 #: src/features/equipment/EquipmentEditor.tsx
 msgid "{weight} × {0} pairs"
 msgstr ""
 
+#: src/features/session/RestPanel.tsx
+msgid "+15"
+msgstr ""
+
+#: src/features/session/RestPanel.tsx
+msgid "+15 seconds"
+msgstr ""
+
+#: src/features/session/RestPanel.tsx
+msgid "−15"
+msgstr ""
+
+#: src/features/session/RestPanel.tsx
+msgid "−15 seconds"
+msgstr ""
+
+#: src/features/session/CheckIn.tsx
+msgid "0 not at all"
+msgstr ""
+
 #: src/features/plan/format.ts
 msgid "1 × {topReps} top set · {topRir}, then {sets} × {reps}"
+msgstr ""
+
+#: src/features/session/CheckIn.tsx
+msgid "1 exhausted"
+msgstr ""
+
+#: src/features/session/CheckIn.tsx
+msgid "1 none"
+msgstr ""
+
+#: src/features/session/CheckIn.tsx
+msgid "1 poor"
+msgstr ""
+
+#: src/features/session/CheckIn.tsx
+msgid "1 relaxed"
 msgstr ""
 
 #: src/features/plan/format.ts
@@ -731,12 +886,20 @@ msgstr ""
 msgid "1–2 weeks ago"
 msgstr ""
 
-#: src/hooks/use-timers.ts
-msgid "10 seconds left"
+#: src/features/session/CheckIn.tsx
+msgid "10 fully"
 msgstr ""
 
 #: src/features/plan/format.ts
 msgid "10–20 sets"
+msgstr ""
+
+#: src/features/session/ExerciseList.tsx
+msgid "15 seconds less rest"
+msgstr ""
+
+#: src/features/session/ExerciseList.tsx
+msgid "15 seconds more rest"
 msgstr ""
 
 #: src/features/labels.ts
@@ -759,6 +922,38 @@ msgstr ""
 msgid "4–9 sets"
 msgstr ""
 
+#: src/features/session/CheckIn.tsx
+msgid "5 eager to train"
+msgstr ""
+
+#: src/features/session/CheckIn.tsx
+msgid "5 full of energy"
+msgstr ""
+
+#: src/features/session/LoggingView.tsx
+msgid "5 or more"
+msgstr ""
+
+#: src/features/session/LoggingView.tsx
+msgid "5 seconds less"
+msgstr ""
+
+#: src/features/session/LoggingView.tsx
+msgid "5 seconds more"
+msgstr ""
+
+#: src/features/session/CheckIn.tsx
+msgid "5 very good"
+msgstr ""
+
+#: src/features/session/CheckIn.tsx
+msgid "5 very sore"
+msgstr ""
+
+#: src/features/session/CheckIn.tsx
+msgid "5 very stressed"
+msgstr ""
+
 #: src/features/labels.ts
 msgid "6 months to 2 years"
 msgstr ""
@@ -772,6 +967,14 @@ msgstr ""
 msgid "why.progression.linear.stallReset.simple"
 msgstr ""
 
+#: src/features/session/CheckIn.tsx
+msgid "A lighter session is planned later this week. You can do it today instead."
+msgstr ""
+
+#: src/features/session/words.ts
+msgid "A lot of sets for one muscle today"
+msgstr ""
+
 #: src/features/shell/UpdateBanner.tsx
 msgid "A new version is ready. Finish your workout to update."
 msgstr ""
@@ -780,8 +983,24 @@ msgstr ""
 msgid "A new version of POWR is ready."
 msgstr ""
 
+#: src/features/session/CheckIn.tsx
+msgid "A quick check-in helps POWR suggest lighter work on bad days. Every question is optional."
+msgstr ""
+
 #: src/features/onboarding/BaselinesStep.tsx
 msgid "A recent set"
+msgstr ""
+
+#: src/features/session/ExerciseList.tsx
+msgid "A related exercise for your equipment"
+msgstr ""
+
+#: src/features/session/SetDetailsSheet.tsx
+msgid "A rep failed"
+msgstr ""
+
+#: src/features/session/StartScreen.tsx
+msgid "A workout is already running. Continue it or finish it first."
 msgstr ""
 
 #: src/features/settings/SettingsScreen.tsx
@@ -790,6 +1009,10 @@ msgstr ""
 
 #: src/features/plan/parts.tsx
 msgid "about {duration}"
+msgstr ""
+
+#: src/features/session/LoggingView.tsx
+msgid "About {remaining} left"
 msgstr ""
 
 #: src/features/onboarding/OnboardingFlow.tsx
@@ -816,16 +1039,40 @@ msgstr ""
 msgid "Add"
 msgstr ""
 
+#: src/features/session/past/LogPastSessionScreen.tsx
+msgid "Add {name}"
+msgstr ""
+
 #: src/features/equipment/EquipmentEditor.tsx
 msgid "Add a plate weight"
+msgstr ""
+
+#: src/features/session/ExerciseList.tsx
+msgid "Add a set"
 msgstr ""
 
 #: src/features/plan/format.ts
 msgid "Add a training day"
 msgstr ""
 
+#: src/features/session/past/LogPastSessionScreen.tsx
+msgid "Add an exercise"
+msgstr ""
+
+#: src/features/session/LoggingView.tsx
+msgid "Add another exercise or set, or finish the workout."
+msgstr ""
+
+#: src/features/session/past/LogPastSessionScreen.tsx
+msgid "Add at least one exercise with a set."
+msgstr ""
+
 #: src/features/equipment/EquipmentScreens.tsx
 msgid "Add equipment"
+msgstr ""
+
+#: src/features/session/ExerciseList.tsx
+msgid "Add exercise"
 msgstr ""
 
 #. placeholder {0}: days[index]!.name.en
@@ -837,9 +1084,39 @@ msgstr ""
 msgid "Add item"
 msgstr ""
 
+#: src/features/session/past/LogPastSessionScreen.tsx
+#: src/features/session/past/PastSessionEditor.tsx
+msgid "Add set"
+msgstr ""
+
+#: src/features/session/past/PastSessionEditor.tsx
+msgid "Add set {number}"
+msgstr ""
+
+#: src/features/session/past/LogPastSessionScreen.tsx
+#: src/features/session/past/PastSessionEditor.tsx
+msgid "Add set, {name}"
+msgstr ""
+
+#: src/features/session/loads.tsx
+msgid "Add the plates of one side to get the total."
+msgstr ""
+
 #. placeholder {0}: day.name.en
 #: src/features/plan/PlanEditorScreen.tsx
 msgid "Add to {0}"
+msgstr ""
+
+#: src/features/session/ExerciseList.tsx
+msgid "Add warm-up sets"
+msgstr ""
+
+#: src/features/session/LoggingView.tsx
+msgid "Add your first exercise"
+msgstr ""
+
+#: src/features/session/LoggingView.tsx
+msgid "Added weight"
 msgstr ""
 
 #. js-lingui-explicit-id
@@ -911,6 +1188,14 @@ msgstr ""
 msgid "All checks pass."
 msgstr ""
 
+#: src/features/session/LoggingView.tsx
+msgid "All planned sets done"
+msgstr ""
+
+#: src/features/session/words.ts
+msgid "All planned sets done."
+msgstr ""
+
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.scoring.allometric"
@@ -936,6 +1221,10 @@ msgstr ""
 msgid "Already postponed once"
 msgstr ""
 
+#: src/features/session/ExerciseList.tsx
+msgid "Also changes the planned sessions of this block. This cannot be undone."
+msgstr ""
+
 #: src/features/equipment/EquipmentEditor.tsx
 msgid "Anything not in the list, e.g. a specific machine. Custom exercises can use it later."
 msgstr ""
@@ -952,6 +1241,10 @@ msgstr ""
 msgid "Apply the chosen replacements"
 msgstr ""
 
+#: src/features/session/CheckIn.tsx
+msgid "Apply the selected changes"
+msgstr ""
+
 #: src/features/labels.ts
 msgid "APRE"
 msgstr ""
@@ -965,6 +1258,18 @@ msgstr ""
 msgid "Are you trying to change your body weight?"
 msgstr ""
 
+#: src/features/session/words.ts
+msgid "As many reps as possible"
+msgstr ""
+
+#: src/features/session/LoggingView.tsx
+msgid "Assistance"
+msgstr ""
+
+#: src/features/session/SummaryScreen.tsx
+msgid "At a glance"
+msgstr ""
+
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.progression.linear.advancedHold"
@@ -975,6 +1280,14 @@ msgstr ""
 msgid "Back"
 msgstr ""
 
+#: src/features/session/SummaryScreen.tsx
+msgid "Back to Home"
+msgstr ""
+
+#: src/features/session/past/PastSessionEditor.tsx
+msgid "Back to past sessions"
+msgstr ""
+
 #: src/features/equipment/SubstitutionReview.tsx
 msgid "Back to the equipment"
 msgstr ""
@@ -982,6 +1295,14 @@ msgstr ""
 #: src/features/plan/NextMesocycleScreen.tsx
 #: src/features/plan/PlanEditorScreen.tsx
 msgid "Back to the plan"
+msgstr ""
+
+#: src/features/session/SessionRuntime.tsx
+msgid "Back to workout"
+msgstr ""
+
+#: src/features/session/words.ts
+msgid "Back-off set"
 msgstr ""
 
 #: src/features/data/DataScreen.tsx
@@ -1008,6 +1329,10 @@ msgstr ""
 msgid "Bands assist or add resistance; they never count towards your strength estimates."
 msgstr ""
 
+#: src/features/session/loads.tsx
+msgid "Bar {bar}. Plates per side, heaviest first."
+msgstr ""
+
 #: src/features/equipment/EquipmentEditor.tsx
 msgid "Bar weights"
 msgstr ""
@@ -1024,6 +1349,10 @@ msgstr ""
 msgid "Based on practitioner surveys and expert consensus."
 msgstr ""
 
+#: src/features/session/CheckIn.tsx
+msgid "Based on your check-in and your recent training. Nothing changes unless you apply it."
+msgstr ""
+
 #: src/features/labels.ts
 msgid "bench press"
 msgstr ""
@@ -1035,6 +1364,14 @@ msgstr ""
 #: src/features/equipment/SubstitutionReview.tsx
 #: src/features/plan/PlanEditorScreen.tsx
 msgid "Best match"
+msgstr ""
+
+#: src/features/session/ExerciseList.tsx
+msgid "Best match: {option}"
+msgstr ""
+
+#: src/features/session/ExerciseList.tsx
+msgid "Best matches first: the same movement, then exercises for the same muscles, all with your equipment."
 msgstr ""
 
 #: src/features/onboarding/steps.tsx
@@ -1062,6 +1399,7 @@ msgid "Bodybuilding"
 msgstr ""
 
 #: src/features/labels.ts
+#: src/features/session/past/parts.tsx
 msgid "Bodyweight"
 msgstr ""
 
@@ -1079,6 +1417,10 @@ msgstr ""
 
 #: src/features/plan/PlanScreen.tsx
 msgid "Breaks"
+msgstr ""
+
+#: src/features/session/SummaryScreen.tsx
+msgid "Bring the lighter week forward"
 msgstr ""
 
 #. placeholder {0}: check.week
@@ -1103,11 +1445,13 @@ msgid "calf raise"
 msgstr ""
 
 #: src/features/plan/PlanScreen.tsx
+#: src/features/session/StartScreen.tsx
 msgid "Calibration: start conservatively so POWR can learn your loads."
 msgstr ""
 
 #: src/features/equipment/EquipmentScreens.tsx
 #: src/features/plan/PlanScreen.tsx
+#: src/features/session/past/PastSessionEditor.tsx
 msgid "Cancel"
 msgstr ""
 
@@ -1143,16 +1487,36 @@ msgstr ""
 msgid "Change the plan"
 msgstr ""
 
+#: src/features/session/LoggingView.tsx
+msgid "Change the values"
+msgstr ""
+
 #: src/features/plan/PlanEditorScreen.tsx
 msgid "Change weekly targets"
+msgstr ""
+
+#: src/features/session/LoggingView.tsx
+msgid "Changed by mistake?"
+msgstr ""
+
+#: src/features/session/SummaryScreen.tsx
+msgid "Changes you accepted"
 msgstr ""
 
 #: src/features/equipment/EquipmentScreens.tsx
 msgid "Check the highlighted fields: every item needs a name."
 msgstr ""
 
+#: src/features/session/words.ts
+msgid "Check the values: weight and reps cannot be negative."
+msgstr ""
+
 #: src/features/onboarding/OnboardingFlow.tsx
 msgid "Check the weights and reps of your lifts."
+msgstr ""
+
+#: src/features/session/LoggingView.tsx
+msgid "Check this set"
 msgstr ""
 
 #: src/features/onboarding/OnboardingFlow.tsx
@@ -1167,6 +1531,10 @@ msgstr ""
 msgid "Check your training days and session time."
 msgstr ""
 
+#: src/features/settings/WorkoutSection.tsx
+msgid "Check-in before a workout"
+msgstr ""
+
 #: src/features/plan/PlanEditorScreen.tsx
 msgid "Checking…"
 msgstr ""
@@ -1179,6 +1547,10 @@ msgstr ""
 msgid "chest fly"
 msgstr ""
 
+#: src/features/session/past/LogPastSessionScreen.tsx
+msgid "Choose a date that is today or earlier."
+msgstr ""
+
 #: src/features/plan/TemplateChooser.tsx
 msgid "Choose a different plan"
 msgstr ""
@@ -1189,6 +1561,10 @@ msgstr ""
 
 #: src/features/data/DataScreen.tsx
 msgid "Choose a POWR backup file (.zip)"
+msgstr ""
+
+#: src/features/session/LoggingView.tsx
+msgid "Choose a weight you could lift about 12 times, and stop with 3 to 4 reps left in the tank. POWR learns your loads from these sets."
 msgstr ""
 
 #: src/features/onboarding/OnboardingFlow.tsx
@@ -1223,8 +1599,17 @@ msgstr ""
 #: src/features/plan/PlanEditorScreen.tsx
 #: src/features/plan/PlanScreen.tsx
 #: src/features/plan/TemplateChooser.tsx
+#: src/features/session/ExerciseList.tsx
+#: src/features/session/loads.tsx
+#: src/features/session/LoggingView.tsx
+#: src/features/session/past/PastSessionEditor.tsx
+#: src/features/session/SetDetailsSheet.tsx
 #: src/features/why/WhySheet.tsx
 msgid "Close"
+msgstr ""
+
+#: src/features/session/words.ts
+msgid "Cluster set"
 msgstr ""
 
 #: src/features/why/WhySheet.tsx
@@ -1235,12 +1620,24 @@ msgstr ""
 msgid "Collar weight (each)"
 msgstr ""
 
-#: src/features/session/LogSetScreen.tsx
+#: src/features/session/past/parts.tsx
+msgid "Compound lifts {rir} rep easier (short sleep)"
+msgstr ""
+
+#: src/features/session/CheckIn.tsx
+msgid "Compound lifts one rep easier (+1 rep in reserve)"
+msgstr ""
+
+#: src/features/session/LoggingView.tsx
 msgid "Confirm set"
 msgstr ""
 
 #: src/features/onboarding/OnboardingFlow.tsx
 msgid "Confirm that you are 16 or older."
+msgstr ""
+
+#: src/features/session/SummaryScreen.tsx
+msgid "Consider bringing your lighter week forward"
 msgstr ""
 
 #: src/features/onboarding/OnboardingFlow.tsx
@@ -1255,9 +1652,33 @@ msgstr ""
 msgid "core"
 msgstr ""
 
+#: src/features/settings/WorkoutSection.tsx
+msgid "Count down"
+msgstr ""
+
+#: src/features/settings/WorkoutSection.tsx
+msgid "Count up, ready when you are"
+msgstr ""
+
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.volume.muscles"
+msgstr ""
+
+#: src/features/session/SummaryScreen.tsx
+msgid "Counted as fractional sets: a set counts fully for the muscles it trains directly and partly for the others."
+msgstr ""
+
+#: src/features/settings/WorkoutSection.tsx
+msgid "Counts down the evidence-based rest for each exercise."
+msgstr ""
+
+#: src/features/session/SummaryScreen.tsx
+msgid "Counts for your weekly streak"
+msgstr ""
+
+#: src/features/settings/WorkoutSection.tsx
+msgid "Counts up from the end of a set, with a gentle cue after a short minimum (60 s for isolation, 90 s for compound exercises)."
 msgstr ""
 
 #. js-lingui-explicit-id
@@ -1273,6 +1694,10 @@ msgstr ""
 msgid "curl"
 msgstr ""
 
+#: src/features/session/ExerciseList.tsx
+msgid "current"
+msgstr ""
+
 #: src/features/labels.ts
 msgid "daily undulating"
 msgstr ""
@@ -1286,12 +1711,12 @@ msgstr ""
 msgid "Data and backups"
 msgstr ""
 
-#: src/features/labels.ts
-msgid "deadlift"
+#: src/features/session/past/LogPastSessionScreen.tsx
+msgid "Date"
 msgstr ""
 
-#: src/features/session/LogSetScreen.tsx
-msgid "Decrease load"
+#: src/features/labels.ts
+msgid "deadlift"
 msgstr ""
 
 #: src/features/equipment/EquipmentScreens.tsx
@@ -1304,12 +1729,37 @@ msgid "Default for your situation"
 msgstr ""
 
 #: src/features/equipment/EquipmentScreens.tsx
+#: src/features/session/past/PastSessionEditor.tsx
 msgid "Delete"
 msgstr ""
 
 #. placeholder {0}: deleting?.name ?? ''
 #: src/features/equipment/EquipmentScreens.tsx
 msgid "Delete {0}?"
+msgstr ""
+
+#: src/features/session/ExerciseList.tsx
+msgid "Delete set"
+msgstr ""
+
+#: src/features/session/past/PastSessionEditor.tsx
+msgid "Delete set {number}, {name}"
+msgstr ""
+
+#: src/features/session/past/PastSessionEditor.tsx
+msgid "Delete this workout"
+msgstr ""
+
+#: src/features/session/past/PastSessionEditor.tsx
+msgid "Delete this workout?"
+msgstr ""
+
+#: src/features/session/past/PastSessionEditor.tsx
+msgid "Delete workout"
+msgstr ""
+
+#: src/features/session/past/PastSessionEditor.tsx
+msgid "Deletes the workout and its sets. Records and estimates are recalculated without it."
 msgstr ""
 
 #: src/features/why/WhySheet.tsx
@@ -1327,7 +1777,16 @@ msgstr ""
 msgid "Discard"
 msgstr ""
 
+#: src/features/session/ExerciseList.tsx
+msgid "Discard this workout?"
+msgstr ""
+
+#: src/features/session/ExerciseList.tsx
+msgid "Discard workout"
+msgstr ""
+
 #: src/features/plan/parts.tsx
+#: src/features/session/LoggingView.tsx
 msgid "Dismiss"
 msgstr ""
 
@@ -1353,8 +1812,30 @@ msgstr ""
 msgid "why.validate.order.lift.simple"
 msgstr ""
 
+#: src/features/session/CheckIn.tsx
+msgid "Do the lighter session today"
+msgstr ""
+
+#: src/features/session/SummaryScreen.tsx
+msgid "Does not count for the streak: less than half of the planned sets done"
+msgstr ""
+
+#: src/features/session/LoggingView.tsx
+msgid "Don't show this hint again"
+msgstr ""
+
+#: src/features/session/ExerciseList.tsx
+msgid "done"
+msgstr ""
+
 #: src/features/labels.ts
+#: src/features/session/SetDetailsSheet.tsx
+#: src/features/session/SummaryScreen.tsx
 msgid "Done"
+msgstr ""
+
+#: src/features/session/SummaryScreen.tsx
+msgid "Done: your lighter week starts next week."
 msgstr ""
 
 #. js-lingui-explicit-id
@@ -1366,12 +1847,32 @@ msgstr ""
 msgid "double progression (more reps, then more weight)"
 msgstr ""
 
+#: src/features/settings/WorkoutSection.tsx
+msgid "Down"
+msgstr ""
+
+#: src/features/session/CheckIn.tsx
+msgid "Drop {sets} back-off set(s)"
+msgstr ""
+
+#: src/features/session/words.ts
+msgid "Drop set"
+msgstr ""
+
+#: src/features/session/words.ts
+msgid "Drops"
+msgstr ""
+
 #: src/features/equipment/EquipmentEditor.tsx
 msgid "Dumbbell weights"
 msgstr ""
 
 #: src/features/equipment/EquipmentEditor.tsx
 msgid "Dumbbells"
+msgstr ""
+
+#: src/features/session/SummaryScreen.tsx
+msgid "Duration"
 msgstr ""
 
 #: src/features/equipment/EquipmentEditor.tsx
@@ -1383,16 +1884,26 @@ msgstr ""
 msgid "why.validate.deload.missing"
 msgstr ""
 
+#: src/features/session/CheckIn.tsx
+msgid "Ease back in: {low}–{high}% of your usual weights"
+msgstr ""
+
+#: src/features/session/past/parts.tsx
+msgid "Eased back in after {days} days off"
+msgstr ""
+
 #: src/features/plan/PlanScreen.tsx
 msgid "Easing back in"
 msgstr ""
 
 #. placeholder {0}: adjustment.daysOff ?? 0
 #: src/features/plan/PlanScreen.tsx
+#: src/features/session/StartScreen.tsx
 msgid "Easing back in after {0} days off: lighter loads and fewer sets this time."
 msgstr ""
 
 #: src/features/equipment/EquipmentScreens.tsx
+#: src/features/session/past/PastSessionEditor.tsx
 msgid "Edit"
 msgstr ""
 
@@ -1410,16 +1921,68 @@ msgstr ""
 msgid "Edit plan"
 msgstr ""
 
+#: src/features/session/ExerciseList.tsx
+msgid "Edit set"
+msgstr ""
+
+#: src/features/session/past/PastSessionEditor.tsx
+msgid "Edit set {number}"
+msgstr ""
+
+#: src/features/session/past/PastSessionEditor.tsx
+msgid "Edit set {number}, {name}"
+msgstr ""
+
+#: src/features/session/SummaryScreen.tsx
+msgid "Edit this workout"
+msgstr ""
+
+#: src/features/session/past/PastSessionEditor.tsx
+msgid "Edit workout"
+msgstr ""
+
 #: src/features/labels.ts
 msgid "effort-based loading (RPE)"
+msgstr ""
+
+#: src/features/session/ExerciseList.tsx
+msgid "Empty: the evidence-based default for this exercise."
+msgstr ""
+
+#: src/features/session/ExerciseList.tsx
+msgid "End of the exercise list"
 msgstr ""
 
 #: src/hooks/use-timers.ts
 msgid "Ends at {endsAt}"
 msgstr ""
 
+#: src/features/session/CheckIn.tsx
+msgid "Energy"
+msgstr ""
+
 #: src/features/onboarding/OnboardingFlow.tsx
 msgid "Enter a four-digit year, e.g. 1990, or leave it empty."
+msgstr ""
+
+#: src/features/session/past/set-fields.tsx
+msgid "Enter a weight from 0 to 2000, or leave it empty for bodyweight."
+msgstr ""
+
+#: src/features/session/past/set-fields.tsx
+msgid "Enter reps in reserve from 0 to 10, in steps of 0.5."
+msgstr ""
+
+#: src/features/session/past/set-fields.tsx
+msgid "Enter the reps as a whole number from 0 to 1000."
+msgstr ""
+
+#: src/features/session/past/set-fields.tsx
+msgid "Enter the reps."
+msgstr ""
+
+#: src/features/session/LoggingView.tsx
+msgid "Enter the weight first."
 msgstr ""
 
 #: src/features/onboarding/OnboardingFlow.tsx
@@ -1441,6 +2004,10 @@ msgstr ""
 
 #: src/features/equipment/EquipmentScreens.tsx
 msgid "Equipment saved."
+msgstr ""
+
+#: src/features/session/SummaryScreen.tsx
+msgid "Estimated 1-rep max"
 msgstr ""
 
 #. js-lingui-explicit-id
@@ -1467,6 +2034,10 @@ msgstr ""
 msgid "Every exercise stays: your plan keeps what works."
 msgstr ""
 
+#: src/features/session/ExerciseList.tsx
+msgid "Every planned set is done."
+msgstr ""
+
 #: src/features/legal/LegalScreens.tsx
 #: src/features/onboarding/OnboardingFlow.tsx
 msgid "Everything you enter is stored only on this device. We never receive it: there is no account, analytics or tracking. Only you can export it, as a backup file."
@@ -1476,12 +2047,21 @@ msgstr ""
 msgid "evidence band"
 msgstr ""
 
-#: src/features/session/LogSetScreen.tsx
-msgid "Exercise"
+#. placeholder {0}: position + 1
+#: src/features/session/ExerciseList.tsx
+msgid "Exercise {0}:"
 msgstr ""
 
 #: src/features/plan/NextMesocycleScreen.tsx
 msgid "Exercise changes"
+msgstr ""
+
+#: src/features/session/ExerciseList.tsx
+msgid "Exercise note"
+msgstr ""
+
+#: src/features/session/ExerciseList.tsx
+msgid "Exercises"
 msgstr ""
 
 #: src/features/plan/PlanEditorScreen.tsx
@@ -1497,6 +2077,14 @@ msgstr ""
 msgid "Export backup"
 msgstr ""
 
+#: src/features/session/SetDetailsSheet.tsx
+msgid "Extra volume credit for techniques is a heuristic, not a measured value."
+msgstr ""
+
+#: src/features/session/words.ts
+msgid "Failure on a heavy compound lift"
+msgstr ""
+
 #: src/features/onboarding/steps.tsx
 msgid "Female"
 msgstr ""
@@ -1505,29 +2093,58 @@ msgstr ""
 msgid "Female reference values"
 msgstr ""
 
-#: src/features/session/LogSetScreen.tsx
-msgid "Fewer reps"
-msgstr ""
-
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.deload.reactive.none"
+msgstr ""
+
+#: src/features/session/past/LogPastSessionScreen.tsx
+msgid "Find an exercise"
 msgstr ""
 
 #: src/features/onboarding/steps.tsx
 msgid "Find an exercise to avoid"
 msgstr ""
 
+#: src/features/session/ExerciseList.tsx
+msgid "Finding alternatives…"
+msgstr ""
+
 #: src/features/onboarding/BaselinesStep.tsx
 msgid "Finding the main lifts of your plan…"
 msgstr ""
 
-#: src/features/session/LogSetScreen.tsx
+#: src/features/session/ExerciseList.tsx
+msgid "Finish as partial"
+msgstr ""
+
+#: src/features/session/LoggingView.tsx
+msgid "Finish at the last logged set"
+msgstr ""
+
+#: src/features/session/ExerciseList.tsx
+#: src/features/session/LoggingView.tsx
 msgid "Finish workout"
+msgstr ""
+
+#: src/features/session/ExerciseList.tsx
+msgid "Finish workout?"
+msgstr ""
+
+#: src/features/session/SummaryScreen.tsx
+msgid "Finished as partial"
 msgstr ""
 
 #: src/features/settings/SettingsScreen.tsx
 msgid "First day of the week"
+msgstr ""
+
+#: src/features/session/SummaryScreen.tsx
+msgid "First estimate: {after}"
+msgstr ""
+
+#: src/features/session/SummaryScreen.tsx
+msgid "First time"
 msgstr ""
 
 #. js-lingui-explicit-id
@@ -1543,8 +2160,20 @@ msgstr ""
 msgid "For an injury or a dislike. POWR never plans or suggests them."
 msgstr ""
 
+#: src/features/session/ExerciseList.tsx
+msgid "For how long?"
+msgstr ""
+
+#: src/features/session/ExerciseList.tsx
+msgid "For the rest of this block"
+msgstr ""
+
 #: src/features/labels.ts
 msgid "Free weights"
+msgstr ""
+
+#: src/features/session/StartScreen.tsx
+msgid "Freestyle"
 msgstr ""
 
 #: src/features/plan/PlanScreen.tsx
@@ -1593,6 +2222,10 @@ msgstr ""
 msgid "Give your equipment a name."
 msgstr ""
 
+#: src/features/session/RestPanel.tsx
+msgid "Go · +{over}"
+msgstr ""
+
 #: src/features/shell/NotFound.tsx
 msgid "Go to Home"
 msgstr ""
@@ -1604,6 +2237,24 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.guardrail.failure"
+msgstr ""
+
+#: src/features/session/ExerciseList.tsx
+#: src/features/session/SetDetailsSheet.tsx
+msgid "Half a rep less in reserve"
+msgstr ""
+
+#: src/features/session/ExerciseList.tsx
+#: src/features/session/SetDetailsSheet.tsx
+msgid "Half a rep more in reserve"
+msgstr ""
+
+#: src/features/session/CheckIn.tsx
+msgid "Half an hour less sleep"
+msgstr ""
+
+#: src/features/session/CheckIn.tsx
+msgid "Half an hour more sleep"
 msgstr ""
 
 #: src/features/plan/PlanPreviewView.tsx
@@ -1637,6 +2288,14 @@ msgstr ""
 msgid "Hide dismissed warnings"
 msgstr ""
 
+#: src/features/session/LoggingView.tsx
+msgid "Hints"
+msgstr ""
+
+#: src/features/settings/WorkoutSection.tsx
+msgid "Hints during a workout"
+msgstr ""
+
 #: src/features/labels.ts
 msgid "hip abduction"
 msgstr ""
@@ -1664,6 +2323,14 @@ msgstr ""
 
 #: src/features/legal/LegalScreens.tsx
 msgid "Hosting"
+msgstr ""
+
+#: src/features/session/CheckIn.tsx
+msgid "Hours of sleep last night"
+msgstr ""
+
+#: src/features/session/CheckIn.tsx
+msgid "How are you today?"
 msgstr ""
 
 #. js-lingui-explicit-id
@@ -1694,6 +2361,18 @@ msgstr ""
 
 #: src/features/onboarding/BaselinesStep.tsx
 msgid "How many more reps could you have done? Not sure is fine."
+msgstr ""
+
+#: src/features/session/past/set-fields.tsx
+msgid "How many more reps you could have done."
+msgstr ""
+
+#: src/features/session/CheckIn.tsx
+msgid "How recovered do you feel?"
+msgstr ""
+
+#: src/features/session/LoggingView.tsx
+msgid "How to do it"
 msgstr ""
 
 #. js-lingui-explicit-id
@@ -1754,11 +2433,8 @@ msgid "Inches (in)"
 msgstr ""
 
 #: src/features/plan/PlanScreen.tsx
+#: src/features/session/StartScreen.tsx
 msgid "Includes key work from a missed session."
-msgstr ""
-
-#: src/features/session/LogSetScreen.tsx
-msgid "Increase load"
 msgstr ""
 
 #: src/features/labels.ts
@@ -1769,6 +2445,10 @@ msgstr ""
 msgid "intermediate"
 msgstr ""
 
+#: src/features/session/words.ts
+msgid "It is too late to undo that."
+msgstr ""
+
 #: src/features/equipment/EquipmentEditor.tsx
 msgid "Item name"
 msgstr ""
@@ -1777,8 +2457,16 @@ msgstr ""
 msgid "Just let me log"
 msgstr ""
 
+#: src/features/session/loads.tsx
+msgid "Just the bar"
+msgstr ""
+
 #: src/features/plan/PlanEditorScreen.tsx
 msgid "Keep {name} in the next block"
+msgstr ""
+
+#: src/features/session/past/PastSessionEditor.tsx
+msgid "Keep it"
 msgstr ""
 
 #: src/features/equipment/SubstitutionReview.tsx
@@ -1810,8 +2498,21 @@ msgstr ""
 msgid "Keep screen on: Used during workouts."
 msgstr ""
 
+#: src/features/session/CheckIn.tsx
+msgid "Keep the plan as it is"
+msgstr ""
+
 #: src/features/settings/AlertsSection.tsx
 msgid "Keep the screen on during workouts"
+msgstr ""
+
+#: src/features/session/ExerciseList.tsx
+msgid "Keep the workout"
+msgstr ""
+
+#: src/features/session/ExerciseList.tsx
+#: src/features/session/LoggingView.tsx
+msgid "Keep training"
 msgstr ""
 
 #: src/features/equipment/EquipmentEditor.tsx
@@ -1820,10 +2521,6 @@ msgstr ""
 
 #: src/features/equipment/EquipmentEditor.tsx
 msgid "Kettlebells"
-msgstr ""
-
-#: src/features/session/LogSetScreen.tsx
-msgid "kg"
 msgstr ""
 
 #: src/features/equipment/EquipmentEditor.tsx
@@ -1844,8 +2541,20 @@ msgstr ""
 msgid "why.progression.linear.increase"
 msgstr ""
 
+#: src/features/session/LoggingView.tsx
+msgid "Last time ({date}):"
+msgstr ""
+
+#: src/features/session/StartScreen.tsx
+msgid "Later this week"
+msgstr ""
+
 #: src/features/labels.ts
 msgid "lateral raise"
+msgstr ""
+
+#: src/features/session/past/set-fields.tsx
+msgid "Leave empty for bodyweight."
 msgstr ""
 
 #: src/features/plan/PlanScreen.tsx
@@ -1860,12 +2569,25 @@ msgstr ""
 msgid "Legal framework"
 msgstr ""
 
+#: src/features/session/words.ts
+msgid "Lengthened partials"
+msgstr ""
+
 #: src/features/onboarding/steps.tsx
 msgid "Lengths in"
 msgstr ""
 
+#: src/features/session/LoggingView.tsx
+msgid "Less assistance"
+msgstr ""
+
 #: src/features/labels.ts
 msgid "Less than 6 months"
+msgstr ""
+
+#: src/features/session/ExerciseList.tsx
+#: src/features/session/LoggingView.tsx
+msgid "Less weight"
 msgstr ""
 
 #: src/features/plan/PlanPreviewView.tsx
@@ -1913,11 +2635,20 @@ msgid "lighter week (deload), week {blockWeek} of {weeks}"
 msgstr ""
 
 #: src/features/plan/PlanScreen.tsx
+#: src/features/session/StartScreen.tsx
 msgid "Lighter week: fewer sets and more reps in reserve, so you recover and come back stronger."
 msgstr ""
 
 #: src/features/settings/SettingsScreen.tsx
 msgid "Like this phone ({localeDay})"
+msgstr ""
+
+#: src/features/session/past/parts.tsx
+msgid "Likely a real drop"
+msgstr ""
+
+#: src/features/session/past/parts.tsx
+msgid "Likely a real gain"
 msgstr ""
 
 #: src/features/settings/AlertsSection.tsx
@@ -1940,12 +2671,16 @@ msgstr ""
 msgid "linear (a little more weight each session)"
 msgstr ""
 
-#: src/features/session/LogSetScreen.tsx
-msgid "Load"
-msgstr ""
-
 #: src/features/plan/TemplateChooser.tsx
 msgid "Loading the plans…"
+msgstr ""
+
+#: src/features/session/past/PastSessionEditor.tsx
+msgid "Loading the workout…"
+msgstr ""
+
+#: src/features/session/past/PastSessionsScreen.tsx
+msgid "Loading your workouts…"
 msgstr ""
 
 #: src/features/equipment/EquipmentScreens.tsx
@@ -1960,13 +2695,46 @@ msgstr ""
 msgid "why.ranking.factor.stretch"
 msgstr ""
 
+#: src/features/session/past/LogPastSessionScreen.tsx
+#: src/features/session/past/PastSessionsScreen.tsx
+msgid "Log a past workout"
+msgstr ""
+
 #: src/features/home/HomeScreen.tsx
-#: src/features/session/LogSetScreen.tsx
 msgid "Log a set"
+msgstr ""
+
+#: src/features/session/ExerciseList.tsx
+msgid "Log both sides together"
+msgstr ""
+
+#: src/features/session/StartScreen.tsx
+msgid "Log freely, or get a plan for your days, time and equipment."
+msgstr ""
+
+#: src/features/session/LoggingView.tsx
+msgid "Log it anyway"
+msgstr ""
+
+#: src/features/session/ExerciseList.tsx
+msgid "Log left and right separately"
+msgstr ""
+
+#: src/features/session/words.ts
+msgid "Log or enter a working weight first."
+msgstr ""
+
+#: src/features/session/LoggingView.tsx
+msgid "Log this set"
 msgstr ""
 
 #: src/features/home/HomeScreen.tsx
 msgid "Log your first set. Everything stays on this phone."
+msgstr ""
+
+#: src/features/session/past/PastSessionEditor.tsx
+#: src/features/session/past/PastSessionsScreen.tsx
+msgid "Logged later"
 msgstr ""
 
 #: src/features/labels.ts
@@ -2033,6 +2801,10 @@ msgstr ""
 msgid "Microplates"
 msgstr ""
 
+#: src/features/session/words.ts
+msgid "Mini-sets"
+msgstr ""
+
 #: src/hooks/use-timers.ts
 msgid "Minimum rest reached"
 msgstr ""
@@ -2041,8 +2813,8 @@ msgstr ""
 msgid "Models differ: check the weight on your bar."
 msgstr ""
 
-#: src/features/session/LogSetScreen.tsx
-msgid "More reps"
+#: src/features/session/LoggingView.tsx
+msgid "More assistance"
 msgstr ""
 
 #: src/features/labels.ts
@@ -2053,6 +2825,15 @@ msgstr ""
 msgid "More than 5 years"
 msgstr ""
 
+#: src/features/session/ExerciseList.tsx
+#: src/features/session/LoggingView.tsx
+msgid "More weight"
+msgstr ""
+
+#: src/features/session/CheckIn.tsx
+msgid "Motivation"
+msgstr ""
+
 #: src/features/plan/PlanEditorScreen.tsx
 msgid "Move {name} down"
 msgstr ""
@@ -2061,8 +2842,16 @@ msgstr ""
 msgid "Move {name} up"
 msgstr ""
 
+#: src/features/session/ExerciseList.tsx
+msgid "Move down"
+msgstr ""
+
 #: src/features/plan/PlanScreen.tsx
 msgid "Move to another day"
+msgstr ""
+
+#: src/features/session/ExerciseList.tsx
+msgid "Move up"
 msgstr ""
 
 #. js-lingui-explicit-id
@@ -2096,8 +2885,8 @@ msgstr ""
 msgid "My equipment"
 msgstr ""
 
-#: src/features/session/LogSetScreen.tsx
-msgid "n/a"
+#: src/features/session/words.ts
+msgid "Myo-reps"
 msgstr ""
 
 #: src/features/equipment/EquipmentEditor.tsx
@@ -2121,6 +2910,26 @@ msgstr ""
 msgid "New equipment"
 msgstr ""
 
+#: src/features/session/words.ts
+msgid "New estimated 1-rep max on {name}: {value}"
+msgstr ""
+
+#: src/features/session/SummaryScreen.tsx
+msgid "New exercises today: {firstTimes}. POWR starts tracking them from these sets."
+msgstr ""
+
+#: src/features/session/words.ts
+msgid "New heaviest weight on {name}: {value}"
+msgstr ""
+
+#: src/features/session/LoggingView.tsx
+msgid "New personal record"
+msgstr ""
+
+#: src/features/session/SummaryScreen.tsx
+msgid "New personal records"
+msgstr ""
+
 #: src/features/home/HomeScreen.tsx
 msgid "New phone? Restore your training data from a backup file."
 msgstr ""
@@ -2129,8 +2938,16 @@ msgstr ""
 msgid "New plan"
 msgstr ""
 
+#: src/features/session/words.ts
+msgid "New rep PR on {name}: {value} for {reps}"
+msgstr ""
+
 #: src/features/labels.ts
 msgid "New to me"
+msgstr ""
+
+#: src/features/session/words.ts
+msgid "New volume record on {name}: {value}"
 msgstr ""
 
 #: src/features/plan/NextMesocycleScreen.tsx
@@ -2138,6 +2955,8 @@ msgstr ""
 msgid "Next block"
 msgstr ""
 
+#: src/features/session/RestPanel.tsx
+#: src/features/session/SessionRuntime.tsx
 #: src/hooks/use-timers.ts
 msgid "Next exercise"
 msgstr ""
@@ -2154,9 +2973,17 @@ msgstr ""
 msgid "Next week"
 msgstr ""
 
+#: src/features/session/RestPanel.tsx
+msgid "Next: {name}"
+msgstr ""
+
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.plan.slot.substituted.simple"
+msgstr ""
+
+#: src/features/session/ExerciseList.tsx
+msgid "No alternative fits your equipment."
 msgstr ""
 
 #: src/features/data/DataScreen.tsx
@@ -2172,12 +2999,28 @@ msgstr ""
 msgid "No equipment yet. Add what your gym has."
 msgstr ""
 
+#: src/features/session/SummaryScreen.tsx
+msgid "No estimate from these sets"
+msgstr ""
+
+#: src/features/session/ExerciseList.tsx
+msgid "No exercise matches."
+msgstr ""
+
+#: src/features/session/past/LogPastSessionScreen.tsx
+msgid "No exercise matches. Try another name."
+msgstr ""
+
 #: src/features/equipment/SubstitutionReview.tsx
 msgid "No exercise with your equipment trains the same muscles. It stays in the plan and is marked as unavailable until you change it in the plan editor."
 msgstr ""
 
 #: src/features/plan/PlanEditorScreen.tsx
 msgid "No exercise with your equipment trains this muscle directly."
+msgstr ""
+
+#: src/features/session/past/PastSessionsScreen.tsx
+msgid "No finished workouts in the last year yet. Workouts you finish, and workouts you log for a past date, show here."
 msgstr ""
 
 #: src/features/plan/NextMesocycleScreen.tsx
@@ -2215,6 +3058,10 @@ msgstr ""
 msgid "No sound."
 msgstr ""
 
+#: src/features/session/words.ts
+msgid "No timer is running."
+msgstr ""
+
 #: src/features/settings/AlertsSection.tsx
 msgid "No vibration."
 msgstr ""
@@ -2230,6 +3077,7 @@ msgid "why.warmup.none"
 msgstr ""
 
 #: src/features/plan/format.ts
+#: src/features/session/SetDetailsSheet.tsx
 msgid "None"
 msgstr ""
 
@@ -2246,6 +3094,10 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.trend.change.insufficientData"
+msgstr ""
+
+#: src/features/session/past/parts.tsx
+msgid "Not enough sessions yet to tell a real change"
 msgstr ""
 
 #. js-lingui-explicit-id
@@ -2267,8 +3119,12 @@ msgstr ""
 msgid "Not quite right?"
 msgstr ""
 
-#: src/features/session/LogSetScreen.tsx
-msgid "Not saved. Check the values and try again."
+#: src/features/session/past/PastSessionEditor.tsx
+msgid "Not saved"
+msgstr ""
+
+#: src/features/session/StartScreen.tsx
+msgid "Not started"
 msgstr ""
 
 #: src/features/settings/AlertsSection.tsx
@@ -2287,8 +3143,36 @@ msgstr ""
 msgid "Not tracking"
 msgstr ""
 
+#: src/features/session/ExerciseList.tsx
+#: src/features/session/SummaryScreen.tsx
+msgid "Note"
+msgstr ""
+
+#: src/features/session/past/LogPastSessionScreen.tsx
+msgid "Note (optional)"
+msgstr ""
+
+#: src/features/session/ExerciseList.tsx
+msgid "Note on this exercise"
+msgstr ""
+
+#: src/features/session/SetDetailsSheet.tsx
+msgid "Note on this set"
+msgstr ""
+
+#. placeholder {0}: last.note
+#. placeholder {0}: slot.note
+#: src/features/session/ExerciseList.tsx
+#: src/features/session/LoggingView.tsx
+msgid "Note: {0}"
+msgstr ""
+
 #: src/features/plan/PlanScreen.tsx
 msgid "Nothing is dropped without you deciding. Choose for each one:"
+msgstr ""
+
+#: src/features/session/StartScreen.tsx
+msgid "Nothing is planned for today. You can start a session of this week early."
 msgstr ""
 
 #: src/features/home/HomeScreen.tsx
@@ -2331,8 +3215,32 @@ msgstr ""
 msgid "Official standard"
 msgstr ""
 
+#: src/features/session/LoggingView.tsx
+msgid "OK"
+msgstr ""
+
 #: src/features/labels.ts
 msgid "On break"
+msgstr ""
+
+#: src/features/session/loads.tsx
+msgid "One {name} plate less per side"
+msgstr ""
+
+#: src/features/session/loads.tsx
+msgid "One {name} plate more per side"
+msgstr ""
+
+#: src/features/session/SetDetailsSheet.tsx
+msgid "One fewer"
+msgstr ""
+
+#: src/features/session/SetDetailsSheet.tsx
+msgid "One more"
+msgstr ""
+
+#: src/features/session/past/LogPastSessionScreen.tsx
+msgid "One of the exercises is not in the library any more."
 msgstr ""
 
 #: src/features/equipment/EquipmentEditor.tsx
@@ -2343,12 +3251,46 @@ msgstr ""
 msgid "One pair more of {weight}"
 msgstr ""
 
+#: src/features/session/ExerciseList.tsx
+#: src/features/session/LoggingView.tsx
+msgid "One rep fewer"
+msgstr ""
+
+#: src/features/session/LoggingView.tsx
+msgid "One rep fewer on the left"
+msgstr ""
+
+#: src/features/session/LoggingView.tsx
+msgid "One rep fewer on the right"
+msgstr ""
+
+#: src/features/session/ExerciseList.tsx
+#: src/features/session/LoggingView.tsx
+msgid "One rep more"
+msgstr ""
+
+#: src/features/session/LoggingView.tsx
+msgid "One rep more on the left"
+msgstr ""
+
+#: src/features/session/LoggingView.tsx
+msgid "One rep more on the right"
+msgstr ""
+
 #: src/features/plan/PlanEditorScreen.tsx
 msgid "One set fewer of {name}"
 msgstr ""
 
 #: src/features/plan/PlanEditorScreen.tsx
 msgid "One set more of {name}"
+msgstr ""
+
+#: src/features/session/CheckIn.tsx
+msgid "One working set fewer per exercise"
+msgstr ""
+
+#: src/features/session/past/parts.tsx
+msgid "One working set fewer per exercise (short sleep)"
 msgstr ""
 
 #. js-lingui-explicit-id
@@ -2366,6 +3308,10 @@ msgstr ""
 
 #: src/features/onboarding/steps.tsx
 msgid "Optional. Used for strength scores and body-weight trends; it stays on this phone."
+msgstr ""
+
+#: src/features/session/ExerciseList.tsx
+msgid "Options for {name}"
 msgstr ""
 
 #: src/features/labels.ts
@@ -2388,8 +3334,31 @@ msgstr ""
 msgid "Page not found"
 msgstr ""
 
+#: src/features/session/SetDetailsSheet.tsx
+msgid "Pain or discomfort"
+msgstr ""
+
 #: src/features/plan/format.ts
 msgid "Pair {first} and {second} as a superset"
+msgstr ""
+
+#: src/features/session/past/PastSessionEditor.tsx
+#: src/features/session/past/PastSessionsScreen.tsx
+msgid "Partial"
+msgstr ""
+
+#: src/features/session/words.ts
+msgid "Partial blocks"
+msgstr ""
+
+#: src/features/session/words.ts
+msgid "Partials after failure"
+msgstr ""
+
+#: src/features/placeholder/screens.tsx
+#: src/features/session/past/PastSessionsScreen.tsx
+#: src/features/session/StartScreen.tsx
+msgid "Past sessions"
 msgstr ""
 
 #: src/features/legal/LegalScreens.tsx
@@ -2406,6 +3375,10 @@ msgstr ""
 
 #: src/features/equipment/SubstitutionReview.tsx
 msgid "Pick a replacement for each one. The best match for the same muscles comes first. Changes apply from your next session."
+msgstr ""
+
+#: src/features/session/LoggingView.tsx
+msgid "Pick a starting weight"
 msgstr ""
 
 #: src/features/onboarding/OnboardingFlow.tsx
@@ -2432,6 +3405,7 @@ msgstr ""
 
 #: src/features/home/HomeScreen.tsx
 #: src/features/plan/PlanScreen.tsx
+#: src/features/session/StartScreen.tsx
 msgid "Plan not set up"
 msgstr ""
 
@@ -2463,6 +3437,18 @@ msgstr ""
 
 #: src/features/equipment/EquipmentEditor.tsx
 msgid "Plate inventory"
+msgstr ""
+
+#: src/features/session/loads.tsx
+msgid "Plates"
+msgstr ""
+
+#: src/features/session/loads.tsx
+msgid "Plates for {target}"
+msgstr ""
+
+#: src/features/session/past/LogPastSessionScreen.tsx
+msgid "Please check the workout"
 msgstr ""
 
 #: src/features/onboarding/OnboardingFlow.tsx
@@ -2519,6 +3505,10 @@ msgstr ""
 msgid "POWR uses notifications only for rest timers: one when a rest ends while you are away from the app, and an optional silent one with the end time. Nothing is sent over the internet."
 msgstr ""
 
+#: src/features/session/ExerciseList.tsx
+msgid "PR"
+msgstr ""
+
 #: src/features/onboarding/steps.tsx
 msgid "Prefer not to say"
 msgstr ""
@@ -2533,6 +3523,10 @@ msgstr ""
 
 #: src/features/plan/NextMesocycleScreen.tsx
 msgid "Preparing the next block…"
+msgstr ""
+
+#: src/features/session/SummaryScreen.tsx
+msgid "Preparing the summary…"
 msgstr ""
 
 #: src/features/plan/PlanScreen.tsx
@@ -2590,6 +3584,10 @@ msgstr ""
 msgid "Raise the target for {name}"
 msgstr ""
 
+#: src/features/session/SetDetailsSheet.tsx
+msgid "Rate the effort (reps in reserve)"
+msgstr ""
+
 #: src/features/onboarding/OnboardingFlow.tsx
 msgid "Read the full health notice"
 msgstr ""
@@ -2602,6 +3600,7 @@ msgstr ""
 msgid "Ready for offline use"
 msgstr ""
 
+#: src/features/session/RestPanel.tsx
 #: src/hooks/use-timers.ts
 msgid "Ready when you are"
 msgstr ""
@@ -2631,6 +3630,10 @@ msgstr ""
 msgid "Reload"
 msgstr ""
 
+#: src/features/session/LoggingView.tsx
+msgid "Remember {time} rest for {name}"
+msgstr ""
+
 #. placeholder {0}: item.name
 #: src/features/equipment/EquipmentEditor.tsx
 msgid "Remove {0}"
@@ -2649,8 +3652,50 @@ msgstr ""
 msgid "Remove band {0}"
 msgstr ""
 
+#: src/features/session/past/LogPastSessionScreen.tsx
+#: src/features/session/past/PastSessionEditor.tsx
+msgid "Remove exercise"
+msgstr ""
+
+#: src/features/session/past/LogPastSessionScreen.tsx
+#: src/features/session/past/PastSessionEditor.tsx
+msgid "Remove exercise {name}"
+msgstr ""
+
+#: src/features/session/ExerciseList.tsx
+msgid "Remove from the superset"
+msgstr ""
+
+#: src/features/session/ExerciseList.tsx
+msgid "Remove from this workout"
+msgstr ""
+
+#: src/features/session/past/LogPastSessionScreen.tsx
+msgid "Remove set"
+msgstr ""
+
+#: src/features/session/past/LogPastSessionScreen.tsx
+msgid "Remove set {number}, {name}"
+msgstr ""
+
+#: src/features/session/ExerciseList.tsx
+msgid "Remove the last open set"
+msgstr ""
+
 #: src/features/plan/PlanEditorScreen.tsx
 msgid "Remove this day"
+msgstr ""
+
+#: src/features/session/StartScreen.tsx
+msgid "Repeat"
+msgstr ""
+
+#: src/features/session/StartScreen.tsx
+msgid "Repeat a past workout"
+msgstr ""
+
+#: src/features/session/StartScreen.tsx
+msgid "Repeat the workout of {date}"
 msgstr ""
 
 #: src/features/data/DataScreen.tsx
@@ -2674,16 +3719,43 @@ msgid "replaced by"
 msgstr ""
 
 #: src/features/onboarding/BaselinesStep.tsx
-#: src/features/session/LogSetScreen.tsx
+#: src/features/session/ExerciseList.tsx
+#: src/features/session/LoggingView.tsx
+#: src/features/session/past/set-fields.tsx
 msgid "Reps"
 msgstr ""
 
-#: src/features/session/LogSetScreen.tsx
+#: src/features/session/ExerciseList.tsx
+#: src/features/session/LoggingView.tsx
 msgid "Reps in reserve"
+msgstr ""
+
+#: src/features/session/past/set-fields.tsx
+msgid "Reps in reserve (optional)"
+msgstr ""
+
+#: src/features/session/SetDetailsSheet.tsx
+msgid "Reps in reserve, in half steps"
+msgstr ""
+
+#: src/features/session/LoggingView.tsx
+msgid "Reps in reserve: {halfText}"
 msgstr ""
 
 #: src/features/onboarding/BaselinesStep.tsx
 msgid "Reps left in the tank (RIR)"
+msgstr ""
+
+#: src/features/session/LoggingView.tsx
+msgid "Reps left side"
+msgstr ""
+
+#: src/features/session/LoggingView.tsx
+msgid "Reps right side"
+msgstr ""
+
+#: src/features/session/RestPanel.tsx
+msgid "Rest"
 msgstr ""
 
 #: src/features/plan/format.ts
@@ -2695,13 +3767,32 @@ msgstr ""
 msgid "why.rest.default.simple"
 msgstr ""
 
+#: src/features/session/ExerciseList.tsx
+msgid "Rest after {name}"
+msgstr ""
+
 #: src/features/plan/PlanScreen.tsx
+#: src/features/session/StartScreen.tsx
 msgid "Rest day"
 msgstr ""
 
 #: src/features/settings/AlertsSection.tsx
 #: src/hooks/use-timers.ts
 msgid "Rest over"
+msgstr ""
+
+#. placeholder {0}: formatClock(display.overMs, 'down')
+#: src/features/session/SessionRuntime.tsx
+msgid "Rest over · +{0}"
+msgstr ""
+
+#: src/features/session/RestPanel.tsx
+msgid "Rest over · +{over}"
+msgstr ""
+
+#. placeholder {0}: formatDurationLong(display.overMs)
+#: src/features/session/RestPanel.tsx
+msgid "Rest over, {0} ago"
 msgstr ""
 
 #: src/hooks/use-timers.ts
@@ -2716,8 +3807,29 @@ msgstr ""
 msgid "Rest started, minimum {duration}"
 msgstr ""
 
+#: src/features/session/ExerciseList.tsx
+msgid "Rest time"
+msgstr ""
+
+#: src/features/settings/WorkoutSection.tsx
+msgid "Rest timer"
+msgstr ""
+
+#: src/features/session/words.ts
+msgid "Rest-pause"
+msgstr ""
+
+#: src/features/session/RestPanel.tsx
+msgid "Restart rest"
+msgstr ""
+
+#: src/features/session/SessionRuntime.tsx
 #: src/hooks/use-timers.ts
 msgid "Resting"
+msgstr ""
+
+#: src/features/session/RestPanel.tsx
+msgid "Resting, at least {minimum}"
 msgstr ""
 
 #: src/features/data/DataScreen.tsx
@@ -2745,33 +3857,78 @@ msgstr ""
 msgid "RIR {value}"
 msgstr ""
 
+#: src/features/settings/WorkoutSection.tsx
+msgid "Round suggested weights"
+msgstr ""
+
 #: src/features/labels.ts
 msgid "row"
+msgstr ""
+
+#: src/features/session/ExerciseList.tsx
+msgid "Same movement ({pattern})"
+msgstr ""
+
+#: src/features/session/past/PastSessionEditor.tsx
+msgid "Save anyway"
 msgstr ""
 
 #: src/features/plan/PlanEditorScreen.tsx
 msgid "Save changes"
 msgstr ""
 
+#: src/features/session/CheckIn.tsx
+msgid "Save check-in"
+msgstr ""
+
 #: src/features/equipment/EquipmentScreens.tsx
 msgid "Save equipment"
+msgstr ""
+
+#: src/features/session/ExerciseList.tsx
+#: src/features/session/past/PastSessionEditor.tsx
+msgid "Save note"
+msgstr ""
+
+#: src/features/session/ExerciseList.tsx
+msgid "Save rest time"
+msgstr ""
+
+#: src/features/session/ExerciseList.tsx
+#: src/features/session/past/PastSessionEditor.tsx
+msgid "Save set"
+msgstr ""
+
+#: src/features/session/past/LogPastSessionScreen.tsx
+msgid "Save workout"
 msgstr ""
 
 #: src/features/data/DataScreen.tsx
 msgid "Saved to Downloads as {name}. Copy it off the phone, for example to cloud storage."
 msgstr ""
 
-#. placeholder {0}: reps ?? 0
-#: src/features/session/LogSetScreen.tsx
-msgid "Saved: {name}, {weight} kg × {0}"
-msgstr ""
-
 #: src/features/equipment/EquipmentEditor.tsx
 msgid "Search equipment"
 msgstr ""
 
+#: src/features/session/ExerciseList.tsx
+msgid "Search exercises"
+msgstr ""
+
 #: src/features/equipment/EquipmentEditor.tsx
 msgid "Search, e.g. hex bar"
+msgstr ""
+
+#: src/features/session/LoggingView.tsx
+msgid "Seconds"
+msgstr ""
+
+#: src/features/settings/AlertsSection.tsx
+msgid "Seconds before the end"
+msgstr ""
+
+#: src/features/session/ExerciseList.tsx
+msgid "Seconds of rest"
 msgstr ""
 
 #: src/features/equipment/EquipmentEditor.tsx
@@ -2802,13 +3959,38 @@ msgstr ""
 msgid "Set {0}: {1} × {2}{3}"
 msgstr ""
 
+#: src/features/session/ExerciseList.tsx
+#: src/features/session/past/LogPastSessionScreen.tsx
+#: src/features/session/past/PastSessionEditor.tsx
+msgid "Set {number}"
+msgstr ""
+
+#: src/features/session/LoggingView.tsx
+msgid "Set {number} of {total}"
+msgstr ""
+
+#: src/features/session/LoggingView.tsx
+#: src/features/session/SetDetailsSheet.tsx
+msgid "Set details"
+msgstr ""
+
+#: src/features/session/RestPanel.tsx
+#: src/features/session/SessionRuntime.tsx
+msgid "Set timer"
+msgstr ""
+
 #: src/hooks/use-timers.ts
 msgid "Set timer started, {duration}"
+msgstr ""
+
+#: src/features/session/SetDetailsSheet.tsx
+msgid "Set type"
 msgstr ""
 
 #: src/features/home/HomeScreen.tsx
 #: src/features/onboarding/OnboardingFlow.tsx
 #: src/features/plan/PlanScreen.tsx
+#: src/features/session/StartScreen.tsx
 msgid "Set up a plan"
 msgstr ""
 
@@ -2817,7 +3999,12 @@ msgid "Set up my plan"
 msgstr ""
 
 #: src/features/data/DataScreen.tsx
+#: src/features/session/SummaryScreen.tsx
 msgid "Sets"
+msgstr ""
+
+#: src/features/session/SummaryScreen.tsx
+msgid "Sets per muscle"
 msgstr ""
 
 #. js-lingui-explicit-id
@@ -2838,8 +4025,20 @@ msgstr ""
 msgid "Sex"
 msgstr ""
 
+#: src/features/session/words.ts
+msgid "Short rest on a competition lift"
+msgstr ""
+
+#: src/features/session/past/PastSessionEditor.tsx
+msgid "Show the summary"
+msgstr ""
+
 #: src/features/plan/PlanEditorScreen.tsx
 msgid "Show them again"
+msgstr ""
+
+#: src/features/session/ExerciseList.tsx
+msgid "Shown next time you do this exercise."
 msgstr ""
 
 #: src/features/labels.ts
@@ -2874,6 +4073,10 @@ msgstr ""
 msgid "Skip {name}"
 msgstr ""
 
+#: src/features/session/CheckIn.tsx
+msgid "Skip check-in"
+msgstr ""
+
 #: src/features/onboarding/steps.tsx
 msgid "Skip for now"
 msgstr ""
@@ -2886,11 +4089,34 @@ msgstr ""
 msgid "Skip it this block"
 msgstr ""
 
+#: src/features/session/RestPanel.tsx
+msgid "Skip rest"
+msgstr ""
+
+#: src/features/session/ExerciseList.tsx
+msgid "Skip this exercise"
+msgstr ""
+
+#: src/features/session/LoggingView.tsx
+msgid "Skip this set"
+msgstr ""
+
 #: src/features/onboarding/OnboardingFlow.tsx
 msgid "Skip this step"
 msgstr ""
 
+#: src/features/session/RestPanel.tsx
+msgid "Skip transition"
+msgstr ""
+
+#: src/features/session/ExerciseList.tsx
+msgid "skipped"
+msgstr ""
+
 #: src/features/labels.ts
+#: src/features/session/ExerciseList.tsx
+#: src/features/session/past/parts.tsx
+#: src/features/session/SummaryScreen.tsx
 msgid "Skipped"
 msgstr ""
 
@@ -2898,12 +4124,33 @@ msgstr ""
 msgid "Skipped this block. Your sessions stay as planned."
 msgstr ""
 
+#: src/features/session/CheckIn.tsx
+msgid "Sleep quality"
+msgstr ""
+
+#: src/features/settings/WorkoutSection.tsx
+msgid "Sleep, energy and soreness in under 30 seconds; it can suggest lighter work on bad days."
+msgstr ""
+
 #: src/features/equipment/SubstitutionReview.tsx
 msgid "Some planned exercises need equipment you removed"
 msgstr ""
 
+#: src/features/session/past/LogPastSessionScreen.tsx
+#: src/features/session/past/PastSessionEditor.tsx
+msgid "Some values are out of range. Check the weights, reps and reps in reserve."
+msgstr ""
+
 #: src/features/shell/RouteError.tsx
 msgid "Something went wrong"
+msgstr ""
+
+#: src/features/session/words.ts
+msgid "Something went wrong. Try again."
+msgstr ""
+
+#: src/features/session/CheckIn.tsx
+msgid "Soreness"
 msgstr ""
 
 #: src/features/settings/AlertsSection.tsx
@@ -2927,16 +4174,52 @@ msgstr ""
 msgid "Squat, bench, deadlift"
 msgstr ""
 
+#: src/features/session/StartScreen.tsx
+msgid "Start a workout"
+msgstr ""
+
+#: src/features/session/StartScreen.tsx
+msgid "Start an empty workout"
+msgstr ""
+
+#: src/features/session/StartScreen.tsx
+msgid "Start an empty workout and add exercises as you go."
+msgstr ""
+
 #: src/features/equipment/EquipmentScreens.tsx
 msgid "Start from a preset"
+msgstr ""
+
+#: src/features/session/StartScreen.tsx
+msgid "Start session"
+msgstr ""
+
+#: src/features/session/StartScreen.tsx
+msgid "Start session: {name}, {date}"
+msgstr ""
+
+#: src/features/session/LoggingView.tsx
+msgid "Start set timer"
 msgstr ""
 
 #: src/features/plan/PlanScreen.tsx
 msgid "Start the break"
 msgstr ""
 
+#: src/features/settings/WorkoutSection.tsx
+msgid "Start the rest timer after each set"
+msgstr ""
+
+#: src/features/session/past/LogPastSessionScreen.tsx
+msgid "Start time (optional)"
+msgstr ""
+
 #: src/features/onboarding/steps.tsx
 msgid "Start times for your calendar (optional)"
+msgstr ""
+
+#: src/features/home/HomeScreen.tsx
+msgid "Start today's session"
 msgstr ""
 
 #: src/features/onboarding/BaselinesStep.tsx
@@ -2964,6 +4247,10 @@ msgstr ""
 
 #: src/features/onboarding/OnboardingFlow.tsx
 msgid "Step {position} of {count}"
+msgstr ""
+
+#: src/features/session/RestPanel.tsx
+msgid "Stop"
 msgstr ""
 
 #: src/features/legal/LegalScreens.tsx
@@ -2995,8 +4282,30 @@ msgstr ""
 msgid "Strength scores and some formulas differ by sex. You can skip this."
 msgstr ""
 
+#: src/features/session/CheckIn.tsx
+msgid "Stress"
+msgstr ""
+
 #: src/features/why/WhySheet.tsx
 msgid "Strong research"
+msgstr ""
+
+#: src/features/session/CheckIn.tsx
+msgid "Suggested changes for today"
+msgstr ""
+
+#: src/features/settings/WorkoutSection.tsx
+msgid "Suggestions use the plates and weights you have. \"To the nearest\" picks the lighter one on a tie."
+msgstr ""
+
+#: src/features/session/ExerciseList.tsx
+#: src/features/session/LoggingView.tsx
+msgid "Superset"
+msgstr ""
+
+#. placeholder {0}: labels.exercise(next.slot.exerciseId)
+#: src/features/session/ExerciseList.tsx
+msgid "Superset with {0}"
 msgstr ""
 
 #: src/features/settings/AlertsSection.tsx
@@ -3004,6 +4313,7 @@ msgid "Supported"
 msgstr ""
 
 #: src/features/plan/PlanEditorScreen.tsx
+#: src/features/session/ExerciseList.tsx
 msgid "Swap {name}"
 msgstr ""
 
@@ -3011,8 +4321,20 @@ msgstr ""
 msgid "Swap days with"
 msgstr ""
 
+#: src/features/session/ExerciseList.tsx
+msgid "Swap exercise"
+msgstr ""
+
+#: src/features/session/ExerciseList.tsx
+msgid "Swapped"
+msgstr ""
+
 #: src/features/settings/SettingsScreen.tsx
 msgid "System"
+msgstr ""
+
+#: src/features/session/SetDetailsSheet.tsx
+msgid "Taken to failure"
 msgstr ""
 
 #: src/features/legal/LegalScreens.tsx
@@ -3023,12 +4345,36 @@ msgstr ""
 msgid "Target met"
 msgstr ""
 
+#: src/features/session/SetDetailsSheet.tsx
+msgid "Technique"
+msgstr ""
+
 #: src/features/settings/AlertsSection.tsx
 msgid "Test alert"
 msgstr ""
 
 #: src/hooks/use-alert-settings.ts
 msgid "Test alert: rest over"
+msgstr ""
+
+#: src/features/session/SummaryScreen.tsx
+msgid "That did not work. Try again from the plan."
+msgstr ""
+
+#: src/features/session/words.ts
+msgid "That exercise is not in the library."
+msgstr ""
+
+#: src/features/session/LoggingView.tsx
+msgid "That is {factor} times your estimated 1-rep max ({e1rm}). Is that right?"
+msgstr ""
+
+#: src/features/session/words.ts
+msgid "That order is not possible."
+msgstr ""
+
+#: src/features/session/words.ts
+msgid "That set or exercise is no longer in this workout."
 msgstr ""
 
 #. js-lingui-explicit-id
@@ -3098,6 +4444,22 @@ msgstr ""
 msgid "The break could not be ended. Check its dates."
 msgstr ""
 
+#: src/features/session/past/PastSessionEditor.tsx
+msgid "The change could not be saved. Try again."
+msgstr ""
+
+#: src/features/session/SummaryScreen.tsx
+msgid "the change of {name}"
+msgstr ""
+
+#: src/features/session/CheckIn.tsx
+msgid "The changes could not be applied. Try again or keep the plan."
+msgstr ""
+
+#: src/features/session/CheckIn.tsx
+msgid "The check-in was not saved. Check the values and try again."
+msgstr ""
+
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.plan.schedule.weekdays"
@@ -3132,6 +4494,10 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.deload.skipped"
+msgstr ""
+
+#: src/features/session/SummaryScreen.tsx
+msgid "the lighter week"
 msgstr ""
 
 #. js-lingui-explicit-id
@@ -3178,12 +4544,24 @@ msgstr ""
 msgid "The sessions already hold as much for this muscle as is useful."
 msgstr ""
 
+#: src/features/session/CheckIn.tsx
+msgid "The sessions could not be swapped. Try again from the plan."
+msgstr ""
+
+#: src/features/session/ExerciseList.tsx
+msgid "The sets you logged in it are not kept for your progress. This cannot be undone."
+msgstr ""
+
 #: src/features/legal/LegalScreens.tsx
 msgid "The Swiss Federal Act on Data Protection (revFADP) applies. Whether the EU GDPR also applies is being confirmed in a legal review; this notice is written to meet both."
 msgstr ""
 
 #: src/features/plan/parts.tsx
 msgid "the time budget"
+msgstr ""
+
+#: src/features/session/past/LogPastSessionScreen.tsx
+msgid "The workout could not be saved. Try again."
 msgstr ""
 
 #: src/features/settings/SettingsScreen.tsx
@@ -3200,6 +4578,10 @@ msgstr ""
 
 #: src/features/plan/NextMesocycleScreen.tsx
 msgid "There is no plan yet."
+msgstr ""
+
+#: src/features/session/words.ts
+msgid "These values look unusual. Check them, then confirm again."
 msgstr ""
 
 #: src/features/onboarding/steps.tsx
@@ -3226,8 +4608,16 @@ msgstr ""
 msgid "This browser has not been tested yet. POWR tries every way it has, but an alert may come late or not at all while the screen is locked or you are in another app."
 msgstr ""
 
+#: src/features/session/past/PastSessionEditor.tsx
+msgid "This cannot be undone. Its sets, records and estimates are removed."
+msgstr ""
+
 #: src/features/plan/PlanScreen.tsx
 msgid "this change"
+msgstr ""
+
+#: src/features/session/past/PastSessionEditor.tsx
+msgid "This change affects your records"
 msgstr ""
 
 #. js-lingui-explicit-id
@@ -3249,6 +4639,14 @@ msgstr ""
 msgid "This equipment profile does not exist."
 msgstr ""
 
+#: src/features/session/words.ts
+msgid "This exercise has logged sets. Skip it instead of removing it."
+msgstr ""
+
+#: src/features/session/words.ts
+msgid "This exercise is already in a superset."
+msgstr ""
+
 #: src/features/data/DataScreen.tsx
 msgid "This file is too large or malformed to restore safely. Nothing was changed."
 msgstr ""
@@ -3267,6 +4665,7 @@ msgid "This page does not exist."
 msgstr ""
 
 #: src/features/placeholder/ComingSoon.tsx
+#: src/features/placeholder/screens.tsx
 msgid "This part of POWR is not built yet."
 msgstr ""
 
@@ -3291,14 +4690,30 @@ msgstr ""
 msgid "This session changed meanwhile. Try again."
 msgstr ""
 
+#: src/features/session/StartScreen.tsx
+msgid "This session could not be started. Try again."
+msgstr ""
+
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.schedule.moved"
 msgstr ""
 
+#: src/features/session/ExerciseList.tsx
+msgid "This session only"
+msgstr ""
+
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.session.adjustment.load"
+msgstr ""
+
+#: src/features/session/words.ts
+msgid "This set is logged already. Edit it in the list instead."
+msgstr ""
+
+#: src/features/session/words.ts
+msgid "This set is not open any more."
 msgstr ""
 
 #: src/features/plan/parts.tsx
@@ -3309,13 +4724,36 @@ msgstr ""
 msgid "This week"
 msgstr ""
 
-#: src/features/session/LogSetScreen.tsx
-msgid "This workout"
+#: src/features/session/past/PastSessionEditor.tsx
+msgid "This will add a PR:"
+msgstr ""
+
+#: src/features/session/past/PastSessionEditor.tsx
+msgid "This will remove a PR:"
+msgstr ""
+
+#: src/features/session/ExerciseList.tsx
+#: src/features/session/LoggingView.tsx
+#: src/features/session/words.ts
+msgid "This workout has already ended."
+msgstr ""
+
+#: src/features/session/LoggingView.tsx
+msgid "This workout has been open for more than 6 hours. Finish it at the last logged set?"
+msgstr ""
+
+#: src/features/session/past/PastSessionEditor.tsx
+msgid "This workout is still in progress. Edit it on the workout screen."
 msgstr ""
 
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.validate.time.overBudget.simple"
+msgstr ""
+
+#: src/features/session/past/PastSessionEditor.tsx
+#: src/features/session/SummaryScreen.tsx
+msgid "This workout was not found. It may have been deleted."
 msgstr ""
 
 #: src/features/onboarding/steps.tsx
@@ -3338,12 +4776,28 @@ msgstr ""
 msgid "Time is up"
 msgstr ""
 
+#: src/features/session/RestPanel.tsx
+msgid "Time is up · +{over}"
+msgstr ""
+
 #: src/hooks/use-timers.ts
 msgid "Time is up, {ago} ago"
 msgstr ""
 
 #: src/hooks/use-timers.ts
 msgid "Time to switch to the next exercise."
+msgstr ""
+
+#: src/features/session/words.ts
+msgid "Timed set"
+msgstr ""
+
+#: src/features/session/ExerciseList.tsx
+msgid "to do"
+msgstr ""
+
+#: src/features/settings/WorkoutSection.tsx
+msgid "To the nearest"
 msgstr ""
 
 #: src/features/home/HomeScreen.tsx
@@ -3357,6 +4811,23 @@ msgstr ""
 
 #: src/features/onboarding/steps.tsx
 msgid "Toggle what you have access to. You can change this any time in Settings."
+msgstr ""
+
+#: src/features/session/words.ts
+msgid "Top set"
+msgstr ""
+
+#: src/features/session/past/parts.tsx
+msgid "Top sets {rir} rep easier (readiness)"
+msgstr ""
+
+#: src/features/session/CheckIn.tsx
+msgid "Top sets one rep easier (+1 rep in reserve)"
+msgstr ""
+
+#. placeholder {0}: formatMass(total, unit)
+#: src/features/session/loads.tsx
+msgid "Total: {0}"
 msgstr ""
 
 #: src/features/shell/BottomNav.tsx
@@ -3381,6 +4852,10 @@ msgstr ""
 msgid "Training weeks before the lighter week"
 msgstr ""
 
+#: src/features/session/ExerciseList.tsx
+msgid "Trains the {muscle} directly"
+msgstr ""
+
 #: src/features/labels.ts
 msgid "triceps extension"
 msgstr ""
@@ -3393,6 +4868,10 @@ msgstr ""
 msgid "Type a name for the item first."
 msgstr ""
 
+#: src/features/session/past/LogPastSessionScreen.tsx
+msgid "Type at least two letters of its name."
+msgstr ""
+
 #: src/features/onboarding/steps.tsx
 msgid "Type at least two letters."
 msgstr ""
@@ -3401,8 +4880,16 @@ msgstr ""
 msgid "Under 4 sets"
 msgstr ""
 
+#: src/features/session/LoggingView.tsx
+msgid "Undo"
+msgstr ""
+
 #: src/features/plan/PlanEditorScreen.tsx
 msgid "Undo last change"
+msgstr ""
+
+#: src/features/session/words.ts
+msgid "Undone."
 msgstr ""
 
 #: src/features/equipment/EquipmentEditor.tsx
@@ -3425,6 +4912,10 @@ msgstr ""
 msgid "Until (optional)"
 msgstr ""
 
+#: src/features/settings/WorkoutSection.tsx
+msgid "Up"
+msgstr ""
+
 #: src/features/shell/UpdateBanner.tsx
 msgid "Update"
 msgstr ""
@@ -3437,12 +4928,25 @@ msgstr ""
 msgid "Upper/lower + push/pull/legs"
 msgstr ""
 
+#: src/features/session/LoggingView.tsx
+msgid "Use \"Add exercise\" below to pick what you train."
+msgstr ""
+
+#. placeholder {0}: formatMass(entry.load, unit)
+#: src/features/session/loads.tsx
+msgid "Use {0}"
+msgstr ""
+
 #: src/features/plan/format.ts
 msgid "Use a time-saving technique set for {name}"
 msgstr ""
 
 #: src/features/plan/format.ts
 msgid "Use shorter rests on isolation exercises"
+msgstr ""
+
+#: src/features/session/ExerciseList.tsx
+msgid "Use the default"
 msgstr ""
 
 #: src/features/onboarding/OnboardingFlow.tsx
@@ -3452,6 +4956,10 @@ msgstr ""
 #: src/features/equipment/EquipmentScreens.tsx
 #: src/features/onboarding/steps.tsx
 msgid "Use this preset"
+msgstr ""
+
+#: src/features/session/loads.tsx
+msgid "Use this total"
 msgstr ""
 
 #: src/features/equipment/EquipmentScreens.tsx
@@ -3486,6 +4994,18 @@ msgstr ""
 msgid "Version {version}. Draft, pending legal review."
 msgstr ""
 
+#: src/features/session/past/parts.tsx
+msgid "Very likely a real drop"
+msgstr ""
+
+#: src/features/session/past/parts.tsx
+msgid "Very likely a real gain"
+msgstr ""
+
+#: src/features/session/words.ts
+msgid "Very slow reps"
+msgstr ""
+
 #: src/features/settings/AlertsSection.tsx
 msgid "Vibrated."
 msgstr ""
@@ -3498,8 +5018,20 @@ msgstr ""
 msgid "Volume"
 msgstr ""
 
+#: src/features/session/words.ts
+msgid "Warm-up"
+msgstr ""
+
+#: src/features/session/ExerciseList.tsx
+msgid "Warm-up {number}"
+msgstr ""
+
+#: src/features/session/LoggingView.tsx
+msgid "Warm-up {number} of {total}"
+msgstr ""
+
 #: src/features/settings/AlertsSection.tsx
-msgid "Warning 10 seconds before the end of a rest"
+msgid "Warning before the end of a rest"
 msgstr ""
 
 #. js-lingui-explicit-id
@@ -3560,7 +5092,13 @@ msgid "weekly undulating"
 msgstr ""
 
 #: src/features/onboarding/BaselinesStep.tsx
+#: src/features/session/LoggingView.tsx
 msgid "Weight"
+msgstr ""
+
+#: src/features/session/ExerciseList.tsx
+#: src/features/session/past/set-fields.tsx
+msgid "Weight ({unit})"
 msgstr ""
 
 #: src/features/onboarding/steps.tsx
@@ -3596,6 +5134,10 @@ msgstr ""
 
 #: src/features/onboarding/steps.tsx
 msgid "What do you want from training?"
+msgstr ""
+
+#: src/features/session/loads.tsx
+msgid "What is on the bar?"
 msgstr ""
 
 #: src/features/legal/LegalScreens.tsx
@@ -3660,6 +5202,14 @@ msgstr ""
 msgid "why.scoring.wilks2020"
 msgstr ""
 
+#: src/features/session/past/parts.tsx
+msgid "Within normal day-to-day variation"
+msgstr ""
+
+#: src/features/session/SetDetailsSheet.tsx
+msgid "Without a rating the set still counts for reps, weight and volume, but not for your estimated 1-rep max."
+msgstr ""
+
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.e1rm.baseline.none"
@@ -3669,12 +5219,51 @@ msgstr ""
 msgid "Without protection the browser may delete POWR data when the phone runs low on space. Back up regularly either way: clearing site data or uninstalling deletes everything."
 msgstr ""
 
-#: src/features/session/LogSetScreen.tsx
-msgid "Workout finished."
+#: src/features/session/words.ts
+msgid "Working set"
+msgstr ""
+
+#: src/features/session/LoggingView.tsx
+#: src/features/settings/WorkoutSection.tsx
+msgid "Workout"
+msgstr ""
+
+#: src/features/session/ExerciseList.tsx
+msgid "Workout actions"
+msgstr ""
+
+#: src/features/session/LoggingView.tsx
+msgid "Workout controls"
+msgstr ""
+
+#: src/features/session/past/PastSessionEditor.tsx
+msgid "Workout deleted."
 msgstr ""
 
 #: src/features/home/HomeScreen.tsx
+#: src/features/session/SessionRuntime.tsx
 msgid "Workout in progress"
+msgstr ""
+
+#: src/features/session/ExerciseList.tsx
+#: src/features/session/past/PastSessionEditor.tsx
+msgid "Workout note"
+msgstr ""
+
+#: src/features/session/LoggingView.tsx
+msgid "Workout resumed"
+msgstr ""
+
+#: src/features/session/SummaryScreen.tsx
+msgid "Workout summary"
+msgstr ""
+
+#: src/features/session/LoggingView.tsx
+msgid "Workout time <0>{elapsed}</0>"
+msgstr ""
+
+#: src/features/session/past/PastSessionEditor.tsx
+msgid "Workout updated."
 msgstr ""
 
 #: src/features/data/DataScreen.tsx
@@ -3687,6 +5276,10 @@ msgstr ""
 
 #: src/features/labels.ts
 msgid "wrist curl"
+msgstr ""
+
+#: src/features/session/LoggingView.tsx
+msgid "You are back where you left off. Timers kept running while POWR was closed."
 msgstr ""
 
 #: src/features/plan/PlanScreen.tsx
@@ -3728,6 +5321,7 @@ msgid "why.progression.linear.increase.simple"
 msgstr ""
 
 #: src/features/onboarding/BaselinesStep.tsx
+#: src/features/session/LoggingView.tsx
 msgid "You lifted this max a while ago. POWR starts from it and refines it automatically from the sets you log."
 msgstr ""
 
@@ -3834,6 +5428,10 @@ msgstr ""
 msgid "why.progression.level.slope.simple"
 msgstr ""
 
+#: src/features/session/SummaryScreen.tsx
+msgid "Your lighter week now starts next week."
+msgstr ""
+
 #: src/features/equipment/EquipmentScreens.tsx
 msgid "Your logged training stays. This only removes the equipment list."
 msgstr ""
@@ -3884,6 +5482,10 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.validate.deload.missing.simple"
+msgstr ""
+
+#: src/features/session/SummaryScreen.tsx
+msgid "Your recent sessions show signs of fatigue. A lighter week now can help you recover and keep progressing."
 msgstr ""
 
 #. js-lingui-explicit-id

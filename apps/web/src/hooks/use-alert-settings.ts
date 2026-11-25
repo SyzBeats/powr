@@ -9,18 +9,27 @@ import { announce } from '#ui/announcer';
 import type { AlertStatusReport, WakeLockStatus } from '../app/container';
 import { useContainer } from '../app/container-context';
 import { useObservable } from './use-observable';
+import { useTimerKit } from './use-timer-kit';
 
 /**
  * Alert settings (SET-03, SET-04, SET-10), stored in the settings record as `alerts`. Absent
- * fields mean the defaults below; a change writes the whole object.
+ * fields mean the defaults below (product-owner decision 2026-11-24: pre-alert on at 10 s, 3-2-1
+ * off, the "Resting – ends at" notice on, volume 80%, keep the screen on); a change writes the
+ * whole object.
  */
 export type AlertSettings = Required<NonNullable<SettingsRecord['alerts']>>;
+
+/** SET-03: the pre-alert timings to choose from. */
+export const PRE_ALERT_SECONDS = [
+  5, 10, 15,
+] as const satisfies readonly AlertSettings['preAlertSeconds'][];
 
 const DEFAULT_ALERT_SETTINGS: AlertSettings = {
   sound: true,
   volume: 0.8,
   vibration: true,
   preAlert: true,
+  preAlertSeconds: 10,
   countdown: false,
   restingNotice: true,
   keepScreenOn: true,
@@ -46,7 +55,7 @@ export function useSetAlertSettings() {
   return useCallback(
     async (patch: Partial<AlertSettings>) => {
       if (patch.keepScreenOn !== undefined)
-        platform.timers.screenWake.setEnabled(patch.keepScreenOn);
+        platform.timers.current()?.screenWake.setEnabled(patch.keepScreenOn);
       await deps.uow.write(['settings'], async (repos) => {
         const current = await repos.settings.get();
         const alerts: AlertSettings = { ...DEFAULT_ALERT_SETTINGS, ...current?.alerts, ...patch };
@@ -102,23 +111,23 @@ export function useAlertStatus(
   permission: NotificationPermissionState,
   restingNotice: boolean,
 ): AlertStatusReport | null {
-  const { platform } = useContainer();
+  const timers = useTimerKit();
   const [report, setReport] = useState<AlertStatusReport | null>(null);
-  const variant = platform.timers.labs.audioKeepAlive() ? 'E' : restingNotice ? 'D' : 'C';
+  const variant = timers.labs.audioKeepAlive() ? 'E' : restingNotice ? 'D' : 'C';
   useEffect(() => {
     let cancelled = false;
-    void platform.timers.alertStatus(variant, permission).then((next) => {
+    void timers.alertStatus(variant, permission).then((next) => {
       if (!cancelled) setReport(next);
     });
     return () => {
       cancelled = true;
     };
-  }, [platform, variant, permission]);
+  }, [timers, variant, permission]);
   return report;
 }
 
 export function useWakeLockStatus(): WakeLockStatus {
-  const { screenWake } = useContainer().platform.timers;
+  const { screenWake } = useTimerKit();
   return useSyncExternalStore(screenWake.subscribe, screenWake.status);
 }
 
@@ -129,13 +138,14 @@ export function useWakeLockStatus(): WakeLockStatus {
  */
 export function useTestAlert() {
   const { platform } = useContainer();
+  const { audio } = useTimerKit();
   const settings = useAlertSettings();
   const { t } = useLingui();
   return useCallback(async () => {
-    const unlocked = await platform.audio.unlock();
-    if (settings.sound && unlocked) platform.audio.play('restEnd', settings.volume);
+    const unlocked = await audio.unlock();
+    if (settings.sound && unlocked) audio.play('restEnd', settings.volume);
     const vibrated = settings.vibration && platform.haptics.vibrate([200, 100, 200]);
     announce(t`Test alert: rest over`);
     return { sound: settings.sound && unlocked, vibrated };
-  }, [platform, settings, t]);
+  }, [platform, audio, settings, t]);
 }

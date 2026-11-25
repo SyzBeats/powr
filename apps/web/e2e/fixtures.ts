@@ -64,7 +64,7 @@ export { expect };
 
 /**
  * The first-run path without a plan (ONB-01, PLN-15): the legal gate, then "Just let me log".
- * Every training screen is behind it since M2b. Ends on the log screen.
+ * Every training screen is behind it since M2b. Ends on the session start screen (M3b).
  */
 export async function skipOnboarding(page: Page): Promise<void> {
   await page.goto('/');
@@ -74,7 +74,7 @@ export async function skipOnboarding(page: Page): Promise<void> {
     .click();
   await page.getByRole('checkbox', { name: 'I am 16 or older.' }).click();
   await page.getByRole('button', { name: 'Just let me log' }).click();
-  await expect(page.getByRole('heading', { level: 1, name: 'Log a set' })).toBeVisible();
+  await expect(page.getByRole('heading', { level: 1, name: 'Start a workout' })).toBeVisible();
 }
 
 /** Pretends the page went to the background (screen locked, app switched) or came back. */

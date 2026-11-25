@@ -67,8 +67,11 @@ On the phone:
 - **`/debug/alerts` (S-1):** enter the device and browser label (e.g. "S22 Chrome PWA"), allow
   notifications, choose variant A–E and the rest length (60 s, 3 min, 5 min, 8 min), tap **Start run**,
   lock the screen or switch apps, come back after the rest, repeat. Variant E is the background-audio
-  keep-alive experiment (OQ-T3 = B; gain adjustable). **Export results** writes a `.txt` file (JSON)
-  for `docs/device-tests/`. Results survive a killed page (stored locally on the device).
+  keep-alive experiment (OQ-T3 = B; gain adjustable). **Export results** writes a `.txt` file (JSON,
+  `harnessVersion` 2) for `tools/capability-matrix/records/`; `pnpm capability-matrix` compiles the
+  records into the shipped matrix. Results survive a killed page (stored locally on the device). The
+  full protocol (cells, condition, battery saver, the results template) is
+  `docs/device-tests/S-1-protocol.md`.
 - **`/debug/capabilities` (S-2):** detection results (service worker, storage persistence, wake lock,
   vibration, notifications, `canShare` per file type, save picker, display mode, …) plus tap-to-run
   checks; **Export report** writes a `.txt` file.
@@ -307,6 +310,9 @@ Member values are camelCase, like the existing unions (`TechniqueKind`, `curveCl
 - 2026-11-24: M2a planning core (no UI): section "M2a planning core" at the end.
 - 2026-11-24: M2b screens and the M2 docs pass (technical concept v0.5): section "M2b screens" after
   the M2a section; section 4 updated (component tests, pseudo-locale test and token gate done).
+- 2026-11-24/25: M2 tooling, M2c planning gaps, M3a session core, M3t timers and alerts and M3b
+  session screens with the M3 docs pass (technical concept v0.7, `docs/device-tests/S-1-protocol.md`):
+  one section each at the end; section 1 points to the S-1 protocol.
 
 ## M1-B content
 
@@ -1979,3 +1985,243 @@ keep-alive lifecycle, the wake-lock states, the status rule and the matrix compi
 - **ADR-0019:** the implementation landed; the matrix stays empty until S-1; follow-up unchanged.
 - **IMPLEMENTATION_NOTES section 1** ("Testing on the Galaxy S22", the `/debug/alerts` bullet):
   point to the protocol above (condition, battery saver, export v2, `pnpm capability-matrix`).
+
+## M3b session screens
+
+Written 2026-11-25 by the M3b work (roadmap A.4 "M3 Workout session", the screens on top of M3a's
+session core and M3t's timers and alerts), plus the docs pass for M3 as a whole (technical concept
+v0.7, ADR amendments, `docs/device-tests/S-1-protocol.md`). Started by an earlier M3b run that was
+stopped mid-way; this run reviewed, fixed and finished its work. Status: `pnpm verify` green
+(numbers under "Evidence").
+
+### What landed
+
+| Area                   | Where                                                                                                                                                                                                                                                                                                                                                                                                                          | PRD                                       |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------- |
+| Routes                 | `/session` (start, check-in, proposals and logging as views inside the route, each with its own `h1`, so `Screen` moves focus and scroll), `/session/summary/$sessionId`, `/session/past`, `/session/past/new`, `/session/past/$sessionId`; M0's `LogSetScreen` and `routes/session.tsx` removed; `?start=today` added to the `/session` search validator                                                                      | WKT-01…16                                 |
+| Start                  | `features/session/StartScreen.tsx`: today's planned session (primary), later this week, an empty freestyle workout, a repeat of one of the last three workouts (60 days), deload / return-from-break / calibration notes on planned cards, "Past sessions"; Home's next-session card gets "Start today's session" (one tap: `/session?start=today` starts it once and drops the parameter)                                     | WKT-01, PRG-11/13                         |
+| Check-in and proposals | `CheckIn.tsx`: `ReadinessCheckIn` (sleep hours stepper, 1–5 chips, PRS 0–10, every item optional, "Skip check-in"), `Proposals` (each change a checkbox with its "Why?", "Apply the selected changes", "Keep the plan as it is", "Do the lighter session today" → discard + `swapSessions` + start)                                                                                                                            | RDY-01…03, PRG-13                         |
+| Logging                | `LoggingView.tsx` (clock line, PR card, resume banner, the current set card, hints, `ExerciseList`, `SessionActions`), `ui/dock.tsx` (the fixed control dock above the bottom navigation), `ui/stepper.tsx`, the RIR chips, `RestPanel.tsx`, `SetDetailsSheet.tsx`, `loads.tsx` (equipment steps and the plate calculator), `ExerciseList.tsx` (set rows, options, swap, rest, notes, edit set, add exercise, finish, discard) | WKT-02…12, 16, TMR-01…13                  |
+| Session runtime        | `SessionRuntime.tsx` (lazy, mounted by `AppShell` while M0's `activeSession` live query has a session): `useTimerAlerts` for the persisted timer, `TIMER_FIRED` from M3t's `pre-alert`/`end` events, `RESUME` once per page (WKT-14) and the global mini timer (TMR-12)                                                                                                                                                        | WKT-14, TMR-04…06, TMR-12                 |
+| Effect runner          | `commands.ts`: `runPlatformEffects` and `useSessionCommands` (`dispatch`, `start`, `finish`, `discard`)                                                                                                                                                                                                                                                                                                                        | §8.5, MOT-02, PWA-07                      |
+| Summary                | `SummaryScreen.tsx`: duration and times, sets against the plan, skipped, partial, streak badge, PR card (Web Animations scale-in ≤ 600 ms, static under reduced motion), first-time exercises, e1RM before → after with the trend label and "Why?", sets per muscle, accepted changes, note, the reactive-deload offer after a finish (PRG-12, `lowReadinessDays` passed), "Edit this workout"                                 | WKT-13, MOT-01/02, PRG-12                 |
+| Past sessions          | `features/session/past/`: list (365 days, newest first), the backdated form (date, time, exercises, sets, note; errors summarised and named at each field), the editor (edit, add and delete sets, remove an exercise, note, delete the workout) with the PR preview sheet ("This will remove a PR" / "This will add a PR") before anything is written; entry points: Progress tab (until M4), the start screen, the summary   | WKT-15                                    |
+| Settings               | `features/settings/WorkoutSection.tsx` (new "Workout" card: rest auto-start, countdown or count-up rest, check-in, each hint, rounding direction; through `updateSessionPreferences`), `AlertsSection.tsx` (pre-alert timing 5/10/15 s, shown while the pre-alert is on)                                                                                                                                                       | SET-03, SET-05, TMR-01/07, RDY-01, WKT-16 |
+| Lazy timer kit         | `app/container.ts` (`platform.timers` is a `TimerKitLoader`: `current()`, `load()`), `hooks/use-timer-kit.ts` (`use(load())`, never conditional), `infrastructure/alerts/index.ts` (the kit now owns the Web Audio cues); `platform.audio` removed                                                                                                                                                                             | decision 2                                |
+| Startup chunk          | `vite.config.ts`: `build.rolldownOptions.output.codeSplitting.groups = [{ name: 'startup', tags: ['$initial'] }]`                                                                                                                                                                                                                                                                                                              | §8.19                                     |
+| Application additions  | `@powr/application/session`: `listPastSessions`, `pastSessionDetail`, `loadImplements` (the implement and rounding mode per exercise for the stepper and the plates)                                                                                                                                                                                                                                                           | WKT-07, WKT-15                            |
+| Settings record        | `alerts.preAlertSeconds` (5, 10 or 15; required inside the strict `alerts` object of the unreleased v2 record; schema, arbitraries and tests)                                                                                                                                                                                                                                                                                  | SET-03                                    |
+
+Smaller parts: `ui/timer-ring.tsx` (decorative SVG ring, done = full ring in the success colour,
+never colour alone, no animation), `hooks/use-workout.ts` (the one sanctioned `import()` of
+`@powr/application/session` and a shared live view per container), `session-ui.ts` (Zustand store
+for ephemeral UI state), `preferences.ts`, `words.ts` (set types, techniques, rejections, hints,
+PRs and announcements in words; `useLoadUnit`, `massFromKg`), the `pr-pop` keyframes and the
+`pb-shell` utility in `app.css`, `BottomNav` publishing `--bottom-nav-height`.
+
+### Product-owner decisions (2026-11-24) and what they became
+
+1. **PRs as M3a built them.** Unchanged in the core. The screens show every PR type in words
+   ("New rep PR on Barbell bench press: 100 kg for 5", "New estimated 1-rep max … 54.6 kg", "New
+   volume record … 720 kg"); Set details says that a set without an effort rating "still counts for
+   reps, weight and volume, but not for your estimated 1-rep max".
+2. **Alert code lazy.** The timer kit (engine, ticker, wake-lock policy, scheduler facade, Web Audio
+   cues) is a lazy chunk (3.3 kB gzip; the scheduler 2.1 kB and the status 0.9 kB stay separate
+   chunks). It loads when `/session` renders (the start tap must unlock audio synchronously, so the
+   kit has to be there before the tap), when Settings → Alerts or the debug harness opens, or at
+   boot when the shell finds an active session (`SessionRuntime`, so alerts are re-armed right after
+   a reload). The live region stays in the shell. **Entry JS 182.73 → 177.34 kB gzip** (target
+   ≤ about 179, budget 186 unchanged). **First wave 15 → 1 script:** the growth came from Rolldown
+   putting every module the entry shared with a lazy route into its own small common chunk; a
+   `codeSplitting` group over the `$initial` modules keeps the entry's static graph in one chunk
+   (lazy chunks import from it as before). Still 0 scripts with Zod.
+3. **Alert defaults.** As decided (pre-alert on, 3-2-1 off, "Resting" notice on, 80%, keep screen
+   on, gentle cue on return, every timer kind). The pre-alert time is selectable in Settings →
+   Alerts (5, 10, 15 s; default 10 s): `alerts.preAlertSeconds` in the v2 settings record (no v3),
+   `AlertOptions.preAlertMs` in the scheduler, the announcement says the chosen time ("15 seconds
+   left").
+4. **Development databases stay at version 2.** No migration. A device that ran an M2 build (or an
+   M3 build before this one) clears the site data once (Chrome: Site settings → Delete data).
+5. **Accepted as built.** No change; the UI follows the core (one-level undo for 30 s, a
+   mesocycle-wide swap says "This cannot be undone", plausibility prompt "Log it anyway", …).
+6. **Device-test records.** Machine records stay in `tools/capability-matrix/records/`; the human
+   protocol and results template are `docs/device-tests/S-1-protocol.md`; no Labs toggle.
+
+### The effect runner and the timer wiring (§8.5, §8.8.7)
+
+| M3a effect              | M3b                                                                                                                                                                                                |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `timer.arm`             | Nothing imperative: the shell's `SessionRuntime` renders `useTimerAlerts(session.timer, { url: '/session' })` with the persisted timer (texts, settings, re-arm on a new end; `arm` is idempotent) |
+| `timer.disarm`          | `restAlerts.disarm(id)` at once (a skipped rest must not pre-alert while the live query catches up)                                                                                                |
+| `wakeLock`              | Nothing: `useScreenWakeLock(true)` on the session screen (from the check-in on) and in the mini timer; finish and discard unmount both                                                             |
+| `celebrate`             | The PR card (`useSessionUi.celebration`), vibration `[30, 40, 60]`, the `pr` cue at the alert volume; one celebration per set (MOT-02)                                                             |
+| `cue`                   | Haptic tick (`[20]` confirm, `[10, 30, 10]` skip and undo), if vibration is on                                                                                                                     |
+| `announce`              | One polite announcement per event, the parts joined (the announcer keeps the latest of a burst); `restStarted` and `transition` are left to the alert hook ("Rest started, 2 minutes")             |
+| M3t `pre-alert` / `end` | `dispatch(TIMER_FIRED { timerId, which })`, so a reload never alerts twice                                                                                                                         |
+| finish / discard        | `restAlerts.stopAll()`, `resetSessionUi()`, update check (§6.3); finish then runs `checkReactiveDeload` with `lowReadinessDays`                                                                    |
+
+### PRD coverage (requirement → screen or element)
+
+| ID              | Where                                                                                                                                                                                                                                                                                  |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| WKT-01          | Home "Start today's session" (one tap); start screen: today's / later planned sessions, freestyle, repeat; one active session (the start screen only shows without one; a refused start explains)                                                                                      |
+| WKT-02          | Logging view: current set card (exercise, "Set n of m", prescription in words, "Why?", last time with its note, "How to do it" cues), exercise list with progress, rest timer and session clock; primary controls in the dock (lower 60%); values at 24 px bold (1.5× body)            |
+| WKT-03          | Dock: weight stepper (next achievable load of the equipment), reps stepper (or left/right), RIR chips 0–4 and 5+ (a half step such as the suggested 1.5 is named in the chips' legend; half steps entered in Set details), one-tap "Confirm set"; plausibility sheet ("Log it anyway") |
+| WKT-04          | Set details: set type (working, top, back-off, AMRAP), technique with drops / mini-sets / partial blocks (credit labelled heuristic), failure, failed rep, pain, set note                                                                                                              |
+| WKT-05, TMR-13  | Options → "Superset with …" / "Remove from the superset"; superset badges; the transition shows "Next: <exercise>" in the dock                                                                                                                                                         |
+| WKT-06          | Warm-ups at start where a working load is known (M3a); Options → "Add warm-up sets"; rows "Warm-up n"                                                                                                                                                                                  |
+| WKT-07          | Plates sheet (per side, the nearest loadable loads below and above, "What is on the bar?" reverse calculator); stepper steps; Settings → Workout rounding                                                                                                                              |
+| WKT-08          | Options → "Swap exercise": ranked alternatives, "Best match", the reason per option, scope "This session only" / "For the rest of this block"                                                                                                                                          |
+| WKT-09          | Options: add a set, remove the last open set, skip the exercise, remove it (nothing logged), move up / down, rest time; "Skip this set" on the card; "Add exercise" (search); all buttons, no drag                                                                                     |
+| WKT-10          | "Workout note", Options → "Note on this exercise", Set details → "Note on this set"; last time's note on the card                                                                                                                                                                      |
+| WKT-11          | Options → "Log left and right separately" (unilateral exercises); "Assistance (kg)" for assisted exercises (stored negative); no weight stepper for pure bodyweight; "Added weight" label                                                                                              |
+| WKT-12          | "Undo" next to the timer in the dock (or "Changed by mistake? Undo" without a timer), 30 s, `UNDO`                                                                                                                                                                                     |
+| WKT-13          | Finish sheet (finish, finish as partial, keep training), discard sheet with confirmation, the summary                                                                                                                                                                                  |
+| WKT-14          | `SessionRuntime` resumes once, re-arms alerts; "Workout resumed" banner (cleared by the next confirmed set); after 6 h "Finish at the last logged set"                                                                                                                                 |
+| WKT-15          | `/session/past`, `/session/past/new`, `/session/past/$sessionId` with the PR preview                                                                                                                                                                                                   |
+| WKT-16          | Hint callouts after a set: "Dismiss", "Don't show this hint again"; Settings → Workout per hint                                                                                                                                                                                        |
+| TMR-01, 02, 08  | Auto-start (M3a) with the Settings switch; defaults and actual rest from the core                                                                                                                                                                                                      |
+| TMR-03          | −15 / +15 / restart / skip in the dock; "Remember m:ss rest for <exercise>"; Options → "Rest time"                                                                                                                                                                                     |
+| TMR-04          | "Rest over · +0:42" (and the done frame); correct after reload (E2E with the Playwright clock)                                                                                                                                                                                         |
+| TMR-05, 06      | M3t's alerts through `useTimerAlerts` in the shell runtime                                                                                                                                                                                                                             |
+| TMR-07          | Settings → Workout "Count up"; the dock shows "Resting, at least 1:30", then "Ready when you are"                                                                                                                                                                                      |
+| TMR-09          | "Start set timer" (countdown to the target, else a stopwatch), "Stop" hands the time to the set                                                                                                                                                                                        |
+| TMR-10          | Not built (TD-39)                                                                                                                                                                                                                                                                      |
+| TMR-11          | "Workout time" and "About … left" under the heading; duration and times in the summary                                                                                                                                                                                                 |
+| TMR-12          | Mini timer above the bottom navigation on every screen but `/session` and onboarding: ring and time of the running timer, else the session clock; one tap back                                                                                                                         |
+| PRG-03          | Pre-filled weight, reps and RIR in the dock; overrides are just edits                                                                                                                                                                                                                  |
+| PRG-09          | "Why?" on the current set, proposals, e1RM changes, the deload offer; hints show their reason                                                                                                                                                                                          |
+| PRG-12          | Summary: "Consider bringing your lighter week forward" with "Why?"                                                                                                                                                                                                                     |
+| RDY-01…03       | Check-in screen, proposals screen, the lighter-session swap                                                                                                                                                                                                                            |
+| MOT-01, 02      | PR card at the top of the logging view (dismissable, never over the controls, static under reduced motion), PR badge on set rows, PRs in the summary                                                                                                                                   |
+| PWA-06…08       | Wake lock from the check-in to the last set and in the mini timer; haptics and cues; notifications (M3t)                                                                                                                                                                               |
+| SET-03, 05      | Pre-alert timing; rest auto-start and count-up; check-in, hints, rounding                                                                                                                                                                                                              |
+| NFR-A11Y-02, 03 | E2E: every dock control ≥ 48 × 48 px and ≥ 8 px apart, inside the lower 60% at 360 × 780, also after scrolling to the end                                                                                                                                                              |
+| NFR-A11Y-04     | Reorder, swap, skip and delete are buttons; no swipe or drag anywhere                                                                                                                                                                                                                  |
+| NFR-A11Y-06, 09 | One polite live region; alerts multimodal; the done state is text, a full ring and a static frame                                                                                                                                                                                      |
+| NFR-A11Y-08     | PR animations are ≤ 600 ms scale-ins, zeroed under reduced motion                                                                                                                                                                                                                      |
+| NFR-USE-01      | 1 tap: "Confirm set"; change weight or reps by a step and confirm: 2 taps                                                                                                                                                                                                              |
+
+**Not built (and why):** TMR-10 tempo metronome (TD-39, not in the M3 slice; tempo still feeds the
+rep-speed hint); TMR-09's optional 3-2-1 lead-in and the automatic stop at the target (the end alert
+fires; TD-48); SET-03 per-context rest defaults, superset transition time, warm-up rest and "reset to
+evidence defaults", SET-05 RIR input style and warm-up generation switch, TMR-01's per-exercise
+auto-start switch, PRG-03 manual mode and PRG-09 "keep as last time" (the core supports manual mode
+and per-exercise preferences; no screen yet; TD-49); WKT-13's mini heat map and the streak count
+(the summary lists sets per muscle and says whether the workout counts; `dWeekly`/`dStreak` are M4,
+TD-43); the pre-session "Update first" offer (TD-14).
+
+### Mock-up vs accessibility
+
+The mock-up's "Workout log" phone puts weight and reps side by side inside the exercise card. At
+360 px two steppers with 48 px buttons cannot hold 24 px values ("102.5") and 48 px fields side by
+side, and the card scrolls away, so: the primary controls live in a fixed **dock** above the bottom
+navigation (it falls back into the page flow when it would take more than 70% of the viewport, e.g.
+at 320 px and 200% text), **one stepper per row** with the label beside it, six RIR chips in one
+row, and "Confirm set" full width at the bottom. The PR card and the resume banner sit above the
+dock in the page, never over controls. Undo is a button in the dock, not a toast.
+
+### Decisions and deviations
+
+| Concept / brief says                                      | What I did                                                                                                                                                                                                                                      |
+| --------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Load the kit on "session start or resume"                 | It loads when `/session` renders: `unlock()` must run synchronously in the start tap, so the kit must already be there; Settings → Alerts, the harness and the boot path with an active session load it too                                     |
+| Effect runner runs `timer.arm` / `wakeLock`               | Declarative: the persisted timer drives `useTimerAlerts`, the mounted screens drive `useScreenWakeLock` (one source of truth after a reload)                                                                                                    |
+| `sessionUi` store (§8.5)                                  | Zustand `useSessionUi` (`session-ui.ts`): resume banner, runtime guard, ended-while-hidden flag, PR celebration, proposals, hints, the focus-after-confirm flag, the deload check; reset on start, finish and discard; lost on reload by design |
+| Undo snackbar                                             | A button in the dock while the token is valid (30 s), so it is one-handed and never times out from under a screen-reader user before the core's limit                                                                                           |
+| RIR half-step chips                                       | Six chips; a half step (the core's suggested "1.5") is named in the legend, half steps are entered in Set details (a seventh chip would wrap and push the dock above the lower 60%)                                                             |
+| Mini timer "while a rest timer runs" (TMR-12)             | During the whole session: the running timer, else the session clock (one way back from anywhere)                                                                                                                                                |
+| Focus after "Confirm set"                                 | The next set's dock re-mounts; focus goes to its "Confirm set" (or its first field), WCAG 2.4.3                                                                                                                                                 |
+| Session preferences written by a hook (like M3t's alerts) | Through the existing use case `updateSessionPreferences`; the alert settings keep M3t's hook (TD-42 unchanged)                                                                                                                                  |
+| One startup chunk                                         | `codeSplitting.groups` with `$initial` (Rolldown 1.x); `chunkSizeWarningLimit` 700 kB minified (the gate is the gzip budget)                                                                                                                    |
+| `NumberField` (Base UI) for steppers                      | Own `Stepper`: one step is the next achievable load of the equipment, not a fixed step; typed decimals with a comma; M0's `ui/number-field.tsx` and `hooks/use-content.ts` were unused after `LogSetScreen` and are removed                     |
+
+**Bugs fixed in M3a/M3t code (found by the screens):**
+
+- **`PrematureCommitError` when finishing a planned session** (real IndexedDB only; M3a's
+  application tests run on in-memory fakes). `createUnitOfWork` passed a plain arrow to
+  `db.transaction`; Dexie keeps its transaction zone across native `await`s only for a scope
+  function it recognises as `async`. After `persist` the `plan.complete` effect's
+  `plannedSessions.get` ran outside the transaction, which committed early. Fix: `async` scope
+  functions in `infrastructure/db/unit-of-work.ts`; regression test in `test/session.test.tsx`
+  (component test on real IndexedDB).
+- **Conditional `use()`** in the first `useTimerKit`: React warned "called use() to suspend … but
+  did not call use() when it finished". Now `use(load())` always; the loader marks its promise
+  `status: 'fulfilled'` so later renders read it without suspending.
+- **Races in `test/alerts.test.tsx`** (M3t): UI assertions and second clicks right after a settings
+  write, before the live query re-rendered; they now wait for the re-render. The announcement range
+  accepts a slower first scheduler load.
+
+### Evidence
+
+`pnpm verify` green on 2026-11-25 (exit 0): lint (0 errors, 0 warnings), format, token gate (lowest
+text 4.56, on fills 5.41, UI 3.88; 332 colour utilities in 163 files), knip, catalog check, typecheck,
+**788 unit and component tests in 76 files**, build, licence gate (33 distributed, 841 build-only,
+passed), size (**entry JS 177.34 kB gzip** of 186, was 182.73 at the M3a/M3t merge; CSS 6.3 kB;
+service worker 8.07 kB; precache 104 files + sw.js, 575.6 kB; **startup path 1 script, 0 with Zod**)
+and **55 E2E tests** (45 before).
+
+- **Component tests** (Vitest browser mode, real IndexedDB): `test/session.test.tsx` (the effect
+  runner with sound and vibration on and off; the stepper: 48 px targets, comma decimals, clamp at
+  0; the timer ring; the logging card and dock: calibration prompt, chips, one confirm, the rest
+  starting, focus back on "Confirm set", axe; the mini timer on another screen with the session
+  clock and with a rest, axe; finishing a planned session on real IndexedDB), `test/summary.test.tsx`
+  (PRs in words, e1RM change, sets, streak, axe), `test/past-sessions.test.tsx` (list, editor, PR
+  preview before saving, backdated form with errors), `test/pseudo-locale.test.tsx` (+30% strings:
+  start, check-in and logging with the dock fit 360 px), `test/alerts.test.tsx` (pre-alert timing),
+  `alerts/scheduler.test.ts` (5 and 15 s pre-alerts), `session/search.test.ts` (`start=today`).
+- **E2E** (`e2e/session.spec.ts`, `e2e/past-sessions.spec.ts`, helpers in `e2e/session.ts`): the
+  planned session from Home in one tap → check-in → mini timer back to the workout → one-tap
+  confirm → rest starts → PR card → "Rest over · +m:ss" (Playwright clock) → finish → summary with
+  the PR; freestyle with set details (drop set) and the plate calculator; repeat of a 10-day-old
+  workout with the return-from-break proposal; Settings → Workout (no check-in, count-up rest)
+  reaching the session; substitution with ranked reasons; undo restoring set and timer; a superset
+  with its transition; a reload mid-rest showing the right remaining time (±1 s) and the resume
+  banner; the lower-60% and target-size assertion at 360 × 780; a backdated workout edited with
+  the PR preview. axe (WCAG 2.2 A/AA, light and dark) on every new screen and sheet; reflow at
+  320 px and 200% text on start, check-in, proposals, logging, summary, past sessions, the
+  backdated form, the editor and Settings → Workout.
+- **Existing specs moved to the new screen** (intent kept): `fixtures.ts` (`skipOnboarding` ends on
+  "Start a workout"), `persistence`, `backup` (export/restore with an active workout, the edited
+  backup rejected, offline export), `offline` (logging offline with the lazy chunks precached),
+  `update-gate` (the gate holds during a workout and releases at finish), `shell`.
+
+**Screenshots** (360 × 780, light and dark, `M2B_SCREENS=<dir>`; viewport shots while the dock is
+fixed, whole page otherwise; `*-320px-200pct.png` for reflow): `session-start`, `session-check-in`,
+`session-proposals`, `session-logging`, `session-resting-pr`, `session-rest-over`,
+`session-resumed`, `session-mini-timer`, `session-empty`, `session-add-exercise`,
+`session-set-details`, `session-exercise-options`, `session-swap`, `session-superset-transition`,
+`session-summary`, `settings-workout`, `past-sessions-empty`, `past-sessions`, `log-past-workout`,
+`past-session-editor`, `past-session-pr-preview`, `home` ("Start today's session"), `settings` (the
+Workout card), `settings-alerts` (the pre-alert timing).
+
+### Open items
+
+- **S-1 on the S22** (TD-38, V-01) and a **manual TalkBack pass** of the session screens: the dock's
+  reading order, the RIR legend with a half step, the announcements during a real rest (once each),
+  focus after "Confirm set", the PR card.
+- TD-39 (TMR-10 metronome), TD-48 (TMR-09 lead-in and auto-stop), TD-49 (the preference screens
+  above), TD-14 ("Update first" before a session), TD-42 (alert settings use case), TD-43 (heat map,
+  streak count, PR history), TD-13 (200 randomized kills).
+- The add-exercise search and the planned-session names use the English content strings directly
+  (content is English-only; the labels hook covers the rest).
+- The proposals screen says "Based on your check-in and your recent training" also when the
+  check-in was skipped and only return-from-break proposals exist.
+- A developer device with an older version-2 database: clear the site data once (decision 4).
+
+### Proposed PRD wording (not edited)
+
+- **TMR-12:** "While a session runs, a compact timer stays visible on every screen of the app: the
+  running rest or set timer, otherwise the session clock, with a one-tap return to the session."
+- **WKT-03:** "RIR uses chips (0, 1, 2, 3, 4, 5+). A half-step value (for example a suggested 1.5)
+  is shown with the chips' label; half steps are entered in the set details."
+- **SET-03:** "pre-alert timing (5, 10 or 15 s; default 10 s)".
+- From M3a, still open: MOT-01 rep PR ("more load than ever for at least that many reps"), RDY-01
+  item scales, WKT-08 alternatives may leave the competition lift for the session, WKT-03
+  plausibility numbers (3× e1RM, 100 reps) as product constants.
+
+**Product-owner answers after M3b (2026-11-25):** the session screen is accepted as built (one
+stepper per row with the label beside it, Undo as a dock button, the mini timer for the whole
+session, the timer kit loading with the Train tab); TD-39 (metronome) and TD-48 (timed-set lead-in
+and auto-stop) go to M4, TD-49 (the preference screens) to M5; PRD v0.6 carries the proposed
+TMR-12, WKT-03 and SET-03 wording.

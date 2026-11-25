@@ -7,9 +7,9 @@
 | Field | Value |
 |---|---|
 | Title | POWR (working title): Product Requirements Document |
-| Version | 0.5 |
+| Version | 0.6 |
 | Date | 2026-11-23 |
-| Status | Draft v0.5. All open questions resolved on 2026-11-23 (§11.1). Only validation tasks remain (§11.2). Baseline for the technical concept. |
+| Status | Draft v0.6. All open questions resolved on 2026-11-23 (§11.1). Only validation tasks remain (§11.2). Baseline for the technical concept. |
 | Owner / publisher | Simeon Zimmermann, SZ WEB DEVELOPMENT, Switzerland (product owner and publisher). Drafted by the requirements agent. |
 | Audience | Product owner, the technical-concept author, designers, testers |
 | Sources | (1) User braindump `app.requirements.md`. (2) User answers to clarification questions (2026-11-23); these are authoritative and override the braindump where it is ambiguous. (3) Evidence base `reports/Strength and hypertrophy evidence base.md` (consolidated report, "EB"), backed by the six files in `research_notes/Strength and hypertrophy evidence base/`. (4) Platform documentation checked on 2026-11-23 (Appendix C). (5) User decisions on all open questions and publisher details, 2026-11-23 (§11.1). |
@@ -25,6 +25,7 @@
 | 0.3 | 2026-11-24 | §7.1 movement patterns extended by five joint actions already used by the content and engine (shoulder horizontal adduction/abduction, shrug, wrist flexion/extension); EXL-04 load-curve class "bench-like" renamed "equation (Wathan/RTS)" (TD-30, rename in code planned for M2b). Both approved by the product owner on 2026-11-24. |
 | 0.4 | 2026-11-24 | PLN-14: time-budget rule (priority muscles keep their full target, the others fall back towards about 4 weekly sets; also for next-block proposals) with reason and fixes. EQP-02 and ONB-06: Custom (empty) opens the equipment checklist first; an empty list gives a bodyweight-only plan with the reason. Both approved by the product owner on 2026-11-24 (M2b). |
 | 0.5 | 2026-11-24 | ONB-08: the main lifts are the competition lifts (powerlifting, powerbuilding) or the plan's primary compound lifts (bodybuilding), at most four, each showing its estimated 1RM. PLN-02: the override lists every template of the style and says whether it fits days and level. Both approved by the product owner on 2026-11-24 (M2c). |
+| 0.6 | 2026-11-25 | TMR-12: the compact timer shows the rest or set timer, otherwise the session clock, for the whole session. WKT-03: half-step RIR is shown with the chips' label and entered in the set details. SET-03: pre-alert timing 5, 10 or 15 s, default 10 s. All approved by the product owner on 2026-11-25 (M3b). |
 
 ---
 
@@ -565,7 +566,7 @@ The session screen shows the exercise list and progress, with the **current set*
 **WKT-03 · Set logging** · Must · MVP
 Logging a set records: load, reps, RIR or RPE (half-points allowed), set type (WKT-04), completion state, timestamp and, optionally, a note, a pain flag (RDY-04) and a "failed rep" marker.
 - **One tap** confirms a set performed exactly as prescribed (M1).
-- Changing the weight uses steppers sized to the exercise's increment (EQP-03), or a numeric keypad. Changing reps uses a stepper or keypad. RIR uses chips (0, 1, 2, 3, 4, 5+; half-steps optional). Novice wording: "How many more reps could you have done?" (SET-05).
+- Changing the weight uses steppers sized to the exercise's increment (EQP-03), or a numeric keypad. Changing reps uses a stepper or keypad. RIR uses chips (0, 1, 2, 3, 4, 5+). A half-step value (for example a suggested 1.5) is shown with the chips' label; half steps are entered in the set details. Novice wording: "How many more reps could you have done?" (SET-05).
 - After confirming, the rest timer starts (TMR-01), PRs are evaluated (MOT-01), the next set's suggestion updates if autoregulation applies (PRG-05), and the set is durably saved (NFR-REL-01).
 - Reps and load cannot be negative. Implausible entries (for example > 3× the current e1RM, or > 100 reps) ask for confirmation.
 
@@ -716,7 +717,7 @@ Exercises can carry a tempo prescription in the format eccentric–bottom pause�
 The session clock shows elapsed workout time from session start, plus the estimated remaining time (PLN-14). It is visible in the session header and in the session summary (WKT-13).
 
 **TMR-12 · Global mini timer** · Must · MVP
-While a rest timer runs, a compact timer stays visible on every screen of the app (for example while browsing exercise history), with a one-tap return to the session.
+While a session runs, a compact timer stays visible on every screen of the app (for example while browsing exercise history): the running rest or set timer, otherwise the session clock, with a one-tap return to the session.
 
 **TMR-13 · Superset rest logic** · Should · MVP
 Within a superset, a short transition timer runs between exercises A and B (default 0:15–0:30). The normal rest runs after the last exercise of the round.
@@ -1167,7 +1168,7 @@ Light, dark and system (default) themes. All screens, charts, the body map and c
 Load unit (kg/lb), bodyweight unit (kg/lb), length unit (cm/in), and plate inventory unit set per plate set. Switching units converts the display without changing stored values or introducing drift (NFR-REL-07).
 
 **SET-03 · Timer defaults** · Must · MVP
-The user can edit rest defaults per context (TMR-02), auto-start on/off, count-up mode, pre-alert timing, superset transition time and warm-up rest, and reset everything to evidence defaults.
+The user can edit rest defaults per context (TMR-02), auto-start on/off, count-up mode, pre-alert timing (5, 10 or 15 s; default 10 s), superset transition time and warm-up rest, and reset everything to evidence defaults.
 
 **SET-04 · Alerts and permissions** · Must · MVP
 Settings for sound on/off and volume, vibration on/off, optional voice cues (Could), notification permission status and a request button, and the "alerts while screen is locked" capability status (TMR-06). The honest status note is required by the OQ-01 decision.

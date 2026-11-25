@@ -41,6 +41,18 @@ export default defineConfig({
     // Everything stays a same-origin file: no data: URLs, simpler CSP and precaching.
     assetsInlineLimit: 0,
     sourcemap: false,
+    // The startup chunk below is about 550 kB minified; the gate is the gzip budget (size-limit,
+    // §8.19), not Vite's 500 kB minified warning.
+    chunkSizeWarningLimit: 700,
+    rolldownOptions: {
+      output: {
+        // One startup chunk (M3b, §8.19): Rolldown otherwise splits every module the entry shares
+        // with a lazy route into its own small common chunk (15 first-wave scripts at M3t, each
+        // compressed on its own). Grouping the entry's static graph keeps the first wave at two
+        // scripts; the lazy chunks import from the group as they did from the small chunks.
+        codeSplitting: { groups: [{ name: 'startup', tags: ['$initial'] }] },
+      },
+    },
   },
   preview: { port: 4173, strictPort: true },
   // Trusted Types only: the production CSP would reject Vite's dev preamble and its injected

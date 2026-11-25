@@ -18,4 +18,15 @@ describe('validateSessionSearch', () => {
       expect(() => validateSessionSearch({ source })).toThrow('Invalid search parameter source=');
     }
   });
+
+  it('accepts start=today (WKT-01 one tap from Home) and rejects other values', () => {
+    expect(validateSessionSearch({ start: 'today' })).toEqual({ start: 'today' });
+    expect(validateSessionSearch({ start: 'today', source: 'shortcut' })).toEqual({
+      start: 'today',
+      source: 'shortcut',
+    });
+    for (const start of ['tomorrow', '', 1, null]) {
+      expect(() => validateSessionSearch({ start })).toThrow('Invalid search parameter start=');
+    }
+  });
 });

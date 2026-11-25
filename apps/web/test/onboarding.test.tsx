@@ -100,7 +100,7 @@ describe('onboarding steps (ONB-01…07)', () => {
     await acknowledge(container);
     renderRoute(container, '/onboarding/goal');
     await userEvent.click(await screen.findByRole('button', { name: 'Just let me log' }));
-    expect(await screen.findByRole('heading', { level: 1, name: 'Log a set' })).toBeTruthy();
+    expect(await screen.findByRole('heading', { level: 1, name: 'Start a workout' })).toBeTruthy();
     const stored = await container.deps.uow.read(['profile', 'plans'], async (repos) => ({
       profile: await repos.profile.get(),
       plan: await repos.plans.getActive(),

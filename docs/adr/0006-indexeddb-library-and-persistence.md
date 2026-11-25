@@ -1,6 +1,6 @@
 # ADR-0006: IndexedDB library and persistence model: Dexie 4
 
-- Status: Accepted (photo storage revisited after spike S-3b; v0.3, 2026-11-24: amended after M0, see below; amended v0.5)
+- Status: Accepted (photo storage revisited after spike S-3b; v0.3, 2026-11-24: amended after M0, see below; amended v0.5, v0.7)
 - Date: 2026-11-23
 - Related: technical concept §8.2, §6.3, §6.5, §6.8; PRD DAT-01…04, DAT-14, NFR-REL-01…08, TC-01, TC-14
 
@@ -57,3 +57,14 @@ Source: `IMPLEMENTATION_NOTES.md` §3 (repository root), which records each devi
 The decision stands. TD-19 is decided: the MVP tables of M2 arrived as **`dataVersion` 2** (seven tables: `profile`, `equipmentProfiles`, `plans`, `plannedSessions`, `breaks`, `meets`, `bodyweights`; settings gain `weekStart` and `overrides`) with a pass-through migration from version 1, run by the Dexie upgrade and by backup import, so both paths are exercised before real user data exists (technical concept §8.2.2). Version 2 was still unreleased when M2b added `Plan.dismissedIssues` (dismissed plan warnings, PLN-09) and `MuscleTarget.full` (time-budget targets) to its record schemas, so no version 3 was needed.
 
 Source: `IMPLEMENTATION_NOTES.md` (repository root), sections "M2a planning core" and "M2b screens".
+
+## Amendment (v0.7, 2026-11-24)
+
+The decision stands, with one deviation that the product owner accepted on 2026-11-24 (technical concept §8.2.2, §8.2.4, §8.2.8):
+
+- **Derived writes are strict too.** Dexie sets the durability per database, not per transaction, so the derived tables (`dExerciseState`, `dSessionE1rm`, `dPrs`) are written with strict durability like the raw data. They are written at finish and after past edits, not per logged set, so the set-commit path does not pay for it.
+- **Version 2 amended again (unreleased), no version 3:** `sessions.plannedSessionId` and the stores `readiness`, `dExerciseState`, `dSessionE1rm` and `dPrs`; the session record's M3 core and the settings' `session` and `alerts` objects. Development devices that ran an M2 build hold the old layout under the same version number and clear their site data once (product-owner decision, 2026-11-24; no migration, no beta users yet).
+- **One event, one transaction:** every session event reads and writes `sessions`, `sets`, `readiness`, `dExerciseState`, `plannedSessions` and `plans` in one strict transaction; the pure reducer runs inside it.
+- **Transaction scopes are `async` functions (M3b fix):** Dexie keeps its transaction zone across native `await`s only for a scope function it recognises as async. The unit of work passed a plain arrow, so after a few nested awaits (the FINISH of a planned session: persist, then mark the planned session done) a repository call ran outside the transaction and Dexie reported `PrematureCommitError`. `createUnitOfWork` now passes `async () => fn(repos)`; a component test on real IndexedDB guards it (the application tests run on in-memory fakes).
+
+Source: `IMPLEMENTATION_NOTES.md` (repository root), sections "M3a session core" and "M3b session screens".

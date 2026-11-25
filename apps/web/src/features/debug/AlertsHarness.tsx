@@ -5,6 +5,7 @@ import { Input } from '#ui/input';
 import { Card, Screen } from '#ui/screen';
 
 import { APP_INFO, useDiagnostics, usePlatform } from '../../hooks/use-app';
+import { useTimerKit } from '../../hooks/use-timer-kit';
 import { useTimerDisplay, type TimerState } from '../../hooks/use-timers';
 import { formatClock, formatTime } from '../../i18n/format';
 import {
@@ -50,7 +51,8 @@ const DEFAULT_SETTINGS: HarnessSettings = {
  */
 export function AlertsHarness() {
   const platform = usePlatform();
-  const { restAlerts, screenWake, labs } = platform.timers;
+  const timers = useTimerKit();
+  const { restAlerts, screenWake, labs } = timers;
   const { log } = useDiagnostics();
   const [settings, setSettings] = useState<HarnessSettings>(() => ({
     ...DEFAULT_SETTINGS,
@@ -82,7 +84,7 @@ export function AlertsHarness() {
   const start = async () => {
     const config: RunConfig = { ...settings, device: settings.device || 'unnamed device' };
     // In the tap: the audio context may only start after user activation.
-    await platform.audio.unlock();
+    await timers.audio.unlock();
     const { run, timer: runTimer } = newRun(
       config,
       Date.now(),
@@ -176,7 +178,7 @@ export function AlertsHarness() {
       placeholder: false,
       exportedAt: new Date().toISOString(),
       device: settings.device || 'unnamed device',
-      browser: platform.timers.browser(),
+      browser: timers.browser(),
       app: APP_INFO,
       userAgent: navigator.userAgent,
       capabilities,

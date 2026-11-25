@@ -194,6 +194,9 @@ test.describe('Settings → Alerts (SET-03, SET-04, SET-10, TMR-06)', () => {
     await page.getByRole('button', { name: 'Test alert' }).click();
     await expect(page.getByTestId('test-alert-result')).toContainText('Rest over');
     await expect(page.getByTestId('live-announcer')).toHaveText('Test alert: rest over');
+    // From the top: axe counts a control the sticky bottom navigation half covers at the current
+    // scroll position as too small (target-size), which says nothing about the control itself.
+    await page.evaluate(() => window.scrollTo(0, 0));
     await checkScreen(page, 'settings-alerts');
     await checkReflow(page, 'settings-alerts');
   });

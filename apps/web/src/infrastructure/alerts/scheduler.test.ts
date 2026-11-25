@@ -138,6 +138,22 @@ describe('rest alerts while visible (§8.8.2, TMR-05)', () => {
     expect(t.types()).toEqual(['armed', 'pre-alert', 'countdown', 'countdown', 'countdown', 'end']);
   });
 
+  it('fires the pre-alert at the chosen timing: 5 or 15 s before the end (SET-03)', async () => {
+    for (const seconds of [5, 15]) {
+      const t = setup();
+      const rest = startedNow(t, { targetMs: 30_000 });
+      t.alerts.arm(rest, TEXTS, { ...OPTIONS, preAlert: true, preAlertMs: seconds * 1000 });
+      await t.alerts.settled();
+      await t.run((clock) => clock.advance(30_000 - seconds * 1000 - 1));
+      expect(t.cues).toEqual([]);
+      await t.run((clock) => clock.advance(1));
+      expect(t.cues).toEqual(['preAlert']);
+      expect(t.events.find((event) => event.type === 'pre-alert')).toMatchObject({
+        remainingMs: seconds * 1000,
+      });
+    }
+  });
+
   it('respects sound and vibration off and skips a pre-alert that already fired', async () => {
     const t = setup();
     const rest = startedNow(t, { targetMs: 30_000, fired: { preAlert: true } });

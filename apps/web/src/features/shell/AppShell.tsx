@@ -1,11 +1,20 @@
 import { useLingui } from '@lingui/react/macro';
 import { Link, Outlet, useRouterState } from '@tanstack/react-router';
 import { Settings } from 'lucide-react';
+import { lazy, Suspense } from 'react';
 
 import { LiveAnnouncer } from '#ui/announcer';
 
+import { useActiveSession } from '../../hooks/use-session';
 import { BottomNav } from './BottomNav';
 import { UpdateBanner } from './UpdateBanner';
+
+/**
+ * The session runtime (M3b): alerts of the running timer, recovery after a reload (WKT-14) and the
+ * global mini timer (TMR-12). A lazy chunk with the timer kit and the session entry, loaded only
+ * while a session is active, so the startup path stays small (§8.19).
+ */
+const SessionRuntime = lazy(() => import('../session/SessionRuntime'));
 
 /** Mobile-first shell: header, content, update notice and the bottom navigation (§8.9.4). */
 export function AppShell() {
@@ -14,6 +23,7 @@ export function AppShell() {
   const onboarding = useRouterState({
     select: (state) => state.location.pathname.startsWith('/onboarding'),
   });
+  const session = useActiveSession();
   return (
     <div className="flex min-h-dvh flex-col">
       <header className="sticky top-0 z-10 border-b border-border bg-bg pt-safe">
@@ -34,9 +44,14 @@ export function AppShell() {
         </div>
       </header>
       <UpdateBanner />
-      <main className={onboarding ? 'flex-1 pb-8' : 'flex-1 pb-28'}>
+      <main className={onboarding ? 'flex-1 pb-8' : 'flex-1 pb-shell'}>
         <Outlet />
       </main>
+      {session.loaded && session.value ? (
+        <Suspense fallback={null}>
+          <SessionRuntime />
+        </Suspense>
+      ) : null}
       {onboarding ? null : <BottomNav />}
       {/* The one polite live region for timer and alert announcements (NFR-A11Y-06). */}
       <LiveAnnouncer />

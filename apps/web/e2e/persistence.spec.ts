@@ -5,18 +5,19 @@ import { join } from 'node:path';
 import { chromium, devices, type Page } from '@playwright/test';
 
 import { expect, skipOnboarding, test } from './fixtures';
+import { addExercise, logSet, startEmptyWorkout } from './session';
 
 async function logOneSet(page: Page, reps: number) {
   await page.goto('/session');
   // A fresh profile starts at the first-run guard (M2b).
   const heading = page.getByRole('heading', { level: 1 });
-  await expect(heading).toHaveText(/^(Log a set|Welcome to POWR)$/);
+  await expect(heading).toHaveText(/^(Start a workout|Welcome to POWR)$/);
   if ((await heading.textContent()) === 'Welcome to POWR') await skipOnboarding(page);
-  const repsInput = page.getByLabel('Reps', { exact: true });
-  await repsInput.fill(String(reps));
-  await page.getByRole('button', { name: 'Confirm set' }).click();
-  // The confirmation is rendered only after the strict-durability commit resolved.
-  await expect(page.getByTestId('log-status')).toContainText(`× ${reps}`);
+  await startEmptyWorkout(page);
+  await addExercise(page, 'Barbell back squat');
+  // The logged row is rendered only after the strict-durability commit resolved.
+  await logSet(page, { weight: 100, reps });
+  await expect(page.getByTestId('logged-set')).toContainText(`× ${reps}`);
 }
 
 test.describe('persistence (WP0.5, QS-01 basic)', () => {
@@ -24,7 +25,7 @@ test.describe('persistence (WP0.5, QS-01 basic)', () => {
     await logOneSet(page, 7);
     await page.reload();
     await expect(page.getByTestId('session-sets')).toContainText('Barbell back squat');
-    await expect(page.getByTestId('session-sets')).toContainText('× 7');
+    await expect(page.getByTestId('logged-set')).toContainText('× 7');
   });
 
   test('a confirmed set survives closing the browser right after the write', async ({
@@ -47,8 +48,8 @@ test.describe('persistence (WP0.5, QS-01 basic)', () => {
       const second = await launch();
       const reopened = second.pages()[0] ?? (await second.newPage());
       await reopened.goto('/session');
-      await expect(reopened.getByTestId('session-sets')).toContainText('× 9');
-      await expect(reopened.getByTestId('session-sets').getByRole('listitem')).toHaveCount(1);
+      await expect(reopened.getByTestId('logged-set')).toContainText('× 9');
+      await expect(reopened.getByTestId('logged-set')).toHaveCount(1);
       await second.close();
     } finally {
       rmSync(profile, { recursive: true, force: true });

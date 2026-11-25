@@ -41,12 +41,13 @@ describe('record migration chain', () => {
     }
   });
 
-  it('accepts the optional alert settings at v2 and rejects incomplete or out-of-range ones (M3t)', () => {
+  it('accepts the optional alert settings at v2 and rejects incomplete or out-of-range ones (M3t, M3b)', () => {
     const alerts = {
       sound: true,
       volume: 0.8,
       vibration: true,
       preAlert: true,
+      preAlertSeconds: 10,
       countdown: false,
       restingNotice: true,
       keepScreenOn: true,
@@ -57,6 +58,23 @@ describe('record migration chain', () => {
     ).toBe(false);
     const { keepScreenOn: _, ...incomplete } = alerts;
     expect(v2Settings.safeParse({ id: 'me', theme: 'dark', alerts: incomplete }).success).toBe(
+      false,
+    );
+    // The pre-alert timing is 5, 10 or 15 s (SET-03, product-owner decision 2026-11-24).
+    for (const preAlertSeconds of [5, 15]) {
+      expect(
+        v2Settings.safeParse({ id: 'me', theme: 'dark', alerts: { ...alerts, preAlertSeconds } })
+          .success,
+      ).toBe(true);
+    }
+    for (const preAlertSeconds of [0, 7, 20, '10']) {
+      expect(
+        v2Settings.safeParse({ id: 'me', theme: 'dark', alerts: { ...alerts, preAlertSeconds } })
+          .success,
+      ).toBe(false);
+    }
+    const { preAlertSeconds: _timing, ...withoutTiming } = alerts;
+    expect(v2Settings.safeParse({ id: 'me', theme: 'dark', alerts: withoutTiming }).success).toBe(
       false,
     );
     expect(

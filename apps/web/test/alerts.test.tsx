@@ -1,4 +1,4 @@
-import { act, fireEvent, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
 import { describe, expect, it } from 'vitest';
@@ -32,6 +32,8 @@ async function containerWith(initial: NotificationPermissionState = 'default') {
     show: async () => false,
     closeByTag: async () => undefined,
   };
+  // The timer kit is a lazy chunk (M3b): load it first, so the screens render without suspending.
+  await container.platform.timers.load();
   return {
     ...container,
     platform: { ...container.platform, notifications },
@@ -106,8 +108,13 @@ describe('Settings → Alerts (SET-03, SET-04, SET-10, TMR-06)', () => {
     await waitFor(async () => expect((await storedAlerts(container))?.countdown).toBe(true));
     await userEvent.click(sound);
     await waitFor(async () => expect((await storedAlerts(container))?.sound).toBe(false));
-    expect(screen.getByRole<HTMLInputElement>('slider', { name: 'Volume' }).disabled).toBe(true);
+    // The section re-renders from the live query after the write (wait before the next click,
+    // or it would toggle from the stale state).
+    await waitFor(() =>
+      expect(screen.getByRole<HTMLInputElement>('slider', { name: 'Volume' }).disabled).toBe(true),
+    );
     await userEvent.click(sound);
+    await waitFor(async () => expect((await storedAlerts(container))?.sound).toBe(true));
 
     // Volume: saved when the change ends, not on every step.
     const volume = screen.getByRole('slider', { name: 'Volume' });
@@ -116,19 +123,43 @@ describe('Settings → Alerts (SET-03, SET-04, SET-10, TMR-06)', () => {
     expect(await storedAlerts(container)).toMatchObject({ volume: 0.8 });
     fireEvent.pointerUp(volume);
     await waitFor(async () => expect((await storedAlerts(container))?.volume).toBeCloseTo(0.6));
-    expect(volume.getAttribute('aria-valuetext')).toBe('60%');
+    // The slider shows the stored value once the live query has re-emitted.
+    await waitFor(() => expect(volume.getAttribute('aria-valuetext')).toBe('60%'));
+
+    // Pre-alert timing (SET-03, product-owner decision 2026-11-24): 5, 10 or 15 s, default 10 s.
+    const timing = screen.getByRole('group', { name: 'Seconds before the end' });
+    expect(within(timing).getByRole('button', { name: '10 s' }).getAttribute('aria-pressed')).toBe(
+      'true',
+    );
+    await userEvent.click(within(timing).getByRole('button', { name: '15 s' }));
+    await waitFor(async () => expect((await storedAlerts(container))?.preAlertSeconds).toBe(15));
+    await userEvent.click(
+      screen.getByRole('checkbox', { name: 'Warning before the end of a rest' }),
+    );
+    await waitFor(async () => expect((await storedAlerts(container))?.preAlert).toBe(false));
+    // The section re-renders once the live query re-emitted the stored settings.
+    await waitFor(() =>
+      expect(screen.queryByRole('group', { name: 'Seconds before the end' })).toBeNull(),
+    );
+    await userEvent.click(
+      screen.getByRole('checkbox', { name: 'Warning before the end of a rest' }),
+    );
+    await waitFor(async () => expect((await storedAlerts(container))?.preAlert).toBe(true));
 
     await userEvent.click(
       screen.getByRole('checkbox', { name: /^Keep the screen on during workouts/ }),
     );
     await waitFor(async () => expect((await storedAlerts(container))?.keepScreenOn).toBe(false));
-    expect(screen.getByTestId('wake-lock-status').textContent).toBe('Keep screen on: Off.');
+    await waitFor(() =>
+      expect(screen.getByTestId('wake-lock-status').textContent).toBe('Keep screen on: Off.'),
+    );
 
     expect(await storedAlerts(container)).toEqual({
       sound: true,
       volume: 0.6,
       vibration: true,
       preAlert: true,
+      preAlertSeconds: 15,
       countdown: true,
       restingNotice: true,
       keepScreenOn: false,
@@ -234,9 +265,11 @@ describe('timer hooks for the session screen (M3b)', () => {
     await waitFor(() =>
       expect(screen.getByTestId('probe-audio').textContent).toMatch(/^(true|false)$/),
     );
+    // Announced when the scheduler chunk armed the rest: on a loaded test machine the dev server
+    // may take a few seconds to serve that chunk the first time, so the remainder is a range.
     await waitFor(() =>
       expect(screen.getByTestId('live-announcer').textContent).toMatch(
-        /^Rest started, 1 minute, (29|30) seconds$/,
+        /^Rest started, 1 minute, ([12]\d|30) seconds$/,
       ),
     );
     // 4 Hz while visible: the clock moves on without any state write.

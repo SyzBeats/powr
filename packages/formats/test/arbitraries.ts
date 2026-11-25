@@ -294,6 +294,7 @@ const alertSettings: fc.Arbitrary<NonNullable<SettingsRecord['alerts']>> = fc.re
   volume: fc.integer({ min: 0, max: 100 }).map((percent) => percent / 100),
   vibration: fc.boolean(),
   preAlert: fc.boolean(),
+  preAlertSeconds: fc.constantFrom(5 as const, 10 as const, 15 as const),
   countdown: fc.boolean(),
   restingNotice: fc.boolean(),
   keepScreenOn: fc.boolean(),

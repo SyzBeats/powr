@@ -6,7 +6,7 @@ import type {
   NotificationPort,
 } from '@powr/application';
 
-import type { AlertAudio } from '../platform/audio';
+import { audio, type AlertAudio } from '../platform/audio';
 import { pruneFiredFlags } from '../runtime-db';
 import { currentBrowser, type BrowserInfo } from './browser';
 import { createTimerEngine, type TimerEngine } from './engine';
@@ -19,12 +19,16 @@ import type { TimerState } from './timer';
 import { createWakeLockPolicy, type WakeLockPolicy } from './wake-lock-policy';
 
 /**
- * Timers and alerts for the composition root (technical concept §8.8). In the entry chunk: the
- * timer engine and its 4 Hz ticker (the mini timer shows on every screen, TMR-12), the wake-lock
- * policy and the facade of the rest-alert scheduler. The scheduler itself and the honest status
- * with the capability matrix are lazy chunks, loaded on the first arm or Settings → Alerts.
+ * Timers and alerts for the composition root (technical concept §8.8). The whole kit is a lazy
+ * chunk (M3b, product-owner decision 2026-11-24): the timer engine and its 4 Hz ticker, the
+ * Web Audio cues, the wake-lock policy and the facade of the rest-alert scheduler load on first
+ * use (a session started or resumed, an active session found at boot, Settings → Alerts, the
+ * debug harness). The scheduler itself and the honest status with the capability matrix are
+ * further lazy chunks, loaded on the first arm or the first status check.
  */
 export interface TimerKit {
+  /** Web Audio cues (§8.8.2); `unlock()` in the "Start session" tap. */
+  readonly audio: AlertAudio;
   readonly engine: TimerEngine;
   readonly ticker: Ticker;
   readonly restAlerts: RestAlerts;
@@ -42,7 +46,6 @@ export interface TimerKit {
 }
 
 export function createTimerKit(deps: {
-  readonly audio: AlertAudio;
   readonly haptics: HapticsPort;
   readonly notifications: NotificationPort;
   readonly transport: AlertTransport;
@@ -75,7 +78,7 @@ export function createTimerKit(deps: {
       lifecycle,
       timers: browserTimers,
       wall: () => Date.now(),
-      audio: deps.audio,
+      audio,
       haptics: deps.haptics,
       notifications: deps.notifications,
       transport: deps.transport,
@@ -89,6 +92,7 @@ export function createTimerKit(deps: {
     });
   }, logEnd(deps.log));
   return {
+    audio,
     engine,
     ticker,
     restAlerts,

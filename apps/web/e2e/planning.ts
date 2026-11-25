@@ -39,11 +39,13 @@ export async function checkScreen(page: Page, name: string): Promise<void> {
     ).toEqual([]);
     if (SCREENS) {
       mkdirSync(SCREENS, { recursive: true });
-      // A whole-page shot, unless a sheet is open (it is fixed to the 360 × 780 viewport).
+      // A whole-page shot, unless a sheet is open (it is fixed to the 360 × 780 viewport) or the
+      // session dock is fixed at the bottom (M3b): then the 360 × 780 view the user sees.
       const sheet = (await page.getByRole('dialog').count()) > 0;
+      const dock = (await page.locator('[data-dock="fixed"]').count()) > 0;
       await page.screenshot({
         path: join(SCREENS, `${name}-${colorScheme}.png`),
-        fullPage: !sheet,
+        fullPage: !sheet && !dock,
       });
     }
   }

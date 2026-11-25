@@ -448,9 +448,10 @@ export const settingsRecordSchema = z.strictObject({
     .max(200)
     .exactOptional(),
   /**
-   * Alerts and workout display (M3t; SET-03 pre-alert and 3-2-1, SET-04 sound, volume and
-   * vibration, SET-10 keep screen on, §8.8.4 the "Resting – ends at …" notification). Absent =
-   * the app's defaults; the app writes the whole object on every change.
+   * Alerts and workout display (M3t; SET-03 pre-alert, its timing and 3-2-1, SET-04 sound,
+   * volume and vibration, SET-10 keep screen on, §8.8.4 the "Resting – ends at …" notification).
+   * Absent = the app's defaults; the app writes the whole object on every change. M3b added
+   * `preAlertSeconds` (product-owner decision 2026-11-24: 5, 10 or 15 s; unreleased v2 amended).
    */
   alerts: z
     .strictObject({
@@ -459,6 +460,8 @@ export const settingsRecordSchema = z.strictObject({
       volume: z.number().min(0).max(1),
       vibration: z.boolean(),
       preAlert: z.boolean(),
+      /** How long before the end the pre-alert fires (SET-03). */
+      preAlertSeconds: z.union([z.literal(5), z.literal(10), z.literal(15)]),
       countdown: z.boolean(),
       restingNotice: z.boolean(),
       keepScreenOn: z.boolean(),

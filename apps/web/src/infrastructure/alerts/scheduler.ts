@@ -46,8 +46,10 @@ export interface AlertOptions {
   /** In-app volume 0–1, applied as gain (TMR-05). */
   readonly volume: number;
   readonly vibration: boolean;
-  /** Pre-alert 10 s before the end (SET-03). */
+  /** Pre-alert before the end (SET-03). */
   readonly preAlert: boolean;
+  /** How long before the end the pre-alert fires: 5, 10 or 15 s (SET-03; default 10 s). */
+  readonly preAlertMs?: number;
   /** 3-2-1 beeps (SET-03). */
   readonly countdown: boolean;
   /** The silent "Resting – ends at …" notification when the page hides (§8.8.4). */
@@ -259,10 +261,11 @@ export function createRestAlerts(deps: RestAlertDeps): RestAlerts {
       entry.visibleHandles.push(timers.setTimeout(task, Math.max(0, remaining - ms)));
     if (entry.timer.mode === 'countdown') {
       const { preAlert, countdown } = entry.options;
-      if (preAlert && !entry.timer.fired.preAlert && remaining > ENDING_MS) {
-        at(ENDING_MS, () => {
+      const preAlertMs = entry.options.preAlertMs ?? ENDING_MS;
+      if (preAlert && !entry.timer.fired.preAlert && remaining > preAlertMs) {
+        at(preAlertMs, () => {
           cue(entry, 'preAlert');
-          emit({ type: 'pre-alert', timer: entry.timer, remainingMs: ENDING_MS });
+          emit({ type: 'pre-alert', timer: entry.timer, remainingMs: preAlertMs });
         });
       }
       if (countdown) {

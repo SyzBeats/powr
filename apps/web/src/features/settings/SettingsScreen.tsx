@@ -14,6 +14,7 @@ import { useSetTheme, useThemePreference } from '../../hooks/use-settings';
 import { localeWeekStart } from '../../i18n/format';
 import { useLabels } from '../labels';
 import { AlertsSection } from './AlertsSection';
+import { WorkoutSection } from './WorkoutSection';
 
 const DebugTools = lazy(() => import('../debug/DebugTools'));
 
@@ -65,7 +66,12 @@ export function SettingsScreen() {
         />
       </Card>
 
-      <AlertsSection />
+      <WorkoutSection />
+
+      {/* The timer kit is a lazy chunk (M3b): the section shows once it is loaded. */}
+      <Suspense fallback={null}>
+        <AlertsSection />
+      </Suspense>
 
       <Card className="gap-1">
         <Link to="/settings/equipment" className={linkClass}>

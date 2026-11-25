@@ -2,6 +2,8 @@ import { screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import { saveOnboardingDraft } from '@powr/application/planning';
+import { dispatch, startWorkout } from '@powr/application/session';
+import type { ExerciseId } from '@powr/domain';
 
 import { PlanPreviewView } from '../src/features/plan/PlanPreviewView';
 import { i18n } from '../src/i18n';
@@ -127,5 +129,32 @@ describe('pseudo-locale expansion (+30%, NFR-L10N-02)', () => {
     renderRoute(container, '/plan/edit');
     await screen.findAllByRole('button', { name: /set/ });
     expect({ editor: overflows() }).toEqual({ editor: [] });
+  });
+
+  it('the session screens fit 360 px: start, check-in and logging with the dock (M3b)', async () => {
+    const container = await createTestContainer();
+    await onboarded(container);
+    await container.platform.timers.load();
+    const start = renderRoute(container, '/session');
+    await screen.findByRole('button', { name: /ẍàñđé/ });
+    await screen.findAllByRole('heading', { level: 2 });
+    expect({ start: overflows() }).toEqual({ start: [] });
+    start.unmount();
+
+    const started = await startWorkout(container.deps, {
+      source: { kind: 'freestyle', exerciseIds: ['ex.barbell-bench-press' as ExerciseId] },
+      warmups: false,
+    });
+    if (!started.ok) throw new Error(started.error.kind);
+    const checkIn = renderRoute(container, '/session');
+    await screen.findAllByRole('group');
+    expect({ checkIn: overflows() }).toEqual({ checkIn: [] });
+    checkIn.unmount();
+
+    await dispatch(container.deps, { type: 'READINESS', items: null });
+    renderRoute(container, '/session');
+    await screen.findByTestId('current-set');
+    await screen.findByRole('region', { name: /^Log this set/ });
+    expect({ logging: overflows() }).toEqual({ logging: [] });
   });
 });

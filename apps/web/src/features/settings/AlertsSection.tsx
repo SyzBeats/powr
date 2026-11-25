@@ -8,9 +8,11 @@ import { Badge, type Tone } from '#ui/badge';
 import { Button } from '#ui/button';
 import { CheckRow } from '#ui/choice';
 import { Card } from '#ui/screen';
+import { Segmented } from '#ui/segmented';
 
 import type { AlertLevel, AlertStatusReport, WakeLockStatus } from '../../app/container';
 import {
+  PRE_ALERT_SECONDS,
   useAlertSettings,
   useAlertStatus,
   useNotificationPermission,
@@ -25,8 +27,9 @@ import { assertNever } from '../exhaustive';
 /**
  * Settings → Alerts (SET-03, SET-04, SET-10, TMR-05, TMR-06, PWA-06, PWA-08): the honest
  * screen-locked status, notification permission (explained first, requested only on a tap),
- * keep screen on with its live status, sound and volume, vibration, pre-alert, 3-2-1, the
- * "resting until" notification and a test alert.
+ * keep screen on with its live status, sound and volume, vibration, pre-alert and its timing
+ * (5, 10 or 15 s), 3-2-1, the "resting until" notification and a test alert. The timer kit is a
+ * lazy chunk, so the section suspends until it is loaded (render it inside a `<Suspense>`).
  */
 export function AlertsSection() {
   const { t } = useLingui();
@@ -79,11 +82,33 @@ export function AlertsSection() {
           checked={settings.vibration}
           onChange={(vibration) => void save({ vibration })}
         />
-        <CheckRow
-          label={t`Warning 10 seconds before the end of a rest`}
-          checked={settings.preAlert}
-          onChange={(preAlert) => void save({ preAlert })}
-        />
+        <div className="flex flex-col gap-2">
+          <CheckRow
+            label={t`Warning before the end of a rest`}
+            checked={settings.preAlert}
+            onChange={(preAlert) => void save({ preAlert })}
+          />
+          {settings.preAlert ? (
+            <div className="flex flex-col gap-1 px-2">
+              <span aria-hidden="true" className="text-sm font-medium text-fg-muted">
+                <Trans>Seconds before the end</Trans>
+              </span>
+              <Segmented<`${(typeof PRE_ALERT_SECONDS)[number]}`>
+                label={t`Seconds before the end`}
+                value={`${settings.preAlertSeconds}`}
+                onChange={(next) =>
+                  void save({
+                    preAlertSeconds: Number(next) as (typeof PRE_ALERT_SECONDS)[number],
+                  })
+                }
+                options={PRE_ALERT_SECONDS.map((seconds) => ({
+                  value: `${seconds}` as const,
+                  label: t`${seconds} s`,
+                }))}
+              />
+            </div>
+          ) : null}
+        </div>
         <CheckRow
           label={t`3-2-1 countdown beeps`}
           checked={settings.countdown}

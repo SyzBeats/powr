@@ -1,5 +1,6 @@
 import {
   ENGINE_VERSION,
+  addDays,
   instantAt,
   toLocalDate,
   type ExerciseId,
@@ -98,6 +99,51 @@ async function loadFinished(
   if (!session) return err({ kind: 'unknownSession' });
   if (session.status === 'active') return err({ kind: 'activeSession' });
   return ok({ session, sets: await repos.sets.bySession(sessionId) });
+}
+
+/** One finished session in the past-sessions list (WKT-15, WKT-01 "repeat"). */
+export interface PastSessionSummary {
+  readonly session: Session;
+  /** Logged sets (done), warm-ups included. */
+  readonly doneSets: number;
+  /** The exercises in the order they were logged. */
+  readonly exerciseIds: readonly ExerciseId[];
+}
+
+/**
+ * WKT-15 and WKT-01: finished and partial sessions of the last `days` days, newest first
+ * (discarded and active ones are left out). A minimal list until the history screens (M4).
+ */
+export async function listPastSessions(
+  deps: Deps,
+  input: { readonly days?: number; readonly limit?: number } = {},
+): Promise<readonly PastSessionSummary[]> {
+  const today = toLocalDate(deps.clock.now());
+  const from = addDays(today, -(input.days ?? 120));
+  return deps.uow.read(['sessions', 'sets'], async (repos) => {
+    const sessions = (await repos.sessions.inRange(from, today))
+      .filter((session) => session.status === 'finished' || session.status === 'partial')
+      .toSorted((a, b) => b.startedAt.epochMs - a.startedAt.epochMs)
+      .slice(0, input.limit ?? 50);
+    return Promise.all(
+      sessions.map(async (session) => {
+        const sets = (await repos.sets.bySession(session.id)).filter((set) => set.state === 'done');
+        return {
+          session,
+          doneSets: sets.length,
+          exerciseIds: sessionExerciseIds(session, sets),
+        };
+      }),
+    );
+  });
+}
+
+/** One finished session with its sets, for the past-session editor (WKT-15). */
+export async function pastSessionDetail(
+  deps: Deps,
+  sessionId: SessionId,
+): Promise<Result<SessionState, PastSessionError>> {
+  return deps.uow.read(['sessions', 'sets'], (repos) => loadFinished(repos, sessionId));
 }
 
 /** A PR and its value: an edit that changes the value replaces the PR. */

@@ -9,7 +9,7 @@ import type {
 import type { ContentCatalog } from '@powr/content';
 import type { CompiledRules } from '@powr/rules';
 
-import { createTimerKit, type TimerKit } from '../infrastructure/alerts';
+import type { TimerKit } from '../infrastructure/alerts';
 import { capabilityProbe } from '../infrastructure/capabilities/probe';
 import {
   createLiveQueries,
@@ -18,7 +18,6 @@ import {
   type PowrDb,
 } from '../infrastructure/db';
 import { createDiagnostics, type Diagnostics } from '../infrastructure/diagnostics/log';
-import { audio, type AlertAudio } from '../infrastructure/platform/audio';
 import { systemClock } from '../infrastructure/platform/clock';
 import { downloadGateway } from '../infrastructure/platform/files';
 import { haptics } from '../infrastructure/platform/haptics';
@@ -42,20 +41,58 @@ export type {
   AlertStatusReport,
   RestAlertTexts,
   TimerDisplay,
+  TimerKit,
   TimerState,
   WakeLockStatus,
 } from '../infrastructure/alerts';
+
+/**
+ * The timer and alert kit, loaded on first use (product-owner decision 2026-11-24, §8.19): the
+ * timer engine, the Web Audio cues, the wake-lock policy and the rest-alert scheduler stay off
+ * the startup path until a session starts or resumes, Settings → Alerts or the debug harness
+ * opens. `current()` is null until `load()` resolved. `load()` always returns the same promise;
+ * once it resolved it carries React's `status: 'fulfilled'` and `value`, so `use(load())` reads
+ * the kit without suspending again.
+ */
+export interface TimerKitLoader {
+  readonly current: () => TimerKit | null;
+  readonly load: () => Promise<TimerKit>;
+}
+
+function lazyTimerKit(create: () => Promise<TimerKit>): TimerKitLoader {
+  let kit: TimerKit | null = null;
+  let loading: Promise<TimerKit> | null = null;
+  return {
+    current: () => kit,
+    load: () => {
+      if (loading) return loading;
+      // React's thenable fields: `use()` returns `value` at once while `status` is 'fulfilled'.
+      const promise: Promise<TimerKit> & { status?: 'fulfilled'; value?: TimerKit } = create().then(
+        (created) => {
+          kit = created;
+          promise.status = 'fulfilled';
+          promise.value = created;
+          return created;
+        },
+      );
+      loading = promise;
+      return promise;
+    },
+  };
+}
 
 /** Platform capabilities used by screens through hooks; never touched directly by features. */
 export interface Platform {
   readonly wakeLock: WakeLockPort;
   readonly haptics: HapticsPort;
-  readonly audio: AlertAudio;
   readonly notifications: NotificationPort;
   /** Low level: service-worker `ARM_REST`/`DISARM` and the `fired:` flags (§8.8.4). */
   readonly alerts: AlertScheduler;
-  /** Timer display engine, rest-alert scheduler, wake-lock policy, honest status (§8.8, M3t). */
-  readonly timers: TimerKit;
+  /**
+   * Timer display engine, Web Audio cues, rest-alert scheduler, wake-lock policy, honest status
+   * (§8.8, M3t), loaded lazily (M3b).
+   */
+  readonly timers: TimerKitLoader;
   readonly capabilities: CapabilityProbe;
   readonly applyTheme: typeof applyTheme;
   readonly downloadText: (name: string, text: string) => void;
@@ -97,15 +134,16 @@ export function createContainer(
   const platform: Platform = {
     wakeLock,
     haptics,
-    audio,
     notifications,
     alerts: alertScheduler,
-    timers: createTimerKit({
-      audio,
-      haptics,
-      notifications,
-      transport: alertScheduler,
-      log: diagnostics.log,
+    timers: lazyTimerKit(async () => {
+      const { createTimerKit } = await import('../infrastructure/alerts');
+      return createTimerKit({
+        haptics,
+        notifications,
+        transport: alertScheduler,
+        log: diagnostics.log,
+      });
     }),
     capabilities: capabilityProbe,
     applyTheme,

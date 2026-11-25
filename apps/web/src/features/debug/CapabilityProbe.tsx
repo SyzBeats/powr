@@ -34,8 +34,9 @@ export function CapabilityProbe() {
     return result;
   };
   const tryBeep = async () => {
-    const unlocked = await platform.audio.unlock();
-    platform.audio.play('restEnd', 1);
+    const { audio } = await platform.timers.load();
+    const unlocked = await audio.unlock();
+    audio.play('restEnd', 1);
     return String(unlocked);
   };
 

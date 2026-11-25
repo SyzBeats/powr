@@ -4,6 +4,7 @@ import type { Page } from '@playwright/test';
 import { strFromU8, strToU8, unzipSync, zipSync } from 'fflate';
 
 import { expect, skipOnboarding, test, waitForOfflineReady } from './fixtures';
+import { addExercise, logSet, startEmptyWorkout } from './session';
 
 /** Requests of this page for the lazy backup chunk (`@powr/application/backup`, §8.19). */
 async function backupChunkLoads(page: Page): Promise<string[]> {
@@ -22,12 +23,10 @@ test.describe('backup (WP0.6, DAT-05/06)', () => {
     baseURL,
   }) => {
     await skipOnboarding(page);
-    await page.getByLabel('Reps', { exact: true }).fill('5');
-    await page.getByRole('button', { name: 'Confirm set' }).click();
-    await expect(page.getByTestId('log-status')).toContainText('× 5');
-    await page.getByLabel('Reps', { exact: true }).fill('4');
-    await page.getByRole('button', { name: 'Confirm set' }).click();
-    await expect(page.getByTestId('session-sets').getByRole('listitem')).toHaveCount(2);
+    await startEmptyWorkout(page);
+    await addExercise(page, 'Barbell back squat');
+    await logSet(page, { weight: 100, reps: 5 });
+    await logSet(page, { weight: 100, reps: 4 });
 
     await page.goto('/data');
     const [download] = await Promise.all([
@@ -57,15 +56,17 @@ test.describe('backup (WP0.6, DAT-05/06)', () => {
       'Restored. 2 sets imported.',
     );
 
+    // The restored workout is still running, with both sets (WKT-14 recovery after a restore).
     await restorePage.goto('/session');
-    await expect(restorePage.getByTestId('session-sets').getByRole('listitem')).toHaveCount(2);
+    await expect(restorePage.getByTestId('logged-set')).toHaveCount(2);
     await fresh.close();
   });
 
   test('rejects an edited backup and changes nothing (QS-17)', async ({ page }) => {
     await skipOnboarding(page);
-    await page.getByRole('button', { name: 'Confirm set' }).click();
-    await expect(page.getByTestId('session-sets').getByRole('listitem')).toHaveCount(1);
+    await startEmptyWorkout(page);
+    await addExercise(page, 'Barbell back squat');
+    await logSet(page, { weight: 100, reps: 5 });
     await page.goto('/data');
     const [download] = await Promise.all([
       page.waitForEvent('download'),
@@ -97,7 +98,7 @@ test.describe('backup (WP0.6, DAT-05/06)', () => {
     );
 
     await page.goto('/session');
-    await expect(page.getByTestId('session-sets').getByRole('listitem')).toHaveCount(1);
+    await expect(page.getByTestId('logged-set')).toHaveCount(1);
   });
 
   test('the first export and restore work offline: the lazy backup chunk is precached', async ({
@@ -114,8 +115,9 @@ test.describe('backup (WP0.6, DAT-05/06)', () => {
     await context.setOffline(true);
     await server?.close();
     await page.goto('/session');
-    await page.getByRole('button', { name: 'Confirm set' }).click();
-    await expect(page.getByTestId('session-sets').getByRole('listitem')).toHaveCount(1);
+    await startEmptyWorkout(page);
+    await addExercise(page, 'Barbell back squat');
+    await logSet(page, { weight: 100, reps: 5 });
     await page.goto('/data');
     await expect(page.getByRole('heading', { level: 1, name: 'Data and backups' })).toBeVisible();
     expect(await backupChunkLoads(page), 'not part of the startup bundle').toEqual([]);
