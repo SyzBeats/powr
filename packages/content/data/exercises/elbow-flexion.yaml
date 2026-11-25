@@ -120,3 +120,228 @@
     - en: Stand on the band and hold the ends with palms facing forward.
     - en: Curl up to full elbow bend while your elbows stay at your sides.
     - en: Use a stronger band or stand on it wider when 30 reps become easy.
+
+# M5 additions (content 0.3.0): preacher, cable and concentration curls are loaded supinated curls
+# and keep the "Biceps curl" row's H tag (Mannarino 2021). The behind-the-body cable curl is a cable
+# curl with the shoulder extended, which loads the biceps at a long length. Reverse and hammer
+# variations, the band hammer curl and the bodyweight ring curl are extrapolations (C); pronated
+# and neutral grips shift work to the brachialis and the brachioradialis (credited to the forearm
+# extensors and the forearms, 0.5).
+
+- id: ex.ez-bar-preacher-curl
+  name: { en: EZ-bar preacher curl }
+  synonyms: [preacher curl, scott curl]
+  pattern: elbowFlexion
+  mechanics: isolation
+  substitutionGroups: [sg.curl]
+  equipment:
+    allOf: [eq.plates, eq.preacher-bench]
+    anyOf: [[eq.ez-bar, eq.barbell-olympic, eq.barbell-womens]]
+  muscles:
+    - { muscle: mu.elbow-flexors, credit: 1, evidence: H, source: src.mannarino2021 }
+    - { muscle: mu.forearms.flexors, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+  load: { type: barbell, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [8, 15], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 3 }
+  cues:
+    - en: Sit at the preacher bench with your armpits snug against the top of the pad.
+    - en: Lower the bar until your elbows are almost straight, slowing down near the bottom.
+    - en: Curl up until your forearms are vertical without lifting your elbows off the pad.
+
+- id: ex.dumbbell-preacher-curl
+  name: { en: Dumbbell preacher curl }
+  synonyms: [single-arm preacher curl, db preacher curl]
+  pattern: elbowFlexion
+  mechanics: isolation
+  substitutionGroups: [sg.curl]
+  equipment:
+    allOf: [eq.dumbbells]
+    anyOf: [[eq.preacher-bench, eq.adjustable-bench]]
+  muscles:
+    - { muscle: mu.elbow-flexors, credit: 1, evidence: H, source: src.mannarino2021 }
+    - { muscle: mu.forearms.flexors, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+  load: { type: dumbbell, curveClass: pooled, unilateral: true, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [8, 15], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 2 }
+  cues:
+    - en: Rest the back of your upper arm on a preacher pad or over the back of an upright incline bench.
+    - en: Lower the dumbbell until your elbow is almost straight.
+    - en: Curl it up without letting your shoulder roll forward or your elbow lift.
+
+- id: ex.cable-curl
+  name: { en: Cable curl }
+  synonyms: [standing cable curl, low-pulley curl]
+  pattern: elbowFlexion
+  mechanics: isolation
+  substitutionGroups: [sg.curl]
+  equipment:
+    allOf: []
+    anyOf: [[eq.cable-station, eq.dual-cable-station]]
+  muscles:
+    - { muscle: mu.elbow-flexors, credit: 1, evidence: H, source: src.mannarino2021 }
+    - { muscle: mu.forearms.flexors, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+  load: { type: machine, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [10, 20], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 3, subRegions: [mu.elbow-flexors.biceps] }
+  cues:
+    - en: Face a low pulley holding a straight or EZ attachment with an underhand grip.
+    - en: Curl the handle up while your elbows stay at your sides.
+    - en: Lower until your arms are straight, keeping tension on the cable.
+
+- id: ex.behind-the-body-cable-curl
+  name: { en: Behind-the-body cable curl }
+  synonyms: [bayesian curl, bayesian cable curl]
+  pattern: elbowFlexion
+  mechanics: isolation
+  substitutionGroups: [sg.curl]
+  equipment:
+    allOf: []
+    anyOf: [[eq.cable-station, eq.dual-cable-station]]
+  muscles:
+    - { muscle: mu.elbow-flexors, credit: 1, evidence: H, source: src.mannarino2021 }
+    - { muscle: mu.forearms.flexors, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+  load: { type: machine, curveClass: pooled, unilateral: true, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [10, 20], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 2, subRegions: [mu.elbow-flexors.biceps] }
+  cues:
+    - en: Set a pulley low, take one handle and step forward until the cable pulls your arm behind your torso.
+    - en: Curl the handle forward and up while your upper arm stays behind your body.
+    - en: Let your arm straighten fully behind you to stretch the biceps before the next rep.
+
+- id: ex.concentration-curl
+  name: { en: Concentration curl }
+  synonyms: [seated concentration curl]
+  pattern: elbowFlexion
+  mechanics: isolation
+  substitutionGroups: [sg.curl]
+  equipment: { allOf: [eq.dumbbells], anyOf: [] }
+  muscles:
+    - { muscle: mu.elbow-flexors, credit: 1, evidence: H, source: src.mannarino2021 }
+    - { muscle: mu.forearms.flexors, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+  load: { type: dumbbell, curveClass: pooled, unilateral: true, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [8, 15], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-1
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 2, subRegions: [mu.elbow-flexors.biceps] }
+  cues:
+    - en: Sit with your legs apart and brace the back of your upper arm against your inner thigh.
+    - en: Curl the dumbbell toward your shoulder without moving your upper arm.
+    - en: Lower until your arm is fully straight before the next rep.
+
+- id: ex.reverse-curl
+  name: { en: Reverse curl }
+  synonyms: [reverse-grip curl, overhand curl]
+  pattern: elbowFlexion
+  mechanics: isolation
+  substitutionGroups: [sg.curl]
+  equipment:
+    allOf: [eq.plates]
+    anyOf: [[eq.ez-bar, eq.barbell-olympic, eq.barbell-womens]]
+  muscles:
+    - { muscle: mu.elbow-flexors, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.forearms.extensors, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+  load: { type: barbell, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [10, 20], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 2, subRegions: [mu.elbow-flexors.brachialis] }
+  cues:
+    - en: Hold an EZ bar or barbell with an overhand grip at about shoulder-width.
+    - en: Curl it up with straight wrists and your elbows at your sides.
+    - en: Lower slowly to straight arms, using less weight than for a normal curl.
+
+- id: ex.cable-rope-hammer-curl
+  name: { en: Cable rope hammer curl }
+  synonyms: [rope hammer curl, cable hammer curl]
+  pattern: elbowFlexion
+  mechanics: isolation
+  substitutionGroups: [sg.curl]
+  equipment:
+    allOf: []
+    anyOf: [[eq.cable-station, eq.dual-cable-station]]
+  muscles:
+    - { muscle: mu.elbow-flexors, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.forearms, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+  load: { type: machine, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [10, 20], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 3, subRegions: [mu.elbow-flexors.brachialis] }
+  cues:
+    - en: Attach a rope to a low pulley and hold it with your palms facing each other.
+    - en: Curl your hands toward your shoulders, elbows fixed at your sides.
+    - en: Lower until your arms are straight without letting the stack touch down.
+
+- id: ex.band-hammer-curl
+  name: { en: Band hammer curl }
+  synonyms: [resistance band hammer curl]
+  pattern: elbowFlexion
+  mechanics: isolation
+  substitutionGroups: [sg.curl]
+  equipment: { allOf: [eq.resistance-bands], anyOf: [] }
+  muscles:
+    - { muscle: mu.elbow-flexors, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.forearms, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+  load: { type: band, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [12, 30], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 0 }
+  cues:
+    - en: Stand on the band and hold the ends with your palms facing each other.
+    - en: Curl up with your elbows at your sides and your wrists straight.
+    - en: Lower slowly against the band to straight arms.
+
+- id: ex.ring-curl
+  name: { en: Ring curl }
+  synonyms: [suspension curl, ring biceps curl]
+  pattern: elbowFlexion
+  mechanics: isolation
+  substitutionGroups: [sg.curl]
+  equipment: { allOf: [eq.rings], anyOf: [] }
+  muscles:
+    - { muscle: mu.elbow-flexors, credit: 1, evidence: C, source: src.powr-eb-mapping }
+  load: { type: bodyweightAdded, curveClass: pooled, unilateral: false, bodyweightLoaded: true }
+  defaults:
+    repRange: { hypertrophy: [8, 20], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 1 }
+  cues:
+    - en: Hold the rings with your palms up and lean back on straight arms, body in one line.
+    - en: Curl your hands toward your forehead, pulling your body up while your elbows point forward.
+    - en: Lower back to straight arms; walk your feet forward to make it harder.

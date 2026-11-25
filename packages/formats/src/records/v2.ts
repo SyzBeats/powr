@@ -482,6 +482,39 @@ export const settingsRecordSchema = z.strictObject({
       division: z.enum(MEET_DIVISIONS).exactOptional(),
     })
     .exactOptional(),
+  /**
+   * M5d backup reminders (DAT-08, TD-57): the cadence in days, or null for off. Absent = the
+   * default: 14 days, or 7 while the browser has not protected the storage (DAT-03). The
+   * session trigger (8 new workouts) follows the same switch. Unreleased v2 amended.
+   */
+  backup: z
+    .strictObject({
+      reminderDays: z.union([z.literal(7), z.literal(14), z.literal(30)]).nullable(),
+    })
+    .exactOptional(),
+  /**
+   * M5s training preferences (SET-05, unreleased v2 amended): effort shown and entered as RIR or
+   * RPE (RPE = 10 − RIR), the RIR entry as chips or decimal steps, and warm-up sets generated at
+   * the start of a workout. Absent = RIR, chips, warm-ups on.
+   */
+  training: z
+    .strictObject({
+      effortScale: z.enum(['rir', 'rpe']).exactOptional(),
+      rirInput: z.enum(['chips', 'decimal']).exactOptional(),
+      warmups: z.boolean().exactOptional(),
+    })
+    .exactOptional(),
+  /**
+   * M5s workout display (SET-10, unreleased v2 amended): larger logging controls and the PR and
+   * streak celebrations (which also follow the system's reduced-motion setting). Absent = normal
+   * controls, celebrations on.
+   */
+  display: z
+    .strictObject({
+      largeControls: z.boolean().exactOptional(),
+      celebrations: z.boolean().exactOptional(),
+    })
+    .exactOptional(),
   alerts: z
     .strictObject({
       sound: z.boolean(),

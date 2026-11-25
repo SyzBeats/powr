@@ -14,25 +14,25 @@ assets:
     copyright: Body-map figure, front and back with the muscle regions (tools/body-map/art/body-map.svg), original artwork drawn for POWR (own work, SZ WEB DEVELOPMENT)
     approval: Own-work artwork approved by product owner Simeon Zimmermann, 2026-11-25 (spike S-5)
   - name: powr-content-exercises
-    version: 0.2.0
+    version: 0.3.0
     licence: LicenseRef-Own-Work
     distributed: true
     copyright: 'Exercise library: names, execution cues, muscle mappings and defaults written for POWR (own work, SZ WEB DEVELOPMENT)'
     approval: Own-work content approved by product owner Simeon Zimmermann, 2026-11-24
   - name: powr-content-muscle-taxonomy
-    version: 0.2.0
+    version: 0.3.0
     licence: LicenseRef-Own-Work
     distributed: true
     copyright: Muscle taxonomy, body-map region IDs and display names written for POWR (own work, SZ WEB DEVELOPMENT)
     approval: Own-work content approved by product owner Simeon Zimmermann, 2026-11-24
   - name: powr-content-equipment
-    version: 0.2.0
+    version: 0.3.0
     licence: LicenseRef-Own-Work
     distributed: true
     copyright: Equipment catalog and gym presets written for POWR (own work, SZ WEB DEVELOPMENT)
     approval: Own-work content approved by product owner Simeon Zimmermann, 2026-11-24
   - name: powr-content-templates
-    version: 0.2.0
+    version: 0.3.0
     licence: LicenseRef-Own-Work
     distributed: true
     copyright: Program templates written for POWR (own work, SZ WEB DEVELOPMENT)

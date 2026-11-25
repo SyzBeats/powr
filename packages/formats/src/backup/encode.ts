@@ -4,7 +4,12 @@ import { toIsoWithOffset, type InstantTz } from '@powr/domain';
 
 import { compareStrings } from '../compare';
 import { findUnsafeJson } from '../json';
-import { RAW_TABLE_KEYS, RAW_TABLE_NAMES, type RawTables } from '../records/tables';
+import {
+  RAW_TABLE_KEYS,
+  RAW_TABLE_NAMES,
+  type RawTableName,
+  type RawTables,
+} from '../records/tables';
 import { DATA_VERSION } from '../version';
 import { contentDigest, sha256Hex } from './hash';
 import { BACKUP_FORMAT, BACKUP_FORMAT_VERSION, type BackupManifest } from './manifest';
@@ -34,14 +39,58 @@ export async function encodeBackup(
   tables: RawTables,
   source: BackupSource,
 ): Promise<EncodedBackup> {
+  return encodeTables(tables, DATA_VERSION, source, 'strict');
+}
+
+/**
+ * The raw records of a `powr` database at its stored `dataVersion`, read without opening it
+ * through Dexie (no upgrade): the safety snapshot taken before a migration and the rescue copy of
+ * the recovery screen (DAT-14). Stores that are not raw tables (derived caches) are left out.
+ */
+export interface RawSnapshot {
+  readonly dataVersion: number;
+  readonly tables: Readonly<Record<string, readonly unknown[]>>;
+}
+
+/**
+ * Builds a backup ZIP of an older (or the current) `dataVersion` from raw records as they were
+ * read from IndexedDB, so the current import path migrates it like any old backup (§8.3.4).
+ * Unlike {@link encodeBackup} it never refuses data: a rescue copy keeps every record as it was,
+ * even one that import would reject (a reserved key, deep nesting), because losing it is worse.
+ */
+export async function encodeRawSnapshot(
+  snapshot: RawSnapshot,
+  source: BackupSource,
+): Promise<EncodedBackup> {
+  if (!Number.isInteger(snapshot.dataVersion) || snapshot.dataVersion < 1) {
+    throw new Error(`Invalid dataVersion ${String(snapshot.dataVersion)}`);
+  }
+  const tables: Partial<Record<RawTableName, readonly object[]>> = {};
+  for (const table of RAW_TABLE_NAMES) {
+    const records = snapshot.tables[table];
+    if (records) tables[table] = records.filter(isRecord);
+  }
+  return encodeTables(tables, snapshot.dataVersion, source, 'keepAll');
+}
+
+async function encodeTables(
+  tables: Partial<Record<RawTableName, readonly object[]>>,
+  dataVersion: number,
+  source: BackupSource,
+  mode: 'strict' | 'keepAll',
+): Promise<EncodedBackup> {
   const dataFiles: Record<string, Uint8Array> = {};
   const entries: BackupManifest['entries'] = [];
   const counts = {} as BackupManifest['counts'];
 
   for (const table of RAW_TABLE_NAMES) {
-    const records = sortByKey(tables[table], RAW_TABLE_KEYS[table]);
-    const unsafe = findUnsafeJson(records);
-    if (unsafe !== null) throw new Error(`Cannot back up ${table}: ${unsafe}`);
+    const present = tables[table];
+    if (!present) continue;
+    const records = sortByKey(present, RAW_TABLE_KEYS[table]);
+    if (mode === 'strict') {
+      const unsafe = findUnsafeJson(records);
+      if (unsafe !== null) throw new Error(`Cannot back up ${table}: ${unsafe}`);
+    }
     const bytes = strToU8(canonicalJson(records));
     const path = `data/${table}.json`;
     dataFiles[path] = bytes;
@@ -58,7 +107,7 @@ export async function encodeBackup(
   const manifest: BackupManifest = {
     format: BACKUP_FORMAT,
     formatVersion: BACKUP_FORMAT_VERSION,
-    dataVersion: DATA_VERSION,
+    dataVersion,
     app: { version: source.app.version, build: source.app.build },
     rulesVersion: source.rulesVersion,
     contentVersion: source.contentVersion,
@@ -67,7 +116,7 @@ export async function encodeBackup(
     part: { kind: 'data', index: 1, count: 1 },
     encrypted: false,
     counts,
-    dateRange: trainingDateRange(tables),
+    dateRange: trainingDateRange(tables.sessions ?? []),
     entries,
     contentDigest: await contentDigest(entries),
   };
@@ -88,9 +137,16 @@ export function backupFileName(createdAtIso: string): string {
   return `powr-backup-${date}-${time}.zip`;
 }
 
-function trainingDateRange(tables: RawTables): BackupManifest['dateRange'] {
-  const days = tables.sessions.map((session) => session.localDate).toSorted(compareStrings);
+function trainingDateRange(sessions: readonly object[]): BackupManifest['dateRange'] {
+  const days = sessions
+    .map((session) => (session as { localDate?: unknown }).localDate)
+    .filter((day): day is string => typeof day === 'string')
+    .toSorted(compareStrings);
   return { from: days[0] ?? null, to: days.at(-1) ?? null };
+}
+
+function isRecord(value: unknown): value is object {
+  return value !== null && typeof value === 'object' && !Array.isArray(value);
 }
 
 /** JSON with object keys in sorted order, so equal data always gives equal bytes and hashes. */

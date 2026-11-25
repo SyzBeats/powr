@@ -98,3 +98,170 @@
     - en: Lie on a bench and hold the bar over your shoulders with a narrow grip.
     - en: Bend only at the elbows to lower the bar toward your forehead or just behind it.
     - en: Extend your arms fully without letting your elbows flare out.
+
+# M5 additions (content 0.3.0): the dumbbell skull crusher and the EZ-bar overhead extension are
+# the EB's "Pressdown / skull crusher" and "Overhead triceps extension" rows (H, Maeo 2023).
+# Kickbacks, band and bodyweight extensions are extrapolations (C); the arm position decides the
+# ranked head: overhead → long head, arm at the side or behind the body → lateral/medial heads.
+
+- id: ex.dumbbell-skull-crusher
+  name: { en: Dumbbell skull crusher }
+  synonyms: [dumbbell lying triceps extension, db skull crusher]
+  pattern: elbowExtension
+  mechanics: isolation
+  substitutionGroups: [sg.triceps-pressdown]
+  equipment:
+    allOf: [eq.dumbbells]
+    anyOf: [[eq.flat-bench, eq.adjustable-bench]]
+  muscles:
+    - { muscle: mu.triceps, credit: 1, evidence: H, source: src.maeo2023 }
+  load: { type: dumbbell, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [8, 15], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 2, subRegions: [mu.triceps.lateral-medial] }
+  cues:
+    - en: Lie on a bench with a dumbbell in each hand above your shoulders, palms facing each other.
+    - en: Bend only at the elbows to lower the dumbbells beside your head.
+    - en: Straighten your arms fully without letting your elbows drift out.
+
+- id: ex.ez-bar-overhead-triceps-extension
+  name: { en: EZ-bar overhead triceps extension }
+  synonyms: [ez-bar overhead extension, seated barbell triceps extension]
+  pattern: elbowExtension
+  mechanics: isolation
+  substitutionGroups: [sg.overhead-triceps-extension]
+  equipment:
+    allOf: [eq.plates]
+    anyOf: [[eq.ez-bar, eq.barbell-olympic, eq.barbell-womens]]
+  muscles:
+    - { muscle: mu.triceps, credit: 1, evidence: H, source: src.maeo2023 }
+  load: { type: barbell, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [8, 15], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 3, subRegions: [mu.triceps.long-head] }
+  cues:
+    - en: Sit upright with back support and hold the bar overhead with a narrow grip.
+    - en: Lower it behind your head by bending your elbows while they keep pointing forward.
+    - en: Extend back to straight arms without arching your lower back.
+
+- id: ex.dumbbell-kickback
+  name: { en: Dumbbell kickback }
+  synonyms: [triceps kickback, db kickback]
+  pattern: elbowExtension
+  mechanics: isolation
+  substitutionGroups: [sg.triceps-pressdown]
+  equipment: { allOf: [eq.dumbbells], anyOf: [] }
+  muscles:
+    - { muscle: mu.triceps, credit: 1, evidence: C, source: src.powr-eb-mapping }
+  load: { type: dumbbell, curveClass: pooled, unilateral: true, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [10, 20], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-1
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 1, subRegions: [mu.triceps.lateral-medial] }
+  cues:
+    - en: Hinge forward with a flat back and hold your upper arm alongside your torso.
+    - en: Straighten your elbow until your arm is in line with your body.
+    - en: Lower the dumbbell under control without letting your upper arm drop.
+
+- id: ex.cable-triceps-kickback
+  name: { en: Cable triceps kickback }
+  synonyms: [triceps cable kickback]
+  pattern: elbowExtension
+  mechanics: isolation
+  substitutionGroups: [sg.triceps-pressdown]
+  equipment:
+    allOf: []
+    anyOf: [[eq.cable-station, eq.dual-cable-station]]
+  muscles:
+    - { muscle: mu.triceps, credit: 1, evidence: C, source: src.powr-eb-mapping }
+  load: { type: machine, curveClass: pooled, unilateral: true, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [10, 20], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-1
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 2, subRegions: [mu.triceps.lateral-medial] }
+  cues:
+    - en: Hold a handle or the bare cable from a low pulley and hinge forward slightly.
+    - en: Keep your upper arm against your side and extend the elbow until the arm is straight.
+    - en: Let the forearm swing back to vertical under control.
+
+- id: ex.band-triceps-pressdown
+  name: { en: Band triceps pressdown }
+  synonyms: [band pushdown, resistance band pressdown]
+  pattern: elbowExtension
+  mechanics: isolation
+  substitutionGroups: [sg.triceps-pressdown]
+  equipment: { allOf: [eq.resistance-bands], anyOf: [] }
+  muscles:
+    - { muscle: mu.triceps, credit: 1, evidence: C, source: src.powr-eb-mapping }
+  load: { type: band, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [12, 30], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 0, subRegions: [mu.triceps.lateral-medial] }
+  cues:
+    - en: Anchor the band high, for example over a pull-up bar, and hold it with your elbows at your sides.
+    - en: Push down until your arms are straight, spreading your hands slightly at the bottom.
+    - en: Let your forearms rise slowly to just above horizontal.
+
+- id: ex.band-overhead-triceps-extension
+  name: { en: Band overhead triceps extension }
+  synonyms: [band overhead extension, resistance band overhead extension]
+  pattern: elbowExtension
+  mechanics: isolation
+  substitutionGroups: [sg.overhead-triceps-extension]
+  equipment: { allOf: [eq.resistance-bands], anyOf: [] }
+  muscles:
+    - { muscle: mu.triceps, credit: 1, evidence: C, source: src.powr-eb-mapping }
+  load: { type: band, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [12, 30], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 0, subRegions: [mu.triceps.long-head] }
+  cues:
+    - en: Anchor the band low behind you or stand on one end, holding the other end behind your head.
+    - en: Point your elbows up and extend your arms overhead until they are straight.
+    - en: Let your hands sink back behind your head slowly.
+
+- id: ex.bodyweight-triceps-extension
+  name: { en: Bodyweight triceps extension }
+  synonyms: [bodyweight skull crusher, bar triceps extension]
+  pattern: elbowExtension
+  mechanics: isolation
+  substitutionGroups: [sg.overhead-triceps-extension]
+  equipment:
+    allOf: []
+    anyOf: [[eq.rings, eq.power-rack, eq.smith-machine]]
+  muscles:
+    - { muscle: mu.triceps, credit: 1, evidence: C, source: src.powr-eb-mapping }
+  load: { type: bodyweightAdded, curveClass: pooled, unilateral: false, bodyweightLoaded: true }
+  defaults:
+    repRange: { hypertrophy: [8, 20], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 1, subRegions: [mu.triceps.long-head] }
+  cues:
+    - en: Hold a bar set at hip height or a pair of rings and lean in on straight arms, body in one line.
+    - en: Bend your elbows to lower your forehead toward your hands while your elbows point forward.
+    - en: Push back to straight arms; set the bar higher to make it easier.

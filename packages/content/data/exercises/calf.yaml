@@ -100,3 +100,76 @@
     - en: Sit on a bench with the balls of your feet on a plate or step.
     - en: Rest the dumbbells on your knees and keep your knees bent at about 90 degrees.
     - en: Lower your heels fully, pause, then rise as high as you can.
+
+# M5 additions (content 0.3.0): the leg-press and dumbbell calf raises are straight-knee calf
+# raises and follow the "Standing calf raise" row (gastrocnemius H, Kassiano 2023; soleus C). The
+# band calf raise is tagged C (a band's resistance profile, lightest at the stretch).
+
+- id: ex.leg-press-calf-raise
+  name: { en: Leg press calf raise }
+  synonyms: [calf press, leg press calf press]
+  pattern: calf
+  mechanics: isolation
+  substitutionGroups: [sg.straight-knee-calf-raise]
+  equipment: { allOf: [eq.leg-press, eq.plates], anyOf: [] }
+  muscles:
+    - { muscle: mu.calves.gastrocnemius, credit: 1, evidence: H, source: src.kassiano2023 }
+    - { muscle: mu.calves.soleus, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+  load: { type: machine, curveClass: legPressLike, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [8, 20], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-1-X-0
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 3, subRegions: [mu.calves.gastrocnemius] }
+  cues:
+    - en: Sit in the leg press with straight knees and the balls of your feet on the bottom edge of the platform.
+    - en: Let the platform push your ankles into a deep stretch and hold it for a moment.
+    - en: Press up through the balls of your feet as far as you can, with the safety catches within reach.
+
+- id: ex.dumbbell-calf-raise
+  name: { en: Dumbbell calf raise }
+  synonyms: [standing dumbbell calf raise, db calf raise]
+  pattern: calf
+  mechanics: isolation
+  substitutionGroups: [sg.straight-knee-calf-raise]
+  equipment: { allOf: [eq.dumbbells], anyOf: [] }
+  muscles:
+    - { muscle: mu.calves.gastrocnemius, credit: 1, evidence: H, source: src.kassiano2023 }
+    - { muscle: mu.calves.soleus, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+  load: { type: dumbbell, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [10, 20], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-1-X-0
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 2, subRegions: [mu.calves.gastrocnemius] }
+  cues:
+    - en: Stand with the balls of your feet on a step or a stack of plates, a dumbbell in each hand.
+    - en: Lower your heels as far as they go and pause in the stretch.
+    - en: Rise as high as you can on your toes with your knees straight.
+
+- id: ex.band-calf-raise
+  name: { en: Band calf raise }
+  synonyms: [resistance band calf raise]
+  pattern: calf
+  mechanics: isolation
+  substitutionGroups: [sg.straight-knee-calf-raise]
+  equipment: { allOf: [eq.resistance-bands], anyOf: [] }
+  muscles:
+    - { muscle: mu.calves.gastrocnemius, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.calves.soleus, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+  load: { type: band, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [15, 30], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-1-X-0
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 0, subRegions: [mu.calves.gastrocnemius] }
+  cues:
+    - en: Stand on the middle of the band, on a step if you have one, and hold the ends at your shoulders.
+    - en: Rise onto your toes as high as you can with straight knees.
+    - en: Lower your heels slowly below the step to stretch your calves.

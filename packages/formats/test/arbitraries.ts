@@ -349,6 +349,22 @@ const settingsRecords: fc.Arbitrary<SettingsRecord[]> = fc
           },
           { requiredKeys: [] },
         ),
+        backup: fc.record({
+          reminderDays: fc.constantFrom(7 as const, 14 as const, 30 as const, null),
+        }),
+        // M5s: SET-05 training preferences and SET-10 workout display.
+        training: fc.record(
+          {
+            effortScale: fc.constantFrom('rir' as const, 'rpe' as const),
+            rirInput: fc.constantFrom('chips' as const, 'decimal' as const),
+            warmups: fc.boolean(),
+          },
+          { requiredKeys: [] },
+        ),
+        display: fc.record(
+          { largeControls: fc.boolean(), celebrations: fc.boolean() },
+          { requiredKeys: [] },
+        ),
       },
       { requiredKeys: ['id', 'theme', 'prefs'] },
     ),

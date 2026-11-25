@@ -1,0 +1,723 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2026-11-25 15:08+0100\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: en\n"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.progression.apre.sixRm"
+msgstr "Adjustment table for sets of six"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.baseline.refineAfterDays"
+msgstr "Age of a 1-rep max that gets refined"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.planning.sessionBudget.tolerancePct"
+msgstr "Allowed overrun of your session time"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.unknownEffort.priorRirDefault"
+msgstr "Assumed reps in reserve without a rating"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.scoring.allometric.exponent"
+msgstr "Body-weight exponent for relative strength"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.scoring.dots.bodyweightClampKg"
+msgstr "Body-weight limits for DOTS"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.scoring.wilks.bodyweightClampKg"
+msgstr "Body-weight limits for Wilks"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.scoring.wilks2020.bodyweightClampKg"
+msgstr "Body-weight limits for Wilks2020"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.deload.returnFromBreak.sorenessNoteAfterDays"
+msgstr "Break length that brings extra soreness"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.monitoring.readiness.adjustments"
+msgstr "Changes offered on a low-readiness day"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.monitoring.readiness.baseline"
+msgstr "Check-ins your usual level is based on"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.rirBias"
+msgstr "Correction for misjudged reps in reserve"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.session.techniqueCredit.cluster"
+msgstr "Credit for cluster sets"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.session.techniqueCredit.drop"
+msgstr "Credit for drop sets"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.session.techniqueCredit.lengthenedPartials"
+msgstr "Credit for lengthened partials"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.session.techniqueCredit.myoReps"
+msgstr "Credit for myo-reps"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.session.techniqueCredit.partialExtension"
+msgstr "Credit for partials after the last full rep"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.session.techniqueCredit.restPause"
+msgstr "Credit for rest-pause sets"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.trend.noiseHeavySd"
+msgstr "Day-to-day variation of heavy sets"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.trend.noiseTypicalSd"
+msgstr "Day-to-day variation of typical sets"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.bodyweight.rate.windowDays"
+msgstr "Days the weekly rate is worked out over"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.session.tempo.default"
+msgstr "Default tempo"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.scoring.dots.coefficients"
+msgstr "DOTS coefficients"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.deload.returnFromBreak"
+msgstr "Easing back in after a break"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.curve.rts"
+msgstr "Effort chart for weight, reps and RPE"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.volume.effort.strengthAccessoryRpe"
+msgstr "Effort for assistance work in strength training"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.volume.effort.hypertrophyRir"
+msgstr "Effort for muscle-building sets"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.volume.effort.strengthRpe"
+msgstr "Effort for strength sets"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.planning.novice.maxWorkingExercises"
+msgstr "Exercises per session for beginners"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.planning.rotation.perMuscle"
+msgstr "Exercises swapped per muscle between blocks"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.planning.variety.pool"
+msgstr "Exercises to choose from in variety mode"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.trend.processSdPerWeek"
+msgstr "Expected weekly change in strength"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.volume.strength.minimumDosePerLift"
+msgstr "Fewest weekly heavy sets per competition lift"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.volume.hypertrophy.minimumDose"
+msgstr "Fewest weekly sets that still build muscle"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.progression.calibration"
+msgstr "First sessions with a new exercise"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.e1rm.equation"
+msgstr "Formula for the estimated 1-rep max"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.volume.hypertrophy.tiers"
+msgstr "Growth at each weekly set count"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.volume.effort.hypertrophySlopePerRir"
+msgstr "Growth lost per rep left in reserve"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.reanchor.trigger"
+msgstr "Hard sets that re-check the estimate"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.volume.strength.perSessionHeavySets"
+msgstr "Heavy sets per lift in one session"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.monitoring.readiness.pmFromHour"
+msgstr "Hour from which a session counts as afternoon"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.progression.model.accessory"
+msgstr "How assistance exercises progress"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.ranking.effectiveness"
+msgstr "How exercises are ranked for a muscle"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.progression.model.mainLift"
+msgstr "How main lifts progress"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.deload.planned.everyWeeks"
+msgstr "How often a lighter week comes"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.volume.counting.default"
+msgstr "How sets count for each muscle"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.scoring.ipfGl.coefficients"
+msgstr "IPF GL coefficients"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.scoring.ipfPoints.coefficients"
+msgstr "IPF Points coefficients"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.progression.double.incrementGuardPct"
+msgstr "Largest weight step when reps go up"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.deload.planned.durationDays"
+msgstr "Length of a lighter week"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.volume.load.hypertrophyMinPct1rm"
+msgstr "Lightest weight for muscle building"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.bodyweight.trend.winsorizePct"
+msgstr "Limit for unusual weigh-ins"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.scoring.ipfGl.minBodyweightKg"
+msgstr "Lowest body weight for IPF GL points"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.scoring.ipfPoints.minBodyweightKg"
+msgstr "Lowest body weight for IPF Points"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.session.rest.countUpSoftMin"
+msgstr "Minimum rest when counting up"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.progression.stall.failedSessions"
+msgstr "Missed sessions before a reset"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.volume.startingVolume.maxFactor"
+msgstr "Most a new plan raises your recent volume"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.volume.hardSet.maxRir"
+msgstr "Most reps in reserve for a hard set"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.planning.timeBudget.fallback"
+msgstr "Muscles that keep their sets when time is short"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.session.rest.supersetTransition"
+msgstr "Pause between the exercises of a superset"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.trend.reference"
+msgstr "Point a change is measured from"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.scoring.display"
+msgstr "Points formulas shown"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.deload.planned.postpone"
+msgstr "Postponing a lighter week"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.unknownEffort.eligibleForE1rmPr"
+msgstr "Records from sets without an effort rating"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.trend.repRangeShift"
+msgstr "Rep change that flags a jump"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.session.tempo.warnRepSeconds"
+msgstr "Rep length that shows a hint"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.curve.nuzzoPooled"
+msgstr "Reps at a share of the 1-rep max (all exercises)"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.curve.nuzzoBench"
+msgstr "Reps at a share of the 1-rep max (bench press)"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.curve.nuzzoLegPress"
+msgstr "Reps at a share of the 1-rep max (leg press)"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.volume.repRange.hypertrophy"
+msgstr "Reps per set for muscle building"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.volume.repRange.strength"
+msgstr "Reps per set for strength"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.trend.strengthMaxReff"
+msgstr "Reps that count for the strength trend"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.curve.classMap"
+msgstr "Reps-to-weight table per kind of exercise"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.session.rest.warmupLight"
+msgstr "Rest after light warm-up sets"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.session.rest.warmupBeforeWork"
+msgstr "Rest after the last warm-up set"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.monitoring.spacing"
+msgstr "Rest between hard sessions"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.session.rest.hypertrophyCompound"
+msgstr "Rest between muscle-building sets, compound exercises"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.session.rest.hypertrophyIsolation"
+msgstr "Rest between muscle-building sets, isolation exercises"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.session.rest.strength"
+msgstr "Rest between strength sets"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.session.rest.timeSaver"
+msgstr "Rest in time-saver mode"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.motivation.streak.graceSessions"
+msgstr "Sessions a week may be short (grace)"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.volume.frequency.strengthPerLift"
+msgstr "Sessions per week for each competition lift"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.volume.frequency.hypertrophyPerMuscle"
+msgstr "Sessions per week for each muscle"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.planning.strength.accessorySets"
+msgstr "Sets of assistance work for strength"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.planning.slot.sets"
+msgstr "Sets per exercise"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.progression.calibration.reliableSetWeight"
+msgstr "Sets reliable enough to end calibration"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.pr.minSetWeight"
+msgstr "Sets that can set a 1-rep max record"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.volume.maintenance"
+msgstr "Sets that keep what you built"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.volume.hardSet.unknownRirCounts"
+msgstr "Sets without an effort rating count as hard"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.motivation.streak.partialMinShare"
+msgstr "Share of sets for a partial session to count"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.monitoring.readiness.sleep"
+msgstr "Short sleep before a session"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.session.rest.competitionMinimum"
+msgstr "Shortest rest on competition lifts"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.deload.reactive"
+msgstr "Signals for an earlier lighter week"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.progression.increment.microplateKgPerSide"
+msgstr "Smallest plate per side"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.bodyweight.trend.alphaPerDay"
+msgstr "Smoothing of the body-weight trend"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.volume.strength.tiers"
+msgstr "Strength gain at each weekly set count"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.progression.classification.slopePctPerWeek"
+msgstr "Strength gains that set your level"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.session.tempo.eccentricSeconds"
+msgstr "Time for the lowering part of a rep"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.session.duration.repSeconds"
+msgstr "Time per rep for session length"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.session.duration.warmupSetSeconds"
+msgstr "Time per warm-up set"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.session.duration.transitionSeconds"
+msgstr "Time to change exercises"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.progression.classification.trainingAgeMonths"
+msgstr "Training experience that sets your level"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.planning.mesocycle.accumulationWeeks"
+msgstr "Training weeks before the lighter week"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.trend.typicalErrorCv"
+msgstr "Typical measurement error of a 1-rep max"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.unknownEffort.priorRirSd"
+msgstr "Uncertainty of an assumed effort"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.volume.hypertrophy.perSessionSoftCap"
+msgstr "Useful sets per muscle in one session"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.session.warmup.heavy"
+msgstr "Warm-up before heavy sets"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.session.warmup.compound"
+msgstr "Warm-up for compound exercises"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.session.warmup.isolation"
+msgstr "Warm-up for isolation exercises"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.session.warmup.feeder"
+msgstr "Warm-up set for a later exercise"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.session.warmup.pruning"
+msgstr "Warm-up sets left out when close together"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.bodyweight.rate.maintain"
+msgstr "Weekly change counted as maintaining"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.bodyweight.rate.bulk"
+msgstr "Weekly gain while building"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.volume.strength.weeklyHeavySetsPerLift"
+msgstr "Weekly heavy sets per competition lift"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.bodyweight.rate.cut"
+msgstr "Weekly loss while cutting"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.motivation.streak.defaultWeeklyTarget"
+msgstr "Weekly sessions for a streak without a plan"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.volume.puos"
+msgstr "Weekly sets beyond which more shows no clear benefit"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.volume.hypertrophy.weeklyBands"
+msgstr "Weekly sets per muscle for growth"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.progression.increment.intermediatePctPerWeek"
+msgstr "Weekly weight step for intermediates"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.motivation.streak.retroactiveBreakWeeks"
+msgstr "Weeks back a break can be marked"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.progression.increment.advancedLoadJumpWeeks"
+msgstr "Weeks between weight steps when advanced"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.bodyweight.trend.initialWeighIns"
+msgstr "Weigh-ins that start the trend"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.progression.stall.resetPct"
+msgstr "Weight drop after a stall"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.e1rm.weightByRpe"
+msgstr "Weight of a set by its effort"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.e1rm.weightByReff"
+msgstr "Weight of a set by its reps"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.e1rm.setOrderDecay"
+msgstr "Weight of later sets in the estimate"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.unknownEffort.weightMultiplier"
+msgstr "Weight of sets without an effort rating"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.progression.increment.noviceLowerKg"
+msgstr "Weight step for beginners, lower body"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.progression.increment.noviceUpperKg"
+msgstr "Weight step for beginners, upper body"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.deload.content"
+msgstr "What changes in a lighter week"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.trend.heavySet"
+msgstr "What counts as a heavy set for the trend"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.volume.strength.heavySet"
+msgstr "What counts as a heavy strength set"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.planning.missed.mergePriorities"
+msgstr "What moves when sessions are merged"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.volume.hardSet.highReps"
+msgstr "When a high-rep set counts as hard"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.trend.changeThresholds"
+msgstr "When a strength change counts as real"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.monitoring.readiness.thresholds"
+msgstr "When readiness counts as low"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.session.warmup.heavyTrigger"
+msgstr "When the heavy warm-up is used"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.progression.pace.window"
+msgstr "When weight steps outpace your progress"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.planning.volume.startPosition"
+msgstr "Where in the range weekly sets start"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.trend.noviceWidening"
+msgstr "Wider ranges in the first weeks"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.scoring.wilks.coefficients"
+msgstr "Wilks coefficients"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.scoring.wilks2020.coefficients"
+msgstr "Wilks2020 coefficients"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.unknownEffort.personalPrior"
+msgstr "Your usual effort, for sets without a rating"

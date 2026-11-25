@@ -69,7 +69,9 @@ export const WHY_VALUES: { readonly [K in RuleId]: readonly string[] } = {
   ],
   'trend.series': ['level', 'observations'],
   'trend.change.insufficientData': [],
-  'trend.change.none': TREND_CHANGE,
+  // TD-62: `reason` is `noise` (within one typical error) or `unconfirmed` (beyond it, not yet
+  // beyond the change's own uncertainty or not sustained).
+  'trend.change.none': [...TREND_CHANGE, 'reason'],
   'trend.change.likely': TREND_CHANGE,
   'trend.change.veryLikely': TREND_CHANGE,
   'progression.double.topReached': ['from', 'to', 'reps', 'atMaxLoad', 'targetRir'],

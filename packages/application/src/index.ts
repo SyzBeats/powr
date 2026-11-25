@@ -13,7 +13,15 @@ export {
   type LogSetError,
   type LogSetResult,
 } from './usecases/session';
-export { setTheme } from './usecases/settings';
+export {
+  ALERT_DEFAULTS,
+  DISPLAY_DEFAULTS,
+  TRAINING_DEFAULTS,
+  setTheme,
+  type AlertSettings,
+  type DisplayPreferences,
+  type TrainingPreferences,
+} from './usecases/settings';
 export { loadCustomExercises } from './usecases/custom-content';
 export { firstRunState, setWeekStart, type LegalVersions } from './usecases/first-run';
 export {

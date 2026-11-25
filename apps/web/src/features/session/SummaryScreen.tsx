@@ -9,10 +9,12 @@ import type { SessionSummary } from '@powr/domain/session';
 import { announce } from '#ui/announcer';
 import { Badge, Callout } from '#ui/badge';
 import { Button, buttonClass } from '#ui/button';
+import { cn } from '#ui/cn';
 import { Card, Screen } from '#ui/screen';
 
 import { useInsight } from '../../hooks/use-insights';
 import { usePlanning } from '../../hooks/use-planning';
+import { useDisplayPreferences } from '../../hooks/use-settings';
 import { useSessionUseCases } from '../../hooks/use-workout';
 import {
   formatLocalDate,
@@ -21,8 +23,10 @@ import {
   todayLocal,
   addLocalDays,
 } from '../../i18n/format';
+import { BackupReminder } from '../data/BackupReminder';
 import { useHeatSentence, useStreakWords } from '../insights/words';
 import { useLabels } from '../labels';
+import { InstallPromotion } from '../shell/InstallPromotion';
 import { WhyButton } from '../why/WhySheet';
 import { useSummaryWords } from './past/parts';
 import { useSessionUi } from './session-ui';
@@ -263,6 +267,10 @@ function SummaryContent({ summary }: { summary: SessionSummary }) {
         </Card>
       ) : null}
 
+      {/* DAT-08 and PWA-02 (M5d): after a finished workout, when due and never mid-workout. */}
+      <BackupReminder />
+      <InstallPromotion />
+
       <div className="flex flex-col gap-2">
         <Link to="/" className={buttonClass({ variant: 'primary', size: 'lg' })}>
           <Trans>Done</Trans>
@@ -287,11 +295,16 @@ function SummaryContent({ summary }: { summary: SessionSummary }) {
 function PrCard({ summary }: { summary: SessionSummary }) {
   const words = useSessionWords();
   const unit = useLoadUnit();
+  // SET-10 (M5s): celebration animations can be switched off; the card still shows.
+  const { celebrations } = useDisplayPreferences();
   return (
     <section
       aria-labelledby="summary-prs"
       data-testid="summary-prs"
-      className="flex animate-[pr-pop_600ms_ease-out] flex-col gap-3 rounded-2xl border-2 border-control bg-surface p-4"
+      className={cn(
+        'flex flex-col gap-3 rounded-2xl border-2 border-control bg-surface p-4',
+        celebrations && 'animate-[pr-pop_600ms_ease-out]',
+      )}
     >
       <h2 id="summary-prs" className="flex items-center gap-2 text-lg font-semibold">
         <Trophy aria-hidden="true" className="size-6 text-pr-accent" />
@@ -330,6 +343,7 @@ function StreakChangeCard({ sessionId }: { sessionId: SessionId }) {
   const change = useInsight(`streak-change:${sessionId}`, (insights, deps) =>
     insights.sessionStreakChange(deps, sessionId),
   );
+  const { celebrations } = useDisplayPreferences();
   if (!change.loaded || change.value === null) return null;
   const { current, newBest } = change.value;
   const weeks = streakWords.weeks(current);
@@ -339,7 +353,10 @@ function StreakChangeCard({ sessionId }: { sessionId: SessionId }) {
       data-testid="summary-streak"
       className={
         newBest
-          ? 'flex animate-[pr-pop_600ms_ease-out] flex-col gap-2 rounded-2xl border-2 border-control bg-surface p-4'
+          ? cn(
+              'flex flex-col gap-2 rounded-2xl border-2 border-control bg-surface p-4',
+              celebrations && 'animate-[pr-pop_600ms_ease-out]',
+            )
           : 'flex flex-col gap-2 rounded-2xl bg-surface p-4'
       }
     >

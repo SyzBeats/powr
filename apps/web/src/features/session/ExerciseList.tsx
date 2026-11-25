@@ -19,9 +19,10 @@ import { useCatalog } from '../../hooks/use-planning';
 import { useSessionUseCases } from '../../hooks/use-workout';
 import { formatClock } from '../../i18n/format';
 import { useLabels } from '../labels';
+import { useEffortWords } from '../settings/effort';
 import { useSessionCommands } from './commands';
 import { useLoadSteps, type LoadImplement } from './loads';
-import { massText, rirText, useSessionWords } from './words';
+import { massText, useSessionWords } from './words';
 
 type SheetState =
   | { readonly kind: 'options'; readonly slotKey: string }
@@ -272,9 +273,10 @@ function SetRow({
   );
 }
 
-/** A logged set and a suggestion in short words: "100 kg × 5 @ RIR 2". */
+/** A logged set and a suggestion in short words: "100 kg × 5 @ RIR 2" (or "@ RPE 8", SET-05). */
 function useSetTexts() {
   const { t } = useLingui();
+  const effortWords = useEffortWords();
   const valuesText = (set: LoggedSet): string => {
     if (set.state === 'skipped') return '';
     const load = massText(set.load);
@@ -287,8 +289,8 @@ function useSetTexts() {
     const duration = set.durationMs === undefined ? '' : formatClock(set.durationMs, 'down');
     const main = [load, reps ? `× ${reps}` : '', duration].filter(Boolean).join(' ');
     if (set.effort.rir === null) return main;
-    const rir = rirText(set.effort.rir, set.effort.openEnded);
-    return t`${main} @ RIR ${rir}`;
+    const effort = effortWords.value(set.effort.rir, set.effort.openEnded === true);
+    return t`${main} @ ${effort}`;
   };
   const suggestionText = (value: {
     load: LoggedSet['load'];
@@ -298,8 +300,8 @@ function useSetTexts() {
     const load = massText(value.load);
     const main = [load, value.reps === null ? '' : `× ${value.reps}`].filter(Boolean).join(' ');
     if (value.rir === null) return main;
-    const rir = rirText(value.rir);
-    return t`${main} @ RIR ${rir}`;
+    const effort = effortWords.value(value.rir);
+    return t`${main} @ ${effort}`;
   };
   return { valuesText, suggestionText };
 }

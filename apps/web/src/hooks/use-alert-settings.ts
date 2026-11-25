@@ -1,51 +1,32 @@
 import { useLingui } from '@lingui/react/macro';
 import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from 'react';
 
-import type { NotificationPermissionState } from '@powr/application';
-import type { SettingsRecord } from '@powr/formats';
+import {
+  ALERT_DEFAULTS,
+  type AlertSettings,
+  type NotificationPermissionState,
+} from '@powr/application';
 
 import { announce } from '#ui/announcer';
 
 import type { AlertStatusReport, WakeLockStatus } from '../app/container';
 import { useContainer } from '../app/container-context';
 import { useObservable } from './use-observable';
+import { useSettingsUseCases } from './use-settings';
 import { useTimerKit } from './use-timer-kit';
 
 /**
  * Alert settings (SET-03, SET-04, SET-10), stored in the settings record as `alerts`. Absent
- * fields mean the defaults below (product-owner decision 2026-11-24: pre-alert on at 10 s, 3-2-1
- * off, the "Resting – ends at" notice on, volume 80%, keep the screen on; M4v: the timed set's
- * 3-2-1 lead-in, its automatic stop at the target and the tempo metronome off); a change writes
- * the whole object.
+ * fields mean the defaults (`ALERT_DEFAULTS` in `@powr/application`: product-owner decision
+ * 2026-11-24, pre-alert on at 10 s, 3-2-1 off, the "Resting – ends at" notice on, volume 80%,
+ * keep the screen on; M4v's timed-set and tempo switches off).
  */
-export type AlertSettings = Required<NonNullable<SettingsRecord['alerts']>>;
+export type { AlertSettings } from '@powr/application';
 
 /** SET-03: the pre-alert timings to choose from. */
 export const PRE_ALERT_SECONDS = [
   5, 10, 15,
 ] as const satisfies readonly AlertSettings['preAlertSeconds'][];
-
-type OptionalAlertSwitch = 'setTimerLeadIn' | 'setTimerAutoStop' | 'tempoCues';
-
-/** The fields the stored `alerts` object always carries (the strict v2 record requires them). */
-const STORED_DEFAULTS: Omit<AlertSettings, OptionalAlertSwitch> = {
-  sound: true,
-  volume: 0.8,
-  vibration: true,
-  preAlert: true,
-  preAlertSeconds: 10,
-  countdown: false,
-  restingNotice: true,
-  keepScreenOn: true,
-};
-
-/** M4v's optional switches are stored only once changed: absent means off. */
-const DEFAULT_ALERT_SETTINGS: AlertSettings = {
-  ...STORED_DEFAULTS,
-  setTimerLeadIn: false,
-  setTimerAutoStop: false,
-  tempoCues: false,
-};
 
 export function useAlertSettings(): AlertSettings & { readonly loaded: boolean } {
   const { deps } = useContainer();
@@ -53,33 +34,25 @@ export function useAlertSettings(): AlertSettings & { readonly loaded: boolean }
   const settings = useObservable(observable);
   const stored = settings.loaded ? settings.value?.alerts : undefined;
   return useMemo(
-    () => ({ ...DEFAULT_ALERT_SETTINGS, ...stored, loaded: settings.loaded }),
+    () => ({ ...ALERT_DEFAULTS, ...stored, loaded: settings.loaded }),
     [stored, settings.loaded],
   );
 }
 
 /**
- * Persists a change of the alert settings. Written through the unit of work like the theme;
- * M3a/M3b may move it into a `setAlertSettings` use case (IMPLEMENTATION_NOTES.md, M3t).
+ * Persists a change of the alert settings through the `setAlertSettings` use case (TD-42, M5s);
+ * keep-screen-on also reaches the wake-lock policy at once.
  */
 export function useSetAlertSettings() {
-  const { deps, platform } = useContainer();
+  const { platform } = useContainer();
+  const run = useSettingsUseCases();
   return useCallback(
     async (patch: Partial<AlertSettings>) => {
       if (patch.keepScreenOn !== undefined)
         platform.timers.current()?.screenWake.setEnabled(patch.keepScreenOn);
-      await deps.uow.write(['settings'], async (repos) => {
-        const current = await repos.settings.get();
-        const alerts = { ...STORED_DEFAULTS, ...current?.alerts, ...patch };
-        await repos.settings.put({
-          ...current,
-          id: 'me',
-          theme: current?.theme ?? 'system',
-          alerts,
-        });
-      });
+      await run((settings, deps) => settings.setAlertSettings(deps, patch));
     },
-    [deps, platform],
+    [platform, run],
   );
 }
 

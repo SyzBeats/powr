@@ -15,6 +15,8 @@ test.describe('exercise library (M4b: EXL)', () => {
   test('browse, filter, open an exercise, create a custom one and log it in a freestyle workout', async ({
     page,
   }) => {
+    // Six screens with axe in both themes and two reflow checks (TD-56 added the filter sheet's).
+    test.setTimeout(90_000);
     await skipOnboarding(page);
 
     await page.goto('/explore');
@@ -28,23 +30,38 @@ test.describe('exercise library (M4b: EXL)', () => {
     await expect(page.getByTestId('library-count')).toHaveText(/^\d+ exercises$/);
     await checkScreen(page, 'library');
 
-    // EXL-02: AND filters, each one a chip.
+    // EXL-02, TD-56: checkboxes, several values per dimension (OR), dimensions with AND; each
+    // value a chip.
     await page.getByRole('searchbox', { name: 'Search exercises' }).fill('curl');
     await page.getByRole('button', { name: 'Filters' }).click();
     const sheet = page.getByRole('dialog', { name: 'Filters' });
-    await sheet.getByRole('combobox', { name: 'Muscle' }).selectOption({ label: 'Biceps' });
-    await sheet.getByRole('combobox', { name: 'Mechanics' }).selectOption('isolation');
+    await sheet.locator('summary', { hasText: 'Muscle' }).click();
+    const muscles = sheet.getByRole('group', { name: 'Works any of these muscles' });
+    await muscles.getByRole('checkbox', { name: 'Biceps', exact: true }).click();
+    await muscles.getByRole('checkbox', { name: 'Forearms', exact: true }).click();
+    await sheet.locator('summary', { hasText: 'Mechanics' }).click();
+    await sheet.getByRole('checkbox', { name: /^Isolation/ }).click();
+    await expect(sheet.getByText('2 chosen')).toBeVisible();
+    await checkScreen(page, 'library-filters');
+    await checkReflow(page, 'library-filters');
     await sheet.getByRole('button', { name: /^Show \d+ exercises?$/ }).click();
     await expect(sheet).toHaveCount(0);
     const chips = page.getByTestId('active-filters');
     await expect(chips.getByRole('button', { name: 'Remove filter: Biceps' })).toBeVisible();
+    await expect(chips.getByRole('button', { name: 'Remove filter: Forearms' })).toBeVisible();
     await expect(page.getByTestId('library-results').getByRole('link').first()).toContainText(
       /curl/i,
     );
     // The query and filters are in the URL, so Back from an exercise keeps them.
-    await expect(page).toHaveURL(/muscle=mu\.elbow-flexors/);
+    await expect
+      .poll(() => decodeURIComponent(page.url()))
+      .toMatch(/muscle=\["mu\.elbow-flexors","mu\.forearms"\]/);
     await checkScreen(page, 'library-filtered');
     await checkReflow(page, 'library-filtered');
+    // One tap removes one value; the other stays.
+    await chips.getByRole('button', { name: 'Remove filter: Forearms' }).click();
+    await expect(chips.getByRole('button', { name: 'Remove filter: Forearms' })).toHaveCount(0);
+    await expect(chips.getByRole('button', { name: 'Remove filter: Biceps' })).toBeVisible();
 
     await page.goto('/explore/exercises/ex.barbell-bench-press');
     await expect(

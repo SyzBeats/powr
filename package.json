@@ -23,6 +23,7 @@
     "i18n:check": "pnpm --filter @powr/web i18n:check",
     "licence": "node tools/licence/src/cli.ts check",
     "licence:demo-gpl": "node tools/licence/src/demo-gpl.ts",
+    "release:check": "node apps/web/scripts/release-check.ts",
     "size": "pnpm --filter @powr/web size",
     "icons": "node tools/icons/src/generate.ts",
     "content:build": "node tools/content-build/src/cli.ts",

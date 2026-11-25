@@ -26,10 +26,13 @@ import { Sheet } from '#ui/sheet';
 import { Stepper } from '#ui/stepper';
 
 import { useCatalog } from '../../hooks/use-planning';
+import { useDisplayPreferences } from '../../hooks/use-settings';
 import { useTimerDisplay } from '../../hooks/use-timers';
 import { useSessionUseCases } from '../../hooks/use-workout';
 import { formatClock, formatLocalDate, formatMass, formatMinutes } from '../../i18n/format';
 import { useLabels } from '../labels';
+import { useLargeControls } from '../settings/display';
+import { rpeOf, useEffortWords } from '../settings/effort';
 import { WhyButton, WhyText } from '../why/WhySheet';
 import { useSessionCommands } from './commands';
 import { ExerciseList, SessionActions } from './ExerciseList';
@@ -40,7 +43,7 @@ import { useSessionUi } from './session-ui';
 import { sessionClock } from './SessionRuntime';
 import { SetDetailsSheet, type SetExtras } from './SetDetailsSheet';
 import { SetTimerButton, TempoCues } from './timed-set';
-import { massText, rirText, useSessionWords } from './words';
+import { massText, useSessionWords } from './words';
 
 /**
  * The logging view of the session screen (WKT-02…12, TMR-01…11; §8.9.4): the top of the screen
@@ -51,6 +54,7 @@ import { massText, rirText, useSessionWords } from './words';
  */
 export function LoggingView({ view }: { view: SessionView }) {
   const { t } = useLingui();
+  useLargeControls();
   const implementsMap = useSessionImplements(view);
   const cursor = view.session.cursor;
   const exercise = cursor
@@ -216,11 +220,16 @@ function Celebration() {
   const { t } = useLingui();
   const words = useSessionWords();
   const prs = useSessionUi((state) => state.celebration);
+  // SET-10 (M5s): celebration animations can be switched off; the card still shows.
+  const { celebrations } = useDisplayPreferences();
   if (!prs || prs.length === 0) return null;
   return (
     <div
       data-testid="pr-celebration"
-      className="flex animate-[pr-pop_600ms_ease-out] items-start gap-3 rounded-2xl border-2 border-success bg-surface p-3"
+      className={cn(
+        'flex items-start gap-3 rounded-2xl border-2 border-success bg-surface p-3',
+        celebrations && 'animate-[pr-pop_600ms_ease-out]',
+      )}
     >
       <Trophy aria-hidden="true" className="mt-0.5 size-6 shrink-0 text-pr-accent" />
       <div className="flex min-w-0 flex-1 flex-col gap-1">
@@ -674,9 +683,10 @@ function ImplausibleText({ issue }: { issue: PlausibilityIssue }) {
   );
 }
 
-/** The prescription in words: "100 kg · 8–12 reps · 2 reps in reserve". */
+/** The prescription in words: "100 kg · 8–12 reps · 2 reps in reserve" (or "RPE 8", SET-05). */
 function usePrescriptionText(): (value: SetSuggestion) => string | null {
   const { t } = useLingui();
+  const effort = useEffortWords();
   return (value) => {
     const parts: string[] = [];
     const load = massText(value.load);
@@ -691,8 +701,7 @@ function usePrescriptionText(): (value: SetSuggestion) => string | null {
     }
     if (value.rirRange) {
       const [low, high] = value.rirRange;
-      const range = low === high ? rirText(low) : `${rirText(low)}–${rirText(high)}`;
-      parts.push(t`${range} reps in reserve`);
+      parts.push(effort.target(low, high));
     }
     return parts.length > 0 ? parts.join(' · ') : null;
   };
@@ -726,7 +735,11 @@ function LastTime({ last }: { last: NonNullable<ExerciseView['lastTime']> }) {
   );
 }
 
-/** WKT-03: the effort chips 0, 1, 2, 3, 4, 5+ (48 px, 8 px apart); a half step shows in the legend. */
+/**
+ * WKT-03: the effort chips 0, 1, 2, 3, 4, 5+ (48 px, 8 px apart); a half step shows in the legend.
+ * SET-05 (M5s): with RPE chosen the same six chips read 10, 9, 8, 7, 6 and "5 or less" (RPE =
+ * 10 − RIR); with decimal entry a stepper in half steps replaces them. Stored effort stays RIR.
+ */
 function RirChips({
   value,
   openEnded,
@@ -737,18 +750,48 @@ function RirChips({
   onChange: (rir: number | null, openEnded: boolean) => void;
 }) {
   const { t } = useLingui();
+  const effort = useEffortWords();
+  const rpe = effort.scale === 'rpe';
+  if (effort.input === 'decimal')
+    return (
+      <Stepper
+        inline
+        label={rpe ? t`Effort (RPE)` : t`Reps in reserve`}
+        value={value === null ? null : rpe ? rpeOf(value) : value}
+        onChange={(next) =>
+          onChange(
+            next === null ? null : Math.min(10, Math.max(0, rpe ? rpeOf(next) : next)),
+            false,
+          )
+        }
+        onStep={(direction, current) =>
+          Math.min(10, Math.max(0, (current ?? (rpe ? 8 : 2)) + direction * 0.5))
+        }
+        decrementLabel={rpe ? t`Half a point lower RPE` : t`Half a rep less in reserve`}
+        incrementLabel={rpe ? t`Half a point higher RPE` : t`Half a rep more in reserve`}
+        max={10}
+      />
+    );
   // A half step (the suggestion's "1.5") presses no chip; the legend names it, so the six chips
   // keep one row at 360 px (a seventh would wrap and push the dock up).
   const half = value !== null && !Number.isInteger(value) && value < 5 ? value : null;
   const selected: string | null =
     value === null || half !== null ? null : openEnded || value >= 5 ? '5+' : String(value);
   const chips = RIR_CHIPS;
-  const halfText = half === null ? null : rirText(half);
+  const halfText = half === null ? null : effort.value(half);
+  const chipText = (chip: RirChip) =>
+    rpe ? (chip === '5+' ? t`≤5` : String(rpeOf(Number(chip)))) : chip;
   return (
     <fieldset className="m-0 flex min-w-0 flex-col gap-1 border-0 p-0">
       <legend className="mb-1 text-sm font-medium text-fg-muted">
         {halfText === null ? (
-          <Trans>Reps in reserve</Trans>
+          rpe ? (
+            <Trans>Effort (RPE)</Trans>
+          ) : (
+            <Trans>Reps in reserve</Trans>
+          )
+        ) : rpe ? (
+          <Trans>Effort: {halfText}</Trans>
         ) : (
           <Trans>Reps in reserve: {halfText}</Trans>
         )}
@@ -761,14 +804,14 @@ function RirChips({
               key={chip}
               type="button"
               aria-pressed={pressed}
-              aria-label={chip === '5+' ? t`5 or more` : undefined}
+              aria-label={chip === '5+' ? (rpe ? t`RPE 5 or less` : t`5 or more`) : undefined}
               onClick={() => (chip === '5+' ? onChange(5, true) : onChange(Number(chip), false))}
               className={cn(
                 'min-h-target min-w-target flex-1 rounded-xl border border-control bg-surface px-2 text-lg font-semibold tabular',
                 pressed && 'border-primary bg-primary text-on-primary',
               )}
             >
-              {chip}
+              {chipText(chip)}
             </button>
           );
         })}

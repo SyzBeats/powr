@@ -120,7 +120,9 @@ test.describe('M2c planning gaps (ONB-08, PLN-02, PLN-08, TD-36)', () => {
     const sheet = page.getByRole('dialog');
     await expect(sheet.getByRole('radio', { name: /^Full body ×3/ })).toBeChecked();
     await expect(sheet.getByText(/^Recommended for your 3 training days/)).toBeVisible();
-    await expect(sheet.getByText('Needs 4 training days a week.')).toBeVisible();
+    // Two plans need four days: Upper/lower ×2 and its alternative Full body ×4 (TD-37, M5).
+    await expect(sheet.getByText('Needs 4 training days a week.')).toHaveCount(2);
+    await expect(sheet.getByRole('radio', { name: /^Full body ×4/ })).toBeVisible();
     await checkScreen(page, 'plan-template-chooser');
     await sheet.getByRole('radio', { name: /^Upper\/lower ×2/ }).click();
     await expect(sheet).toHaveCount(0);

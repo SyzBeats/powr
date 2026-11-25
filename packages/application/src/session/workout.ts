@@ -240,6 +240,8 @@ export async function startWorkout(
     prepared.equipmentProfiles.find((profile) => profile.isDefault)?.id ??
     null;
   const [from, to] = readinessWindow(prepared, today);
+  // SET-05 (M5s): warm-up sets at the start follow the setting unless the caller decides.
+  const warmups = input.warmups ?? prepared.settings?.training?.warmups;
   const outcome = await deps.uow.write(SESSION_TABLES, async (repos) => {
     const active = await repos.sessions.getActive();
     if (active) return err({ kind: 'activeSession' as const, sessionId: active.id });
@@ -260,7 +262,7 @@ export async function startWorkout(
         },
         equipmentProfileId,
         source: start,
-        ...(input.warmups === undefined ? {} : { warmups: input.warmups }),
+        ...(warmups === undefined ? {} : { warmups }),
       },
       ctx,
     );

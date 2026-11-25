@@ -23,9 +23,15 @@ class SafetyDb extends Dexie {
   }
 }
 
-export function createSafetySnapshots(): SafetySnapshots {
+/**
+ * The safety-copy store. The Dexie connection opens on first use and closes on `versionchange`
+ * (Dexie's default), so "Delete all data" can delete the database while the app runs.
+ */
+export function createSafetySnapshots(): SafetySnapshots & { wipe(): Promise<void> } {
   const db = new SafetyDb();
   return {
+    /** "Delete all data" (DAT-13): deletes `powr-safety`; the instance stays closed. */
+    wipe: () => db.delete(),
     async save(snapshot) {
       await db.transaction('rw', db.snapshots, async () => {
         await db.snapshots.add({
@@ -37,6 +43,23 @@ export function createSafetySnapshots(): SafetySnapshots {
         const ids = await db.snapshots.orderBy('id').primaryKeys();
         await db.snapshots.bulkDelete(ids.slice(0, Math.max(0, ids.length - KEEP)));
       });
+    },
+    async list() {
+      // oxlint-disable-next-line unicorn/no-array-reverse -- a Dexie collection, not an array
+      const all = await db.snapshots.orderBy('id').reverse().toArray();
+      return all.map(({ id, fileName, reason, at, bytes }) => ({
+        id: id!,
+        fileName,
+        reason,
+        at,
+        size: bytes.byteLength,
+      }));
+    },
+    async read(id) {
+      return (await db.snapshots.get(id))?.bytes;
+    },
+    async delete(id) {
+      await db.snapshots.delete(id);
     },
   };
 }

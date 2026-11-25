@@ -96,13 +96,14 @@ const LAZY_SESSION: ImportPattern = {
 /**
  * The insight and library use cases (M4a) are lazy chunks too: the analytics engine, the library
  * search and the rules resolver stay off the startup path (§8.19). The screens' loaders (M4b)
- * carry the disable comments; type imports are allowed.
+ * carry the disable comments; type imports are allowed. M5s: the settings use cases likewise
+ * (`useSettingsUseCases` in src/hooks/use-settings.ts is the one loader).
  */
 const LAZY_INSIGHTS: ImportPattern = {
-  regex: '^@powr/application/(insights|library)$',
+  regex: '^@powr/application/(insights|library|settings)$',
   allowTypeImports: true,
   message:
-    "The insight and library use cases are lazy-loaded: use import('@powr/application/insights') or import('@powr/application/library').",
+    "The insight, library and settings use cases are lazy-loaded: use import('@powr/application/insights'), import('@powr/application/library') or import('@powr/application/settings').",
 };
 
 /**

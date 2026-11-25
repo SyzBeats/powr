@@ -310,6 +310,16 @@ export interface FileGateway {
   }): Promise<'saved' | 'downloaded' | 'cancelled'>;
 }
 
+/** A stored safety snapshot, without its bytes (Data and backups → "Safety copies"). */
+export interface SafetySnapshotInfo {
+  readonly id: number;
+  readonly fileName: string;
+  readonly reason: 'import' | 'migration';
+  /** ISO 8601 with offset. */
+  readonly at: string;
+  readonly size: number;
+}
+
 /** Keeps the latest safety snapshots taken before imports and migrations (`powr-safety`). */
 export interface SafetySnapshots {
   save(snapshot: {
@@ -318,6 +328,10 @@ export interface SafetySnapshots {
     reason: 'import' | 'migration';
     at: InstantTz;
   }): Promise<void>;
+  /** M5d: the stored snapshots, newest first. */
+  list(): Promise<SafetySnapshotInfo[]>;
+  read(id: number): Promise<Uint8Array | undefined>;
+  delete(id: number): Promise<void>;
 }
 
 export interface AppInfo {

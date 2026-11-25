@@ -21,6 +21,7 @@ export type ObservationRules = RuleSlice<
   | 'load.trend.noiseTypicalSd'
   | 'load.trend.heavySet'
   | 'load.trend.noviceWidening'
+  | 'load.trend.typicalErrorCv'
 >;
 
 export interface TrendObservation {
@@ -43,7 +44,10 @@ export function isStrengthSet(
 /**
  * Turns a session e1RM into a filter observation. σ is 4% for heavy sets (low r_eff, RPE ≥ 9) and
  * 9% otherwise, widened in quadrature by the effort prior of sets without RIR (E-1) and, for
- * novices, during their first weeks of data.
+ * novices, during their first weeks of data. σ never falls below the level's typical error
+ * (TD-59, M5): a session e1RM varies from day to day at least as much as a tested 1RM does, so a
+ * novice's heavy sets (4% against a 5.5% typical error once the widening ends) are modelled at
+ * 5.5%; for trained lifters (3.3%) the floor does not bind.
  */
 export function trendObservation(
   estimate: SetE1rm,
@@ -60,11 +64,12 @@ export function trendObservation(
   const widening = rules['load.trend.noviceWidening'].value;
   const factor =
     context.level === 'novice' && context.weeksOfData <= widening.weeks ? widening.factor : 1;
+  const floor = rules['load.trend.typicalErrorCv'].value[context.level];
   return {
     localDate,
     e1rmKg: estimate.e1rmKg,
     weight: estimate.weight,
-    logSd: Math.hypot(base, estimate.effortLogSd) * factor,
+    logSd: Math.max(Math.hypot(base, estimate.effortLogSd) * factor, floor),
   };
 }
 
@@ -220,8 +225,17 @@ export function labelChange(
     referenceDate: current.reference.localDate,
     typicalError: te,
   };
+  // TD-62 (M5): "no label" has two causes the "Why?" text tells apart. `noise`: the change is
+  // within one typical error. `unconfirmed`: it is beyond one typical error, but not yet beyond
+  // the change's own uncertainty (likelyZ) or not for `sustainSessions` sessions in a row.
+  const reason = size > thresholds.likelyTe * te ? 'unconfirmed' : 'noise';
   return explained(value, `trend.change.${label}`, {
-    args: { deltaPct: value.deltaPct, typicalErrorPct: te * 100, direction: value.direction },
+    args: {
+      deltaPct: value.deltaPct,
+      typicalErrorPct: te * 100,
+      direction: value.direction,
+      ...(label === 'none' ? { reason } : {}),
+    },
     facts: [
       quantity('referenceDate', current.reference.localDate),
       quantity('referenceE1rmKg', current.reference.e1rmKg),

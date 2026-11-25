@@ -8,7 +8,14 @@ export {
   type DecodedBackup,
   type ImportPreview,
 } from './decode';
-export { backupFileName, encodeBackup, type BackupSource, type EncodedBackup } from './encode';
+export {
+  backupFileName,
+  encodeBackup,
+  encodeRawSnapshot,
+  type BackupSource,
+  type EncodedBackup,
+  type RawSnapshot,
+} from './encode';
 export { DEFAULT_ARCHIVE_LIMITS, type ArchiveLimits } from './limits';
 export { BACKUP_FORMAT, BACKUP_FORMAT_VERSION, type BackupManifest } from './manifest';
 export { validateRawTables, type RecordIssue } from '../records/validate';

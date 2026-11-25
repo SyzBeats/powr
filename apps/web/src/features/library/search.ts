@@ -6,10 +6,11 @@
 
 export interface LibrarySearch {
   readonly q?: string;
-  readonly muscle?: string;
-  readonly equipment?: string;
-  readonly pattern?: string;
-  readonly mechanics?: 'compound' | 'isolation';
+  /** TD-56: several values per dimension (any of them matches; dimensions combine with AND). */
+  readonly muscle?: readonly string[];
+  readonly equipment?: readonly string[];
+  readonly pattern?: readonly string[];
+  readonly mechanics?: readonly ('compound' | 'isolation')[];
   readonly available?: true;
   readonly favourites?: true;
   readonly custom?: true;
@@ -21,19 +22,24 @@ const ID = /^[a-zA-Z0-9._-]{1,80}$/;
 const id = (value: unknown): string | undefined =>
   typeof value === 'string' && ID.test(value) ? value : undefined;
 
+/** One value or a list (an old single-value link still works); duplicates and junk dropped. */
+const ids = (value: unknown, valid: (entry: unknown) => boolean = (entry) => !!id(entry)) => {
+  const list = [...new Set((Array.isArray(value) ? value : [value]).filter(valid))].slice(0, 64);
+  return list.length > 0 ? (list as string[]) : undefined;
+};
+
 const flag = (value: unknown): true | undefined =>
   value === true || value === 'true' || value === 1 || value === '1' ? true : undefined;
 
-/** `/explore/exercises?q=…&muscle=mu.chest&available=true…`: the query and the active filters. */
+/** `/explore/exercises?q=…&muscle=["mu.chest"]&available=true…`: the query and the filters. */
 export function validateLibrarySearch(search: Record<string, unknown>): LibrarySearch {
   const q = typeof search['q'] === 'string' ? search['q'].slice(0, 100) : undefined;
-  const mechanics = search['mechanics'];
   const entries = {
     q: q || undefined,
-    muscle: id(search['muscle']),
-    equipment: id(search['equipment']),
-    pattern: id(search['pattern']),
-    mechanics: mechanics === 'compound' || mechanics === 'isolation' ? mechanics : undefined,
+    muscle: ids(search['muscle']),
+    equipment: ids(search['equipment']),
+    pattern: ids(search['pattern']),
+    mechanics: ids(search['mechanics'], (entry) => entry === 'compound' || entry === 'isolation'),
     available: flag(search['available']),
     favourites: flag(search['favourites']),
     custom: flag(search['custom']),

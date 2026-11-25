@@ -156,3 +156,209 @@
     - en: Place your feet shoulder-width in the middle of the platform.
     - en: Lower the sled until your knees are well bent, without your lower back lifting off the pad.
     - en: Press through your whole foot and stop just short of locking your knees.
+
+# M5 additions (content 0.3.0):
+# - Tempo and pin squats are back squats with another tempo or start position, so they keep the
+#   back-squat credits and their H tags (Kubo 2019, Plotkin 2023), as the paused squat does. Like
+#   every close variant of the competition squat they use the equation curve class.
+# - Hack squat: the EB row "Leg press / hack squat" (rectus femoris EMG, Ema 2016; the rest C).
+# - Safety-squat-bar, Smith-machine, box and bodyweight squats are not in the EB table; they reuse
+#   the back-squat row as convention (C).
+
+- id: ex.tempo-back-squat
+  name: { en: Tempo back squat }
+  synonyms: [tempo squat, slow-eccentric squat]
+  pattern: squat
+  mechanics: compound
+  variantOf: ex.barbell-back-squat
+  substitutionGroups: [sg.squat]
+  equipment:
+    allOf: [eq.plates]
+    anyOf: [[eq.barbell-olympic, eq.barbell-womens], [eq.power-rack, eq.squat-stand]]
+  muscles:
+    - { muscle: mu.quads.vasti, credit: 1, evidence: H, source: src.kubo2019 }
+    - { muscle: mu.quads.rectus-femoris, credit: 0, evidence: EMG, source: src.ema2016 }
+    - { muscle: mu.glutes.max, credit: 0.5, evidence: H, source: src.plotkin2023 }
+    - { muscle: mu.adductors, credit: 0.5, evidence: H, source: src.kubo2019 }
+    - { muscle: mu.hamstrings, credit: 0, evidence: H, source: src.kubo2019 }
+  load: { type: barbell, curveClass: equation, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [6, 12], strength: [2, 6] }
+    restClass: strength
+    tempo: 4-1-X-0
+    fixedRom: true
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 3, subRegions: [mu.quads.vasti] }
+  cues:
+    - en: Set up and brace exactly as you do for your competition squat.
+    - en: Count four slow seconds on the way down while the bar stays over mid-foot.
+    - en: Hold the bottom for one second without relaxing your brace.
+    - en: Stand up with full intent once the pause is over.
+
+- id: ex.pin-squat
+  name: { en: Pin squat }
+  synonyms: [dead-stop squat, squat from pins]
+  pattern: squat
+  mechanics: compound
+  variantOf: ex.barbell-back-squat
+  substitutionGroups: [sg.squat]
+  equipment:
+    allOf: [eq.plates, eq.power-rack]
+    anyOf: [[eq.barbell-olympic, eq.barbell-womens]]
+  muscles:
+    - { muscle: mu.quads.vasti, credit: 1, evidence: H, source: src.kubo2019 }
+    - { muscle: mu.quads.rectus-femoris, credit: 0, evidence: EMG, source: src.ema2016 }
+    - { muscle: mu.glutes.max, credit: 0.5, evidence: H, source: src.plotkin2023 }
+    - { muscle: mu.adductors, credit: 0.5, evidence: H, source: src.kubo2019 }
+    - { muscle: mu.hamstrings, credit: 0, evidence: H, source: src.kubo2019 }
+  load: { type: barbell, curveClass: equation, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [6, 10], strength: [1, 5] }
+    restClass: strength
+    tempo: 2-1-X-0
+    fixedRom: true
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 3, subRegions: [mu.quads.vasti] }
+  cues:
+    - en: Set the safety pins so the bar rests on them when you are at competition depth.
+    - en: Lower under control until the bar settles on the pins, staying braced the whole time.
+    - en: Drive the bar up from the dead stop without rocking or bouncing it off the pins.
+
+- id: ex.safety-squat-bar-squat
+  name: { en: Safety-squat-bar squat }
+  synonyms: [ssb squat, yoke bar squat]
+  pattern: squat
+  mechanics: compound
+  substitutionGroups: [sg.squat]
+  equipment:
+    allOf: [eq.plates, eq.safety-squat-bar]
+    anyOf: [[eq.power-rack, eq.squat-stand]]
+  muscles:
+    - { muscle: mu.quads.vasti, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.quads.rectus-femoris, credit: 0, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.glutes.max, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.adductors, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.hamstrings, credit: 0, evidence: C, source: src.powr-eb-mapping }
+  load: { type: barbell, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [6, 12], strength: [6, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 3, subRegions: [mu.quads.vasti] }
+  cues:
+    - en: Rest the padded yoke on your upper back and hold the handles in front of you.
+    - en: Keep your chest up, because the bar's forward pull tries to tip your torso over.
+    - en: Squat as deep as you can stay braced, then drive your upper back up into the pads.
+
+- id: ex.hack-squat
+  name: { en: Hack squat }
+  synonyms: [machine hack squat, plate-loaded hack squat]
+  pattern: squat
+  mechanics: compound
+  substitutionGroups: [sg.squat]
+  equipment: { allOf: [eq.hack-squat, eq.plates], anyOf: [] }
+  muscles:
+    - { muscle: mu.quads.vasti, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.quads.rectus-femoris, credit: 0, evidence: EMG, source: src.ema2016 }
+    - { muscle: mu.glutes, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.adductors, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.hamstrings, credit: 0, evidence: C, source: src.powr-eb-mapping }
+  load: { type: machine, curveClass: legPressLike, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [8, 15], strength: [6, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 3, subRegions: [mu.quads.vasti] }
+  cues:
+    - en: Set your shoulders under the pads and your feet shoulder-width in the middle of the platform.
+    - en: Release the safety handles and sink until your thighs are at least parallel to the platform.
+    - en: Keep your lower back against the pad and press through your whole foot.
+    - en: Lock the safety handles again before you step out.
+
+- id: ex.smith-machine-squat
+  name: { en: Smith-machine squat }
+  synonyms: [smith squat]
+  pattern: squat
+  mechanics: compound
+  substitutionGroups: [sg.squat]
+  equipment: { allOf: [eq.smith-machine, eq.plates], anyOf: [] }
+  muscles:
+    - { muscle: mu.quads.vasti, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.quads.rectus-femoris, credit: 0, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.glutes.max, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.adductors, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.hamstrings, credit: 0, evidence: C, source: src.powr-eb-mapping }
+  load: { type: machine, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [8, 15], strength: [6, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 3, subRegions: [mu.quads.vasti] }
+  cues:
+    - en: Set the safety stops just below your lowest point before you load the bar.
+    - en: Rest the bar on your upper back with your feet slightly in front of it.
+    - en: Sit down until your thighs are at least parallel, heels flat on the floor.
+    - en: Push the floor away and let the rails guide the bar back up.
+
+- id: ex.box-squat
+  name: { en: Box squat }
+  synonyms: [bench squat, barbell box squat]
+  pattern: squat
+  mechanics: compound
+  substitutionGroups: [sg.squat]
+  equipment:
+    allOf: [eq.plates]
+    anyOf:
+      - [eq.barbell-olympic, eq.barbell-womens]
+      - [eq.power-rack, eq.squat-stand]
+      - [eq.flat-bench, eq.adjustable-bench]
+  muscles:
+    - { muscle: mu.quads.vasti, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.quads.rectus-femoris, credit: 0, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.glutes.max, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.adductors, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.hamstrings, credit: 0, evidence: C, source: src.powr-eb-mapping }
+  load: { type: barbell, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [6, 12], strength: [6, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-1-X-0
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 3, subRegions: [mu.quads.vasti] }
+  cues:
+    - en: Place a bench or box behind you at a height where your thighs are about parallel when seated.
+    - en: Sit back and down under control until you touch the box, without dropping onto it.
+    - en: Pause briefly while staying braced, then drive up from the box.
+
+- id: ex.bodyweight-squat
+  name: { en: Bodyweight squat }
+  synonyms: [air squat, free squat]
+  pattern: squat
+  mechanics: compound
+  substitutionGroups: [sg.squat]
+  equipment: { allOf: [], anyOf: [] }
+  muscles:
+    - { muscle: mu.quads.vasti, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.quads.rectus-femoris, credit: 0, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.glutes.max, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.adductors, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.hamstrings, credit: 0, evidence: C, source: src.powr-eb-mapping }
+  load: { type: bodyweightAdded, curveClass: pooled, unilateral: false, bodyweightLoaded: true }
+  defaults:
+    repRange: { hypertrophy: [15, 30], strength: [6, 12] }
+    restClass: hypertrophyCompound
+    tempo: 3-0-X-0
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 1 }
+  cues:
+    - en: Stand with your feet about shoulder-width apart and your toes turned slightly out.
+    - en: Sit down between your heels as deep as you can while your heels stay flat.
+    - en: Stand up tall; slow the descent or add a pause at the bottom once reps get easy.

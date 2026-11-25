@@ -50,6 +50,13 @@ function sorted(tables: RawTables): RawTables {
   };
 }
 
+/** Whether a settings record with these fields passes the strict v2 schema. */
+const settings = (extra: Record<string, unknown>) =>
+  validateRawTables({
+    ...emptyRawTables(),
+    settings: [{ id: 'me', theme: 'system', ...extra }] as RawTables['settings'],
+  }).ok;
+
 /** Whether a plan record passes the strict v2 schema. */
 const validPlan = (record: Plan) => validateRawTables({ ...emptyRawTables(), plans: [record] }).ok;
 
@@ -196,6 +203,20 @@ describe('backup import rejects bad files before anything is written', () => {
     const extra = { ...tables, settings: [{ id: 'me', theme: 'dark', script: '<b>' }] };
     const { bytes } = await encodeBackup(extra as unknown as RawTables, source);
     expect(await decodeBackup(bytes)).toMatchObject({ ok: false, error: { kind: 'invalidData' } });
+  });
+
+  it('checks the M5s training and display preferences strictly (SET-05, SET-10)', () => {
+    expect(
+      settings({
+        training: { effortScale: 'rpe', rirInput: 'decimal', warmups: false },
+        display: { largeControls: true, celebrations: false },
+      }),
+    ).toBe(true);
+    expect(settings({ training: {}, display: {} })).toBe(true);
+    expect(settings({ training: { effortScale: 'rpe10' } })).toBe(false);
+    expect(settings({ training: { rirInput: 'slider' } })).toBe(false);
+    expect(settings({ training: { warmups: 'yes' } })).toBe(false);
+    expect(settings({ display: { largeControls: true, confetti: true } })).toBe(false);
   });
 
   it('checks dismissed warning keys and time-budget targets on plan records (PLN-09, PLN-14)', () => {

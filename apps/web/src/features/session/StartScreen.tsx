@@ -14,6 +14,7 @@ import { useActivePlan, usePlannedSessions } from '../../hooks/use-planning';
 import { useSessionUseCases } from '../../hooks/use-workout';
 import { addLocalDays, formatLocalDate, todayLocal } from '../../i18n/format';
 import { useLabels } from '../labels';
+import { UpdateFirstOffer } from '../shell/UpdateFirstOffer';
 import { useSessionCommands } from './commands';
 
 /**
@@ -80,6 +81,8 @@ export function StartScreen({ startToday = false }: { startToday?: boolean }) {
 
   return (
     <Screen title={t`Start a workout`}>
+      {/* TD-14 (M5d): a waiting update is offered before the workout, never during it. */}
+      <UpdateFirstOffer />
       {error ? (
         <Callout tone="danger" title={t`Not started`}>
           <p>{error}</p>

@@ -37,10 +37,10 @@ describe('exercise library (EXL-02)', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Filters' }));
     const sheet = await screen.findByRole('dialog', { name: 'Filters' });
-    await userEvent.selectOptions(
-      within(sheet).getByRole('combobox', { name: 'Muscle' }),
-      'mu.elbow-flexors',
-    );
+    // Each dimension is a disclosure with checkboxes (TD-56: several values each).
+    await userEvent.click(within(sheet).getByText('Muscle', { selector: 'summary span' }));
+    const muscles = within(sheet).getByRole('group', { name: 'Works any of these muscles' });
+    await userEvent.click(within(muscles).getByRole('checkbox', { name: 'Biceps' }));
     await userEvent.click(
       within(sheet).getByRole('checkbox', { name: /Available with my equipment/ }),
     );
@@ -52,10 +52,11 @@ describe('exercise library (EXL-02)', () => {
     expect(
       within(chips).getByRole('button', { name: 'Remove filter: Available with my equipment' }),
     ).toBeTruthy();
+    let biceps = 0;
     await waitFor(() => {
-      const filtered = Number(count.textContent?.split(' ')[0]);
-      expect(filtered).toBeGreaterThan(0);
-      expect(filtered).toBeLessThan(all);
+      biceps = Number(count.textContent?.split(' ')[0]);
+      expect(biceps).toBeGreaterThan(0);
+      expect(biceps).toBeLessThan(all);
     });
     const results = within(screen.getByTestId('library-results'));
     expect(results.getAllByRole('link').some((link) => /curl/i.test(link.textContent ?? ''))).toBe(
@@ -64,17 +65,35 @@ describe('exercise library (EXL-02)', () => {
     expect(results.queryByText('Needs other equipment')).toBeNull();
     expect(await seriousViolations()).toEqual([]);
 
-    // One tap clears one filter; "Clear all" the rest.
+    // A second muscle widens the list (OR within a dimension); the sheet reopens with the muscle
+    // group open and its choice checked.
+    await userEvent.click(screen.getByRole('button', { name: 'Filters' }));
+    const widen = await screen.findByRole('dialog', { name: 'Filters' });
+    expect(within(widen).getByText('1 chosen')).toBeTruthy();
+    const open = within(widen).getByRole('group', { name: 'Works any of these muscles' });
+    expect(within(open).getByRole('checkbox', { name: 'Biceps', checked: true })).toBeTruthy();
+    await userEvent.click(within(open).getByRole('checkbox', { name: 'Triceps' }));
+    await userEvent.click(within(widen).getByRole('button', { name: 'Close filters' }));
+    await waitFor(() => expect(Number(count.textContent?.split(' ')[0])).toBeGreaterThan(biceps));
+    const armWork = Number(count.textContent?.split(' ')[0]);
+    expect(within(chips).getByRole('button', { name: 'Remove filter: Triceps' })).toBeTruthy();
+    const expected = await searchExercises(container.deps, {
+      muscles: ['mu.elbow-flexors', 'mu.triceps'] as never,
+      availableOnly: true,
+    });
+    expect(armWork).toBe(expected.length);
+    expect(await seriousViolations()).toEqual([]);
+
+    // One tap clears one value; "Clear all" the rest.
     await userEvent.click(within(chips).getByRole('button', { name: 'Remove filter: Biceps' }));
     await waitFor(() =>
       expect(screen.queryByRole('button', { name: 'Remove filter: Biceps' })).toBeNull(),
     );
+    expect(within(chips).getByRole('button', { name: 'Remove filter: Triceps' })).toBeTruthy();
     await userEvent.click(screen.getByRole('button', { name: 'Filters' }));
     const again = await screen.findByRole('dialog', { name: 'Filters' });
-    await userEvent.selectOptions(
-      within(again).getByRole('combobox', { name: 'Mechanics' }),
-      'isolation',
-    );
+    await userEvent.click(within(again).getByText('Mechanics', { selector: 'summary span' }));
+    await userEvent.click(within(again).getByRole('checkbox', { name: /^Isolation/ }));
     await userEvent.click(within(again).getByRole('button', { name: 'Close filters' }));
     await userEvent.click(await screen.findByRole('button', { name: 'Clear all' }));
     await waitFor(() => expect(screen.queryByTestId('active-filters')).toBeNull());

@@ -7,17 +7,20 @@ import type { MuscleWeek, PlanFix } from '@powr/domain/planning';
 import { formatMass, formatMinutes } from '../../i18n/format';
 import { assertNever } from '../exhaustive';
 import { useLabels } from '../labels';
+import { useEffortWords } from '../settings/effort';
 
 const range = ([min, max]: readonly [number, number]) => (min === max ? `${min}` : `${min}–${max}`);
 
 /**
  * Prescriptions in words (PLN-07): "3 × 8–12, 1–2 reps in reserve". Novices see "reps left"
- * instead of "RIR" (NFR-USE-03); others get "RIR".
+ * instead of "RIR" (NFR-USE-03); others get "RIR", or "RPE" once they chose it (SET-05).
  */
 export function usePrescriptionText(novice: boolean) {
   const { t } = useLingui();
+  const effortWords = useEffortWords();
   const effort = (rir: readonly [number, number]) => {
     const value = range(rir);
+    if (effortWords.scale === 'rpe') return effortWords.short(rir[0], rir[1]);
     return novice ? t`${value} reps left` : t`RIR ${value}`;
   };
   return (prescription: Prescription): string => {

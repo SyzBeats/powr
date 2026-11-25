@@ -11,8 +11,20 @@ msgstr ""
 msgid " or "
 msgstr ""
 
+#: src/features/legal/LegalScreens.tsx
+msgid ", "
+msgstr ""
+
+#: src/features/settings/ExerciseChoicesScreen.tsx
+msgid "\"Keep as last time\" pre-fills what you lifted last time instead of a progression. The rest timer can start by itself after a set, or only when you tap it."
+msgstr ""
+
 #: src/features/settings/AlertsSection.tsx
 msgid "\"Resting until\" notification"
+msgstr ""
+
+#: src/features/why/citations.tsx
+msgid "(opens in a new tab)"
 msgstr ""
 
 #. placeholder {0}: view.meet.daysUntil
@@ -23,6 +35,11 @@ msgstr ""
 #. placeholder {0}: count('break')
 #: src/features/progress/CalendarScreen.tsx
 msgid "{0, plural, one {# break day} other {# break days}}"
+msgstr ""
+
+#. placeholder {0}: preview.updates
+#: src/features/calendar/CalendarExportScreen.tsx
+msgid "{0, plural, one {# earlier exported session changed and is updated too.} other {# earlier exported sessions changed and are updated too.}}"
 msgstr ""
 
 #. placeholder {0}: day.slots.length
@@ -71,6 +88,26 @@ msgstr ""
 msgid "{0, plural, one {# record} other {# records}}"
 msgstr ""
 
+#. placeholder {0}: changed.changed
+#: src/features/calendar/CalendarExportScreen.tsx
+msgid "{0, plural, one {# session changed since your last export. Export again to update your calendar.} other {# sessions changed since your last export. Export again to update your calendar.}}"
+msgstr ""
+
+#. placeholder {0}: preview.withoutTime
+#: src/features/calendar/CalendarExportScreen.tsx
+msgid "{0, plural, one {# session has no planned start time and uses the time you chose.} other {# sessions have no planned start time and use the time you chose.}}"
+msgstr ""
+
+#. placeholder {0}: preview.cancelled
+#: src/features/calendar/CalendarExportScreen.tsx
+msgid "{0, plural, one {# session is no longer planned and is cancelled in your calendar.} other {# sessions are no longer planned and are cancelled in your calendar.}}"
+msgstr ""
+
+#. placeholder {0}: preview.sessions
+#: src/features/calendar/CalendarExportScreen.tsx
+msgid "{0, plural, one {# session} other {# sessions}}"
+msgstr ""
+
 #. placeholder {0}: Math.round(sets * 10) / 10
 #. placeholder {0}: entry.doneSets
 #. placeholder {0}: last.doneSets
@@ -107,6 +144,11 @@ msgstr ""
 msgid "{0, plural, one {Heads-up: # muscle or lift now has less than the usual recovery time. Consider another day.} other {Heads-up: # muscles or lifts now have less than the usual recovery time. Consider another day.}}"
 msgstr ""
 
+#. placeholder {0}: BACKUP_REMINDER.snoozeDays
+#: src/features/data/BackupReminder.tsx
+msgid "{0, plural, one {Okay. POWR reminds you again in # day.} other {Okay. POWR reminds you again in # days.}}"
+msgstr ""
+
 #. placeholder {0}: fix.sets
 #: src/features/plan/format.ts
 msgid "{0, plural, one {Remove # set of {name}} other {Remove # sets of {name}}}"
@@ -125,6 +167,16 @@ msgstr ""
 #. placeholder {0}: hidden.length
 #: src/features/plan/PlanEditorScreen.tsx
 msgid "{0, plural, one {Show # dismissed warning} other {Show # dismissed warnings}}"
+msgstr ""
+
+#. placeholder {0}: state.sessionsSinceBackup
+#: src/features/data/BackupReminder.tsx
+msgid "{0, plural, one {You finished # workout since your last backup.} other {You finished # workouts since your last backup.}}"
+msgstr ""
+
+#. placeholder {0}: state.daysSinceBackup ?? 0
+#: src/features/data/BackupReminder.tsx
+msgid "{0, plural, one {Your last backup is # day old.} other {Your last backup is # days old.}}"
 msgstr ""
 
 #. placeholder {0}: words.origin(session.origin)
@@ -208,6 +260,11 @@ msgstr ""
 msgid "{0} items"
 msgstr ""
 
+#. placeholder {0}: clock(shown)
+#: src/features/settings/RestTimesScreen.tsx
+msgid "{0} minutes"
+msgstr ""
+
 #. placeholder {0}: chosen.length
 #: src/features/progress/CompareScreen.tsx
 msgid "{0} of {MAX} chosen."
@@ -222,6 +279,11 @@ msgstr ""
 #. placeholder {0}: entry.label
 #: src/features/progress/ExerciseProgressScreen.tsx
 msgid "{0} starts {from}"
+msgstr ""
+
+#. placeholder {0}: weeks.evidenceDefault
+#: src/features/settings/TrainingAdvanced.tsx
+msgid "{0} weeks"
 msgstr ""
 
 #. placeholder {0}: other.name.en
@@ -326,6 +388,10 @@ msgstr ""
 msgid "why.progression.double.topReached.simple"
 msgstr ""
 
+#: src/features/why/citations.tsx
+msgid "{authors} ({year})."
+msgstr ""
+
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.equipment.availability.simple"
@@ -346,6 +412,10 @@ msgstr ""
 msgid "why.plan.lift.unavailable.simple"
 msgstr ""
 
+#: src/features/settings/ProfileSection.tsx
+msgid "{avoided} avoided"
+msgstr ""
+
 #: src/features/session/SummaryScreen.tsx
 msgid "{before} → {after}"
 msgstr ""
@@ -357,6 +427,14 @@ msgstr ""
 
 #: src/features/insights/words.ts
 msgid "{below, plural, one {# muscle below your target.} other {# muscles below your target.}}"
+msgstr ""
+
+#: src/features/calendar/ReexportNotice.tsx
+msgid "{changed, plural, one {# session changed since you added the plan to your calendar.} other {# sessions changed since you added the plan to your calendar.}}"
+msgstr ""
+
+#: src/features/library/LibraryScreen.tsx
+msgid "{chosen, plural, one {# chosen} other {# chosen}}"
 msgstr ""
 
 #: src/features/progress/ExerciseProgressScreen.tsx
@@ -379,6 +457,10 @@ msgstr ""
 msgid "{count, plural, one {Show # exercise} other {Show # exercises}}"
 msgstr ""
 
+#: src/features/settings/ProfileSection.tsx
+msgid "{count} entered"
+msgstr ""
+
 #: src/features/progress/ProgressScreen.tsx
 msgid "{count}, last on {date}"
 msgstr ""
@@ -399,6 +481,10 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.plan.duration.simple"
+msgstr ""
+
+#: src/features/settings/ProfileSection.tsx
+msgid "{days} · {minutes}"
 msgstr ""
 
 #: src/features/progress/VolumeScreen.tsx
@@ -491,6 +577,14 @@ msgstr ""
 msgid "why.progression.linear.stallReset"
 msgstr ""
 
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "{family}{version} on {platform}, in the browser"
+msgstr ""
+
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "{family}{version} on {platform}, installed app"
+msgstr ""
+
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.readiness.assessment"
@@ -511,8 +605,16 @@ msgstr ""
 msgid "why.volume.sessionCap.within.simple"
 msgstr ""
 
+#: src/features/settings/effort.ts
+msgid "{from} reps in reserve"
+msgstr ""
+
 #: src/features/motivation/StreakScreen.tsx
 msgid "{from} to {to}"
+msgstr ""
+
+#: src/features/settings/effort.ts
+msgid "{from}–{to} reps in reserve"
 msgstr ""
 
 #. js-lingui-explicit-id
@@ -526,6 +628,10 @@ msgstr ""
 
 #: src/features/progress/VolumeScreen.tsx
 msgid "{heavy} of {target} planned heavy sets, {sets} sets in all, {tonnage} lifted"
+msgstr ""
+
+#: src/features/shell/InstallPromotion.tsx
+msgid "{INSTALL_SNOOZE_DAYS, plural, one {Okay. POWR will not ask again for # day.} other {Okay. POWR will not ask again for # days.}}"
 msgstr ""
 
 #. js-lingui-explicit-id
@@ -596,7 +702,7 @@ msgid "{low}–{high} sets"
 msgstr ""
 
 #: src/features/session/ExerciseList.tsx
-msgid "{main} @ RIR {rir}"
+msgid "{main} @ {effort}"
 msgstr ""
 
 #. js-lingui-explicit-id
@@ -714,6 +820,10 @@ msgstr ""
 msgid "why.plan.next.volume"
 msgstr ""
 
+#: src/features/settings/ProfileSection.tsx
+msgid "{muscles} · {avoided} avoided"
+msgstr ""
+
 #: src/features/session/loads.tsx
 msgid "{name} × {count}"
 msgstr ""
@@ -819,8 +929,13 @@ msgstr ""
 msgid "{name}: {from} → {to} estimated 1-rep max over {span} ({pct}). {label}."
 msgstr ""
 
+#: src/features/calendar/CalendarExportScreen.tsx
 #: src/features/plan/PlanEditorScreen.tsx
 msgid "{name}: {sets} sets"
+msgstr ""
+
+#: src/features/settings/RestTimesScreen.tsx
+msgid "{name}: {time}"
 msgstr ""
 
 #: src/features/progress/words.ts
@@ -829,6 +944,10 @@ msgstr ""
 
 #: src/ui/charts/trend-chart.tsx
 msgid "{name}: {value}"
+msgstr ""
+
+#: src/features/calendar/CalendarExportScreen.tsx
+msgid "{name}: 1 set"
 msgstr ""
 
 #: src/features/onboarding/OnboardingFlow.tsx
@@ -901,10 +1020,6 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.pr.volume"
-msgstr ""
-
-#: src/features/session/LoggingView.tsx
-msgid "{range} reps in reserve"
 msgstr ""
 
 #. js-lingui-explicit-id
@@ -1184,6 +1299,11 @@ msgstr ""
 msgid "why.warmup.isolation.simple"
 msgstr ""
 
+#. placeholder {0}: labels.phase(profile.phase)
+#: src/features/settings/ProfileSection.tsx
+msgid "{style} · {0}"
+msgstr ""
+
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.validate.spacing"
@@ -1235,6 +1355,7 @@ msgstr ""
 msgid "{time} is now the rest for {name}."
 msgstr ""
 
+#: src/features/data/DataDeletedScreen.tsx
 #: src/ui/screen.tsx
 msgid "{title} · POWR"
 msgstr ""
@@ -1332,9 +1453,13 @@ msgstr ""
 msgid "{value} this week"
 msgstr ""
 
+#: src/features/settings/TrainingAdvanced.tsx
+msgid "{value} weeks"
+msgstr ""
+
 #: src/features/library/ExerciseDetailScreen.tsx
 #: src/features/session/past/parts.tsx
-msgid "{values} · RIR {rir}"
+msgid "{values} · {effort}"
 msgstr ""
 
 #. js-lingui-explicit-id
@@ -1391,6 +1516,10 @@ msgstr ""
 msgid "−15 seconds"
 msgstr ""
 
+#: src/features/session/LoggingView.tsx
+msgid "≤5"
+msgstr ""
+
 #: src/features/session/CheckIn.tsx
 msgid "0 not at all"
 msgstr ""
@@ -1401,6 +1530,10 @@ msgstr ""
 
 #: src/features/session/CheckIn.tsx
 msgid "1 exhausted"
+msgstr ""
+
+#: src/features/calendar/CalendarExportScreen.tsx
+msgid "1 hour before"
 msgstr ""
 
 #: src/features/session/CheckIn.tsx
@@ -1443,12 +1576,32 @@ msgstr ""
 msgid "12+"
 msgstr ""
 
+#: src/features/data/DataScreen.tsx
+msgid "14 days, or 7 while the storage is not protected."
+msgstr ""
+
+#: src/features/calendar/CalendarExportScreen.tsx
+msgid "15 minutes before"
+msgstr ""
+
 #: src/features/session/ExerciseList.tsx
 msgid "15 seconds less rest"
 msgstr ""
 
+#: src/features/settings/RestTimesScreen.tsx
+msgid "15 seconds less: {name}"
+msgstr ""
+
 #: src/features/session/ExerciseList.tsx
 msgid "15 seconds more rest"
+msgstr ""
+
+#: src/features/settings/RestTimesScreen.tsx
+msgid "15 seconds more: {name}"
+msgstr ""
+
+#: src/features/calendar/CalendarExportScreen.tsx
+msgid "2 hours before"
 msgstr ""
 
 #: src/features/labels.ts
@@ -1465,6 +1618,10 @@ msgstr ""
 
 #: src/features/settings/AlertsSection.tsx
 msgid "3-2-1 countdown beeps"
+msgstr ""
+
+#: src/features/calendar/CalendarExportScreen.tsx
+msgid "30 minutes before"
 msgstr ""
 
 #: src/features/bodymap/words.ts
@@ -1512,7 +1669,12 @@ msgstr ""
 msgid "6 months to 2 years"
 msgstr ""
 
+#: src/features/data/DataScreen.tsx
+msgid "7 days while the storage is not protected, otherwise 14."
+msgstr ""
+
 #: src/features/onboarding/steps.tsx
+#: src/features/settings/ProfileSection.tsx
 msgid "90+ min"
 msgstr ""
 
@@ -1522,6 +1684,10 @@ msgstr ""
 
 #: src/ui/charts/trend-chart.tsx
 msgid "95% range {range}"
+msgstr ""
+
+#: src/features/data/DataScreen.tsx
+msgid "A backup is one file with all your data. Keep it somewhere other than this phone."
 msgstr ""
 
 #: src/features/settings/WorkoutSection.tsx
@@ -1557,6 +1723,10 @@ msgstr ""
 msgid "A lighter session is planned later this week. You can do it today instead."
 msgstr ""
 
+#: src/features/settings/TrainingAdvanced.tsx
+msgid "A lighter week after every"
+msgstr ""
+
 #: src/features/session/words.ts
 msgid "A lot of sets for one muscle today"
 msgstr ""
@@ -1567,6 +1737,10 @@ msgstr ""
 
 #: src/features/shell/UpdateBanner.tsx
 msgid "A new version of POWR is ready."
+msgstr ""
+
+#: src/features/shell/UpdateFirstOffer.tsx
+msgid "A new version of POWR is ready. Updating takes a few seconds and keeps your data. During a workout POWR never updates, so now is a good moment."
 msgstr ""
 
 #. placeholder {0}: labels.muscle(group.id)
@@ -1588,6 +1762,14 @@ msgstr ""
 
 #: src/features/session/SetDetailsSheet.tsx
 msgid "A rep failed"
+msgstr ""
+
+#: src/features/settings/WorkoutSection.tsx
+msgid "A short animation for new records and a best streak. Off when your phone reduces motion."
+msgstr ""
+
+#: src/features/settings/TrainingSection.tsx
+msgid "A stepper in half steps, for example 1.5 reps in reserve."
 msgstr ""
 
 #: src/features/motivation/StreakScreen.tsx
@@ -1618,8 +1800,16 @@ msgstr ""
 msgid "about {duration}"
 msgstr ""
 
+#: src/features/calendar/CalendarExportScreen.tsx
+msgid "About {length}. Planned in POWR; open the app to train."
+msgstr ""
+
 #: src/features/session/LoggingView.tsx
 msgid "About {remaining} left"
+msgstr ""
+
+#: src/features/settings/ProfileSection.tsx
+msgid "About you"
 msgstr ""
 
 #: src/features/insights/words.ts
@@ -1751,6 +1941,10 @@ msgstr ""
 msgid "Add to {0}"
 msgstr ""
 
+#: src/features/plan/PlanScreen.tsx
+msgid "Add to calendar"
+msgstr ""
+
 #: src/features/bodymap/RankedExercises.tsx
 msgid "Add to today"
 msgstr ""
@@ -1765,6 +1959,10 @@ msgstr ""
 
 #: src/features/session/LoggingView.tsx
 msgid "Add your first exercise"
+msgstr ""
+
+#: src/features/calendar/CalendarExportScreen.tsx
+msgid "Add your plan to your calendar"
 msgstr ""
 
 #: src/features/session/LoggingView.tsx
@@ -1800,8 +1998,16 @@ msgstr ""
 msgid "Adjust the equipment list"
 msgstr ""
 
+#: src/features/settings/TrainingAdvanced.tsx
+msgid "Adjusted by sets of six (APRE)"
+msgstr ""
+
 #: src/features/labels.ts
 msgid "advanced"
+msgstr ""
+
+#: src/features/settings/TrainingAdvanced.tsx
+msgid "Advanced: progression, formula, lighter weeks"
 msgstr ""
 
 #. js-lingui-explicit-id
@@ -1828,16 +2034,37 @@ msgstr ""
 msgid "After a break, the first weeks start a little lighter."
 msgstr ""
 
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "After installing, touch and hold the POWR icon: Start today’s session, Log bodyweight. Your launcher decides whether it shows them."
+msgstr ""
+
+#: src/features/settings/RestTimesScreen.tsx
+msgid "After light warm-up sets"
+msgstr ""
+
 #: src/features/settings/WorkoutSection.tsx
 msgid "After the \"Time is up\" alert, the target time is entered for the set. Otherwise the timer runs on until you tap Stop."
 msgstr ""
 
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "After the first visit everything works without a connection."
+msgstr ""
+
 #: src/features/settings/AlertsSection.tsx
+#: src/features/settings/SettingsScreen.tsx
 msgid "Alerts"
+msgstr ""
+
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "Alerts use sound and the screen instead."
 msgstr ""
 
 #: src/features/settings/AlertsSection.tsx
 msgid "Alerts while screen is locked:"
+msgstr ""
+
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "Alerts while the screen is locked"
 msgstr ""
 
 #: src/features/progress/PrHistoryScreen.tsx
@@ -1847,6 +2074,10 @@ msgstr ""
 
 #: src/features/plan/PlanEditorScreen.tsx
 msgid "All checks pass."
+msgstr ""
+
+#: src/features/data/DataDeletedScreen.tsx
+msgid "All data deleted"
 msgstr ""
 
 #: src/features/progress/PrHistoryScreen.tsx
@@ -1870,12 +2101,20 @@ msgstr ""
 msgid "All planned sets done."
 msgstr ""
 
+#: src/features/settings/RestTimesScreen.tsx
+msgid "All rest times already follow the evidence defaults."
+msgstr ""
+
 #: src/features/progress/ExerciseProgressScreen.tsx
 msgid "All sessions"
 msgstr ""
 
 #: src/features/progress/ExerciseProgressScreen.tsx
 msgid "All sets"
+msgstr ""
+
+#: src/features/calendar/CalendarExportScreen.tsx
+msgid "All-day events"
 msgstr ""
 
 #: src/features/progress/words.ts
@@ -1911,6 +2150,10 @@ msgstr ""
 msgid "Also changes the planned sessions of this block. This cannot be undone."
 msgstr ""
 
+#: src/features/settings/RestTimesScreen.tsx
+msgid "Also forget the rest times remembered for single exercises"
+msgstr ""
+
 #: src/features/library/words.ts
 msgid "An exercise with this name exists. Choose another name."
 msgstr ""
@@ -1919,28 +2162,44 @@ msgstr ""
 msgid "An unvalidated convention: a quarter set for {name}, not backed by growth or activity data."
 msgstr ""
 
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "Android"
+msgstr ""
+
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "Another browser"
+msgstr ""
+
+#: src/features/data/DataDeletedScreen.tsx
+msgid "Another POWR window or tab may still be open. Close it, then tap Start again and delete the data once more."
+msgstr ""
+
+#: src/features/settings/ProfileSection.tsx
+msgid "Answer a few questions to get your profile and a plan."
+msgstr ""
+
 #: src/features/progress/ScoresScreen.tsx
 msgid "Answer it in the plan set-up"
 msgstr ""
 
 #: src/features/library/LibraryScreen.tsx
-msgid "Any equipment"
-msgstr ""
-
-#: src/features/library/LibraryScreen.tsx
-msgid "Any movement"
-msgstr ""
-
-#: src/features/library/LibraryScreen.tsx
-msgid "Any muscle"
+msgid "Any of these movements"
 msgstr ""
 
 #: src/features/equipment/EquipmentEditor.tsx
 msgid "Anything not in the list, e.g. a specific machine. Custom exercises can use it later."
 msgstr ""
 
-#: src/features/why/WhySheet.tsx
+#: src/features/why/evidence.ts
 msgid "App estimate"
+msgstr ""
+
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "App shortcuts"
+msgstr ""
+
+#: src/features/settings/SettingsScreen.tsx
+msgid "Appearance"
 msgstr ""
 
 #: src/features/equipment/SubstitutionReview.tsx
@@ -1976,8 +2235,16 @@ msgstr ""
 msgid "As many reps as possible"
 msgstr ""
 
+#: src/features/settings/ExerciseChoicesScreen.tsx
+msgid "As set for all"
+msgstr ""
+
 #: src/features/session/LoggingView.tsx
 msgid "Assistance"
+msgstr ""
+
+#: src/features/settings/TrainingAdvanced.tsx
+msgid "Assistance exercises progress by"
 msgstr ""
 
 #: src/features/session/SummaryScreen.tsx
@@ -1989,12 +2256,20 @@ msgstr ""
 msgid "why.progression.linear.advancedHold"
 msgstr ""
 
+#: src/features/data/DataScreen.tsx
+msgid "Automatic: every {autoDays} days"
+msgstr ""
+
 #: src/features/library/LibraryScreen.tsx
 msgid "Available with my equipment"
 msgstr ""
 
 #: src/features/library/ExerciseDetailScreen.tsx
 msgid "Available with your equipment"
+msgstr ""
+
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "Available, not used yet"
 msgstr ""
 
 #: src/features/bodymap/BodyMapScreen.tsx
@@ -2041,6 +2316,12 @@ msgstr ""
 msgid "Back to Progress"
 msgstr ""
 
+#: src/features/settings/ExerciseChoicesScreen.tsx
+#: src/features/settings/ProfileAnswerScreen.tsx
+#: src/features/settings/RestTimesScreen.tsx
+msgid "Back to Settings"
+msgstr ""
+
 #: src/features/bodymap/MuscleScreen.tsx
 msgid "Back to the body map"
 msgstr ""
@@ -2058,6 +2339,10 @@ msgstr ""
 msgid "Back to the plan"
 msgstr ""
 
+#: src/features/settings/ProfileAnswerScreen.tsx
+msgid "Back to the question"
+msgstr ""
+
 #: src/features/bodymap/RankedExercises.tsx
 msgid "Back to the workout"
 msgstr ""
@@ -2066,11 +2351,11 @@ msgstr ""
 msgid "Back to workout"
 msgstr ""
 
-#: src/features/home/HomeScreen.tsx
+#: src/features/data/BackupReminder.tsx
 msgid "Back up now"
 msgstr ""
 
-#: src/features/home/HomeScreen.tsx
+#: src/features/data/BackupReminder.tsx
 msgid "Back up your training"
 msgstr ""
 
@@ -2090,12 +2375,12 @@ msgstr ""
 msgid "Backup"
 msgstr ""
 
-#: src/features/legal/LegalScreens.tsx
-msgid "Backup files you export are under your control. If you store or share them elsewhere, for example in a cloud drive, that service's terms apply. Clearing your browser data, uninstalling or the browser freeing space can delete your data, so keep backups."
+#: src/features/data/DataScreen.tsx
+msgid "Backup reminders"
 msgstr ""
 
-#: src/features/legal/LegalScreens.tsx
-msgid "Backups and data loss"
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "Backups go to Downloads."
 msgstr ""
 
 #: src/features/library/words.ts
@@ -2146,6 +2431,22 @@ msgstr ""
 
 #: src/features/session/CheckIn.tsx
 msgid "Based on your check-in and your recent training. Nothing changes unless you apply it."
+msgstr ""
+
+#: src/features/data/DataScreen.tsx
+msgid "Before a data update, {when}"
+msgstr ""
+
+#: src/features/data/DataScreen.tsx
+msgid "Before a restore, {when}"
+msgstr ""
+
+#: src/features/shell/RecoveryScreen.tsx
+msgid "Before it updates how your data is stored, POWR saves a safety copy. That copy could not be saved, so the update did not run. Your data has not been changed."
+msgstr ""
+
+#: src/features/settings/RestTimesScreen.tsx
+msgid "Before the first working set"
 msgstr ""
 
 #: src/features/insights/words.ts
@@ -2215,6 +2516,14 @@ msgstr ""
 msgid "Best: {0} on {1} (total {2} at {3})"
 msgstr ""
 
+#: src/features/settings/RestTimesScreen.tsx
+msgid "Between the exercises of a superset"
+msgstr ""
+
+#: src/features/settings/WorkoutSection.tsx
+msgid "Bigger buttons and steppers for logging a set."
+msgstr ""
+
 #: src/features/onboarding/steps.tsx
 msgid "Birth year"
 msgstr ""
@@ -2245,6 +2554,7 @@ msgid "Body view"
 msgstr ""
 
 #: src/features/onboarding/steps.tsx
+#: src/features/settings/UnitsSection.tsx
 msgid "Body weight"
 msgstr ""
 
@@ -2298,6 +2608,11 @@ msgstr ""
 msgid "Bodyweight with assistance"
 msgstr ""
 
+#. placeholder {0}: profile.birthYear
+#: src/features/settings/ProfileSection.tsx
+msgid "born {0}"
+msgstr ""
+
 #: src/features/onboarding/steps.tsx
 msgid "Both: strength on the big three plus muscle-building work. Example week: two strength days and two size days."
 msgstr ""
@@ -2331,6 +2646,14 @@ msgstr ""
 
 #: src/features/library/ExploreScreen.tsx
 msgid "Browse exercises"
+msgstr ""
+
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "Browsers do not share .zip files, so backups always go to Downloads. Copy them off the phone."
+msgstr ""
+
+#: src/features/settings/TrainingAdvanced.tsx
+msgid "Brzycki"
 msgstr ""
 
 #: src/features/onboarding/steps.tsx
@@ -2371,13 +2694,23 @@ msgstr ""
 msgid "Calibration: start conservatively so POWR can learn your loads."
 msgstr ""
 
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "Can be installed"
+msgstr ""
+
 #: src/features/body/LogBodyScreen.tsx
+#: src/features/data/DataScreen.tsx
 #: src/features/equipment/EquipmentScreens.tsx
 #: src/features/library/CustomExerciseScreen.tsx
 #: src/features/plan/PlanScreen.tsx
 #: src/features/session/past/PastSessionEditor.tsx
 #: src/features/session/timed-set.tsx
+#: src/features/settings/ProfileAnswerScreen.tsx
 msgid "Cancel"
+msgstr ""
+
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "Cannot be checked from the app"
 msgstr ""
 
 #: src/features/labels.ts
@@ -2388,8 +2721,17 @@ msgstr ""
 msgid "carry"
 msgstr ""
 
+#: src/features/settings/WorkoutSection.tsx
+msgid "Celebration animations"
+msgstr ""
+
 #: src/features/onboarding/steps.tsx
+#: src/features/settings/UnitsSection.tsx
 msgid "Centimetres (cm)"
+msgstr ""
+
+#: src/features/settings/ProfileSection.tsx
+msgid "Change"
 msgstr ""
 
 #: src/features/onboarding/OnboardingFlow.tsx
@@ -2424,12 +2766,24 @@ msgstr ""
 msgid "Change weekly targets"
 msgstr ""
 
+#: src/features/settings/ProfileSection.tsx
+msgid "Change: {title}"
+msgstr ""
+
 #: src/features/session/LoggingView.tsx
 msgid "Changed by mistake?"
 msgstr ""
 
 #: src/features/session/SummaryScreen.tsx
 msgid "Changes you accepted"
+msgstr ""
+
+#: src/features/settings/UnitsSection.tsx
+msgid "Changing a unit only changes how values are shown; nothing you logged is rounded or lost. Plate sets keep their own unit under Equipment."
+msgstr ""
+
+#: src/features/calendar/CalendarExportScreen.tsx
+msgid "Check the calendar it goes into, then tap Save or Import."
 msgstr ""
 
 #: src/features/equipment/EquipmentScreens.tsx
@@ -2464,8 +2818,16 @@ msgstr ""
 msgid "Check-in before a workout"
 msgstr ""
 
+#: src/features/data/DataScreen.tsx
+msgid "Checking the file…"
+msgstr ""
+
 #: src/features/bodymap/PlaceInPlan.tsx
 msgid "Checking the plan…"
+msgstr ""
+
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "Checking this browser…"
 msgstr ""
 
 #: src/features/data/DataScreen.tsx
@@ -2473,6 +2835,7 @@ msgid "Checking your data…"
 msgstr ""
 
 #: src/features/plan/PlanEditorScreen.tsx
+#: src/features/shell/DeviceSupportScreen.tsx
 msgid "Checking…"
 msgstr ""
 
@@ -2486,6 +2849,11 @@ msgstr ""
 
 #: src/features/labels.ts
 msgid "chest fly"
+msgstr ""
+
+#: src/features/settings/ExerciseChoicesScreen.tsx
+#: src/features/settings/TrainingSection.tsx
+msgid "Choices per exercise"
 msgstr ""
 
 #: src/features/library/words.ts
@@ -2552,8 +2920,16 @@ msgstr ""
 msgid "Choose another day"
 msgstr ""
 
+#: src/features/library/LibraryScreen.tsx
+msgid "Choose any number in each group. An exercise is shown when it matches one of your choices in every group you use."
+msgstr ""
+
 #: src/features/library/words.ts
 msgid "Choose at most 30 equipment items."
+msgstr ""
+
+#: src/features/calendar/CalendarExportScreen.tsx
+msgid "Choose Calendar if Android asks which app to use."
 msgstr ""
 
 #: src/features/library/words.ts
@@ -2574,6 +2950,10 @@ msgstr ""
 
 #: src/features/library/words.ts
 msgid "Choose how the weight is loaded."
+msgstr ""
+
+#: src/features/calendar/CalendarExportScreen.tsx
+msgid "Choose the file (copy it from the phone first) and the calendar, then Import."
 msgstr ""
 
 #: src/features/progress/CompareScreen.tsx
@@ -2605,6 +2985,10 @@ msgstr ""
 msgid "Choose your equipment first, so POWR knows which lifts your plan uses."
 msgstr ""
 
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "Chrome"
+msgstr ""
+
 #: src/features/progress/ScoresScreen.tsx
 #: src/features/settings/InsightsSection.tsx
 msgid "Classic (raw)"
@@ -2620,6 +3004,7 @@ msgstr ""
 
 #: src/features/body/BodyScreen.tsx
 #: src/features/bodymap/PlaceInPlan.tsx
+#: src/features/data/DataScreen.tsx
 #: src/features/equipment/EquipmentScreens.tsx
 #: src/features/library/detail-parts.tsx
 #: src/features/plan/PlanEditorScreen.tsx
@@ -2658,7 +3043,7 @@ msgstr ""
 msgid "cm"
 msgstr ""
 
-#: src/features/why/WhySheet.tsx
+#: src/features/why/evidence.ts
 msgid "Coaching convention"
 msgstr ""
 
@@ -2705,7 +3090,7 @@ msgid "Compound lifts one rep easier (+1 rep in reserve)"
 msgstr ""
 
 #: src/features/library/LibraryScreen.tsx
-msgid "Compound or isolation"
+msgid "Compound, isolation or both"
 msgstr ""
 
 #: src/features/session/LoggingView.tsx
@@ -2792,6 +3177,10 @@ msgstr ""
 msgid "Created"
 msgstr ""
 
+#: src/features/data/DataScreen.tsx
+msgid "Creating the backup…"
+msgstr ""
+
 #: src/features/library/CustomExerciseScreen.tsx
 msgid "Credit per set"
 msgstr ""
@@ -2811,6 +3200,11 @@ msgstr ""
 #: src/features/progress/ScoresScreen.tsx
 #: src/features/settings/InsightsSection.tsx
 msgid "Current estimates"
+msgstr ""
+
+#. placeholder {0}: labels.template(active.templateId)
+#: src/features/settings/ProfileSection.tsx
+msgid "Current plan: {0}."
 msgstr ""
 
 #: src/features/motivation/StreakScreen.tsx
@@ -2858,8 +3252,13 @@ msgstr ""
 msgid "Dark"
 msgstr ""
 
+#: src/features/settings/SettingsScreen.tsx
+msgid "Data"
+msgstr ""
+
 #: src/features/data/DataScreen.tsx
 #: src/features/settings/SettingsScreen.tsx
+#: src/features/shell/DeviceSupportScreen.tsx
 msgid "Data and backups"
 msgstr ""
 
@@ -2867,6 +3266,10 @@ msgstr ""
 #: src/features/session/past/LogPastSessionScreen.tsx
 #: src/ui/charts/time-chart.tsx
 msgid "Date"
+msgstr ""
+
+#: src/features/calendar/CalendarExportScreen.tsx
+msgid "Days without a start time use the time below."
 msgstr ""
 
 #: src/features/labels.ts
@@ -2891,10 +3294,15 @@ msgstr ""
 msgid "Defaults"
 msgstr ""
 
+#: src/features/data/DataScreen.tsx
 #: src/features/equipment/EquipmentScreens.tsx
 #: src/features/library/detail-parts.tsx
 #: src/features/session/past/PastSessionEditor.tsx
 msgid "Delete"
+msgstr ""
+
+#: src/features/data/DataScreen.tsx
+msgid "DELETE"
 msgstr ""
 
 #. placeholder {0}: deleting?.name ?? ''
@@ -2906,6 +3314,22 @@ msgstr ""
 msgid "Delete {name}?"
 msgstr ""
 
+#: src/features/data/DataScreen.tsx
+msgid "Delete all data"
+msgstr ""
+
+#: src/features/data/DataScreen.tsx
+msgid "Delete all data?"
+msgstr ""
+
+#: src/features/data/DataScreen.tsx
+msgid "Delete all data…"
+msgstr ""
+
+#: src/features/data/DataScreen.tsx
+msgid "Delete everything"
+msgstr ""
+
 #: src/features/session/ExerciseList.tsx
 msgid "Delete set"
 msgstr ""
@@ -2914,8 +3338,16 @@ msgstr ""
 msgid "Delete set {number}, {name}"
 msgstr ""
 
+#: src/features/data/DataScreen.tsx
+msgid "Delete the safety copy"
+msgstr ""
+
 #: src/features/library/detail-parts.tsx
 msgid "Delete this exercise"
+msgstr ""
+
+#: src/features/data/DataScreen.tsx
+msgid "Delete this safety copy?"
 msgstr ""
 
 #: src/features/body/BodyScreen.tsx
@@ -2938,16 +3370,47 @@ msgstr ""
 msgid "Delete workout"
 msgstr ""
 
+#: src/features/data/DataScreen.tsx
+msgid "Delete: {label}"
+msgstr ""
+
 #: src/features/body/BodyScreen.tsx
 msgid "Delete…"
+msgstr ""
+
+#: src/features/data/DataScreen.tsx
+msgid "Deletes every workout, plan, setting, safety copy and the diagnostics from this phone, then POWR starts again as on the first day. This cannot be undone."
 msgstr ""
 
 #: src/features/session/past/PastSessionEditor.tsx
 msgid "Deletes the workout and its sets. Records and estimates are recalculated without it."
 msgstr ""
 
+#: src/features/data/DataDeletedScreen.tsx
+msgid "Deleting your data…"
+msgstr ""
+
 #: src/features/why/WhySheet.tsx
 msgid "Details"
+msgstr ""
+
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "Device support"
+msgstr ""
+
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "Device test S-1 has no result for this browser yet."
+msgstr ""
+
+#. placeholder {0}: status.tested.onTime
+#. placeholder {1}: status.tested.runs
+#. placeholder {2}: status.tested.device
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "Device test S-1: {0} of {1} alerts on time ({2})."
+msgstr ""
+
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "Device test S-2 has not run yet."
 msgstr ""
 
 #. placeholder {0}: status.tested.onTime
@@ -3023,6 +3486,10 @@ msgstr ""
 msgid "Does not count for the streak: less than half of the planned sets done"
 msgstr ""
 
+#: src/features/why/citations.tsx
+msgid "DOI {doi}"
+msgstr ""
+
 #: src/features/session/LoggingView.tsx
 msgid "Don't show this hint again"
 msgstr ""
@@ -3035,6 +3502,10 @@ msgstr ""
 #: src/features/session/SetDetailsSheet.tsx
 #: src/features/session/SummaryScreen.tsx
 msgid "Done"
+msgstr ""
+
+#: src/features/data/DataScreen.tsx
+msgid "Done: the browser now protects POWR data."
 msgstr ""
 
 #: src/features/session/SummaryScreen.tsx
@@ -3056,6 +3527,18 @@ msgstr ""
 
 #: src/features/settings/WorkoutSection.tsx
 msgid "Down"
+msgstr ""
+
+#: src/features/calendar/CalendarExportScreen.tsx
+msgid "Download the calendar file"
+msgstr ""
+
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "Downloaded instead"
+msgstr ""
+
+#: src/features/legal/LegalScreens.tsx
+msgid "Draft"
 msgstr ""
 
 #: src/features/session/CheckIn.tsx
@@ -3097,6 +3580,10 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.validate.deload.missing"
+msgstr ""
+
+#: src/features/settings/RestTimesScreen.tsx
+msgid "Each kind of set has a rest time from research. Change one to use it in every workout from now on; a value outside the usual range is fine, POWR only notes it."
 msgstr ""
 
 #: src/features/progress/ExerciseProgressScreen.tsx
@@ -3214,8 +3701,17 @@ msgstr ""
 msgid "Effectiveness: {0}"
 msgstr ""
 
+#: src/features/session/LoggingView.tsx
+#: src/features/settings/TrainingAdvanced.tsx
+msgid "Effort (RPE)"
+msgstr ""
+
 #: src/features/labels.ts
 msgid "effort-based loading (RPE)"
+msgstr ""
+
+#: src/features/session/LoggingView.tsx
+msgid "Effort: {halfText}"
 msgstr ""
 
 #: src/features/session/ExerciseList.tsx
@@ -3254,6 +3750,10 @@ msgstr ""
 msgid "Enter a name."
 msgstr ""
 
+#: src/features/calendar/CalendarExportScreen.tsx
+msgid "Enter a time such as 18:00."
+msgstr ""
+
 #: src/features/library/detail-parts.tsx
 msgid "Enter a training max above 0, or leave it empty."
 msgstr ""
@@ -3286,6 +3786,10 @@ msgstr ""
 msgid "Enter at least one measurement."
 msgstr ""
 
+#: src/features/settings/TrainingSection.tsx
+msgid "Enter effort with"
+msgstr ""
+
 #: src/features/library/words.ts
 msgid "Enter rep ranges from 1 to 100 with the lower number first."
 msgstr ""
@@ -3314,6 +3818,10 @@ msgstr ""
 msgid "Enter your bodyweight, for example 80.5."
 msgstr ""
 
+#: src/features/settings/TrainingAdvanced.tsx
+msgid "Epley"
+msgstr ""
+
 #: src/features/library/words.ts
 msgid "Equation (Wathan or the RPE chart)"
 msgstr ""
@@ -3322,7 +3830,7 @@ msgstr ""
 #: src/features/library/CustomExerciseScreen.tsx
 #: src/features/library/ExerciseDetailScreen.tsx
 #: src/features/library/LibraryScreen.tsx
-#: src/features/settings/SettingsScreen.tsx
+#: src/features/settings/ProfileSection.tsx
 msgid "Equipment"
 msgstr ""
 
@@ -3368,6 +3876,18 @@ msgstr ""
 msgid "why.pr.e1rm"
 msgstr ""
 
+#: src/features/progress/ProgressScreen.tsx
+msgid "Estimated 1-rep max {e1rm}"
+msgstr ""
+
+#: src/features/progress/ProgressScreen.tsx
+msgid "Estimated 1-rep max {e1rm}, still calibrating"
+msgstr ""
+
+#: src/features/settings/TrainingAdvanced.tsx
+msgid "Estimated 1-rep max formula"
+msgstr ""
+
 #: src/features/progress/PrHistoryScreen.tsx
 msgid "Estimated 1-rep max records are estimates from your sets and effort ratings, not weights you lifted."
 msgstr ""
@@ -3379,6 +3899,18 @@ msgstr ""
 
 #: src/features/library/detail-parts.tsx
 msgid "Every {pattern} exercise is avoided."
+msgstr ""
+
+#: src/features/data/DataScreen.tsx
+msgid "Every 14 days"
+msgstr ""
+
+#: src/features/data/DataScreen.tsx
+msgid "Every 30 days"
+msgstr ""
+
+#: src/features/data/DataScreen.tsx
+msgid "Every 7 days"
 msgstr ""
 
 #: src/features/plan/NextMesocycleScreen.tsx
@@ -3402,13 +3934,28 @@ msgstr ""
 msgid "Every working set counts, including lighter, high-rep sets."
 msgstr ""
 
-#: src/features/legal/LegalScreens.tsx
+#: src/features/data/DataScreen.tsx
+msgid "Everything POWR stored on this phone is deleted. Backup files you saved elsewhere are not affected."
+msgstr ""
+
 #: src/features/onboarding/OnboardingFlow.tsx
 msgid "Everything you enter is stored only on this device. We never receive it: there is no account, analytics or tracking. Only you can export it, as a backup file."
 msgstr ""
 
 #: src/features/labels.ts
 msgid "evidence band"
+msgstr ""
+
+#: src/features/settings/RestTimesScreen.tsx
+msgid "Evidence default: {evidenceDefault}"
+msgstr ""
+
+#: src/features/settings/RestTimesScreen.tsx
+msgid "Evidence default: {evidenceDefault} (squat and deadlift {competition}). Your value applies to them too."
+msgstr ""
+
+#: src/features/settings/TrainingAdvanced.tsx
+msgid "Evidence default: {evidenceDefault}."
 msgstr ""
 
 #: src/features/bodymap/words.ts
@@ -3450,6 +3997,10 @@ msgstr ""
 msgid "Exercise library"
 msgstr ""
 
+#: src/features/settings/SettingsScreen.tsx
+msgid "Exercise library {contentVersion}"
+msgstr ""
+
 #: src/features/progress/CalendarScreen.tsx
 msgid "Exercise names or notes"
 msgstr ""
@@ -3467,8 +4018,8 @@ msgstr ""
 msgid "Exercises"
 msgstr ""
 
-#: src/features/library/LibraryScreen.tsx
-msgid "Exercises must match every filter you choose."
+#: src/features/settings/ExerciseChoicesScreen.tsx
+msgid "Exercises from your plan and your recent workouts show up here. Set up a plan or log a workout first."
 msgstr ""
 
 #: src/features/progress/CompareScreen.tsx
@@ -3485,7 +4036,23 @@ msgid "Explore"
 msgstr ""
 
 #: src/features/data/DataScreen.tsx
+msgid "Export a backup first"
+msgstr ""
+
+#: src/features/data/DataScreen.tsx
+msgid "Export a backup first if you might want this data again."
+msgstr ""
+
+#: src/features/data/DataScreen.tsx
 msgid "Export backup"
+msgstr ""
+
+#: src/features/shell/RecoveryScreen.tsx
+msgid "Export diagnostics"
+msgstr ""
+
+#: src/features/calendar/CalendarExportScreen.tsx
+msgid "Exporting again updates the same events in calendar apps that support it. Some apps add a second copy instead: then delete the old events, for example by searching your calendar for “POWR”."
 msgstr ""
 
 #: src/features/session/SetDetailsSheet.tsx
@@ -3516,6 +4083,7 @@ msgid "Favourites only"
 msgstr ""
 
 #: src/features/onboarding/steps.tsx
+#: src/features/settings/ProfileSection.tsx
 msgid "Female"
 msgstr ""
 
@@ -3581,7 +4149,7 @@ msgstr ""
 msgid "Finished as partial"
 msgstr ""
 
-#: src/features/settings/SettingsScreen.tsx
+#: src/features/settings/TrainingSection.tsx
 msgid "First day of the week"
 msgstr ""
 
@@ -3600,6 +4168,10 @@ msgstr ""
 
 #: src/features/plan/TemplateChooser.tsx
 msgid "Fits your training days and your level."
+msgstr ""
+
+#: src/features/settings/TrainingAdvanced.tsx
+msgid "Fixed steps"
 msgstr ""
 
 #: src/features/bodymap/RankedExercises.tsx
@@ -3651,6 +4223,16 @@ msgstr ""
 msgid "For the rest of this block"
 msgstr ""
 
+#: src/features/settings/ExerciseChoicesScreen.tsx
+#: src/features/settings/RestTimesScreen.tsx
+msgid "Forget"
+msgstr ""
+
+#: src/features/settings/ExerciseChoicesScreen.tsx
+#: src/features/settings/RestTimesScreen.tsx
+msgid "Forget the rest time of {name}"
+msgstr ""
+
 #. placeholder {0}: view.rulesVersion
 #: src/features/progress/ScoresScreen.tsx
 msgid "Formulas are implemented from the official IPF documents and the published coefficients. Rules version {0}."
@@ -3681,6 +4263,18 @@ msgstr ""
 #. placeholder {0}: formatLocalDate(entry.start)
 #: src/features/plan/PlanPreviewView.tsx
 msgid "from {0}"
+msgstr ""
+
+#: src/features/calendar/CalendarExportScreen.tsx
+msgid "From {first} to {last}."
+msgstr ""
+
+#: src/features/settings/ExerciseChoicesScreen.tsx
+msgid "From recent workouts"
+msgstr ""
+
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "From the browser menu"
 msgstr ""
 
 #: src/features/plan/PlanEditorScreen.tsx
@@ -3766,6 +4360,10 @@ msgstr ""
 msgid "why.guardrail.failure"
 msgstr ""
 
+#: src/features/calendar/CalendarExportScreen.tsx
+msgid "Google Calendar"
+msgstr ""
+
 #: src/features/settings/InsightsSection.tsx
 msgid "Grace: a week with one session short still counts"
 msgstr ""
@@ -3778,12 +4376,22 @@ msgstr ""
 msgid "Growth studies"
 msgstr ""
 
+#: src/features/session/LoggingView.tsx
+msgid "Half a point higher RPE"
+msgstr ""
+
+#: src/features/session/LoggingView.tsx
+msgid "Half a point lower RPE"
+msgstr ""
+
 #: src/features/session/ExerciseList.tsx
+#: src/features/session/LoggingView.tsx
 #: src/features/session/SetDetailsSheet.tsx
 msgid "Half a rep less in reserve"
 msgstr ""
 
 #: src/features/session/ExerciseList.tsx
+#: src/features/session/LoggingView.tsx
 #: src/features/session/SetDetailsSheet.tsx
 msgid "Half a rep more in reserve"
 msgstr ""
@@ -3794,6 +4402,10 @@ msgstr ""
 
 #: src/features/session/CheckIn.tsx
 msgid "Half an hour more sleep"
+msgstr ""
+
+#: src/features/settings/TrainingSection.tsx
+msgid "Half steps"
 msgstr ""
 
 #: src/features/library/words.ts
@@ -3978,10 +4590,6 @@ msgstr ""
 msgid "horizontal push"
 msgstr ""
 
-#: src/features/legal/LegalScreens.tsx
-msgid "Hosting"
-msgstr ""
-
 #: src/features/session/CheckIn.tsx
 msgid "Hours of sleep last night"
 msgstr ""
@@ -4032,6 +4640,16 @@ msgstr ""
 msgid "How many more reps you could have done."
 msgstr ""
 
+#: src/features/legal/LegalScreens.tsx
+#: src/features/settings/SettingsScreen.tsx
+#: src/features/why/WhySheet.tsx
+msgid "How POWR decides"
+msgstr ""
+
+#: src/features/why/WhySheet.tsx
+msgid "How POWR decides: {name}"
+msgstr ""
+
 #: src/features/session/CheckIn.tsx
 msgid "How recovered do you feel?"
 msgstr ""
@@ -4042,6 +4660,14 @@ msgstr ""
 
 #: src/features/library/CustomExerciseScreen.tsx
 msgid "How the weight is loaded"
+msgstr ""
+
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "How this is tested"
+msgstr ""
+
+#: src/features/calendar/CalendarExportScreen.tsx
+msgid "How to add the file to your calendar"
 msgstr ""
 
 #: src/features/library/ExerciseDetailScreen.tsx
@@ -4082,8 +4708,20 @@ msgstr ""
 msgid "I'm back: end the break"
 msgstr ""
 
+#: src/features/shell/InstallPromotion.tsx
+msgid "If the address bar shows an install icon, tapping it does the same. Menus differ between versions."
+msgstr ""
+
+#: src/features/settings/ProfileAnswerScreen.tsx
+msgid "If this changes your plan, you see the new plan first and decide whether to use it."
+msgstr ""
+
 #: src/features/library/detail-parts.tsx
 msgid "If you have logged it or a plan uses it, it is retired instead: it leaves the lists and plans, and your logged sets stay."
+msgstr ""
+
+#: src/features/settings/ProfileAnswerScreen.tsx
+msgid "If you update, the new plan starts on {from}. This week stays as planned. Changes you made to the current plan by hand do not carry over."
 msgstr ""
 
 #: src/features/labels.ts
@@ -4112,12 +4750,16 @@ msgstr ""
 msgid "In progress"
 msgstr ""
 
-#: src/features/legal/LegalScreens.tsx
-msgid "In short"
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "In Samsung Internet: menu, then “Add page to”, then “Home screen”."
 msgstr ""
 
 #: src/features/why/WhySheet.tsx
 msgid "In technical terms"
+msgstr ""
+
+#: src/features/settings/ExerciseChoicesScreen.tsx
+msgid "In your plan"
 msgstr ""
 
 #: src/features/insights/words.ts
@@ -4125,6 +4767,7 @@ msgid "In your target"
 msgstr ""
 
 #: src/features/onboarding/steps.tsx
+#: src/features/settings/UnitsSection.tsx
 msgid "Inches (in)"
 msgstr ""
 
@@ -4154,7 +4797,29 @@ msgid "Injury"
 msgstr ""
 
 #: src/features/settings/InsightsSection.tsx
+#: src/features/settings/SettingsScreen.tsx
 msgid "Insights"
+msgstr ""
+
+#: src/features/shell/DeviceSupportScreen.tsx
+#: src/features/shell/InstallPromotion.tsx
+msgid "Install"
+msgstr ""
+
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "Install it to open POWR like any app."
+msgstr ""
+
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "Install on the home screen"
+msgstr ""
+
+#: src/features/shell/InstallPromotion.tsx
+msgid "Install POWR on this phone"
+msgstr ""
+
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "Installed"
 msgstr ""
 
 #: src/features/labels.ts
@@ -4182,8 +4847,16 @@ msgstr ""
 msgid "Isolation (one joint)"
 msgstr ""
 
+#: src/features/data/DataScreen.tsx
+msgid "It cannot be restored afterwards. Your current data and your own backup files are not affected."
+msgstr ""
+
 #: src/features/session/words.ts
 msgid "It is too late to undo that."
+msgstr ""
+
+#: src/features/shell/InstallPromotion.tsx
+msgid "It opens from your home screen like any app, full screen and offline, and the browser is more likely to protect your data."
 msgstr ""
 
 #: src/features/library/detail-parts.tsx
@@ -4206,11 +4879,24 @@ msgstr ""
 msgid "Keep {name} in the next block"
 msgstr ""
 
+#: src/features/shell/RecoveryScreen.tsx
+msgid "Keep a copy"
+msgstr ""
+
+#: src/features/settings/TrainingSection.tsx
+msgid "Keep an exercise as last time, or start its rest timer by hand."
+msgstr ""
+
+#: src/features/settings/ExerciseChoicesScreen.tsx
+msgid "Keep as last time"
+msgstr ""
+
 #: src/features/library/detail-parts.tsx
 msgid "Keep at most 12 settings."
 msgstr ""
 
 #: src/features/body/BodyScreen.tsx
+#: src/features/data/DataScreen.tsx
 #: src/features/library/detail-parts.tsx
 #: src/features/session/past/PastSessionEditor.tsx
 msgid "Keep it"
@@ -4218,6 +4904,14 @@ msgstr ""
 
 #: src/features/equipment/SubstitutionReview.tsx
 msgid "Keep it for now"
+msgstr ""
+
+#: src/features/settings/ProfileAnswerScreen.tsx
+msgid "Keep my current plan"
+msgstr ""
+
+#: src/features/settings/ProfileAnswerScreen.tsx
+msgid "Keep my current plan and days"
 msgstr ""
 
 #. placeholder {0}: status.reason
@@ -4249,8 +4943,16 @@ msgstr ""
 msgid "Keep the plan as it is"
 msgstr ""
 
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "Keep the screen on"
+msgstr ""
+
 #: src/features/settings/AlertsSection.tsx
 msgid "Keep the screen on during workouts"
+msgstr ""
+
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "Keep the screen on during workouts for alerts you can rely on. Details in Settings, Alerts."
 msgstr ""
 
 #: src/features/session/ExerciseList.tsx
@@ -4289,11 +4991,16 @@ msgstr ""
 
 #: src/features/equipment/EquipmentEditor.tsx
 #: src/features/onboarding/steps.tsx
+#: src/features/settings/UnitsSection.tsx
 msgid "Kilograms (kg)"
 msgstr ""
 
 #: src/features/labels.ts
 msgid "knee extension"
+msgstr ""
+
+#: src/features/settings/WorkoutSection.tsx
+msgid "Larger controls"
 msgstr ""
 
 #: src/features/data/DataScreen.tsx
@@ -4388,8 +5095,8 @@ msgstr ""
 msgid "Legacy"
 msgstr ""
 
-#: src/features/legal/LegalScreens.tsx
-msgid "Legal framework"
+#: src/features/settings/SettingsScreen.tsx
+msgid "Legal"
 msgstr ""
 
 #: src/ui/charts/training-calendar.tsx
@@ -4400,6 +5107,10 @@ msgstr ""
 
 #: src/features/session/words.ts
 msgid "Lengthened partials"
+msgstr ""
+
+#: src/features/settings/UnitsSection.tsx
+msgid "Lengths"
 msgstr ""
 
 #: src/features/onboarding/steps.tsx
@@ -4441,10 +5152,6 @@ msgstr ""
 msgid "Lift"
 msgstr ""
 
-#: src/features/legal/LegalScreens.tsx
-msgid "Lifting heavy weights carries a risk of injury. Use safe technique, a spotter or safety equipment such as rack safeties."
-msgstr ""
-
 #: src/features/progress/ScoresScreen.tsx
 msgid "Lifts the scores use"
 msgstr ""
@@ -4460,6 +5167,10 @@ msgstr ""
 
 #: src/features/motivation/StreakScreen.tsx
 msgid "Lighter (deload) weeks count with their planned sessions: rest is training."
+msgstr ""
+
+#: src/features/settings/TrainingSection.tsx
+msgid "Lighter sets that ramp up to your first working weight, where POWR knows it."
 msgstr ""
 
 #: src/features/progress/words.ts
@@ -4494,7 +5205,7 @@ msgstr ""
 msgid "Like a leg press"
 msgstr ""
 
-#: src/features/settings/SettingsScreen.tsx
+#: src/features/settings/TrainingSection.tsx
 msgid "Like this phone ({localeDay})"
 msgstr ""
 
@@ -4511,14 +5222,16 @@ msgid "Likely real change"
 msgstr ""
 
 #: src/features/settings/AlertsSection.tsx
+#: src/features/shell/DeviceSupportScreen.tsx
 msgid "Limited"
 msgstr ""
 
 #: src/features/settings/AlertsSection.tsx
+#: src/features/shell/DeviceSupportScreen.tsx
 msgid "Limited (best effort)"
 msgstr ""
 
-#: src/features/why/WhySheet.tsx
+#: src/features/why/evidence.ts
 msgid "Limited research"
 msgstr ""
 
@@ -4605,10 +5318,14 @@ msgid "Loading your workouts…"
 msgstr ""
 
 #: src/features/equipment/EquipmentScreens.tsx
+#: src/features/legal/LegalScreens.tsx
 #: src/features/library/CustomExerciseScreen.tsx
 #: src/features/onboarding/OnboardingFlow.tsx
 #: src/features/plan/PlanEditorScreen.tsx
 #: src/features/plan/PlanScreen.tsx
+#: src/features/settings/ExerciseChoicesScreen.tsx
+#: src/features/settings/ProfileAnswerScreen.tsx
+#: src/features/settings/RestTimesScreen.tsx
 msgid "Loading…"
 msgstr ""
 
@@ -4718,6 +5435,10 @@ msgstr ""
 msgid "Main"
 msgstr ""
 
+#: src/features/settings/TrainingAdvanced.tsx
+msgid "Main lifts progress by"
+msgstr ""
+
 #: src/features/labels.ts
 msgid "Maintaining"
 msgstr ""
@@ -4734,12 +5455,21 @@ msgstr ""
 msgid "Make it your own"
 msgstr ""
 
+#: src/features/calendar/CalendarExportScreen.tsx
+msgid "Making the file…"
+msgstr ""
+
 #: src/features/onboarding/steps.tsx
+#: src/features/settings/ProfileSection.tsx
 msgid "Male"
 msgstr ""
 
 #: src/features/onboarding/steps.tsx
 msgid "Male reference values"
+msgstr ""
+
+#: src/features/settings/ProfileSection.tsx
+msgid "Manage equipment"
 msgstr ""
 
 #: src/features/motivation/StreakScreen.tsx
@@ -4936,6 +5666,14 @@ msgstr ""
 msgid "Muscle {0}"
 msgstr ""
 
+#: src/features/settings/RestTimesScreen.tsx
+msgid "Muscle building, compound exercises"
+msgstr ""
+
+#: src/features/settings/RestTimesScreen.tsx
+msgid "Muscle building, isolation exercises"
+msgstr ""
+
 #: src/features/library/words.ts
 msgid "Muscle building, one joint (shortest rest)"
 msgstr ""
@@ -5050,6 +5788,10 @@ msgstr ""
 msgid "New exercises today: {firstTimes}. POWR starts tracking them from these sets."
 msgstr ""
 
+#: src/features/settings/ProfileAnswerScreen.tsx
+msgid "New exercises: {names}"
+msgstr ""
+
 #: src/features/session/words.ts
 msgid "New heaviest weight on {name}: {value}"
 msgstr ""
@@ -5089,6 +5831,18 @@ msgstr ""
 
 #: src/features/session/words.ts
 msgid "New volume record on {name}: {value}"
+msgstr ""
+
+#: src/features/calendar/CalendarExportScreen.tsx
+msgid "Next 2 weeks"
+msgstr ""
+
+#: src/features/calendar/CalendarExportScreen.tsx
+msgid "Next 4 weeks"
+msgstr ""
+
+#: src/features/calendar/CalendarExportScreen.tsx
+msgid "Next 8 weeks"
 msgstr ""
 
 #: src/features/plan/NextMesocycleScreen.tsx
@@ -5141,6 +5895,10 @@ msgstr ""
 msgid "No alternative fits your equipment."
 msgstr ""
 
+#: src/features/settings/ExerciseChoicesScreen.tsx
+msgid "No automatic progression; you raise the weight yourself."
+msgstr ""
+
 #: src/features/data/DataScreen.tsx
 msgid "No backup yet."
 msgstr ""
@@ -5172,6 +5930,10 @@ msgstr ""
 
 #: src/features/session/SummaryScreen.tsx
 msgid "No estimate from these sets"
+msgstr ""
+
+#: src/features/progress/ProgressScreen.tsx
+msgid "No estimated 1-rep max yet: it needs sets with an effort rating"
 msgstr ""
 
 #: src/features/bodymap/RankedExercises.tsx
@@ -5242,12 +6004,20 @@ msgstr ""
 msgid "No longer avoided."
 msgstr ""
 
+#: src/features/settings/ProfileAnswerScreen.tsx
+msgid "No longer in the plan: {names}"
+msgstr ""
+
 #: src/features/plan/NextMesocycleScreen.tsx
 msgid "No longer possible with your equipment or avoid list"
 msgstr ""
 
 #: src/features/body/BodyScreen.tsx
 msgid "No measurements yet. Waist, hips, arms and thighs show change that the scale can miss."
+msgstr ""
+
+#: src/features/calendar/CalendarExportScreen.tsx
+msgid "No meet date is set. Choose another range."
 msgstr ""
 
 #: src/features/bodymap/PlaceInPlan.tsx
@@ -5264,6 +6034,14 @@ msgstr ""
 
 #: src/features/onboarding/OnboardingFlow.tsx
 msgid "No plan fits these answers yet"
+msgstr ""
+
+#: src/features/settings/ProfileSection.tsx
+msgid "No plan yet"
+msgstr ""
+
+#: src/features/calendar/CalendarExportScreen.tsx
+msgid "No planned sessions in this range. Choose a longer range."
 msgstr ""
 
 #: src/features/equipment/EquipmentEditor.tsx
@@ -5292,9 +6070,17 @@ msgstr ""
 msgid "No records match these filters."
 msgstr ""
 
+#: src/features/calendar/CalendarExportScreen.tsx
+msgid "No reminder"
+msgstr ""
+
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.e1rm.set.unknownEffort"
+msgstr ""
+
+#: src/features/data/DataScreen.tsx
+msgid "No safety copies yet."
 msgstr ""
 
 #: src/features/progress/ExerciseProgressScreen.tsx
@@ -5336,6 +6122,10 @@ msgstr ""
 #. placeholder {0}: new Intl.ListFormat(undefined, { type: 'conjunction' }).format(missing)
 #: src/features/progress/CompareScreen.tsx
 msgid "No strength trend yet for: {0}. A trend needs sets with an effort rating."
+msgstr ""
+
+#: src/features/calendar/CalendarExportScreen.tsx
+msgid "No time; your calendar shows them at the top of the day."
 msgstr ""
 
 #: src/features/session/words.ts
@@ -5388,7 +6178,12 @@ msgstr ""
 #: src/features/library/CustomExerciseScreen.tsx
 #: src/features/plan/format.ts
 #: src/features/session/SetDetailsSheet.tsx
+#: src/features/settings/ProfileSection.tsx
 msgid "None"
+msgstr ""
+
+#: src/features/settings/ProfileSection.tsx
+msgid "None entered"
 msgstr ""
 
 #: src/features/progress/CompareScreen.tsx
@@ -5407,6 +6202,14 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.progression.linear.retry"
+msgstr ""
+
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "not Android"
+msgstr ""
+
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "Not available here"
 msgstr ""
 
 #: src/features/bodymap/RankedExercises.tsx
@@ -5454,18 +6257,38 @@ msgstr ""
 
 #: src/features/onboarding/BaselinesStep.tsx
 #: src/features/plan/NextMesocycleScreen.tsx
+#: src/features/shell/InstallPromotion.tsx
 msgid "Not now"
+msgstr ""
+
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "Not offered yet"
+msgstr ""
+
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "Not protected yet"
 msgstr ""
 
 #: src/features/onboarding/OnboardingFlow.tsx
 msgid "Not quite right?"
 msgstr ""
 
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "Not reported"
+msgstr ""
+
 #: src/features/session/past/PastSessionEditor.tsx
 msgid "Not saved"
 msgstr ""
 
+#: src/features/calendar/CalendarExportScreen.tsx
+#: src/features/data/DataScreen.tsx
+#: src/features/shell/RecoveryScreen.tsx
+msgid "Not saved."
+msgstr ""
+
 #: src/features/settings/InsightsSection.tsx
+#: src/features/settings/ProfileSection.tsx
 msgid "Not set"
 msgstr ""
 
@@ -5478,7 +6301,12 @@ msgid "Not started"
 msgstr ""
 
 #: src/features/settings/AlertsSection.tsx
+#: src/features/shell/DeviceSupportScreen.tsx
 msgid "Not supported"
+msgstr ""
+
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "Not supported on this browser"
 msgstr ""
 
 #: src/features/settings/AlertsSection.tsx
@@ -5529,6 +6357,10 @@ msgstr ""
 msgid "Notes"
 msgstr ""
 
+#: src/features/shell/RecoveryScreen.tsx
+msgid "Nothing is deleted automatically. Save a copy of your data now; a fixed version of POWR can restore it."
+msgstr ""
+
 #: src/features/plan/PlanScreen.tsx
 msgid "Nothing is dropped without you deciding. Choose for each one:"
 msgstr ""
@@ -5547,10 +6379,6 @@ msgstr ""
 
 #: src/features/settings/AlertsSection.tsx
 msgid "Notifications are blocked for POWR, so nothing can alert you while the screen is locked. You can allow them in the browser's site settings."
-msgstr ""
-
-#: src/features/legal/LegalScreens.tsx
-msgid "Notifications are only used for rest-timer alerts, and only after you allow them. POWR asks for nothing else without a reason you can see."
 msgstr ""
 
 #: src/features/settings/AlertsSection.tsx
@@ -5573,11 +6401,11 @@ msgstr ""
 msgid "novice"
 msgstr ""
 
-#: src/features/legal/LegalScreens.tsx
-msgid "Nutrition targets and weight-cut guidance are estimates for healthy adults. They are not suitable for people with an eating disorder, during pregnancy or for minors."
+#: src/features/data/DataScreen.tsx
+msgid "Off"
 msgstr ""
 
-#: src/features/why/WhySheet.tsx
+#: src/features/why/evidence.ts
 msgid "Official standard"
 msgstr ""
 
@@ -5585,8 +6413,16 @@ msgstr ""
 msgid "OK"
 msgstr ""
 
+#: src/features/calendar/CalendarExportScreen.tsx
+msgid "On a computer, open Google Calendar in a browser, then Settings, Import and export."
+msgstr ""
+
 #: src/features/labels.ts
 msgid "On break"
+msgstr ""
+
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "On during workouts; it uses more battery."
 msgstr ""
 
 #: src/features/library/ExerciseDetailScreen.tsx
@@ -5668,6 +6504,10 @@ msgstr ""
 msgid "One side at a time"
 msgstr ""
 
+#: src/features/settings/TrainingSection.tsx
+msgid "One tap per value"
+msgstr ""
+
 #: src/features/session/CheckIn.tsx
 msgid "One working set fewer per exercise"
 msgstr ""
@@ -5705,10 +6545,18 @@ msgstr ""
 msgid "Open a part of the muscle for its own sets and best exercises."
 msgstr ""
 
+#: src/features/shell/InstallPromotion.tsx
+msgid "Open POWR from the new icon."
+msgstr ""
+
 #: src/features/home/HomeScreen.tsx
 #: src/features/library/ExploreScreen.tsx
 #: src/features/session/SummaryScreen.tsx
 msgid "Open the body map"
+msgstr ""
+
+#: src/features/calendar/CalendarExportScreen.tsx
+msgid "Open the downloaded file from the notification or from My Files, Downloads."
 msgstr ""
 
 #: src/features/home/HomeScreen.tsx
@@ -5721,6 +6569,11 @@ msgstr ""
 
 #: src/features/progress/parts.tsx
 msgid "Open the workout"
+msgstr ""
+
+#: src/features/legal/LegalScreens.tsx
+#: src/features/settings/SettingsScreen.tsx
+msgid "Open-source licences and attributions"
 msgstr ""
 
 #: src/features/onboarding/BaselinesStep.tsx
@@ -5740,8 +6593,16 @@ msgstr ""
 msgid "Other"
 msgstr ""
 
+#: src/features/settings/ExerciseChoicesScreen.tsx
+msgid "Other exercises with a choice"
+msgstr ""
+
 #: src/features/library/CustomExerciseScreen.tsx
 msgid "Other names (optional)"
+msgstr ""
+
+#: src/features/settings/RestTimesScreen.tsx
+msgid "Outside the range research supports for this kind of set. That is your choice; POWR uses it."
 msgstr ""
 
 #: src/features/plan/format.ts
@@ -5810,10 +6671,6 @@ msgstr ""
 
 #: src/features/progress/ExerciseProgressScreen.tsx
 msgid "Performance"
-msgstr ""
-
-#: src/features/legal/LegalScreens.tsx
-msgid "Permissions"
 msgstr ""
 
 #: src/features/progress/ExerciseProgressScreen.tsx
@@ -5886,6 +6743,10 @@ msgstr ""
 msgid "Plan not set up"
 msgstr ""
 
+#: src/features/settings/ProfileAnswerScreen.tsx
+msgid "Plan: {before} → {after}"
+msgstr ""
+
 #: src/features/progress/words.ts
 msgid "planned"
 msgstr ""
@@ -5946,6 +6807,7 @@ msgid "Please check the workout"
 msgstr ""
 
 #: src/features/onboarding/OnboardingFlow.tsx
+#: src/features/settings/ProfileAnswerScreen.tsx
 msgid "Please check your answers"
 msgstr ""
 
@@ -5984,6 +6846,7 @@ msgstr ""
 
 #: src/features/equipment/EquipmentEditor.tsx
 #: src/features/onboarding/steps.tsx
+#: src/features/settings/UnitsSection.tsx
 msgid "Pounds (lb)"
 msgstr ""
 
@@ -6009,28 +6872,65 @@ msgstr ""
 msgid "POWR"
 msgstr ""
 
-#: src/features/why/WhySheet.tsx
+#: src/features/calendar/CalendarExportScreen.tsx
+msgid "POWR · {name} (Week {week}, lighter week)"
+msgstr ""
+
+#: src/features/calendar/CalendarExportScreen.tsx
+msgid "POWR · {name} (Week {week})"
+msgstr ""
+
+#: src/features/why/citations.tsx
 msgid "POWR {topic}"
 msgstr ""
 
+#: src/features/shell/RecoveryScreen.tsx
+msgid "POWR could not make a safety copy"
+msgstr ""
+
 #: src/app/StartupError.tsx
+#: src/features/shell/RecoveryScreen.tsx
 msgid "POWR could not open its data"
 msgstr ""
 
-#: src/features/legal/LegalScreens.tsx
-msgid "POWR gives general fitness information and training suggestions. It is not medical advice and does not replace a doctor, physiotherapist, dietitian or qualified coach."
+#: src/features/shell/RecoveryScreen.tsx
+msgid "POWR could not update your data"
 msgstr ""
 
 #: src/features/onboarding/OnboardingFlow.tsx
 msgid "POWR gives general training suggestions, not medical advice. Check with a doctor before you start or change training, especially with a health condition, an injury or a pregnancy. Stop and get help if you feel chest pain, dizziness or sharp pain. You decide what you do with the suggestions."
 msgstr ""
 
-#: src/features/legal/LegalScreens.tsx
-msgid "POWR suggests; you confirm. You are responsible for the decisions you make with its suggestions."
+#: src/features/shell/InstallPromotion.tsx
+msgid "POWR is being added to your home screen."
+msgstr ""
+
+#: src/features/calendar/CalendarExportScreen.tsx
+msgid "POWR makes a calendar file with your planned sessions. Your calendar app adds them and reminds you; nothing is sent anywhere."
+msgstr ""
+
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "POWR needs a connection to open in this browser."
+msgstr ""
+
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "POWR runs as its own app."
+msgstr ""
+
+#: src/features/data/DataScreen.tsx
+msgid "POWR saves your data by itself before a restore replaces it and before an update changes how it is stored. The latest two are kept."
+msgstr ""
+
+#: src/features/calendar/CalendarExportScreen.tsx
+msgid "POWR training plan"
 msgstr ""
 
 #: src/features/settings/AlertsSection.tsx
 msgid "POWR uses notifications only for rest timers: one when a rest ends while you are away from the app, and an optional silent one with the end time. Nothing is sent over the internet."
+msgstr ""
+
+#: src/features/shell/UpdateBanner.tsx
+msgid "POWR was updated in another window. Reload to continue."
 msgstr ""
 
 #: src/features/session/ExerciseList.tsx
@@ -6047,6 +6947,7 @@ msgid "PR: {list}"
 msgstr ""
 
 #: src/features/onboarding/steps.tsx
+#: src/features/settings/ProfileSection.tsx
 msgid "Prefer not to say"
 msgstr ""
 
@@ -6054,12 +6955,17 @@ msgstr ""
 msgid "Preliminary coefficients: not yet checked against the primary source."
 msgstr ""
 
+#: src/features/settings/RestTimesScreen.tsx
 #: src/features/why/WhySheet.tsx
 msgid "Preliminary value"
 msgstr ""
 
 #: src/features/home/HomeScreen.tsx
 msgid "Preparing offline use…"
+msgstr ""
+
+#: src/features/shell/RecoveryScreen.tsx
+msgid "Preparing the file…"
 msgstr ""
 
 #: src/features/plan/NextMesocycleScreen.tsx
@@ -6096,6 +7002,7 @@ msgid "Primary: each set counts as 1 set"
 msgstr ""
 
 #: src/features/onboarding/OnboardingFlow.tsx
+#: src/features/settings/ProfileSection.tsx
 msgid "Priorities"
 msgstr ""
 
@@ -6116,6 +7023,11 @@ msgstr ""
 msgid "Privacy notice"
 msgstr ""
 
+#: src/features/settings/ProfileSection.tsx
+#: src/features/settings/SettingsScreen.tsx
+msgid "Profile and plan"
+msgstr ""
+
 #: src/features/plan/PlanPreviewView.tsx
 #: src/features/progress/ProgressScreen.tsx
 #: src/features/shell/BottomNav.tsx
@@ -6126,11 +7038,28 @@ msgstr ""
 msgid "Progress sections"
 msgstr ""
 
+#: src/features/settings/TrainingAdvanced.tsx
+msgid "Progression and lighter weeks apply to new plans and the next block; your current plan keeps its prescriptions. The formula applies to every estimate from now on."
+msgstr ""
+
 #: src/features/data/DataScreen.tsx
 msgid "Protect my data"
 msgstr ""
 
-#: src/features/why/WhySheet.tsx
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "Protected"
+msgstr ""
+
+#: src/features/settings/SettingsScreen.tsx
+msgid "Published by {person}, {business}, {country}."
+msgstr ""
+
+#: src/features/legal/LegalScreens.tsx
+#: src/features/settings/SettingsScreen.tsx
+msgid "Publisher and imprint"
+msgstr ""
+
+#: src/features/why/citations.tsx
 msgid "PubMed {pmid}"
 msgstr ""
 
@@ -6140,6 +7069,10 @@ msgstr ""
 
 #: src/features/labels.ts
 msgid "Push/pull/legs"
+msgstr ""
+
+#: src/features/settings/SettingsScreen.tsx
+msgid "Questions or feedback: <0/>"
 msgstr ""
 
 #: src/features/library/words.ts
@@ -6168,6 +7101,10 @@ msgstr ""
 
 #: src/features/onboarding/OnboardingFlow.tsx
 msgid "Read the full privacy notice"
+msgstr ""
+
+#: src/features/shell/RecoveryScreen.tsx
+msgid "Reading your data…"
 msgstr ""
 
 #: src/features/home/HomeScreen.tsx
@@ -6214,11 +7151,32 @@ msgstr ""
 
 #: src/app/StartupError.tsx
 #: src/features/shell/RouteError.tsx
+#: src/features/shell/UpdateBanner.tsx
 msgid "Reload"
 msgstr ""
 
 #: src/features/session/LoggingView.tsx
 msgid "Remember {time} rest for {name}"
+msgstr ""
+
+#: src/features/settings/RestTimesScreen.tsx
+msgid "Remembered for single exercises"
+msgstr ""
+
+#: src/features/settings/ExerciseChoicesScreen.tsx
+msgid "Remembered rest: {rest}"
+msgstr ""
+
+#: src/features/data/BackupReminder.tsx
+msgid "Remind me later"
+msgstr ""
+
+#: src/features/calendar/CalendarExportScreen.tsx
+msgid "Reminder"
+msgstr ""
+
+#: src/features/data/DataScreen.tsx
+msgid "Reminders show on Home and after a workout. POWR also reminds you after 8 workouts without a backup."
 msgstr ""
 
 #: src/features/library/CustomExerciseScreen.tsx
@@ -6352,6 +7310,10 @@ msgstr ""
 msgid "replaced by"
 msgstr ""
 
+#: src/features/shell/RecoveryScreen.tsx
+msgid "Report the problem"
+msgstr ""
+
 #: src/features/progress/ExerciseProgressScreen.tsx
 msgid "reps"
 msgstr ""
@@ -6387,6 +7349,10 @@ msgstr ""
 msgid "Reps in reserve (optional)"
 msgstr ""
 
+#: src/features/settings/TrainingSection.tsx
+msgid "Reps in reserve (RIR)"
+msgstr ""
+
 #: src/features/session/SetDetailsSheet.tsx
 msgid "Reps in reserve, in half steps"
 msgstr ""
@@ -6405,6 +7371,18 @@ msgstr ""
 
 #: src/features/session/LoggingView.tsx
 msgid "Reps right side"
+msgstr ""
+
+#: src/features/settings/TrainingAdvanced.tsx
+msgid "Reps, then weight"
+msgstr ""
+
+#: src/features/settings/RestTimesScreen.tsx
+msgid "Reset all rest times"
+msgstr ""
+
+#: src/features/settings/RestTimesScreen.tsx
+msgid "Reset to evidence defaults"
 msgstr ""
 
 #: src/features/session/RestPanel.tsx
@@ -6441,6 +7419,10 @@ msgstr ""
 
 #: src/features/home/HomeScreen.tsx
 msgid "Rest is part of training: your muscles grow between sessions."
+msgstr ""
+
+#: src/features/calendar/CalendarExportScreen.tsx
+msgid "Rest of this week"
 msgstr ""
 
 #: src/features/settings/AlertsSection.tsx
@@ -6482,6 +7464,23 @@ msgstr ""
 msgid "Rest timer"
 msgstr ""
 
+#: src/features/settings/ExerciseChoicesScreen.tsx
+msgid "Rest timer after a set"
+msgstr ""
+
+#: src/features/settings/ExerciseChoicesScreen.tsx
+msgid "Rest timer after a set: {name}"
+msgstr ""
+
+#: src/features/settings/RestTimesScreen.tsx
+#: src/features/settings/WorkoutSection.tsx
+msgid "Rest times"
+msgstr ""
+
+#: src/features/settings/RestTimesScreen.tsx
+msgid "Rest times reset to the evidence defaults."
+msgstr ""
+
 #: src/features/session/words.ts
 msgid "Rest-pause"
 msgstr ""
@@ -6508,8 +7507,16 @@ msgstr ""
 msgid "Restored. {sets} sets imported."
 msgstr ""
 
+#: src/features/data/DataScreen.tsx
+msgid "Restoring…"
+msgstr ""
+
 #: src/features/library/LibraryScreen.tsx
 msgid "Results"
+msgstr ""
+
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "Results come from two device-test protocols run on a Galaxy S22 with Chrome and Samsung Internet: S-1 for timers and alerts (docs/device-tests/S-1-protocol.md) and S-2 for the other capabilities (docs/device-tests/S-2-protocol.md)."
 msgstr ""
 
 #: src/features/library/ExerciseDetailScreen.tsx
@@ -6529,9 +7536,20 @@ msgstr ""
 msgid "RIR (\"reps in reserve\") is how many more reps you could have done when you stopped a set. 2 RIR means two more were possible. RPE (rate of perceived exertion) says the same on a 1–10 scale: RPE 8 equals 2 RIR. POWR asks in plain words if you are new to it."
 msgstr ""
 
-#. placeholder {0}: formatNumber(row.rir, 1)
-#: src/features/progress/ExerciseProgressScreen.tsx
-msgid "RIR {0}"
+#: src/features/settings/effort.ts
+msgid "RIR {from}"
+msgstr ""
+
+#: src/features/settings/effort.ts
+msgid "RIR {from}–{to}"
+msgstr ""
+
+#: src/features/settings/effort.ts
+msgid "RIR {shown}"
+msgstr ""
+
+#: src/features/settings/effort.ts
+msgid "RIR {shown}+"
 msgstr ""
 
 #: src/features/plan/format.ts
@@ -6550,16 +7568,82 @@ msgstr ""
 msgid "row"
 msgstr ""
 
+#: src/features/settings/TrainingSection.tsx
+msgid "RPE (1–10)"
+msgstr ""
+
+#: src/features/settings/effort.ts
+msgid "RPE {from}–{to}"
+msgstr ""
+
+#: src/features/settings/effort.ts
+msgid "RPE {rpe}"
+msgstr ""
+
+#: src/features/settings/effort.ts
+msgid "RPE {rpe} or less"
+msgstr ""
+
+#: src/features/settings/effort.ts
+msgid "RPE {to}"
+msgstr ""
+
+#: src/features/session/LoggingView.tsx
+msgid "RPE 5 or less"
+msgstr ""
+
+#: src/features/settings/TrainingAdvanced.tsx
+msgid "RTS chart"
+msgstr ""
+
+#: src/features/settings/SettingsScreen.tsx
+msgid "Rules registry {rulesVersion}"
+msgstr ""
+
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "Run the S-1 alert test"
+msgstr ""
+
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "Run the S-2 capability checks"
+msgstr ""
+
+#: src/features/settings/RestTimesScreen.tsx
+msgid "s"
+msgstr ""
+
 #: src/features/library/words.ts
 msgid "Safeties"
+msgstr ""
+
+#: src/features/data/DataScreen.tsx
+msgid "Safety copies"
+msgstr ""
+
+#: src/features/data/DataScreen.tsx
+msgid "Safety copy deleted."
 msgstr ""
 
 #: src/features/session/ExerciseList.tsx
 msgid "Same movement ({pattern})"
 msgstr ""
 
+#: src/features/calendar/CalendarExportScreen.tsx
+msgid "Samsung Calendar"
+msgstr ""
+
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "Samsung Internet"
+msgstr ""
+
 #: src/features/body/LogBodyScreen.tsx
+#: src/features/data/DataScreen.tsx
+#: src/features/settings/ProfileAnswerScreen.tsx
 msgid "Save"
+msgstr ""
+
+#: src/features/shell/RecoveryScreen.tsx
+msgid "Save a copy of your data"
 msgstr ""
 
 #: src/features/session/past/PastSessionEditor.tsx
@@ -6609,12 +7693,34 @@ msgstr ""
 msgid "Save setup"
 msgstr ""
 
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "Save to a folder you choose"
+msgstr ""
+
 #: src/features/session/past/LogPastSessionScreen.tsx
 msgid "Save workout"
 msgstr ""
 
 #: src/features/data/DataScreen.tsx
-msgid "Saved to Downloads as {name}. Copy it off the phone, for example to cloud storage."
+msgid "Save: {label}"
+msgstr ""
+
+#. placeholder {0}: delivery.fileName
+#. placeholder {0}: diagnostics.fileName
+#: src/features/calendar/CalendarExportScreen.tsx
+#: src/features/shell/RecoveryScreen.tsx
+msgid "Saved to Downloads as {0}."
+msgstr ""
+
+#. placeholder {0}: copy.fileName
+#. placeholder {0}: state.fileName
+#: src/features/data/DataScreen.tsx
+#: src/features/shell/RecoveryScreen.tsx
+msgid "Saved to Downloads as {0}. Copy it off the phone, for example to cloud storage."
+msgstr ""
+
+#: src/features/data/DataScreen.tsx
+msgid "Saved to Downloads as {name}."
 msgstr ""
 
 #. placeholder {0}: choice.label
@@ -6629,6 +7735,14 @@ msgstr ""
 
 #: src/features/body/LogBodyScreen.tsx
 msgid "Saved: {saved}."
+msgstr ""
+
+#: src/features/settings/ProfileAnswerScreen.tsx
+msgid "Saved."
+msgstr ""
+
+#: src/features/settings/ProfileAnswerScreen.tsx
+msgid "Saved. Your plan is updated."
 msgstr ""
 
 #: src/features/home/HomeScreen.tsx
@@ -6727,9 +7841,8 @@ msgstr ""
 #. placeholder {0}: set.index + 1
 #. placeholder {1}: set.load ? formatMass(set.load.value, set.load.unit) : '–'
 #. placeholder {2}: set.reps ?? '–'
-#. placeholder {3}: set.rir !== null ? ` @ RIR ${set.rir}` : ''
 #: src/features/why/WhySheet.tsx
-msgid "Set {0}: {1} × {2}{3}"
+msgid "Set {0}: {1} × {2}{effort}"
 msgstr ""
 
 #: src/features/session/ExerciseList.tsx
@@ -6740,6 +7853,10 @@ msgstr ""
 
 #: src/features/session/LoggingView.tsx
 msgid "Set {number} of {total}"
+msgstr ""
+
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "Set a longer screen timeout in the phone settings for workouts."
 msgstr ""
 
 #: src/features/session/LoggingView.tsx
@@ -6768,11 +7885,17 @@ msgstr ""
 msgid "Set type"
 msgstr ""
 
+#: src/features/settings/ProfileSection.tsx
+msgid "Set up a new plan"
+msgstr ""
+
 #: src/features/bodymap/PlaceInPlan.tsx
+#: src/features/calendar/CalendarExportScreen.tsx
 #: src/features/home/HomeScreen.tsx
 #: src/features/onboarding/OnboardingFlow.tsx
 #: src/features/plan/PlanScreen.tsx
 #: src/features/session/StartScreen.tsx
+#: src/features/settings/ProfileSection.tsx
 msgid "Set up a plan"
 msgstr ""
 
@@ -6817,6 +7940,10 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
+#: src/features/settings/SettingsScreen.tsx
+msgid "Settings sections"
+msgstr ""
+
 #: src/features/onboarding/OnboardingFlow.tsx
 msgid "Setup progress"
 msgstr ""
@@ -6827,6 +7954,26 @@ msgstr ""
 
 #: src/features/onboarding/steps.tsx
 msgid "Sex"
+msgstr ""
+
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "Share backup files"
+msgstr ""
+
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "Share sheet offered"
+msgstr ""
+
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "Share the calendar file"
+msgstr ""
+
+#: src/features/calendar/CalendarExportScreen.tsx
+msgid "Share with a calendar app"
+msgstr ""
+
+#: src/features/calendar/CalendarExportScreen.tsx
+msgid "Shared."
 msgstr ""
 
 #: src/features/session/words.ts
@@ -6858,6 +8005,10 @@ msgstr ""
 
 #: src/features/bodymap/BodyMapScreen.tsx
 msgid "Show as a list"
+msgstr ""
+
+#: src/features/settings/TrainingSection.tsx
+msgid "Show effort as"
 msgstr ""
 
 #: src/features/progress/ExerciseProgressScreen.tsx
@@ -6903,6 +8054,10 @@ msgstr ""
 msgid "Show them again"
 msgstr ""
 
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "Shown in Data and backups."
+msgstr ""
+
 #: src/features/library/detail-parts.tsx
 msgid "Shown in lists again."
 msgstr ""
@@ -6924,10 +8079,6 @@ msgstr ""
 msgid "why.deload.reactive.propose"
 msgstr ""
 
-#: src/features/legal/LegalScreens.tsx
-msgid "Simeon Zimmermann, SZ WEB DEVELOPMENT, Switzerland. Postal address and e-mail: to be added before the public release."
-msgstr ""
-
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.trend.change.veryLikely"
@@ -6945,6 +8096,10 @@ msgstr ""
 
 #: src/features/library/CustomExerciseScreen.tsx
 msgid "Single-arm or single-leg: sets can be logged per side."
+msgstr ""
+
+#: src/features/settings/TrainingSection.tsx
+msgid "Six buttons, one tap. Half steps stay possible in the set details."
 msgstr ""
 
 #: src/features/body/words.ts
@@ -7042,6 +8197,10 @@ msgstr ""
 msgid "Small on the figure, so also here:"
 msgstr ""
 
+#: src/features/data/DataDeletedScreen.tsx
+msgid "Some data could not be deleted"
+msgstr ""
+
 #: src/features/equipment/SubstitutionReview.tsx
 msgid "Some planned exercises need equipment you removed"
 msgstr ""
@@ -7051,12 +8210,20 @@ msgstr ""
 msgid "Some values are out of range. Check the weights, reps and reps in reserve."
 msgstr ""
 
+#: src/features/calendar/CalendarExportScreen.tsx
+msgid "Some versions of the Google Calendar app open the file directly from Downloads; if yours does not, use the computer."
+msgstr ""
+
 #: src/features/shell/RouteError.tsx
 msgid "Something went wrong"
 msgstr ""
 
 #: src/features/session/words.ts
 msgid "Something went wrong. Try again."
+msgstr ""
+
+#: src/features/calendar/CalendarExportScreen.tsx
+msgid "Soon: {title}"
 msgstr ""
 
 #: src/features/session/CheckIn.tsx
@@ -7075,7 +8242,13 @@ msgstr ""
 msgid "Sound played."
 msgstr ""
 
+#. placeholder {0}: hostOf(url)
+#: src/features/why/citations.tsx
+msgid "Source: {0}"
+msgstr ""
+
 #: src/features/progress/ScoresScreen.tsx
+#: src/features/why/WhySheet.tsx
 msgid "Sources"
 msgstr ""
 
@@ -7114,6 +8287,10 @@ msgstr ""
 msgid "Start a workout with it: {name}"
 msgstr ""
 
+#: src/features/data/DataDeletedScreen.tsx
+msgid "Start again"
+msgstr ""
+
 #: src/features/session/StartScreen.tsx
 msgid "Start an empty workout"
 msgstr ""
@@ -7146,6 +8323,10 @@ msgstr ""
 msgid "Start the rest timer after each set"
 msgstr ""
 
+#: src/features/calendar/CalendarExportScreen.tsx
+msgid "Start time"
+msgstr ""
+
 #: src/features/session/past/LogPastSessionScreen.tsx
 msgid "Start time (optional)"
 msgstr ""
@@ -7156,6 +8337,10 @@ msgstr ""
 
 #: src/features/home/HomeScreen.tsx
 msgid "Start today's session"
+msgstr ""
+
+#: src/features/shell/UpdateFirstOffer.tsx
+msgid "Start without updating"
 msgstr ""
 
 #: src/features/onboarding/BaselinesStep.tsx
@@ -7178,6 +8363,10 @@ msgstr ""
 #. placeholder {0}: formatLocalDate(mesocycle.startDate, 'long')
 #: src/features/plan/NextMesocycleScreen.tsx
 msgid "Starts {0}"
+msgstr ""
+
+#: src/features/settings/ExerciseChoicesScreen.tsx
+msgid "Starts by itself"
 msgstr ""
 
 #: src/features/home/HomeScreen.tsx
@@ -7219,12 +8408,12 @@ msgstr ""
 msgid "Stop the set timer at the target time"
 msgstr ""
 
-#: src/features/legal/LegalScreens.tsx
-msgid "Stop training and get medical help if you feel chest pain, dizziness, shortness of breath or sharp pain."
-msgstr ""
-
 #: src/features/data/DataScreen.tsx
 msgid "Storage"
+msgstr ""
+
+#: src/features/data/BackupReminder.tsx
+msgid "Storage is not protected: the browser may delete POWR data when the phone runs low on space."
 msgstr ""
 
 #: src/features/data/DataScreen.tsx
@@ -7233,6 +8422,18 @@ msgstr ""
 
 #: src/features/data/DataScreen.tsx
 msgid "Storage protected: Yes"
+msgstr ""
+
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "Storage protection"
+msgstr ""
+
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "Storage use"
+msgstr ""
+
+#: src/features/data/DataScreen.tsx
+msgid "Storage use: not reported by this browser."
 msgstr ""
 
 #: src/features/home/HomeScreen.tsx
@@ -7260,6 +8461,10 @@ msgstr ""
 msgid "Strength scores and some formulas differ by sex. You can skip this."
 msgstr ""
 
+#: src/features/settings/RestTimesScreen.tsx
+msgid "Strength sets"
+msgstr ""
+
 #: src/features/progress/ProgressScreen.tsx
 msgid "Strength trends"
 msgstr ""
@@ -7272,7 +8477,7 @@ msgstr ""
 msgid "Stress"
 msgstr ""
 
-#: src/features/why/WhySheet.tsx
+#: src/features/why/evidence.ts
 msgid "Strong research"
 msgstr ""
 
@@ -7307,6 +8512,7 @@ msgid "Superset with {0}"
 msgstr ""
 
 #: src/features/settings/AlertsSection.tsx
+#: src/features/shell/DeviceSupportScreen.tsx
 msgid "Supported"
 msgstr ""
 
@@ -7335,8 +8541,8 @@ msgstr ""
 msgid "Taken to failure"
 msgstr ""
 
-#: src/features/legal/LegalScreens.tsx
-msgid "Talk to a doctor before you start or change a training or nutrition programme, especially if you have a known condition, are pregnant or have had an injury."
+#: src/features/shell/InstallPromotion.tsx
+msgid "Tap “Add page to”, then “Home screen”."
 msgstr ""
 
 #: src/features/bodymap/BodyMapScreen.tsx
@@ -7357,6 +8563,10 @@ msgstr ""
 
 #: src/ui/charts/time-chart.tsx
 msgid "Tap the chart or use the arrow keys to see a point's values."
+msgstr ""
+
+#: src/features/shell/InstallPromotion.tsx
+msgid "Tap the menu button <0/> at the bottom of Samsung Internet."
 msgstr ""
 
 #: src/features/bodymap/MuscleScreen.tsx
@@ -7508,12 +8718,12 @@ msgstr ""
 msgid "why.validate.frequency.lift"
 msgstr ""
 
-#: src/features/legal/LegalScreens.tsx
-msgid "The app files are served from a server in Germany that we rent from Hetzner Online GmbH and operate ourselves. We do not keep access logs. Your training data never reaches this server."
-msgstr ""
-
 #: src/features/progress/VolumeScreen.tsx
 msgid "The average of the four weeks before this one, from {first}."
+msgstr ""
+
+#: src/features/data/DataScreen.tsx
+msgid "The backup could not be created. Nothing was changed. If the phone is low on space, free some and try again."
 msgstr ""
 
 #: src/features/plan/PlanPreviewView.tsx
@@ -7522,6 +8732,26 @@ msgstr ""
 
 #: src/features/plan/PlanScreen.tsx
 msgid "The break could not be ended. Check its dates."
+msgstr ""
+
+#: src/features/data/DataScreen.tsx
+msgid "The browser decides by itself whether to protect it. Installing POWR on the home screen or allowing notifications makes a yes more likely."
+msgstr ""
+
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "The browser decides when to offer it; its menu may have “Install app” or “Add to Home screen”."
+msgstr ""
+
+#: src/features/data/DataScreen.tsx
+msgid "The browser keeps POWR data even when space runs low. Clearing site data or uninstalling still deletes everything, so keep backups."
+msgstr ""
+
+#: src/features/data/DataScreen.tsx
+msgid "The browser said no for now. POWR asks again after you install it or allow notifications. Until then, reminders to back up come every 7 days."
+msgstr ""
+
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "The calendar file is downloaded; open it from your downloads."
 msgstr ""
 
 #: src/features/session/past/PastSessionEditor.tsx
@@ -7544,6 +8774,10 @@ msgstr ""
 msgid "The check-in was not saved. Check the values and try again."
 msgstr ""
 
+#: src/features/shell/RecoveryScreen.tsx
+msgid "The data could not be read. It has not been deleted; export the diagnostics and try again after an update."
+msgstr ""
+
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.plan.schedule.weekdays"
@@ -7551,6 +8785,14 @@ msgstr ""
 
 #: src/features/plan/PlanScreen.tsx
 msgid "the deload check"
+msgstr ""
+
+#: src/features/shell/RecoveryScreen.tsx
+msgid "The diagnostics could not be exported."
+msgstr ""
+
+#: src/features/shell/RecoveryScreen.tsx
+msgid "The diagnostics file lists what went wrong on this phone. It contains no training data."
 msgstr ""
 
 #: src/features/plan/PlanScreen.tsx
@@ -7581,6 +8823,10 @@ msgstr ""
 msgid "The figure shows the same muscles and sets as this list."
 msgstr ""
 
+#: src/features/calendar/CalendarExportScreen.tsx
+msgid "The file could not be made. Your plan is unchanged; try again."
+msgstr ""
+
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.pr.firstTime"
@@ -7603,6 +8849,10 @@ msgstr ""
 msgid "The heaviest weight you lifted for at least one rep in each lift."
 msgstr ""
 
+#: src/features/legal/LegalScreens.tsx
+msgid "the legal review"
+msgstr ""
+
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.deload.skipped"
@@ -7610,6 +8860,14 @@ msgstr ""
 
 #: src/features/session/SummaryScreen.tsx
 msgid "the lighter week"
+msgstr ""
+
+#: src/features/legal/LegalScreens.tsx
+msgid "The list is not available"
+msgstr ""
+
+#: src/features/legal/LegalScreens.tsx
+msgid "The list of licences is created when the app is built, and this copy of the app does not include it. Reload the app; if that does not help, update it."
 msgstr ""
 
 #: src/features/bodymap/BodyMapScreen.tsx
@@ -7663,6 +8921,10 @@ msgstr ""
 msgid "The plan could not be updated. Try again from the plan editor."
 msgstr ""
 
+#: src/features/legal/LegalScreens.tsx
+msgid "the publisher's postal address"
+msgstr ""
+
 #: src/features/library/detail-parts.tsx
 msgid "The reference weight for percentage-based plans, often a little below your true 1-rep max."
 msgstr ""
@@ -7670,6 +8932,22 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.validate.prescription.reps"
+msgstr ""
+
+#: src/features/settings/WorkoutSection.tsx
+msgid "The rest for each kind of set, with the evidence default; change or reset them."
+msgstr ""
+
+#: src/features/data/DataScreen.tsx
+msgid "The restore did not complete. Nothing was changed."
+msgstr ""
+
+#: src/features/settings/TrainingSection.tsx
+msgid "The same scale both ways: RPE 8 means 2 reps in reserve. POWR keeps your entries either way."
+msgstr ""
+
+#: src/features/calendar/CalendarExportScreen.tsx
+msgid "The same time for every session"
 msgstr ""
 
 #. js-lingui-explicit-id
@@ -7691,10 +8969,6 @@ msgstr ""
 
 #: src/features/library/CustomExerciseScreen.tsx
 msgid "The smallest jump you can make. Empty: your equipment decides."
-msgstr ""
-
-#: src/features/legal/LegalScreens.tsx
-msgid "The Swiss Federal Act on Data Protection (revFADP) applies. Whether the EU GDPR also applies is being confirmed in a legal review; this notice is written to meet both."
 msgstr ""
 
 #: src/features/bodymap/MuscleScreen.tsx
@@ -7751,6 +9025,10 @@ msgstr ""
 
 #: src/features/plan/PlanEditorScreen.tsx
 msgid "There is no plan to edit yet."
+msgstr ""
+
+#: src/features/calendar/CalendarExportScreen.tsx
+msgid "There is no plan yet, so there are no sessions to add."
 msgstr ""
 
 #: src/features/plan/NextMesocycleScreen.tsx
@@ -7916,6 +9194,22 @@ msgstr ""
 msgid "This set is not open any more."
 msgstr ""
 
+#: src/features/legal/LegalScreens.tsx
+msgid "This text is a draft until its legal review and may still change. Still to come: {list}."
+msgstr ""
+
+#: src/features/calendar/CalendarExportScreen.tsx
+msgid "This training block"
+msgstr ""
+
+#: src/features/shell/RecoveryScreen.tsx
+msgid "This version of POWR stores your data in a new way, and updating it failed. The update was undone: your data is still stored exactly as before."
+msgstr ""
+
+#: src/features/shell/RecoveryScreen.tsx
+msgid "This version of POWR stores your data in a new way. It saves a safety copy first. Keep the app open; this takes a few seconds."
+msgstr ""
+
 #: src/features/plan/parts.tsx
 msgid "this warning"
 msgstr ""
@@ -8004,6 +9298,14 @@ msgstr ""
 msgid "time budget"
 msgstr ""
 
+#: src/features/calendar/CalendarExportScreen.tsx
+msgid "Time for days without one"
+msgstr ""
+
+#: src/features/calendar/CalendarExportScreen.tsx
+msgid "Time for every session"
+msgstr ""
+
 #: src/hooks/use-timers.ts
 msgid "Time for your next set."
 msgstr ""
@@ -8036,6 +9338,10 @@ msgstr ""
 msgid "Time trained"
 msgstr ""
 
+#: src/features/settings/RestTimesScreen.tsx
+msgid "Time-saver mode"
+msgstr ""
+
 #: src/features/library/words.ts
 msgid "Timed (seconds instead of weight)"
 msgstr ""
@@ -8046,6 +9352,10 @@ msgstr ""
 
 #: src/features/settings/WorkoutSection.tsx
 msgid "Timed sets and tempo"
+msgstr ""
+
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "Timer alerts can vibrate (Settings, Alerts)."
 msgstr ""
 
 #: src/features/library/CustomExerciseScreen.tsx
@@ -8099,6 +9409,11 @@ msgstr ""
 msgid "Train"
 msgstr ""
 
+#: src/features/settings/SettingsScreen.tsx
+#: src/features/settings/TrainingSection.tsx
+msgid "Training"
+msgstr ""
+
 #: src/features/progress/CalendarScreen.tsx
 msgid "Training calendar"
 msgstr ""
@@ -8115,6 +9430,10 @@ msgstr ""
 #: src/features/data/DataScreen.tsx
 #: src/features/onboarding/steps.tsx
 msgid "Training days"
+msgstr ""
+
+#: src/features/settings/ProfileAnswerScreen.tsx
+msgid "Training days a week: {before} → {after}"
 msgstr ""
 
 #: src/features/progress/ExerciseProgressScreen.tsx
@@ -8180,6 +9499,10 @@ msgstr ""
 msgid "triceps extension"
 msgstr ""
 
+#: src/features/shell/RecoveryScreen.tsx
+msgid "Try again"
+msgstr ""
+
 #: src/features/data/DataScreen.tsx
 msgid "Type {confirmWord} to confirm"
 msgstr ""
@@ -8225,6 +9548,8 @@ msgid "Unit of your plates and dumbbells"
 msgstr ""
 
 #: src/features/onboarding/steps.tsx
+#: src/features/settings/SettingsScreen.tsx
+#: src/features/settings/UnitsSection.tsx
 msgid "Units"
 msgstr ""
 
@@ -8238,6 +9563,10 @@ msgstr ""
 
 #: src/features/plan/PlanScreen.tsx
 msgid "Until (optional)"
+msgstr ""
+
+#: src/features/calendar/CalendarExportScreen.tsx
+msgid "Until your meet"
 msgstr ""
 
 #: src/features/library/ExerciseDetailScreen.tsx
@@ -8260,12 +9589,32 @@ msgstr ""
 msgid "Update"
 msgstr ""
 
+#: src/features/shell/UpdateFirstOffer.tsx
+msgid "Update before you start?"
+msgstr ""
+
+#: src/features/shell/UpdateFirstOffer.tsx
+msgid "Update first"
+msgstr ""
+
+#: src/features/settings/ProfileAnswerScreen.tsx
+msgid "Update my plan from {from}"
+msgstr ""
+
+#: src/features/calendar/ReexportNotice.tsx
+msgid "Update your calendar"
+msgstr ""
+
 #: src/features/progress/ExerciseProgressScreen.tsx
 msgid "Updating the chart…"
 msgstr ""
 
 #: src/features/progress/ScoresScreen.tsx
 msgid "Updating the scores…"
+msgstr ""
+
+#: src/features/shell/RecoveryScreen.tsx
+msgid "Updating your data…"
 msgstr ""
 
 #: src/features/home/HomeScreen.tsx
@@ -8341,6 +9690,19 @@ msgstr ""
 msgid "Use the default"
 msgstr ""
 
+#: src/features/settings/RestTimesScreen.tsx
+#: src/features/settings/TrainingAdvanced.tsx
+msgid "Use the evidence default"
+msgstr ""
+
+#: src/features/settings/TrainingAdvanced.tsx
+msgid "Use the evidence default: {label}"
+msgstr ""
+
+#: src/features/settings/RestTimesScreen.tsx
+msgid "Use the evidence default: {name}"
+msgstr ""
+
 #: src/features/onboarding/OnboardingFlow.tsx
 msgid "Use the recommended plan"
 msgstr ""
@@ -8362,10 +9724,20 @@ msgstr ""
 msgid "Used for weeks without planned sessions. Not set: one session keeps such a week."
 msgstr ""
 
+#: src/features/library/LibraryScreen.tsx
+msgid "Uses any of these items"
+msgstr ""
+
+#. placeholder {0}: formatBytes(usage * 1e6)
+#. placeholder {1}: formatBytes(quota * 1e6)
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "Using {0} of {1}"
+msgstr ""
+
 #. placeholder {0}: formatBytes(status.estimate.usage)
 #. placeholder {1}: formatBytes(status.estimate.quota)
 #: src/features/data/DataScreen.tsx
-msgid "Using {0} of {1}"
+msgid "Using {0} of the {1} this browser allows."
 msgstr ""
 
 #: src/features/equipment/EquipmentEditor.tsx
@@ -8403,10 +9775,6 @@ msgstr ""
 msgid "Version {version}"
 msgstr ""
 
-#: src/features/legal/LegalScreens.tsx
-msgid "Version {version}. Draft, pending legal review."
-msgstr ""
-
 #: src/features/library/CustomExerciseScreen.tsx
 msgid "Very hard"
 msgstr ""
@@ -8436,6 +9804,7 @@ msgid "Vibrated."
 msgstr ""
 
 #: src/features/settings/AlertsSection.tsx
+#: src/features/shell/DeviceSupportScreen.tsx
 msgid "Vibration"
 msgstr ""
 
@@ -8481,6 +9850,10 @@ msgstr ""
 msgid "Warm-up {number} of {total}"
 msgstr ""
 
+#: src/features/settings/TrainingSection.tsx
+msgid "Warm-up sets at the start of a workout"
+msgstr ""
+
 #. placeholder {0}: words.setValues(set)
 #: src/features/progress/ExerciseProgressScreen.tsx
 msgid "Warm-up: {0}"
@@ -8490,13 +9863,13 @@ msgstr ""
 msgid "Warning before the end of a rest"
 msgstr ""
 
+#: src/features/settings/TrainingAdvanced.tsx
+msgid "Wathan"
+msgstr ""
+
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.plan.schedule.weekdays.simple"
-msgstr ""
-
-#: src/features/legal/LegalScreens.tsx
-msgid "We do not collect, receive or process your training data. There is no account, no analytics, no telemetry and no tracking."
 msgstr ""
 
 #. js-lingui-explicit-id
@@ -8561,6 +9934,10 @@ msgstr ""
 msgid "Weekly session goal without a plan"
 msgstr ""
 
+#: src/features/settings/ProfileAnswerScreen.tsx
+msgid "Weekly sets for {muscle}: {before} → {after}"
+msgstr ""
+
 #: src/features/plan/NextMesocycleScreen.tsx
 #: src/features/plan/PlanEditorScreen.tsx
 #: src/features/plan/PlanPreviewView.tsx
@@ -8617,6 +9994,10 @@ msgstr ""
 msgid "Weights in"
 msgstr ""
 
+#: src/features/settings/UnitsSection.tsx
+msgid "Weights you lift"
+msgstr ""
+
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.break.return.reentry.simple"
@@ -8660,10 +10041,6 @@ msgstr ""
 msgid "What is on the bar?"
 msgstr ""
 
-#: src/features/legal/LegalScreens.tsx
-msgid "What POWR stores, where and why"
-msgstr ""
-
 #: src/features/progress/ScoresScreen.tsx
 msgid "What the scores still need"
 msgstr ""
@@ -8676,12 +10053,24 @@ msgstr ""
 msgid "What to show"
 msgstr ""
 
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "What works in this browser on this phone, checked just now. Where something is missing, POWR uses another way, shown under each item."
+msgstr ""
+
+#: src/features/data/DataScreen.tsx
+msgid "What works on this phone"
+msgstr ""
+
 #: src/features/onboarding/steps.tsx
 msgid "When did you last train regularly?"
 msgstr ""
 
 #: src/features/onboarding/BaselinesStep.tsx
 msgid "When did you lift it? (optional)"
+msgstr ""
+
+#: src/features/settings/ExerciseChoicesScreen.tsx
+msgid "When I tap it"
 msgstr ""
 
 #: src/features/library/words.ts
@@ -8724,12 +10113,12 @@ msgstr ""
 msgid "Which reference values should scores use?"
 msgstr ""
 
-#: src/features/motivation/StreakScreen.tsx
-msgid "Which week?"
+#: src/features/calendar/CalendarExportScreen.tsx
+msgid "Which sessions"
 msgstr ""
 
-#: src/features/legal/LegalScreens.tsx
-msgid "Who is responsible"
+#: src/features/motivation/StreakScreen.tsx
+msgid "Which week?"
 msgstr ""
 
 #: src/features/why/WhySheet.tsx
@@ -8762,6 +10151,10 @@ msgstr ""
 msgid "why.scoring.wilks2020"
 msgstr ""
 
+#: src/features/settings/ProfileAnswerScreen.tsx
+msgid "With your new answer ({answerTitle}), POWR worked out your plan again. Nothing is saved yet."
+msgstr ""
+
 #: src/features/session/past/parts.tsx
 msgid "Within normal day-to-day variation"
 msgstr ""
@@ -8779,6 +10172,10 @@ msgstr ""
 msgid "why.e1rm.baseline.none"
 msgstr ""
 
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "Without protection the browser may delete data when space runs low, so backup reminders come more often."
+msgstr ""
+
 #: src/features/data/DataScreen.tsx
 msgid "Without protection the browser may delete POWR data when the phone runs low on space. Back up regularly either way: clearing site data or uninstalling deletes everything."
 msgstr ""
@@ -8792,6 +10189,7 @@ msgid "Working set"
 msgstr ""
 
 #: src/features/session/LoggingView.tsx
+#: src/features/settings/SettingsScreen.tsx
 #: src/features/settings/WorkoutSection.tsx
 msgid "Workout"
 msgstr ""
@@ -8812,6 +10210,10 @@ msgstr ""
 
 #: src/features/session/past/PastSessionEditor.tsx
 msgid "Workout deleted."
+msgstr ""
+
+#: src/features/settings/WorkoutSection.tsx
+msgid "Workout display"
 msgstr ""
 
 #: src/features/home/HomeScreen.tsx
@@ -8845,6 +10247,18 @@ msgstr ""
 msgid "Workouts"
 msgstr ""
 
+#: src/features/library/LibraryScreen.tsx
+msgid "Works any of these muscles"
+msgstr ""
+
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "Works here"
+msgstr ""
+
+#: src/features/shell/DeviceSupportScreen.tsx
+msgid "Works offline"
+msgstr ""
+
 #: src/features/plan/parts.tsx
 msgid "Worth a look"
 msgstr ""
@@ -8872,10 +10286,6 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.validate.avoided.simple"
-msgstr ""
-
-#: src/features/legal/LegalScreens.tsx
-msgid "You can delete all your data at any time in Settings, Data and backups."
 msgstr ""
 
 #: src/features/bodymap/PlaceInPlan.tsx
@@ -8966,6 +10376,14 @@ msgstr ""
 msgid "Your active plan uses this equipment. Make another profile the plan's equipment first."
 msgstr ""
 
+#: src/features/settings/ProfileAnswerScreen.tsx
+msgid "Your answer is saved, and the plan stays as it is. The next block uses your new answer."
+msgstr ""
+
+#: src/features/settings/ProfileAnswerScreen.tsx
+msgid "Your answer is saved, and the plan stays as it is. Your next plan uses it."
+msgstr ""
+
 #: src/features/progress/ExerciseProgressScreen.tsx
 msgid "Your best weight for each rep count shows here after your first working set."
 msgstr ""
@@ -8975,11 +10393,20 @@ msgstr ""
 msgid "your bodyweight rate"
 msgstr ""
 
+#: src/features/calendar/CalendarExportScreen.tsx
+msgid "Your calendar app shows the reminder, also when POWR is closed."
+msgstr ""
+
+#: src/features/calendar/CalendarExportScreen.tsx
+msgid "Your calendar file"
+msgstr ""
+
 #: src/features/progress/ScoresScreen.tsx
 msgid "Your current estimated 1-rep max of each lift, from its strength trend."
 msgstr ""
 
 #: src/features/onboarding/OnboardingFlow.tsx
+#: src/features/settings/ProfileSection.tsx
 msgid "Your current lifts"
 msgstr ""
 
@@ -8991,8 +10418,16 @@ msgstr ""
 msgid "Your data has not been changed. Close other POWR windows, then reload."
 msgstr ""
 
+#: src/features/shell/RecoveryScreen.tsx
+msgid "Your data has not been changed. Close other POWR windows, then try again."
+msgstr ""
+
 #: src/features/shell/RouteError.tsx
 msgid "Your data is saved. Reload to continue."
+msgstr ""
+
+#: src/features/settings/SettingsScreen.tsx
+msgid "Your data stays on this phone. Back it up, restore it or delete it here."
 msgstr ""
 
 #: src/features/onboarding/OnboardingFlow.tsx
@@ -9013,10 +10448,11 @@ msgid "Your estimated 1-rep max is rising more slowly than the plan adds weight,
 msgstr ""
 
 #: src/features/progress/ProgressScreen.tsx
-msgid "Your exercises of the last 12 months, most trained first."
+msgid "Your exercises of the last 12 months, most trained first, with the current estimated 1-rep max and whether it changed for real."
 msgstr ""
 
 #: src/features/onboarding/OnboardingFlow.tsx
+#: src/features/settings/ProfileSection.tsx
 msgid "Your experience"
 msgstr ""
 
@@ -9029,6 +10465,7 @@ msgid "Your first week"
 msgstr ""
 
 #: src/features/onboarding/OnboardingFlow.tsx
+#: src/features/settings/ProfileSection.tsx
 msgid "Your goal"
 msgstr ""
 
@@ -9038,11 +10475,6 @@ msgstr ""
 
 #: src/features/library/ExerciseDetailScreen.tsx
 msgid "Your history"
-msgstr ""
-
-#. placeholder {0}: formatLocalDate(last, 'long')
-#: src/features/home/HomeScreen.tsx
-msgid "Your last backup is from {0}."
 msgstr ""
 
 #: src/features/plan/NextMesocycleScreen.tsx
@@ -9101,6 +10533,10 @@ msgstr ""
 msgid "Your plan"
 msgstr ""
 
+#: src/features/calendar/CalendarExportScreen.tsx
+msgid "Your plan changed"
+msgstr ""
+
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.validate.lift.missing.simple"
@@ -9125,8 +10561,16 @@ msgstr ""
 msgid "why.validate.deload.missing.simple"
 msgstr ""
 
+#: src/features/settings/ProfileAnswerScreen.tsx
+msgid "Your plan would change"
+msgstr ""
+
 #: src/features/progress/ExerciseProgressScreen.tsx
 msgid "Your planned increases are ahead of your trend"
+msgstr ""
+
+#: src/features/calendar/CalendarExportScreen.tsx
+msgid "Your planned start times"
 msgstr ""
 
 #: src/features/library/CustomExerciseScreen.tsx
@@ -9177,12 +10621,17 @@ msgstr ""
 msgid "Your set timer has ended."
 msgstr ""
 
+#: src/features/settings/RestTimesScreen.tsx
 #: src/features/why/WhySheet.tsx
 msgid "Your setting"
 msgstr ""
 
 #: src/features/why/WhySheet.tsx
 msgid "Your setting for this exercise"
+msgstr ""
+
+#: src/features/settings/TrainingAdvanced.tsx
+msgid "Your setting. Evidence default: {evidenceDefault}."
 msgstr ""
 
 #: src/features/library/detail-parts.tsx
@@ -9222,11 +10671,7 @@ msgstr ""
 msgid "Your total"
 msgstr ""
 
-#: src/features/legal/LegalScreens.tsx
-msgid "Your training (plans, sessions and sets), body data you choose to enter (such as body weight), check-ins and settings. They are stored in your browser's storage on this device, only to run the app for you."
-msgstr ""
-
-#: src/features/home/HomeScreen.tsx
+#: src/features/data/BackupReminder.tsx
 msgid "Your training lives only on this phone. A backup file keeps it safe."
 msgstr ""
 
@@ -9244,6 +10689,7 @@ msgid "Your trend starts after a few weigh-ins."
 msgstr ""
 
 #: src/features/onboarding/OnboardingFlow.tsx
+#: src/features/settings/ProfileSection.tsx
 msgid "Your week"
 msgstr ""
 
@@ -9260,7 +10706,15 @@ msgstr ""
 msgid "why.bodyweight.rate"
 msgstr ""
 
+#: src/features/data/DataScreen.tsx
+msgid "Your workout in progress is deleted too."
+msgstr ""
+
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.plan.volume.budget.simple"
+msgstr ""
+
+#: src/features/data/DataDeletedScreen.tsx
+msgid "Your workouts, plans, settings, safety copies and diagnostics are gone from this phone. Backup files you saved elsewhere are not affected."
 msgstr ""

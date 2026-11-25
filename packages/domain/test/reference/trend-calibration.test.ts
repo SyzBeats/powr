@@ -1,6 +1,6 @@
 /**
- * Calibration of the e1RM trend's change labels (PRD PRG-02; rules 1.6.0, technical concept
- * §8.7.5): a seeded simulation through the real observation, filter and label functions
+ * Calibration of the e1RM trend's change labels (PRD PRG-02; rules 1.6.0 and 1.7.0, technical
+ * concept §8.7.5): a seeded simulation through the real observation, filter and label functions
  * (fixtures/trend-sim.ts). Per level and set kind it reports how soon a sustained, realistic gain
  * reads "likely real" and how often pure noise is labelled a change within 12 and 26 weeks, and
  * asserts bounds for both. The summary snapshot is the reviewed table: a registry change that
@@ -68,7 +68,7 @@ const at = (level: TraineeLevel, kind: SetKind, gain: number) =>
 const weeks = (value: number) => (Number.isFinite(value) ? value.toFixed(1) : '–');
 const pct = (value: number) => `${(value * 100).toFixed(1)}%`;
 
-describe('e1RM trend calibration (PRG-02, rules 1.6.0; 2 sessions a week, 300 seeded runs)', () => {
+describe('e1RM trend calibration (PRG-02, rules 1.7.0; 2 sessions a week, 300 seeded runs)', () => {
   it('matches the reviewed summary', () => {
     const lines = rows.map((entry) =>
       [
@@ -95,10 +95,11 @@ describe('e1RM trend calibration (PRG-02, rules 1.6.0; 2 sessions a week, 300 se
       expect(row(level, 'heavy').noise.within12).toBeLessThanOrEqual(0.05);
       expect(row(level, 'heavy').noise.within26).toBeLessThanOrEqual(0.08);
     }
-    // Novice heavy sets: after the 8-week widening the filter assumes 4%, less than a novice's
-    // own typical error (5.5%), so jitter at that TE is under-modelled; the 26-week rate is
-    // high and only reported (TD-59: floor the observation noise at the level's TE).
-    expect(row('novice', 'heavy').noise.within12).toBeLessThanOrEqual(0.15);
+    // Novice heavy sets: rules 1.6.0 modelled them at 4% after the 8-week widening, less than a
+    // novice's own typical error (5.5%), and claimed a change in 11.3% / 63.7% of flat series.
+    // TD-59 (M5) floors the observation noise at the level's TE: 5.7% / 14.7%.
+    expect(row('novice', 'heavy').noise.within12).toBeLessThanOrEqual(0.08);
+    expect(row('novice', 'heavy').noise.within26).toBeLessThanOrEqual(0.18);
   });
 
   it('keeps false claims bounded when the jitter is as large as the filter assumes (stress)', () => {
@@ -108,8 +109,8 @@ describe('e1RM trend calibration (PRG-02, rules 1.6.0; 2 sessions a week, 300 se
       expect(row(level, 'typical').stress.within12).toBeLessThanOrEqual(0.12);
       expect(row(level, 'typical').stress.within26).toBeLessThanOrEqual(0.2);
     }
-    // Heavy sets: 7.7–12% within 12 weeks and 10–22% within 26 (novice heavy sets are the
-    // highest, TD-59).
+    // Heavy sets: 7.3–11% within 12 weeks and 15–21% within 26 (rules 1.7.0: the TE floor
+    // lowered novice heavy sets, the 12-week window raised advanced lifters' 26-week rates).
     for (const level of LEVELS) {
       expect(row(level, 'heavy').stress.within12).toBeLessThanOrEqual(0.15);
       expect(row(level, 'heavy').stress.within26).toBeLessThanOrEqual(0.25);
@@ -138,6 +139,12 @@ describe('e1RM trend calibration (PRG-02, rules 1.6.0; 2 sessions a week, 300 se
     // long-run rates (≤ 0.1% a week) stay within one TE for months: no claim is the honest label.
     expect(at('advanced', 'heavy', 0.005).medianWeeks).toBeLessThanOrEqual(14);
     expect(at('advanced', 'heavy', 0.005).by26).toBe(1);
+    // Rules 1.7.0 (TD-60): the 12-week window lets +0.25% a week on heavy sets show within about
+    // 20 weeks (8 weeks: 44% of runs by week 26, no median) and +0.5% a week on typical sets
+    // within 26 weeks in most runs (8 weeks: 5%).
+    expect(at('advanced', 'heavy', 0.0025).medianWeeks).toBeLessThanOrEqual(21);
+    expect(at('advanced', 'heavy', 0.0025).by26).toBeGreaterThanOrEqual(0.7);
+    expect(at('advanced', 'typical', 0.005).by26).toBeGreaterThanOrEqual(0.6);
   });
 
   it('labels faster gains no later than slower ones', () => {

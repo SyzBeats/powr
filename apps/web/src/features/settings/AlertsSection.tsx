@@ -7,7 +7,6 @@ import type { NotificationPermissionState } from '@powr/application';
 import { Badge, type Tone } from '#ui/badge';
 import { Button } from '#ui/button';
 import { CheckRow } from '#ui/choice';
-import { Card } from '#ui/screen';
 import { Segmented } from '#ui/segmented';
 
 import type { AlertLevel, AlertStatusReport, WakeLockStatus } from '../../app/container';
@@ -23,6 +22,7 @@ import {
 import { usePlatform } from '../../hooks/use-app';
 import { formatPercent } from '../../i18n/format';
 import { assertNever } from '../exhaustive';
+import { SettingsSection } from './parts';
 
 /**
  * Settings → Alerts (SET-03, SET-04, SET-10, TMR-05, TMR-06, PWA-06, PWA-08): the honest
@@ -39,91 +39,84 @@ export function AlertsSection() {
   const status = useAlertStatus(permission, settings.restingNotice);
   const wakeLock = useWakeLockStatus();
   const { haptics } = usePlatform();
-  const headingId = useId();
 
   if (!settings.loaded) return null;
 
   return (
-    <Card>
-      <section aria-labelledby={headingId} className="flex flex-col gap-3">
-        <h2 id={headingId} className="text-lg font-semibold">
-          <Trans>Alerts</Trans>
-        </h2>
+    <SettingsSection id="alerts" title={t`Alerts`}>
+      {status ? <LockedStatus status={status} /> : null}
 
-        {status ? <LockedStatus status={status} /> : null}
+      <NotificationPermission permission={permission} onRequest={() => void request()} />
 
-        <NotificationPermission permission={permission} onRequest={() => void request()} />
-
-        <div className="flex flex-col gap-1">
-          <CheckRow
-            label={t`Keep the screen on during workouts`}
-            description={t`Recommended: alerts are most reliable while POWR is on screen. Keeping the screen on uses more battery.`}
-            checked={settings.keepScreenOn}
-            onChange={(keepScreenOn) => void save({ keepScreenOn })}
-          />
-          <p data-testid="wake-lock-status" className="px-2 text-sm text-fg-muted">
-            <WakeLockLine status={wakeLock} />
-          </p>
-        </div>
-
+      <div className="flex flex-col gap-1">
         <CheckRow
-          label={t`Sound`}
-          checked={settings.sound}
-          onChange={(sound) => void save({ sound })}
+          label={t`Keep the screen on during workouts`}
+          description={t`Recommended: alerts are most reliable while POWR is on screen. Keeping the screen on uses more battery.`}
+          checked={settings.keepScreenOn}
+          onChange={(keepScreenOn) => void save({ keepScreenOn })}
         />
-        <VolumeSlider
-          value={settings.volume}
-          disabled={!settings.sound}
-          onChange={(volume) => void save({ volume })}
-        />
-        <CheckRow
-          label={t`Vibration`}
-          description={haptics.supported ? undefined : t`Not supported on this device.`}
-          checked={settings.vibration}
-          onChange={(vibration) => void save({ vibration })}
-        />
-        <div className="flex flex-col gap-2">
-          <CheckRow
-            label={t`Warning before the end of a rest`}
-            checked={settings.preAlert}
-            onChange={(preAlert) => void save({ preAlert })}
-          />
-          {settings.preAlert ? (
-            <div className="flex flex-col gap-1 px-2">
-              <span aria-hidden="true" className="text-sm font-medium text-fg-muted">
-                <Trans>Seconds before the end</Trans>
-              </span>
-              <Segmented<`${(typeof PRE_ALERT_SECONDS)[number]}`>
-                label={t`Seconds before the end`}
-                value={`${settings.preAlertSeconds}`}
-                onChange={(next) =>
-                  void save({
-                    preAlertSeconds: Number(next) as (typeof PRE_ALERT_SECONDS)[number],
-                  })
-                }
-                options={PRE_ALERT_SECONDS.map((seconds) => ({
-                  value: `${seconds}` as const,
-                  label: t`${seconds} s`,
-                }))}
-              />
-            </div>
-          ) : null}
-        </div>
-        <CheckRow
-          label={t`3-2-1 countdown beeps`}
-          checked={settings.countdown}
-          onChange={(countdown) => void save({ countdown })}
-        />
-        <CheckRow
-          label={t`"Resting until" notification`}
-          description={t`When you leave POWR during a rest, a silent notification shows when the rest ends.`}
-          checked={settings.restingNotice}
-          onChange={(restingNotice) => void save({ restingNotice })}
-        />
+        <p data-testid="wake-lock-status" className="px-2 text-sm text-fg-muted">
+          <WakeLockLine status={wakeLock} />
+        </p>
+      </div>
 
-        <TestAlert />
-      </section>
-    </Card>
+      <CheckRow
+        label={t`Sound`}
+        checked={settings.sound}
+        onChange={(sound) => void save({ sound })}
+      />
+      <VolumeSlider
+        value={settings.volume}
+        disabled={!settings.sound}
+        onChange={(volume) => void save({ volume })}
+      />
+      <CheckRow
+        label={t`Vibration`}
+        description={haptics.supported ? undefined : t`Not supported on this device.`}
+        checked={settings.vibration}
+        onChange={(vibration) => void save({ vibration })}
+      />
+      <div className="flex flex-col gap-2">
+        <CheckRow
+          label={t`Warning before the end of a rest`}
+          checked={settings.preAlert}
+          onChange={(preAlert) => void save({ preAlert })}
+        />
+        {settings.preAlert ? (
+          <div className="flex flex-col gap-1 px-2">
+            <span aria-hidden="true" className="text-sm font-medium text-fg-muted">
+              <Trans>Seconds before the end</Trans>
+            </span>
+            <Segmented<`${(typeof PRE_ALERT_SECONDS)[number]}`>
+              label={t`Seconds before the end`}
+              value={`${settings.preAlertSeconds}`}
+              onChange={(next) =>
+                void save({
+                  preAlertSeconds: Number(next) as (typeof PRE_ALERT_SECONDS)[number],
+                })
+              }
+              options={PRE_ALERT_SECONDS.map((seconds) => ({
+                value: `${seconds}` as const,
+                label: t`${seconds} s`,
+              }))}
+            />
+          </div>
+        ) : null}
+      </div>
+      <CheckRow
+        label={t`3-2-1 countdown beeps`}
+        checked={settings.countdown}
+        onChange={(countdown) => void save({ countdown })}
+      />
+      <CheckRow
+        label={t`"Resting until" notification`}
+        description={t`When you leave POWR during a rest, a silent notification shows when the rest ends.`}
+        checked={settings.restingNotice}
+        onChange={(restingNotice) => void save({ restingNotice })}
+      />
+
+      <TestAlert />
+    </SettingsSection>
   );
 }
 

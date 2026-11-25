@@ -146,6 +146,16 @@ export function formatMass(value: number, unit: 'kg' | 'lb'): string {
   }).format(value);
 }
 
+/** A length with its unit, e.g. "180 cm" (M5s: the profile summary in Settings). */
+export function formatLength(value: number, unit: 'cm' | 'in'): string {
+  return new Intl.NumberFormat(deviceLocale(), {
+    style: 'unit',
+    unit: unit === 'cm' ? 'centimeter' : 'inch',
+    unitDisplay: 'short',
+    maximumFractionDigits: 1,
+  }).format(value);
+}
+
 /** A fraction as a percentage in the device locale, e.g. 0.8 → "80%". */
 export function formatPercent(fraction: number): string {
   return new Intl.NumberFormat(deviceLocale(), {

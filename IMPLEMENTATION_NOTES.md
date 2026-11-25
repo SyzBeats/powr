@@ -3201,3 +3201,582 @@ no assertion weakened:
   limit (`apps/web/vitest.components.config.ts`); it takes about 63 s instead of about 25 s and
   passed 4 of 4 consecutive runs (before: 1 failure in about every second run);
 - the body-map pixel scan keeps its own 60 s limit (about 464,000 hit tests).
+
+## M5d data, calendar and PWA
+
+Written 2026-11-25 by the M5d work (roadmap A.4 "M5 Data, calendar, settings, legal, PWA polish",
+the data, calendar and PWA part; M5s and M5p ran in parallel), plus TD-14 (in part), TD-55, TD-56
+and TD-57. Status: see "Evidence".
+
+### What landed
+
+| Area              | Where                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | PRD                       |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------- |
+| Data and backups  | `features/data/DataScreen.tsx`: "Storage protected: Yes/No" with the risk and how the browser decides, an explained "Protect my data" with its outcome, use and quota (or "not reported"); export with busy, saved, not-saved and failed states (with a storage-full hint); restore with checking, restoring and failed states; the backup reminder cadence; safety copies (save, delete with a confirmation sheet); "Verify data"; a link to Device support; "Delete all data"                                                                                                                                                             | DAT-01…08, DAT-13         |
+| Backup reminders  | `@powr/application/data` (`reminder.ts`: `BACKUP_REMINDER`, `backupReminderState`, `observeBackupReminder`, `readBackupReminder`, `snoozeBackupReminder`, `setBackupReminderDays`), `hooks/use-backup-reminder.ts`, `features/data/BackupReminder.tsx` on Home (replaces M4b's fixed 14-day card) and on the workout summary; settings `backup.reminderDays`                                                                                                                                                                                                                                                                                | DAT-08, TD-57             |
+| Safety copies     | `SafetySnapshots` port gains `list`, `read`, `delete`; `infrastructure/db/safety-db.ts`; `@powr/application/data` (`listSafetyCopies`, `saveSafetyCopy`, `deleteSafetyCopy`)                                                                                                                                                                                                                                                                                                                                                                                                                                                                | §8.2.1, TD-14             |
+| Delete all data   | `infrastructure/platform/wipe.ts` (lazy; deletes `powr`, `powr-safety`, `powr-diag` and `powr-runtime` through their own instances so nothing reopens them, clears `localStorage` and `sessionStorage`, closes notifications, reports what is left), `platform.deleteAllData` (stops the rest alerts first), `features/data/DataDeletedScreen.tsx` (replaces the whole app from the first step; "Start again" reloads into the first run), the `App.tsx` switch on `useAppUi.wipe`                                                                                                                                                          | DAT-13                    |
+| Data update guard | `infrastructure/db/stored-version.ts` (`pendingUpgrade` from `indexedDB.databases()`, nothing opened), `infrastructure/db/raw-read.ts` (every store at the stored version; never creates or upgrades), `app/upgrade.tsx` (lazy: "Updating your data…", the safety snapshot before Dexie migrates, the recovery screen), `features/shell/RecoveryScreen.tsx`; `@powr/formats/backup` `encodeRawSnapshot` (a backup of any `dataVersion` from raw records, never refusing data); `@powr/application/backup` `snapshotBeforeUpgrade`, `saveRescueCopy` (`UpgradeEnv`); boot: snapshot → open → recovery on failure; the `versionchange` banner | DAT-14, §6.7 step 3, §6.8 |
+| `.ics` encoder    | `@powr/formats/ics` (`encodeIcs`, `icsUid`, `escapeIcsText`, `foldIcsLine`, `ICS_MIME`): pure; CRLF; folding at 75 octets on whole UTF-8 characters; escaping; UTC `DTSTART` with `DURATION`, or all-day `VALUE=DATE` with an exclusive `DTEND`; `SEQUENCE`; `STATUS`; `VALARM` (never on a cancelled event); input checks that throw                                                                                                                                                                                                                                                                                                       | CAL-01…04                 |
+| Calendar use case | `@powr/application/planning` `calendar.ts`: `previewCalendarExport`, `exportCalendar`, `recordCalendarExport`, `calendarExportStatus`; ranges rest of week, block, next N weeks, until the meet; the plan's start time per weekday with a fallback, a fixed time, or all-day; PLN-14 minutes (`dayMinutes`, rounded up to 5); main exercises and working sets in the description; reminders 0/15/30/60/120 min; re-export bookkeeping in `meta.calendarExport`                                                                                                                                                                              | CAL-01…05                 |
+| Calendar screen   | `features/calendar/CalendarExportScreen.tsx` at `/plan/calendar` (Plan → "Add to calendar"), `ReexportNotice.tsx` on the Plan screen, `hooks/use-calendar.ts`, `app/public-origin.ts` (`VITE_PUBLIC_ORIGIN`, default `https://powr.invalid`)                                                                                                                                                                                                                                                                                                                                                                                                | CAL-01…05                 |
+| Install promotion | `infrastructure/pwa/install.ts` (captures `beforeinstallprompt` at boot; first visit and dismissal in `localStorage`), `hooks/use-device.ts` (`useInstall`), `features/shell/InstallPromotion.tsx` on Home and the summary                                                                                                                                                                                                                                                                                                                                                                                                                  | PWA-02                    |
+| Shortcuts         | manifest `shortcuts`: "Start today's session" (`/session?start=today&source=shortcut`) and "Log bodyweight" (`/body/log?source=shortcut`); `app/launch.ts` puts Home beneath a shortcut or a standalone deep-link launch                                                                                                                                                                                                                                                                                                                                                                                                                    | PWA-05, PWA-12            |
+| Back gesture      | `ui/back-dismiss.tsx`: an open `Sheet` owns one same-URL history entry (TanStack Router `navigate` with `resetScroll: false`); Back closes it; closing it any other way takes the entry off; a sheet opening at once takes the entry over; stale entries are skipped (`watchSheetHistory`, loaded lazily by `AppShell`)                                                                                                                                                                                                                                                                                                                     | PWA-12                    |
+| Device support    | `features/shell/DeviceSupportScreen.tsx` at `/settings/device-support` (also "What works on this phone" in Data and backups): 11 capabilities from runtime detection plus the timer alerts with the S-1 matrix, each with its status in words, what POWR does instead and the device-test state; the protocols named; the harness links in beta builds                                                                                                                                                                                                                                                                                      | PWA-13                    |
+| Web Share         | `infrastructure/platform/share.ts` (lazy, `platform.share()`): the `.ics` file goes to the share sheet only where `navigator.canShare` accepts it; the download stays the default                                                                                                                                                                                                                                                                                                                                                                                                                                                           | PWA-09, CAL-05            |
+| TD-14             | `features/shell/UpdateFirstOffer.tsx` on the start screen ("Update before you start?"); the `versionchange` banner ("POWR was updated in another window. Reload."); the safety-copy UI above                                                                                                                                                                                                                                                                                                                                                                                                                                                | TD-14                     |
+| TD-55             | `@powr/application/insights` `exerciseSummaries` (bulk: two range reads, one `ensureDerived`, one `exerciseStates`, one points read for any number of rows); the Progress hub rows show the current e1RM and the change label in words with an icon                                                                                                                                                                                                                                                                                                                                                                                         | ANL-02, TD-55             |
+| TD-56             | `features/library/search.ts` (arrays per dimension; old single-value links still work), `LibraryScreen.tsx` (checkbox groups with the OR-within, AND-across rule in words, a chip per value, "Clear all")                                                                                                                                                                                                                                                                                                                                                                                                                                   | EXL-02, TD-56             |
+| Docs              | `docs/device-tests/S-2-protocol.md`, `docs/device-tests/S-6-protocol.md` (new; no other doc edited)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | V-07, V-02                |
+
+### Product-owner decisions (2026-11-25) and what they became
+
+1. **One config value for calendar UIDs and public URLs, default `powr.invalid`.** `app/public-origin.ts`: `VITE_PUBLIC_ORIGIN` (an http(s) origin, read by Vite at build time, so the deploy pipeline sets it per build) gives the origin, default `https://powr.invalid` (reserved TLD, RFC 2606); anything that is not an http(s) origin falls back to the default. The UIDs use its host. No `vite.config.ts` `define` and no lint allow-list change were needed. The origin constant stays module-private until a public URL uses it (knip); M5s can export it.
+2. **Stable UIDs from the plan's IDs:** `UID:<plannedSessionId>@<host>` (`icsUid`). Planned-session IDs are UUIDv7 and never change for a session (moves, swaps and restores keep them; a backup restored on a new phone keeps them, so a re-export there updates the same events). The plan ID is not repeated in the UID: it would add about 37 characters (a folded `UID` line) and no uniqueness. Re-planning creates new sessions with new IDs; their predecessors are cancelled by the next export.
+
+### Decisions and deviations
+
+| Concept / brief says                                                                                 | What I did                                                                                                                                                                                                                                                                                                                                                                                                 |
+| ---------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `DTSTART` "with `TZID` or floating local time as the concept decides"                                | The concept (§6.6 step 3) decides UTC: each event's local wall-clock start is converted with Temporal in the device zone (`instantAt`) and written as `…Z`, so no `VTIMEZONE` is needed and DST is right per event (tests for both Zurich changes, unit and application level)                                                                                                                             |
+| `UID` = `powr-<plannedSessionId>@<app-domain>` (§6.6)                                                | `<plannedSessionId>@<host>` (the product-owner wording); see decision 2                                                                                                                                                                                                                                                                                                                                    |
+| `SEQUENCE` = the planned session's revision (§6.6)                                                   | The revision for a first export; afterwards the last exported sequence, plus 1 whenever the written event changes (time, length, texts, alarm) even without a new revision, so an export with another time or alarm also updates. A cancellation is the last sequence plus 1                                                                                                                               |
+| "Re-export may add `STATUS:CANCELLED` events for removed sessions" (§8.13)                           | Built: an exported, upcoming session that was deleted, skipped, merged, put on a break or replaced by re-planning is written once as `CANCELLED` (same UID, its last summary and start), then never again. Exported sessions that moved or changed outside the chosen range are updated too, so a smaller range never leaves a stale time behind. Past and done sessions are left alone                    |
+| Ranges "rest of week, mesocycle, next N weeks, until the meet" (CAL-01)                              | "Rest of this week", "This training block" (the current mesocycle), "Next 2/4/8 weeks", "Until your meet" ("No meet date is set" without one)                                                                                                                                                                                                                                                              |
+| Start time "a default time the user picks at export" (CAL-02)                                        | "Your planned start times" (only if the plan has any) with a time for days without one, "The same time for every session", or "All-day events"                                                                                                                                                                                                                                                             |
+| Event texts                                                                                          | Made in the app with Lingui (`CalendarTexts`); the use case is language-free. Title "POWR · Upper A (Week 3)", in a deload week "(Week 4, lighter week)"; description: the exercises with their working sets, then "About 70 minutes. Planned in POWR; open the app to train."; reminder text "Soon: <title>". No personal data                                                                            |
+| "Re-export is offered when the plan changes" (CAL-04)                                                | `calendarExportStatus` compares the exported upcoming sessions with the live ones (revision, day, status); the Plan screen shows "N sessions changed since you added the plan to your calendar" with "Update your calendar", and the export screen says the same                                                                                                                                           |
+| A safety snapshot "ZIP into `powr-safety`" before the upgrade (§6.7)                                 | As specified, as a regular backup file of the **stored** `dataVersion` (`encodeRawSnapshot`), so the normal restore migrates it later; the update does not run if the snapshot cannot be written (the recovery screen says so). No snapshot when the old database holds no user records                                                                                                                    |
+| DB open failure: "retry, export what can be read, restore from backup, export diagnostics" (§6.8)    | "Try again", "Save a copy of your data" (every store at the stored version, read without Dexie, as a backup file) and "Export diagnostics". Restore from a backup is not offered there: it needs the database open at the current version, which is what failed. Nothing is ever deleted                                                                                                                   |
+| Detecting a pending upgrade                                                                          | `indexedDB.databases()` before opening (Chromium 71+; the Chromium 130 baseline has it). Without it the upgrade still runs atomically, only without the snapshot                                                                                                                                                                                                                                           |
+| Safety copies "auto-pruned after 30 days or after a newer regular backup" (§8.2.1)                   | Not built: only the existing rotation (the latest two) deletes a copy; silently deleting old data is the riskier side. Open decision                                                                                                                                                                                                                                                                       |
+| "Delete all data" removes "caches of user data" (DAT-13)                                             | The four databases and both web storages. Cache Storage holds only app files (the precache and `version.json`), so it stays and POWR still opens offline for the first run. `indexedDB.databases()` lists nothing afterwards (E2E)                                                                                                                                                                         |
+| Delete all "returns to first-run onboarding"                                                         | A deletion screen replaces the app ("All data deleted", focused heading); "Start again" reloads into the welcome screen. Reloading at once would open (and so create) an empty `powr` before anyone could check, and the screen confirms what happened                                                                                                                                                     |
+| Install-prompt state "in `meta`" (§8.2.2)                                                            | In `localStorage` (`powr.install`): the first visit and a dismissal belong to the browser, not to the training data a backup moves to another phone                                                                                                                                                                                                                                                        |
+| "Never on first visit" (PWA-02)                                                                      | The first page load on a browser never shows the card; later page loads do (Home after onboarding, the summary of a finished workout); never during a workout; not again for 14 days after "Not now" or a dismissed browser dialog                                                                                                                                                                         |
+| Samsung Internet "illustrated instructions" (PWA-02)                                                 | Steps in words with the menu icon, hedged ("Menus differ between versions"); to be confirmed by S-2 cell 1                                                                                                                                                                                                                                                                                                 |
+| Shortcuts: "Start today's workout", "Log bodyweight", "Quick timer", "Last workout summary" (PWA-05) | The first two (the brief's scope; there is no quick timer yet, TMR-15). Both use the 192 px app icon (no shortcut artwork yet); M0's "Log a set" shortcut is replaced                                                                                                                                                                                                                                      |
+| Back gesture: "every screen has a parent" (§8.9.1)                                                   | A shortcut or a standalone deep link opened as the first entry of a window gets Home beneath it (`seedLaunchHistory`, with a `history.flush()` between the replace and the push, because TanStack batches the history writes of one task). Prompts before discarding unsaved edits (`useBlocker`) in the plan and equipment editors are not built (not in M5d's files)                                     |
+| Device support "summarized in Settings → About → Device support" (PWA-13)                            | Route `/settings/device-support`, Back goes to Settings. M5s owns the Settings screen, so the entry for now is "What works on this phone" in Data and backups. The protocols are named as repository paths (they are not shipped); the S-1 and S-2 harness links show in beta builds only                                                                                                                  |
+| Device support levels                                                                                | "Works here", "Limited", "Not available here", "Downloaded instead" (a deliberate fallback, info tone, not an error), "Cannot be checked from the app"; every row says "Device test S-2 has not run yet" until S-2 has results (there is no S-2 matrix)                                                                                                                                                    |
+| Backup reminder snooze                                                                               | "Remind me later" hides a due reminder for 3 days (`meta.backupReminder.snoozedUntil`); a backup resets the reminder; a design value                                                                                                                                                                                                                                                                       |
+| "After N new sessions (default 8)" (DAT-08)                                                          | 8, a constant: finished and partial workouts that ended after the last backup, counted only while that backup is under 30 days old (older is due for every cadence anyway, so the read stays small)                                                                                                                                                                                                        |
+| The cadence setting                                                                                  | Settings `backup: { reminderDays: 7 \| 14 \| 30 \| null }`; absent = "Automatic" (14 days, 7 while storage is not protected); off turns both triggers off                                                                                                                                                                                                                                                  |
+| New use cases as lazy entries                                                                        | Calendar in the existing lazy `@powr/application/planning` (it needs the rules and `dayMinutes`); reminders and safety copies in a new entry `@powr/application/data`, imported statically only by lazy screens, so no new `LAZY_*` lint pattern. The backup codec stays in `@powr/application/backup`; the data-update guard (`app/upgrade.tsx`) has its own sanctioned `import()` with a disable comment |
+| Entry JS (shared by three parallel agents)                                                           | The new screens, the encoder, the wipe, the share adapter, the guard and the back-gesture code are lazy; on the startup path are only the install-prompt capture, the stored-version check, the launch seeding, two route definitions, the `versionchange` banner and the container's small additions                                                                                                      |
+| A type cycle                                                                                         | `DataScreen` and `DeviceSupportScreen` link to each other; TypeScript then inferred the route tree through the components and dropped `/settings/device-support`. An explicit `ReactElement` return type on `DeviceSupportScreen` breaks the cycle                                                                                                                                                         |
+
+**Bugs and gaps found on the way:**
+
+- TanStack Router's browser history batches every `push`/`replace` of one task into a single native history write, so two writes in a row lose the first; `seedLaunchHistory` flushes between them.
+- The `Sheet` component had no back-gesture handling: on Android, Back left the screen behind an open sheet. Now Back closes the sheet first.
+- Dexie closes a database on `versionchange` with auto-open still on, so a later write recreates a deleted database; the wipe deletes through each Dexie instance (auto-open off) and turns diagnostics logging off.
+- The calendar screen's time field first had the same label as its fieldset ("Start time"), which made both ambiguous for screen readers (the component test found it); the field is "Time for every session" now.
+
+- A sheet whose page keeps its state in the URL (the library's Filters sheet replaces the URL on every change) first closed itself on the first change, because the replaced entry looked like Back (found by the library E2E). Now only a step back closes a sheet, and the URL the page set while the sheet was open is kept after Back.
+
+### PRD coverage (requirement → screen or element)
+
+| ID             | Where                                                                                                                                                                                                                                                                                                                        |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| DAT-01, DAT-02 | Unchanged (local only; strict durability); "Delete all data" and the guard write nothing outside the origin                                                                                                                                                                                                                  |
+| DAT-03         | Data and backups: "Storage protected: Yes/No" with an icon, the risk in one sentence, how the browser decides, "Protect my data" and its outcome; the reminder default drops to 7 days and shows prominently (border, shield icon, a sentence) while unprotected; device support lists it                                    |
+| DAT-04         | "Using 5.5 MB of the 10.7 GB this browser allows", or "Storage use: not reported by this browser"; a failed export says to free space                                                                                                                                                                                        |
+| DAT-05         | One tap "Export backup" with busy, "Saved to Downloads as …", "Not saved" and failure states; "Export a backup first" in the delete sheet                                                                                                                                                                                    |
+| DAT-06         | Restore with "Checking the file…", "Restoring…", and "The restore did not complete. Nothing was changed."; the safety copy before a restore is listed                                                                                                                                                                        |
+| DAT-07         | Old raw data becomes a backup of its own `dataVersion` (`encodeRawSnapshot`), imported through the existing migration chain (formats test with the v1 fixture)                                                                                                                                                               |
+| DAT-08         | Reminders on Home and the workout summary: no backup with training data, older than the cadence (7/14/30 days or off; 14 by default, 7 unprotected), or 8 workouts since; "Remind me later" (3 days); the cadence in Data and backups                                                                                        |
+| DAT-13         | "Delete all data…": an "Export a backup first" offer, typed DELETE in a sheet (two steps), every database and both storages deleted, "All data deleted", "Start again" into the first run                                                                                                                                    |
+| DAT-14         | Safety snapshot before the update; a failing update is rolled back by IndexedDB; the recovery screen with "Save a copy of your data", "Export diagnostics", "Try again"; a fixed version updates the same data (E2E with a simulated failing migration); migrations never run during a workout (the install gate, unchanged) |
+| CAL-01         | Plan → "Add to calendar" (`/plan/calendar`): rest of the week, this block, next 2/4/8 weeks, until the meet; RFC 5545 output (unit tests, E2E checks the file); Samsung and Google import is S-6                                                                                                                             |
+| CAL-02         | Title "POWR · Upper A (Week 3)", the planned start time per weekday, a chosen time or all-day, the PLN-14 duration, the exercises with their sets, reminders none/15/30/60/120 min; no personal data                                                                                                                         |
+| CAL-03         | UTC per event from the local wall-clock time; both Zurich DST changes tested                                                                                                                                                                                                                                                 |
+| CAL-04         | `<plannedSessionId>@<host>` UIDs, `SEQUENCE` up on every change, `STATUS:CANCELLED` for sessions that are gone; "Your plan changed" on the Plan and export screens; the duplicates note with the removal hint                                                                                                                |
+| CAL-05         | Download by default; "Share with a calendar app" only where `canShare` accepts the `.ics`; the import guide (Samsung Calendar, Google Calendar) focused after the export; works offline (precached chunks)                                                                                                                   |
+| PWA-01         | Manifest unchanged except the shortcuts (icons, standalone, no orientation lock)                                                                                                                                                                                                                                             |
+| PWA-02         | Install card on Home and the summary from the second page load, never during a workout, "Not now" for 14 days; Chrome's own dialog, Samsung Internet's menu steps                                                                                                                                                            |
+| PWA-03         | Every new screen and chunk is precached (185 files); the calendar export and the device-support screen work offline                                                                                                                                                                                                          |
+| PWA-04, TD-14  | "Update before you start?" on the start screen (never during a workout); "POWR was updated in another window. Reload."                                                                                                                                                                                                       |
+| PWA-05         | Two manifest shortcuts, opened offline, Home beneath them                                                                                                                                                                                                                                                                    |
+| PWA-09         | `.ics` sharing only where allowed; backups always download (P-04); diagnostics download                                                                                                                                                                                                                                      |
+| PWA-12         | Back closes sheets first, then leaves the screen; leaving `/session` keeps the workout (E2E); stable deep links; a shortcut's Back goes to Home                                                                                                                                                                              |
+| PWA-13         | `/settings/device-support`: 11 capabilities plus the alerts row with the S-1 matrix, statuses in words with icons, the fallback per row, the device-test state; S-1/S-2 protocols named                                                                                                                                      |
+| PWA-14         | Unchanged; the new screens use `pt-safe` and the shell's safe areas                                                                                                                                                                                                                                                          |
+| ANL-02 (TD-55) | Progress hub rows: current e1RM ("still calibrating" where so) and the change label in words with an icon                                                                                                                                                                                                                    |
+| EXL-02 (TD-56) | Multi-select filters per dimension, chips per value, "Clear all"                                                                                                                                                                                                                                                             |
+
+**Not built (and why):** PWA-05's "Quick timer" (TMR-15 does not exist yet) and "Last workout summary"; PWA-09 sharing of session summaries and PR cards as images (MOT-09, v1.2); PWA-10 share target (v1.x); the save picker for backups (TD-15, waits for S-2); safety copies' 30-day auto-prune (decision); unsaved-edit prompts in the editors (`useBlocker`; not M5d's files); CAL-06 milestone events (v1.x); an S-2 capability matrix compiled like S-1's (open decision); per-category storage estimates (photos, safety copies) from DAT-04 (photos are v1.2). TD-63 (route validators into the lazy chunks) was not in this brief.
+
+### Evidence
+
+`pnpm verify` green on 2026-11-25 (exit 0): lint (0 errors, 0 warnings), format, token gate, knip, catalog check, typecheck, 986 unit and 107 component tests, build, licence gate, size and 73 E2E tests (3 opt-in skipped). Four earlier runs stopped only at the component step, because another worktree's Vitest held the fixed browser port 23315 (TD-58); everything before it was green each time. In detail:
+
+- **Unit and property tests:** 986 tests in 82 files (882 before). New: `packages/formats/test/ics.test.ts` (74: golden calendar, CRLF, folding of ASCII, umlauts, CJK and emoji at 75 octets, escaping, UTC and both Zurich DST changes, durations, triggers, UID rules, cancellations, input checks, fast-check fold/unfold, escape and structure properties), `packages/formats/test/snapshot.test.ts` (3: a v1 database as a v1 backup the import migrates; a record import would reject is kept; invalid versions), settings `backup` schema and hostile-key cases, `packages/application/test/m5d.test.ts` (13: reminder rules, inputs and the strict settings record, safety copies, upgrade snapshot and rescue copy, calendar export UIDs/times/durations/alarms, a move raising `SEQUENCE` and the "plan changed" status, `STATUS:CANCELLED`, DST, all-day and errors), `packages/application/test/summaries.test.ts` (TD-55, 4), `apps/web/src/features/library/search.test.ts` (TD-56, 3), `apps/web/src/infrastructure/db/upgrade-guard.test.ts` (5, fake-indexeddb: pending update without opening, raw read without upgrading or creating, **a simulated failing migration: snapshot, rollback, rescue copy, then a fixed update of the same data**, delete all with nothing reopened, the public origin).
+- **Component tests** (browser mode, real IndexedDB, axe in each): 107 in 19 files (98 before). New `test/m5d.test.tsx` (8: Data and backups with storage, cadence and a safety copy deleted after its sheet; delete all with the exact typed word; the Home reminder and "Remind me later" with focus; the calendar export with the field error, the download, the stored export and the focused guide; device support; the install card on a later visit and none during a workout; the recovery screen; "Update first"); `progress.test.tsx` (TD-55) and `library.test.tsx` (TD-56) extended; `home.test.tsx` waits for the reminder.
+- **E2E:** 73 passed, 3 opt-in skipped (65 before). New `e2e/m5d.spec.ts` (8): delete all → every IndexedDB database and both storages gone → "Start again" → welcome; the backup reminder after a workout, "Remind me later", the cadence saved; **the failing data update** (a v1 database seeded from the v1 fixture, `put`/`update` patched to throw in the version change): the recovery screen (axe, reflow), still IndexedDB version 10, "Save a copy of your data" downloads a v1 backup with every session and set, the diagnostics name `db.upgrade` and `db.recovery`, a page without the patch updates to version 20 with the same counts and lists the safety copy; the `.ics` download (file name, CRLF, ≤ 75 octets per line, one `VEVENT` and one 30-minute alarm per session, UIDs `@powr.invalid`, 18:30 Zurich = 17:30Z, the same UIDs on a second export); Back closes a sheet before the screen, a closed sheet leaves no entry, during a workout Back closes the sheet, then goes Home with the workout running, Forward returns with the set; a shortcut window opened on `/body/log?source=shortcut` goes Back to Home; the install card never on the first visit nor during a workout, once on the summary, then not again; device support with 11 rows, honest statuses and the install row. axe in light and dark and reflow at 320 px and 200% text on every new screen. `e2e/library.spec.ts` (TD-56) gets a 90 s limit (its filter sheet adds two axe scans and a reflow; 18 → about 30 s under load); `e2e/progress.spec.ts` extended (TD-55).
+- **Size:** entry JS **183.56 kB** gzip of 186 (182.21 before: the install capture, the stored-version check, the launch seeding, two route definitions, the stale-window banner, the container's additions; about 0.1 kB are TD-56's validators); CSS 7.22 kB; service worker 9.16 kB; precache 185 files + sw.js, 991.6 kB; **startup path 1 script, 0 with Zod**. Licence gate passed.
+- **Lint** 0 warnings, format, token gate, knip, catalog check, typecheck: clean.
+
+**Screenshots** (360 × 780, light and dark; `*-320px-200pct.png` for reflow; handed over outside the repository): `data`, `data-delete-all`, `data-deleted`, `data-safety-copies`, `data-verify`, `home`, `home-backup-reminder`, `session-summary`, `install-promotion`, `calendar-export`, `plan-week`, `device-support`, `recovery-upgrade`, `progress` (TD-55), `library`, `library-filtered`, `library-filters` (TD-56).
+
+### Open items
+
+- **Device tests:** S-2 (`docs/device-tests/S-2-protocol.md`) and S-6 (`docs/device-tests/S-6-protocol.md`) on the S22; their results change the Device support texts, the Samsung Internet install steps, the import guide and the duplicates note. A manual TalkBack pass of the new screens (the delete sheet, the cadence radio cards, the recovery screen, the device-support rows, the install card's focus after "Not now").
+- **Merge:** the startup budget is shared by three agents; M5d adds about 1.2 kB. TD-63 (route search validation into the lazy route chunks) would win back roughly 1 kB if the merge needs it.
+- `VITE_PUBLIC_ORIGIN` must be set by the deploy pipeline (`deploy/`, CI) before the first beta with calendar exports; until then UIDs end in `@powr.invalid`, which calendar apps accept.
+- Settings should link Device support (M5s's screen); until then the link is in Data and backups.
+- The calendar export runs the PLN-14 estimate per session; a plan with very long ranges (52 weeks) is untested on the S22 for speed.
+- Unsaved-edit prompts on Back in the plan and equipment editors (PWA-12's "asks before discarding unsaved edits").
+
+### Doc amendments for the docs pass
+
+- **Technical concept §6.6:** UID `<plannedSessionId>@<host>` from the one public-origin value (`VITE_PUBLIC_ORIGIN`, default `powr.invalid`); `SEQUENCE` = revision for a first export, then up by one on every change of the written event; cancellations and out-of-range updates as built; the range and time choices; the event texts; `meta.calendarExport`.
+- **§6.7 step 3, §6.8:** the guard as built (`indexedDB.databases()`, the raw read, the snapshot as a backup of the stored `dataVersion`, no update without it, the recovery screen's three actions, no restore there); the `versionchange` banner.
+- **§8.2.1:** "Delete all data" as built (the four databases through their own instances, both storages, notifications; Cache Storage kept as app files only; the deletion screen and "Start again"); safety copies listed with save and delete, no auto-prune (pending decision); the `SafetySnapshots` port's `list`, `read`, `delete`.
+- **§8.2.2:** the install-prompt state lives in `localStorage`, not `meta`; `meta` gains `backupReminder` and `calendarExport`; settings gain `backup.reminderDays` (unreleased version 2 amended again).
+- **§8.2.5, DAT-08:** the reminder rule as built (cadence, 8 workouts, 3-day snooze, the unprotected default).
+- **§8.3.4:** `encodeRawSnapshot` (older `dataVersion` files from raw records).
+- **§8.4:** the manifest shortcuts as built; the deep-link launch puts Home beneath.
+- **§8.9.1:** Back and sheets as built (`ui/back-dismiss.tsx`); `/plan/calendar` and `/settings/device-support`; TanStack's batched history writes.
+- **§8.13:** `@powr/formats/ics` as built (all-day `DTEND`, no `VALARM` on cancelled events, input checks, no `node-ical`: a test-local RFC 5545 reader).
+- **§8.23:** the Device support screen as built (levels, the S-1 matrix for alerts, "Device test S-2 has not run yet").
+- **§11.2:** TD-14 narrowed (the "Update first" offer, the safety-copy UI and the other-window handling are built; the one-tap start from Home skips the offer); TD-55, TD-56, TD-57 closed; new items: the S-2 matrix, the safety-copy auto-prune decision, unsaved-edit prompts.
+- **PRD (proposals, not edited):** PWA-05 lists the two shortcuts built; DAT-08 states the 3-day "Remind me later"; CAL-02 "a time chosen at export" includes "All-day events"; DAT-13 says that a confirmation screen precedes the first run.
+
+## M5s settings, legal and explainability
+
+Written 2026-11-25 by the M5s work (roadmap A.4 "M5 Data, calendar, settings, legal, PWA
+polish", the settings, legal and explainability part; M5p and M5d ran in parallel). Status:
+`pnpm verify` green (numbers under "Evidence"). Nothing committed; the product owner commits.
+
+### What landed
+
+| Area                 | Where                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              | PRD                            |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------ |
+| Settings, organised  | `features/settings/SettingsScreen.tsx`: one page in ten sections (profile and plan, units, training, workout, alerts, insights, appearance, data, legal, about), each a region named by its h2 with an anchor (`parts.tsx`, `scroll-mt-16`), an "On this page" list of in-page links at the top                                                                                                                                                                                                                                                                                                                    | SET-01…11                      |
+| Profile and plan     | `ProfileSection.tsx`: every onboarding answer in words with "Change", equipment ("Manage equipment"), "Set up a (new) plan"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | SET-06, SET-08                 |
+| One answer changed   | `ProfileAnswerScreen.tsx` at `/settings/profile/$answer` (goal, experience, schedule, body, priorities, baselines): the onboarding question prefilled, "Save" → `previewProfileChange`; no plan change → stored at once; a plan change → "Your plan would change" with the changes in words and the whole new plan (`PlanPreviewView` with its "Why?"), then "Update my plan from <date>" / "Keep my current plan" (or "…and days" for a schedule) / "Back to the question"                                                                                                                                        | SET-08                         |
+| Units                | `UnitsSection.tsx` (weights, body weight, lengths) → `setUnits`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | SET-02                         |
+| Training             | `TrainingSection.tsx`: effort as RIR or RPE, effort entry by one tap per value or half steps, warm-up sets on/off, first day of the week (moved here), "Choices per exercise"; `TrainingAdvanced.tsx` (collapsible): main-lift and assistance progression, e1RM formula, lighter-week interval, each with its evidence default and "Use the evidence default"                                                                                                                                                                                                                                                      | SET-05, SET-11                 |
+| Per-exercise choices | `ExerciseChoicesScreen.tsx` at `/settings/exercises`: the plan's, recent and chosen exercises with "Keep as last time" (manual mode) and the rest timer "As set for all / Starts by itself / When I tap it"; remembered rests with "Forget"                                                                                                                                                                                                                                                                                                                                                                        | TMR-01, PRG-03, PRG-09, TMR-03 |
+| Rest times           | `RestTimesScreen.tsx` at `/settings/rest` (linked from Workout): seven rest contexts with steppers (±15 s, typed values saved after a pause), the evidence default for the user's style and level (strength: "squat and deadlift 4:00"), evidence label, "Your setting", the out-of-range note, per-row "Use the evidence default", "Reset all rest times" (optionally the per-exercise ones too)                                                                                                                                                                                                                  | SET-03, TMR-02                 |
+| Workout display      | `WorkoutSection.tsx` "Workout display": larger controls (`features/settings/display.ts`, `[data-large-controls] [data-dock]` in `app.css`: 56 px targets, larger text), celebration animations on/off (session and summary PR cards, best streak)                                                                                                                                                                                                                                                                                                                                                                  | SET-10                         |
+| Effort words         | `features/settings/effort.ts` (`useEffortWords`): "RIR 2" / "RPE 8", targets "1–2 reps in reserve" / "RPE 8–9"; used by the dock (chips read 10…6 and "≤5" with RPE; a half-step stepper with decimal entry), the exercise list, past sets, the plan's prescriptions, the "Why?" set list, the library history and the progress rep-max table                                                                                                                                                                                                                                                                      | SET-05                         |
+| Legal texts          | `features/legal/texts/` (`Disclaimer.tsx`, `Privacy.tsx`, `Imprint.tsx`, `parts.tsx`) rendered as React elements at `/legal/$page` (`disclaimer`, `privacy`, `imprint`, `how-powr-decides`, `attributions`; one route replaces `/legal/privacy` and `/legal/disclaimer`); `LegalScreens.tsx` (titles, versions, the "Draft" marker)                                                                                                                                                                                                                                                                                | LEG-01, LEG-02, LEG-09         |
+| Publisher details    | `features/legal/publisher.ts`: the one module with every publisher and legal detail (person, trading name, country, `tools@sz-development.com`, hosting, the postal address and the legal-review date as explicit placeholders); no imports, so plain Node loads it                                                                                                                                                                                                                                                                                                                                                | LEG-09                         |
+| Release gate         | `pnpm release:check` (`apps/web/scripts/release-check.ts`): fails while a placeholder remains; step "Legal release check" in the production job of `.github/workflows/deploy.yml`, before the image is promoted; not in `pnpm verify` or `ci.yml`                                                                                                                                                                                                                                                                                                                                                                  | product-owner decision         |
+| Attributions         | `/legal/attributions` (`texts/Attributions.tsx`, `attributions-data.ts`): the build's `attributions.json` (precached), software with licence, copyright, the full NOTICE (ECharts) and the licence text behind "Licence text", then POWR's own work; `tools/licence` now writes the distributed assets of `assets-inventory.yaml` into `attributions.json` (`kind: 'asset'`)                                                                                                                                                                                                                                       | LEG-06, LEG-08                 |
+| How POWR decides     | `/legal/how-powr-decides` (`texts/HowPowrDecides.tsx`): suggests-never-decides, where numbers come from, the five evidence labels and their study types, preliminary values (with the count), the registry, content and engine versions, then 13 areas (e1RM and trends, volume, progression, lighter weeks, rest, warm-ups, session details, planning, readiness, body weight, points, streaks, rankings), each in plain words with "The values behind it": every registry value with its label, evidence, "Preliminary value" and sources, and the area's full citations; each value has an anchor `#param-<id>` | LEG-05, PRG-09                 |
+| "Why?" sheet         | `features/why/WhySheet.tsx`: each parameter by its label, with "How POWR decides" (to its anchor; works with or without a router); a "Sources" list with full citations (authors, year, details, DOI and source links that open in a new tab); `evidence.ts` (labels), `citations.tsx`, `param-labels.ts`                                                                                                                                                                                                                                                                                                          | TD-33, PRG-09                  |
+| Citations            | `packages/rules/scripts/citations.ts` (`@powr/rules/citations/node`: `parseCitation`, `compileCitations`, `loadCitations`) reads `data/sources/*.yaml`; `apps/web/scripts/citations-plugin.ts` serves it as `virtual:powr-citations`, generated on every build and dev start through Vite's module runner, imported with `import()` (12.8 kB gzip lazy chunk)                                                                                                                                                                                                                                                      | TD-33                          |
+| Parameter labels     | `features/why/params/labels.ts`: 143 `params.<id>` messages, typed `satisfies Record<ParamId, MessageDescriptor>`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | TD-33                          |
+| Lazy catalogs        | `lingui.config.ts`: two more catalogs, `legal` (`features/legal/texts`, 6.2 kB gzip) and `params` (`features/why/params`, 3.2 kB); `i18n/index.ts` `loadCatalog(name)` merges one on first use; `scripts/i18n-check.ts` checks every catalog                                                                                                                                                                                                                                                                                                                                                                       | §8.19                          |
+| Use cases            | New lazy entry `@powr/application/settings` (`setAlertSettings` (TD-42), `restTimes`, `setRestTime`, `resetRestTimes`, `resetExerciseRest`, `exerciseChoices`, `setExerciseChoice`, `setTrainingPreferences`, `setDisplayPreferences`, `setUnits`, `trainingParameters`, `setTrainingParameter`); planning entry: `profileAnswers`, `previewProfileChange`, `saveProfileChange` (`planning/profile.ts`); root: `ALERT_DEFAULTS`, `TRAINING_DEFAULTS`, `DISPLAY_DEFAULTS`; `startWorkout` reads the warm-up switch                                                                                                  | TD-42, SET-08                  |
+| Settings record      | Unreleased v2 amended: `training` (`effortScale` 'rir'/'rpe', `rirInput` 'chips'/'decimal', `warmups`) and `display` (`largeControls`, `celebrations`), both strict and optional; arbitraries and a strictness test                                                                                                                                                                                                                                                                                                                                                                                                | SET-05, SET-10                 |
+
+### Product-owner decisions (2026-11-25) and what they became
+
+1. **Publisher:** "Simeon Zimmermann, SZ WEB DEVELOPMENT, Switzerland", e-mail
+   `tools@sz-development.com`, in `LEGAL_DETAILS` (privacy notice, imprint, About, both notices'
+   contact lines).
+2. **Postal address a placeholder, in one config module:** `postalAddress` is a `Placeholder`
+   ("the postal address of the publisher (LEG-09)"); the texts say "Postal address: to be added
+   before the public release." The legal-review date is a second placeholder (V-05/V-06), so the
+   gate also holds the drafts back.
+3. **Release gate:** `pnpm release:check` fails today with both placeholders (exit 1, the list in
+   the message); `deploy.yml` runs it first in the production job (pnpm and Node set up, no
+   install); `pnpm verify` and `ci.yml` do not run it. The "Draft" marker (an outlined warning
+   callout naming what is missing) shows on the health notice, privacy notice and imprint while
+   any placeholder remains; since production cannot deploy with one, only dev and beta builds
+   show it.
+4. **Domain:** no domain anywhere; the texts need no public URL. If a later text needs the
+   website's address it takes M5d's public-URL setting (default `powr.invalid`).
+
+### PRD coverage (requirement → screen or element)
+
+| ID                     | Where                                                                                                                                                                                                                                                                                                                                   |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| SET-01                 | Appearance: System / Light / Dark, applied without a reload (unchanged behaviour, own section)                                                                                                                                                                                                                                          |
+| SET-02                 | Units: weights, body weight, lengths (`setUnits`; display only, no drift)                                                                                                                                                                                                                                                               |
+| SET-03                 | `/settings/rest`: rest per context, superset transition, warm-up rests, reset to evidence defaults (also the per-exercise rests); auto-start and count-up in Workout; pre-alert timing in Alerts                                                                                                                                        |
+| SET-04                 | Alerts (M3t; now through `setAlertSettings`)                                                                                                                                                                                                                                                                                            |
+| SET-05                 | Training: RIR or RPE, chips or half steps, warm-ups, week start; advanced: main-lift and assistance progression, e1RM formula, lighter-week interval; rounding, check-in and hints stay in Workout                                                                                                                                      |
+| SET-06                 | Profile and plan → "Manage equipment" (`/settings/equipment`)                                                                                                                                                                                                                                                                           |
+| SET-08                 | "Change" per answer → one question → no re-plan when the plan stays the same, else the preview and "Update my plan from <next week>" / "Keep my current plan" (the next block or the next plan uses it)                                                                                                                                 |
+| SET-09                 | Legal (health notice, privacy notice, publisher and imprint, How POWR decides, licences and attributions) and About (version and build, rules registry and content versions, publisher, "Questions or feedback" by e-mail)                                                                                                              |
+| SET-10                 | Keep screen on and vibration (Alerts, M3t); Workout display: larger controls, celebration animations (reduced motion still applies)                                                                                                                                                                                                     |
+| SET-11                 | Training → first day of the week                                                                                                                                                                                                                                                                                                        |
+| TMR-01, PRG-03, PRG-09 | `/settings/exercises`: per-exercise auto-start; "Keep as last time" (manual mode)                                                                                                                                                                                                                                                       |
+| LEG-01                 | `/legal/disclaimer`: §8.1 in full (not medical advice, see a doctor first, stop and get help with 112, lifting safely, pain and readiness as self-tracking, nutrition limits incl. under 18, your decisions), version, re-acknowledged on a new version (versions bumped to 2026-11-25)                                                 |
+| LEG-02                 | `/legal/privacy`: §8.2 in full (in short, responsible publisher, what is stored where and why incl. health data, what we do not do, hosting with Hetzner in Germany and no access logs, permissions, backups unencrypted, data loss, deleting, rights under revFADP and the GDPR incl. the FDPIC, legal framework, changes and contact) |
+| LEG-03                 | Unchanged (onboarding confirmation); the notices name the under-18 limits                                                                                                                                                                                                                                                               |
+| LEG-05                 | `/legal/how-powr-decides`, linked from Settings and from every parameter in a "Why?" sheet                                                                                                                                                                                                                                              |
+| LEG-06, LEG-08         | `/legal/attributions` from the build's `attributions.json`: every distributed package and asset, the ECharts NOTICE; E2E: the screen lists exactly the distributed entries of `licence-inventory.json`                                                                                                                                  |
+| LEG-07                 | All new copy: no diagnosis, no prediction, "suggests; you decide"                                                                                                                                                                                                                                                                       |
+| LEG-09                 | `/legal/imprint` and the privacy notice's responsible party, offline                                                                                                                                                                                                                                                                    |
+| TD-33                  | Full citations and labels in the "Why?" sheet and "How POWR decides"                                                                                                                                                                                                                                                                    |
+| TD-42                  | `setAlertSettings` in `@powr/application/settings`; the hook calls it                                                                                                                                                                                                                                                                   |
+| TD-49                  | All of it (see SET-03, SET-05, TMR-01, PRG-03, PRG-09)                                                                                                                                                                                                                                                                                  |
+
+**Not built (and why):** SET-07 advanced science settings (Could, v1.x); SET-09's changelog
+(NFR-MNT-07: `tools/release-notes` and `changelog.json` do not exist yet) and "Device support"
+(PWA-13, M5d's area); LEG-04 pre-participation self-screening (Should; wording and licensing to
+check, §8.4); voice cues (SET-04 Could); a website copy of the legal texts as static HTML
+(`legal/*` in the image, technical concept §7.1; the texts live in the app only so far).
+
+### Decisions and deviations
+
+| Brief or concept says                                                         | What I did                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| ----------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Settings in "clear sections"                                                  | One page with ten sections and an "On this page" list (the E2E and component tests address sections by region); deeper editors are routes: `/settings/profile/$answer`, `/settings/rest`, `/settings/exercises`                                                                                                                                                                                                                                                                                                                     |
+| Legal routes `/legal/privacy`, `/legal/disclaimer`                            | One route `/legal/$page` (five pages), so the startup route tree grows by one route, not three; the URLs stay the same                                                                                                                                                                                                                                                                                                                                                                                                              |
+| Legal, attribution and citation data lazy                                     | Texts and parameter labels in their own Lingui catalogs, citations a virtual module, attributions fetched from the precached `attributions.json`; the boot catalog grew only by the new settings strings (50.7 → 52.7 kB gzip)                                                                                                                                                                                                                                                                                                      |
+| Citations "generated at build time" by a generator in the rules build scripts | `packages/rules/scripts/citations.ts` plus a Vite plugin in the app, so the chunk never goes stale when the registry changes (no committed copy to regenerate at merge); plain Node cannot load the rules scripts (extensionless imports), so the plugin uses `runnerImport` like `tools/content-build`                                                                                                                                                                                                                             |
+| "Why?" sheet links each parameter to its entry                                | A plain same-origin link that navigates in-app through the router when there is one (component previews render the sheet without a router)                                                                                                                                                                                                                                                                                                                                                                                          |
+| SET-08 "regenerate from next week or next mesocycle, or only future plans"    | "Update my plan from <start of next week>" (this week's sessions stay; the old plan ends then); "Keep my current plan": the answer is stored and the next block's proposal reads experience, priorities, avoid and the reference set from the profile anyway, so "next mesocycle" needs no extra step; style and training days belong to the plan and apply to the next plan the user sets up. A schedule change that does not change the plan (start times, a session length that still fits) updates the plan's schedule in place |
+| "Re-plan only when needed"                                                    | `previewProfileChange` generates the plan for the old and the new answers with the same options (template if the style stays, block length, variety, seed, week start) and compares template, block, days, targets and level; equal → no re-plan                                                                                                                                                                                                                                                                                    |
+| SET-05 advanced values                                                        | Registry overrides (§8.6.3) through `setTrainingParameter` with short choice keys; a main-lift model applies to every level; APRE and the RTS chart are not offered                                                                                                                                                                                                                                                                                                                                                                 |
+| Rest overrides                                                                | A value equal to the evidence default removes the override (so a registry update still reaches the user); a global strength rest also replaces the squat/deadlift variant, which the row says                                                                                                                                                                                                                                                                                                                                       |
+| Effort as RPE                                                                 | Display and entry only; records and the engine keep RIR. Onboarding still asks in RIR (before the preference exists)                                                                                                                                                                                                                                                                                                                                                                                                                |
+| Publisher module location                                                     | `features/legal/publisher.ts` with a file-level `lingui/no-unlocalized-strings` disable (names and addresses are data), as `ui/body-map/artwork.gen.ts` does                                                                                                                                                                                                                                                                                                                                                                        |
+
+**Found on the way:** axe flagged an invalid `<dl>` (dt/dd inside nested divs) in my first
+profile summary (now a list); the rest stepper snapped back to the stored value when cleared before
+typing (now an empty field is a draft of its own).
+
+### Evidence
+
+`pnpm verify` green on 2026-11-25 (exit 0), run in this worktree (the component tests waited for
+another worktree to free Vitest's browser port, TD-58): lint (0 errors, 0 warnings), format, token
+gate, knip, catalog check (three catalogs), typecheck, **907 unit tests in 80 files and 113 component tests in 21 files** (882 and 98 before),
+build, licence gate (37 distributed, 841 build-only, passed), size (**entry JS 182.72 kB gzip** of
+186, was 182.21: one net route more, the settings defaults in the root entry, the settings hooks;
+startup path 1 script, 0 with Zod), **70 E2E tests** (65 before; the 3 opt-in S-4 measurements skipped); precache 189 files + sw.js, 1016.1 kB.
+
+- **Unit:** `packages/application/test/m5s.test.ts` (alert settings, rest times and their reset,
+  the session resolving a user's rest, training and display preferences, warm-ups off at the
+  start, per-exercise choices, units, the advanced choices, SET-08: no re-plan, re-plan from next
+  week with this week kept, keep the plan, schedule-only change, invalid answers, stale preview,
+  no plan, reference set); `packages/formats/test/backup.test.ts` (the new settings objects are
+  strict); `packages/rules/scripts/citations.test.ts` (every active source, no excluded one, every
+  cited source has a citation, parsing never loses text); `apps/web/scripts/release-check.test.ts`
+  (fails with the placeholders, passes when filled, the CLI exits 1);
+  `apps/web/src/features/why/params.test.ts` (a label for every registry parameter in the shipped
+  catalog); `tools/licence/test/gate.test.ts` (distributed assets in the attributions).
+- **Component** (real IndexedDB, axe in light and dark): `test/settings-m5.test.tsx` (the ten
+  sections in order with their anchors, units, training and display preferences, the advanced
+  choices with reset, rest times with the out-of-range note and reset, per-exercise choices),
+  `test/profile-edit.test.tsx` (an answer without a re-plan, a schedule change with its preview
+  and update, keeping the plan for a priority, an incomplete answer pointed out),
+  `test/legal.test.tsx` (privacy notice in full with the draft marker and mail links, health
+  notice, imprint, attributions with the real ECharts NOTICE and own work, the missing-file
+  message, How POWR decides opening the linked value, the "Why?" sheet with labels and full
+  citations).
+- **E2E** (`e2e/settings-legal.spec.ts`, production build with Trusted Types): a strength rest of
+  200 s reaches a squat set (3:20 instead of 4:00) and the reset brings 4:00 back; a schedule
+  change in Settings shows the re-plan preview and updates the plan; the legal screens before
+  onboarding with the lazy texts, the draft marker and the versions; a "Why?" sheet in a workout
+  links to its value in How POWR decides (focused and in view); the attributions screen equals
+  `attributions.json` and the distributed entries of `licence-inventory.json`, with the ECharts
+  NOTICE byte for byte. axe in light and dark and reflow at 320 px and 200% text on each.
+
+**Screenshots** (360 × 780, light and dark; `*-320px-200pct.png` for reflow), in the coordinator's
+scratchpad `m5s-screens/`: `settings`, `settings-rest-times`, `settings-profile-edit`,
+`settings-replan-preview`, `why-sheet-citations`, `legal-privacy`, `legal-disclaimer`,
+`legal-imprint`, `legal-how-powr-decides`, `legal-attributions`.
+
+### Open items
+
+- **Legal review (M6, V-05/V-06):** both texts and the imprint are drafts; fill `postalAddress`
+  and `legalReview` in `publisher.ts`, bump `versions.ts` if the wording changes, then
+  `pnpm release:check` passes. To confirm there: GDPR applicability, the FDPIC/EU authority
+  wording, 112 as the emergency number, the imprint content for Switzerland and the EU, whether
+  the hosting sentence about transient connection data is enough.
+- **Merge with M5p:** a new registry parameter needs its label in
+  `features/why/params/labels.ts` (the type and `params.test.ts` fail until it has one), then
+  `pnpm i18n:extract`; new sources need nothing (the citations are generated).
+- **Merge with M5d:** `routeTree.gen.ts` and the catalogs regenerate; the data link in Settings
+  points at `/data`; if M5d adds settings fields to the v2 record they sit next to `training` and
+  `display`.
+- **TalkBack on the S22:** the "On this page" links, the profile rows' "Change" names, the rest
+  steppers with their hint, the re-plan preview's reading order, the RPE chips' names, the long
+  attributions list.
+- TD-58 (the component tests' fixed port) made `pnpm verify` wait for another worktree.
+
+### Proposed PRD wording (not edited)
+
+- **SET-05:** "RPE or RIR display and entry (RPE = 10 − RIR; records keep RIR); RIR entry by one
+  tap per value (0–4, 5+) or in half steps."
+- **SET-08:** "… choose whether to update the current plan from the start of next week (this week
+  stays as planned) or keep it; experience, priorities, exercises to avoid and the reference set
+  then reach the next block's proposal, style and training days the next plan. Only an answer
+  that changes the plan asks; the new plan is shown before anything is stored."
+- **SET-09:** "… and a contact route by e-mail (`tools@sz-development.com`)."
+- **LEG-09:** "… a postal contact address (a release check blocks production until it is
+  provided) and e-mail."
+
+### Doc amendments for the docs pass
+
+- Technical concept §8.9.1 (routes: `/legal/$page`, `/settings/rest`, `/settings/exercises`,
+  `/settings/profile/$answer`), §8.12/§8.21 (attributions include the distributed assets;
+  `pnpm release:check` in the production deploy), §8.6.4 (How POWR decides as built: generated
+  from the resolved registry and the citations chunk), §8.9.8 (the "Why?" sheet as built: labels
+  and full citations; TD-33 closed), §8.8.7 (TD-42 closed), §8.2.2 (settings `training` and
+  `display`), §8.15 and §8.19 (lazy `legal` and `params` catalogs, the citations chunk), §11.2
+  (TD-33, TD-42, TD-49 closed).
+
+## M5p content and engine follow-ups
+
+Written 2026-11-25 by the M5p work (the M5 content pass and the trend follow-ups, in parallel with
+M5d and M5s): TD-23 / PRD A-05 (library 74 → 190 exercises), TD-37 (alternative templates), TD-59,
+TD-60 and TD-62. Content 0.2.0 → **0.3.0**, rules 1.6.0 → **1.7.0** (`1.7.0+127ea5b9a286`),
+`ENGINE_VERSION` 0.1.0 → **0.2.0**. Status: every `pnpm verify` stage green; see "Evidence" for the runs.
+
+### What landed
+
+| Task                   | Where                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| TD-23 / A-05 library   | 116 new exercises in `packages/content/data/exercises/*.yaml` (each file's header names the EB rows the new entries follow); `packages/content/package.json` 0.3.0; `content.json`, `ids.lock.json` (+124 IDs: 116 exercises, 5 substitution groups, 3 templates) and the `powr-content-*` inventory entries rebuilt by `pnpm content:build`                                                                                                                                                                                                          |
+| TD-37 alternatives     | `templates/bb-full-body-5day.yaml` (PRD-named "Full body ×5"), `bb-full-body-4day.yaml` ("Full body ×4"), `bb-upper-lower-6day.yaml` ("Upper/lower ×3"), all `default: false`                                                                                                                                                                                                                                                                                                                                                                         |
+| TD-59 TE floor         | `trendObservation` (`packages/domain/src/trend/index.ts`): σ = max(σ_set, TE[level]); `ObservationRules` gains `load.trend.typicalErrorCv`                                                                                                                                                                                                                                                                                                                                                                                                            |
+| TD-60 memory, 12 weeks | `MAX_POINTS` 30 → 60 and `MAX_RECENT` 12 → 60 (`packages/domain/src/session/history.ts`); `load.trend.reference` advanced 8 → 12 weeks (`packages/rules/data/load.yaml`, rules 1.7.0)                                                                                                                                                                                                                                                                                                                                                                 |
+| TD-62 "no label" text  | `labelChange` passes `reason: 'noise' \| 'unconfirmed'` with `trend.change.none`; `why.trend.change.none` selects on it (`apps/web/src/features/why/{messages,args}.ts`, `en/messages.po`)                                                                                                                                                                                                                                                                                                                                                            |
+| Tests                  | `tools/content-build/test/coverage.test.ts` (A-05 size, the six preset gaps closed, PRD-named alternatives), `packages/domain/test/reference/trend.test.ts` (TE floor, 12-week window, TD-62 reason), `session/reference.test.ts` (60 points and exposures, the 12-week reference), `trend-calibration.test.ts` (snapshot and bounds), `packages/application/test/m2c.test.ts` (the override lists and generates the alternatives), plan-matrix snapshot, `planning.test.ts` (rules 1.7.0), `apps/web/e2e/m2c.spec.ts` (two plans now need four days) |
+
+**Why 60 and 60 (TD-60 asked for at least 40 / 30).** The change label needs a point
+`load.trend.reference` weeks back (now 12 for advanced lifters) that is not one of the kept series'
+first 3 points, and the rep-range flag needs the exposures on or before that date. At 4 sessions
+a week of one lift that is 12 × 4 + 4 = 52 points; 40 would cover 3 sessions a week only. Both
+lists hold a few numbers per entry, so 60 costs little in `dExerciseState`. Stored states rebuild
+on first use: the rules stamp, the content version and `ENGINE_VERSION` are all part of the
+derivation key, and the engine version had to move anyway because TD-59 changes outputs for the
+same inputs (§7.8).
+
+**TD-62 as built.** "No label" now has two texts. Within one typical error: "That's within normal
+day-to-day variation (about 3.3%), so there's no real change yet." (unchanged). Beyond one typical
+error but not yet beyond `likelyZ` SD of its own uncertainty, or not for 3 sessions in a row:
+"That's more than normal day-to-day variation (about 3.3%), but it isn't a confirmed change yet.
+POWR calls it real once the trend is clear enough and the change holds over a few sessions in a
+row." No new rule ID was needed (`RuleId` is unchanged); the arg is the domain's, the text the
+"Why?" catalog's.
+
+### Content stats (0.2.0 → 0.3.0)
+
+- **Exercises:** 74 → **190** active (isolation 98, compound 92; unilateral 7 → 36). By pattern:
+  horizontal push 7 → 19, core 5 → 15, hinge 6 → 14, elbow flexion 5 → 14, squat 5 → 12, vertical
+  push 4 → 12, elbow extension 4 → 11, hip extension 3 → 10, horizontal pull 5 → 9, vertical pull
+  4 → 8, lunge 2 → 8, knee flexion 3 → 8, shoulder abduction 3 → 7, calf 4 → 7, horizontal
+  adduction 2 → 7, horizontal abduction 4 → 7, shrug 2 → 5, hip abduction 1 → 4, hip adduction
+  1 → 4, knee extension 2 → 3, wrist flexion 1 → 3, wrist extension 1 → 3; carry 0 (see open items).
+- **By load type:** machine/cable 19 → 49, bodyweight + added 16 → 39, barbell 16 → 38, dumbbell
+  19 → 38, band 3 → 24, bodyweight-assisted 1 → 2. Curve class: pooled 146, equation 34 (every
+  competition lift and close variant, the bench-like presses and push-ups), leg-press-like 10.
+- **By equipment** (exercises that use an item of the category): free weights 86, bars 39, benches
+  35, cables 28, accessories (bands, landmine) 28, machines 25, racks 20, bodyweight stations 12,
+  no equipment at all 24.
+- **Per display group** (exercises crediting it ≥ 0.5 / = 1.0): chest 31/28, front delts 30/12,
+  side delts 15/7, elbow flexors 29/14, forearms 10/6, abs 12/8, obliques 15/6, quads 29/23,
+  adductors 34/5, tibialis 0/0, upper traps 8/5, mid back 16/9, lats 17/17, rear delts 16/16,
+  triceps 42/16, lower back 14/6, glutes 49/27, hamstrings 24/14, calves 7/7.
+- **Per preset** (available exercises): commercial gym 74 → 190, home barbell gym 54 → 128,
+  dumbbells and bench 29 → 63, bodyweight and bands 19 → 60, hotel gym 37 → 91, "Custom (empty)"
+  10 → 24. Every display group except the optional tibialis has ≥ 2 exercises crediting it ≥ 0.5
+  under every preset with equipment (EXL-01): the six M1 gaps are closed (bodyweight and bands ×
+  calves, forearms, lower back, upper traps; dumbbells and bench × upper traps; hotel × upper
+  traps), and `KNOWN_PRESET_GAPS` is empty.
+- **Credits:** 217 → 526 (H 42 → 74, EMG 4 → 9, C 171 → 443). H and EMG tags only where the EB row
+  names the exercise or the same loaded movement (loaded curls Mannarino 2021, rows Mannarino 2021,
+  pulldowns Gentil 2015, flat-bench variants PubMed 24265879, incline presses PubMed 34644424 (EMG),
+  hip thrusts Plotkin 2023, straight-knee calf raises Kassiano 2023, good morning Bourne 2017 as in
+  the RDL row, triceps extensions Maeo 2023); band versions, kickbacks, Smith-machine and other
+  extrapolations are C, as M1 did. No new source was needed.
+- **Competition variants (EXL-07):** squat: paused, **tempo**, **pin**; bench: long-pause,
+  close-grip, **Spoto**, **pin**, **Larsen**; deadlift: deficit, **block pull**, **paused**. All
+  have `fixedRom`, rest class `strength`, strength reps within 1–6 and the equation curve class.
+- **Substitution groups:** 29 → 34 (new: `sg.lat-isolation`, `sg.upright-row`, `sg.pull-through`,
+  `sg.back-extension`, `sg.trunk-rotation`); no single-member group is left (M1 had seven).
+- **Judgement calls:** the floor back extension sits in `core` (no spinal-extension pattern); the
+  diamond push-up credits the pec 0.5 (hands closer than the close-grip bench); the handstand
+  push-up rates overload suitability 0 (it cannot be made lighter, so the pike push-up stays the
+  first bodyweight press); incline and low-to-high flies credit the clavicular head but do not rank
+  it, so a plain chest-fly slot keeps the pec deck or flat fly. Exercise names that carry a
+  person's name (Arnold, Spoto, Larsen press; "Bayesian curl" as a search synonym) are the common
+  names of the movements; all cues are written for POWR.
+
+### TD-37: the alternative templates
+
+| Cell            | Default (unchanged)          | New alternative                   | Levels                         | Why                                                                 |
+| --------------- | ---------------------------- | --------------------------------- | ------------------------------ | ------------------------------------------------------------------- |
+| Bodybuilding ×5 | Upper/lower + push/pull/legs | **Full body ×5** (`fullBody`)     | intermediate, advanced         | Named by PLN-02 ("Upper/Lower + PPL hybrid or Full body ×5")        |
+| Bodybuilding ×4 | Upper/lower ×2               | **Full body ×4** (`fullBody`)     | novice, intermediate, advanced | POWR addition: shorter whole-body sessions; each muscle 2–3× a week |
+| Bodybuilding ×6 | Push/pull/legs ×2            | **Upper/lower ×3** (`upperLower`) | intermediate, advanced         | POWR addition: shorter sessions than PPL; each muscle 2–3× a week   |
+
+Each alternative serves only levels its cell's default serves, differs from it in split, and gives
+every major muscle slots on at least two days (PLN-04). The override sheet (M2c `TemplateChooser`)
+lists them without UI changes: `templateChoices` returns every template of the style, and an
+alternative for the user's days and level shows "Fits your training days and your level." below
+the recommended plan; choosing it generates with `plan.template.chosen` and its split text. The
+coverage test now asserts the PRD-named alternative and that every alternative has a default in
+its cell, and `m2c.test.ts` checks the override end to end: for five bodybuilding days the sheet's
+fitting choices are the upper/lower + PPL default (recommended) and Full body ×5, which then
+generates with `plan.template.chosen`; four and six days list their alternative; a novice is
+refused Upper/lower ×3 with `plan.template.levelMismatch`. Powerlifting and powerbuilding
+cells have no alternative (the PRD names none).
+
+### Plan matrix (PLN-01) and the snapshot diff
+
+18 templates × 6 presets × 3 levels × 6 budgets = **1,944 combinations** (was 1,620): **996 plans**
+(was 744), 552 expected `plan.lift.unavailable` (unchanged) and 396 expected
+`plan.template.levelMismatch` (was 324: Full body ×5 and Upper/lower ×3 are not offered to
+novices). Every plan and every next block has no avoidable violation, only available exercises and
+every over-budget day flagged, at all six budgets; generation stays below 1 s.
+
+First-plan snapshot (60 minutes), against the 0.2.0 content:
+
+- 270 → 324 lines: +54 for the three alternatives (18 lines each; 6 of them per 5- and 6-day
+  alternative are novice `levelMismatch` lines).
+- Of the 270 existing lines, **62 changed** and 208 are identical. **No powerlifting line
+  changed** (the lift slots take the competition lifts as before: the new close variants tie with
+  them on score and sort after `ex.barbell-*`). Changed lines by template: BB 2-day 12, 3-day 13,
+  4-day 13, 5-day 8, 6-day 8; PB 2-, 4-, 5- and 6-day 2 each. By preset: home barbell gym 17,
+  custom 13, bodyweight and bands 12, dumbbells and bench 11, commercial gym 7, hotel gym 2.
+- Exercises per plan in the changed lines: −1 in 6, equal in 27, +1 in 14, +2 in 7, +3 in 4,
+  +4 in 2, +5 in 2 (bodyweight and bands PPL ×2: 24 → 29 exercises, its forearm and upper-trap
+  slots now have candidates). Sets: −2 to +9 (mostly +1).
+- Violations in the 270 lines 559 → 560, all with an input cause: `slotLimit` 117 → 100 (slots
+  that had no candidate of their pattern now have one), `timeBudget` 268 → 283 (the extra sets meet
+  the 60-minute budget), `template` 66 → 67, `sessionCap` 6 → 8, `equipment` 102 → 102;
+  `volume.belowFloor` 139 → 137, `volume.low` 341 → 342, `frequency.muscle` 79 → 81 (side delts
+  on one day only at 60 minutes in the bodyweight-and-bands upper/lower ×2 plans for intermediate
+  and advanced lifters, cause `timeBudget`).
+- Examples: `bb-ppl-6day | bodyweight-bands | intermediate` 24 ex, 95 sets, 6 violations → 29 ex,
+  104 sets, 3 (forearms and upper traps no longer below the floor, hamstrings no longer low);
+  `bb-full-body-2day | commercial-gym | intermediate` 14 ex, 38 sets → 15 ex, 37 sets.
+
+Next-block snapshot (PLN-13 at 60 minutes): 124 → 166 lines (+42 for the alternatives' plans);
+**96 of 124 changed**, because the next block rotates one or two exercises per muscle and now has
+more candidates to rotate to (and more of them at the slot's top score). Violations 559 → 578
+(`timeBudget` 281 → 308, `template` 165 → 157, `slotLimit` 110 → 108, `sessionCap` 3 → 5), all
+with a cause; no powerbuilding or powerlifting guarantee changed.
+
+Sample plans (commercial gym, intermediate, no budget) read as before: back squat, dumbbell bench,
+seated cable row and RDL stay the full-body anchors (so the M2c baselines step asks for the same
+lifts); new picks appear where they now score highest or win the ID tie-break among equal scores
+(behind-the-body cable curl, EZ-bar overhead triceps extension, leg-press calf raise, cable
+rear-delt fly, barbell split squat).
+
+### Trend calibration (TD-59, TD-60), rules 1.6.0 → 1.7.0
+
+`trend-calibration.test.ts` (300 seeded runs, 2 sessions a week; median weeks to the first upward
+claim, "–" when most runs have none within 26 weeks, then the share claimed by 12 / 26 weeks).
+`likelyZ` stays 1.5. Only the rows below moved: the TE floor binds only for novices (5.5% > 4%;
+trained 3.3% < 4%), the 12-week window only for advanced lifters. Intermediate and novice-typical
+rows are unchanged.
+
+| Level, sets      | Gain/week | 1.6.0               | 1.7.0                                       | Cause |
+| ---------------- | --------- | ------------------- | ------------------------------------------- | ----- |
+| novice heavy     | +1 %      | 10.0 (73 % / 100 %) | 12.0 (54 % / 95 %)                          | TD-59 |
+| novice heavy     | +2 %      | 7.0 (100 % / 100 %) | 7.0 (99 % / 100 %)                          | TD-59 |
+| novice heavy     | +3 %      | 5.6 (100 % / 100 %) | 5.6 (100 % / 100 %)                         | —     |
+| advanced typical | +0.25 %   | – (0 % / 0 %)       | – (0 % / 0.3 %)                             | TD-60 |
+| advanced typical | +0.5 %    | – (0 % / 5 %)       | **24.0** (0 % / **70 %**)                   | TD-60 |
+| advanced heavy   | +0.25 %   | – (9 % / 44 %)      | **19.8** (11 % / **78 %**)                  | TD-60 |
+| advanced heavy   | +0.5 %    | 13.6 (39 % / 100 %) | 13.6 (40 % / 100 %); noise-free 17.0 → 13.6 | TD-60 |
+
+False claims on flat series, within 12 / 26 weeks:
+
+| Level, sets      | Jitter at the TE, 1.6.0 | 1.7.0              | Stress, 1.6.0   | 1.7.0           |
+| ---------------- | ----------------------- | ------------------ | --------------- | --------------- |
+| novice heavy     | 11.3 % / **63.7 %**     | 5.7 % / **14.7 %** | 12.0 % / 22.3 % | 11.0 % / 19.7 % |
+| advanced typical | 0 % / 0 %               | 0 % / 0 %          | 7.0 % / 10.3 %  | 6.7 % / 14.3 %  |
+| advanced heavy   | 2.7 % / 3.0 %           | 3.7 % / 5.0 %      | 7.7 % / 10.3 %  | 7.3 % / 14.7 %  |
+
+TD-59 removes the novice heavy-set over-claim (63.7% of flat series claimed by week 26 → 14.7%)
+at the cost of a later label for +1% a week on heavy sets (10 → 12 weeks). TD-60 lets advanced
+lifters' good-block gains show (+0.25% a week on heavy sets: 44% → 78% of runs by week 26; +0.5%
+on typical sets: 5% → 70%); the longer window raises their 26-week false-claim rates under stress
+to about 14–15%, within the existing bounds (≤ 20% typical, ≤ 25% heavy). Bounds changed
+deliberately: novice heavy sets at the TE now ≤ 8% within 12 weeks and ≤ 18% within 26 (was
+≤ 15% within 12, 26 weeks unbounded); new: advanced heavy +0.25% a week ≤ 21 weeks and ≥ 70% by
+26, advanced typical +0.5% a week ≥ 60% by 26. The describe title says rules 1.7.0.
+
+Evidence for the registry change (rules 1.7.0: 143 parameters, unchanged count; 38 `verified:
+false`, unchanged): `load.trend.reference` advanced 8 → 12 weeks keeps its sources and its
+`verified: false` (a POWR design value at the EB's upper end, "slope over the last 8–12 weeks",
+EB §Progression › Classification); the note says why 12 is now possible. `load.trend.typicalErrorCv`
+gained a note that it is also the observation-noise floor (value unchanged). `pnpm --filter
+@powr/rules build -- --diff <1.6.0 rules.json>` lists the one value change.
+
+### Decisions and deviations
+
+| Brief says                                            | What I did                                                                                                                                                                                                                                                                                                                                                           |
+| ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Cover every movement pattern                          | Every pattern except `carry`: a carry has no honest rep range, and `ExerciseDefaults` requires one (duration or distance defaults are a domain-model change outside M5p). Tibialis has no pattern either                                                                                                                                                             |
+| Raise `MAX_POINTS` / `MAX_RECENT` to at least 40 / 30 | 60 / 60, so 12 weeks fit at up to 4 sessions a week of one lift (above)                                                                                                                                                                                                                                                                                              |
+| TD-62: a separate message or args                     | An arg (`reason`) on the existing rule: no `RuleId` change in `@powr/domain/explain`                                                                                                                                                                                                                                                                                 |
+| TD-37: alternatives "as the PRD table names them"     | The one PRD-named alternative (Full body ×5) plus two POWR additions for the other bodybuilding cells with a common second split (4 and 6 days); listed for the product owner below                                                                                                                                                                                  |
+| Owned files                                           | Also `packages/domain/src/version.ts` (`ENGINE_VERSION` 0.2.0, §7.8: outputs changed), `packages/application/test/planning.test.ts` (the rules-version pin) and one assertion of `apps/web/e2e/m2c.spec.ts`: the template sheet now shows "Needs 4 training days a week." twice (Upper/lower ×2 and Full body ×4), so the test expects two and the Full body ×4 card |
+
+### Evidence
+
+`pnpm verify` on 2026-11-25, every stage green: lint (0 errors, 0 warnings), format, token gate,
+knip, catalog check, typecheck, **907 unit tests** in 76 files (882 before: +25 in coverage,
+trend, session, calibration and M2c tests), **98 component tests**, build, licence gate, size and
+**65 E2E tests** (3 skipped, as before). The last full runs shared the machine with the other M5
+agents (load average 20–25) and did not finish in one pass: twice the component run could not
+start (port 23315 taken by another agent's Vitest browser server), once the legal-gate focus test
+flaked (see open items), and twice `e2e/library.spec.ts` hit its 30 s limit inside the parallel
+E2E run (27.1 s in the baseline run; 12.5 s alone under the same load). Run 6 and run 7 passed
+everything through `pnpm size`; the E2E suite then passed in full on its own against the same
+build (65 passed). Size: entry JS **182.21 kB** gzip (unchanged; the content is a lazy chunk), the
+content chunk `built-in-*.js` 150.9 → **282.8 kB** raw, 17.5 → **30.6 kB** gzip, precache
+953.2 → **966.4 kB** gzip of 2,000 kB. `pnpm content:check` is clean with no preset coverage gap;
+the plan-matrix test (1,944 combinations, plans and next blocks) takes about 10 s.
+
+### Open items
+
+- **Product owner:** (1) keep the two POWR-added alternatives (Full body ×4, Upper/lower ×3) or
+  ship only the PRD-named Full body ×5; and whether powerlifting or powerbuilding cells should get
+  alternatives (none named in PLN-02); (2) carries and a tibialis exercise need a contract change
+  (duration/distance defaults, a dorsiflexion pattern), so TD-23 keeps that remainder; (3) among
+  exercises with equal MAP-03 scores the generator picks by ID, which now decides some defaults
+  (Arnold press over the dumbbell shoulder press in the hotel gym, the behind-the-body cable curl
+  over the incline dumbbell curl); a "standard choice" tie-break (or favouring fewer pieces of
+  equipment) would be a ranking decision; (4) the content judgement calls listed above (diamond
+  push-up pec 0.5, handstand push-up overload 0, flies that credit but do not rank the clavicular
+  head, the floor back extension in `core`).
+- **For the M5 merge:** the past-session list's trend label (`apps/web/src/features/session/past/parts.tsx`,
+  "Within normal day-to-day variation") has the same inaccuracy TD-62 fixed in the "Why?" text; it
+  can read `ChangeLabel.deltaPct` against `typicalError` (or the explanation's `reason`) in the
+  owner's pass. `en/messages.po` changed in one entry (`why.trend.change.none`); a parallel catalog
+  change merges by re-running `pnpm i18n:extract`.
+- **Flaky component tests (a latent focus race, more frequent with the larger library):** two
+  browser tests fail now and then: the legal gate's focus check (`onboarding.test.tsx`) and the
+  custom-exercise error summary (`library.test.tsx`: focus never reaches the summary within
+  10 s, although the summary is on screen). Both screens focus the summary in a
+  `requestAnimationFrame` right after `setState` (`OnboardingFlow.tsx` line 169,
+  `CustomExerciseScreen.tsx` line 311); the frame can come before React commits the summary, and
+  then nothing is focused. Observed while the other M5 agents loaded the machine (load average
+  5–9): with the 0.3.0 content the library test failed in 4 of about 10 full component runs and
+  the legal-gate test in 2; with the 0.2.0 `content.json` swapped back in, the legal-gate test
+  failed 1 of 3 runs and the library test none. The fix is to focus in an effect after the
+  summary renders (a counter state set with the issues, and `useEffect(() => { if (count > 0)
+  summaryRef.current?.focus() }, [count])`); it is UI code outside M5p's files and was not made
+  here. A re-run passes.
+- **Later:** per-user process noise (TD-61, unchanged); the personal curve fit (TD-26).
+
+### Doc amendments for the docs pass
+
+- **PRD:** A-05 met (190 exercises); EXL-01 coverage met for every preset (tibialis optional);
+  §7.1 "carry" still has no exercise; PLN-02 table: bodybuilding 4 days "Upper/Lower ×2 or Full
+  body ×4", 6 days "Push/Pull/Legs ×2 or Upper/Lower ×3" if the product owner keeps them.
+- **Technical concept §8.7.5:** σ is floored at the level's typical error (TD-59); the reference
+  window is novice 4, intermediate 8, advanced 12 weeks (rules 1.7.0); the session engine keeps 60
+  strength-trend points and 60 recent exposures; "no label" explains `noise` vs `unconfirmed`
+  (TD-62); the calibration numbers above.
+- **§8.12 / M1 status line:** content set 190 exercises (526 credits: 74 H, 9 EMG, 443 C),
+  34 substitution groups, 15 default and 3 alternative templates; content 0.3.0.
+- **§7.8:** `ENGINE_VERSION` 0.2.0, rules 1.7.0.
+- **§11.2:** TD-23 closed except carries and tibialis (needs a contract change); TD-37 closed for
+  bodybuilding (PL and PB pending a product decision); TD-59, TD-60 and TD-62 closed.

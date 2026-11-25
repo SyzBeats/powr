@@ -43,6 +43,7 @@ import {
   todayLocal,
   weekStartOfLocal,
 } from '../../i18n/format';
+import { ReexportNotice } from '../calendar/ReexportNotice';
 import { useLabels } from '../labels';
 import { WhyButton, WhyNamesContext, WhySimpleContext, WhyText } from '../why/WhySheet';
 import { usePrescriptionText } from './format';
@@ -170,6 +171,10 @@ function ActivePlan({
             <Link to="/plan/next" className={buttonClass({})}>
               <Trans>Next block</Trans>
             </Link>
+            {/* CAL-01 (M5d): the planned sessions as a calendar file. */}
+            <Link to="/plan/calendar" className={buttonClass({})}>
+              <Trans>Add to calendar</Trans>
+            </Link>
             <Link
               to="/plan/setup/$step"
               params={{ step: 'goal' }}
@@ -207,6 +212,8 @@ function ActivePlan({
             <WhyButton why={outcome.why} subject={t`this change`} />
           </div>
         ) : null}
+
+        <ReexportNotice />
 
         <MissedCard plan={plan} onChanged={setOutcome} />
 

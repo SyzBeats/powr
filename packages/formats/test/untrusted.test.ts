@@ -151,6 +151,10 @@ describe('crafted backups that try prototype pollution are rejected', () => {
       'settings insights with __proto__',
       { settings: `[{"id":"me","theme":"dark","insights":{"__proto__":${POLLUTE}}}]` },
     ],
+    [
+      'settings backup reminder with __proto__',
+      { settings: `[{"id":"me","theme":"dark","backup":{"__proto__":${POLLUTE}}}]` },
+    ],
   ])('%s → invalidData', async (_name, data) => {
     const result = await decodeBackup(await craftBackup({ data }));
     expect(result).toMatchObject({

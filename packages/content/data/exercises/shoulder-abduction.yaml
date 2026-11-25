@@ -71,3 +71,104 @@
     - en: Stand on the middle of a band and hold one end in each hand.
     - en: Raise your arms out to the side to shoulder height, elbows slightly bent.
     - en: Use a stronger band or a shorter grip once you can do 30 clean reps.
+
+# M5 additions (content 0.3.0):
+# - Lean-away lateral raise: the "Lateral raise" row (C); leaning away starts each rep from a
+#   longer delt length.
+# - Upright rows (dumbbell, cable, band) are not in the EB table: lateral delt 1.0 and upper traps
+#   0.5 (C), as abduction with the traps elevating the shoulder blade. The cues keep the elbows at
+#   or below shoulder height and the grip at least shoulder-width.
+
+- id: ex.lean-away-lateral-raise
+  name: { en: Lean-away lateral raise }
+  synonyms: [leaning lateral raise, lean-away dumbbell lateral raise]
+  pattern: shoulderAbduction
+  mechanics: isolation
+  substitutionGroups: [sg.lateral-raise]
+  equipment: { allOf: [eq.dumbbells], anyOf: [] }
+  muscles:
+    - { muscle: mu.side-delts, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.upper-traps, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+  load: { type: dumbbell, curveClass: pooled, unilateral: true, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [10, 20], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 2 }
+  cues:
+    - en: Hold a sturdy post with one hand and lean away from it with a dumbbell in the other hand.
+    - en: Raise the dumbbell out to the side until your arm is about parallel to the floor.
+    - en: Lower it slowly until it hangs slightly across the front of your body before the next rep.
+
+- id: ex.dumbbell-upright-row
+  name: { en: Dumbbell upright row }
+  synonyms: [db upright row]
+  pattern: shoulderAbduction
+  mechanics: compound
+  substitutionGroups: [sg.upright-row]
+  equipment: { allOf: [eq.dumbbells], anyOf: [] }
+  muscles:
+    - { muscle: mu.side-delts, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.upper-traps, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+  load: { type: dumbbell, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [10, 20], strength: [8, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 2 }
+  cues:
+    - en: Hold the dumbbells in front of your thighs, hands about shoulder-width apart.
+    - en: Lead with your elbows and lift until your upper arms are about parallel to the floor.
+    - en: Stop lower if your shoulders complain, then lower the dumbbells under control.
+
+- id: ex.cable-upright-row
+  name: { en: Cable upright row }
+  synonyms: [rope upright row]
+  pattern: shoulderAbduction
+  mechanics: compound
+  substitutionGroups: [sg.upright-row]
+  equipment:
+    allOf: []
+    anyOf: [[eq.cable-station, eq.dual-cable-station]]
+  muscles:
+    - { muscle: mu.side-delts, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.upper-traps, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+  load: { type: machine, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [10, 20], strength: [8, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 3 }
+  cues:
+    - en: Stand close to a low pulley holding a rope or bar with your hands about shoulder-width apart.
+    - en: Pull up along your body, elbows leading, until your upper arms are about parallel to the floor.
+    - en: Lower slowly until your arms are straight.
+
+- id: ex.band-upright-row
+  name: { en: Band upright row }
+  synonyms: [resistance band upright row]
+  pattern: shoulderAbduction
+  mechanics: compound
+  substitutionGroups: [sg.upright-row]
+  equipment: { allOf: [eq.resistance-bands], anyOf: [] }
+  muscles:
+    - { muscle: mu.side-delts, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.upper-traps, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+  load: { type: band, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [12, 30], strength: [8, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 0 }
+  cues:
+    - en: Stand on the middle of the band and hold the ends in front of your thighs.
+    - en: Raise your elbows out and up until your hands reach chest height.
+    - en: Lower slowly back to straight arms.

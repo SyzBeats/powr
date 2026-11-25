@@ -104,3 +104,110 @@
     - en: Loop a band over the bar and place one foot or knee in it.
     - en: Pull as in a normal pull-up, chin over the bar and a full hang at the bottom.
     - en: Switch to a lighter band as you get stronger.
+
+# M5 additions (content 0.3.0):
+# - Single-arm and band pulldowns follow the "Pulldown / pull-up / chin-up" row; the band version
+#   tags the elbow flexors C (another resistance profile than the studied pulldown).
+# - Straight-arm pulldown and dumbbell pullover are shoulder-extension isolation exercises without
+#   an EB row: lats 1.0 (C); the pullover also stretches the sternocostal pec (0.5, C).
+
+- id: ex.single-arm-lat-pulldown
+  name: { en: Single-arm lat pulldown }
+  synonyms: [one-arm pulldown, single-arm pulldown]
+  pattern: verticalPull
+  mechanics: compound
+  substitutionGroups: [sg.vertical-pull]
+  equipment:
+    allOf: []
+    anyOf: [[eq.lat-pulldown, eq.cable-station, eq.dual-cable-station]]
+  muscles:
+    - { muscle: mu.lats, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.elbow-flexors, credit: 0.5, evidence: H, source: src.gentil2015 }
+    - { muscle: mu.rear-delts, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.mid-back, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+  load: { type: machine, curveClass: pooled, unilateral: true, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [8, 15], strength: [6, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 3 }
+  cues:
+    - en: Kneel or sit under a high pulley and hold one handle with your arm stretched overhead.
+    - en: Pull your elbow down toward your hip without leaning away from the cable.
+    - en: Let the handle rise until your lat is fully stretched before the next rep.
+
+- id: ex.band-lat-pulldown
+  name: { en: Band lat pulldown }
+  synonyms: [resistance band pulldown, banded pulldown]
+  pattern: verticalPull
+  mechanics: compound
+  substitutionGroups: [sg.vertical-pull]
+  equipment: { allOf: [eq.resistance-bands], anyOf: [] }
+  muscles:
+    - { muscle: mu.lats, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.elbow-flexors, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.rear-delts, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.mid-back, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+  load: { type: band, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [12, 30], strength: [8, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-1
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 0 }
+  cues:
+    - en: Anchor the band high, for example over a pull-up bar or a door, and kneel facing it.
+    - en: Pull the ends down toward your shoulders, driving your elbows to your sides.
+    - en: Let your arms rise back overhead slowly while the band stays taut.
+
+- id: ex.straight-arm-pulldown
+  name: { en: Straight-arm pulldown }
+  synonyms: [straight-arm lat pulldown, cable pullover]
+  pattern: verticalPull
+  mechanics: isolation
+  substitutionGroups: [sg.lat-isolation]
+  equipment:
+    allOf: []
+    anyOf: [[eq.cable-station, eq.dual-cable-station, eq.lat-pulldown]]
+  muscles:
+    - { muscle: mu.lats, credit: 1, evidence: C, source: src.powr-eb-mapping }
+  load: { type: machine, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [10, 20], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-1
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 3 }
+  cues:
+    - en: Stand facing a high pulley and hold a bar or rope with straight arms at about eye level.
+    - en: Hinge slightly forward and sweep your hands down to your thighs with your arms almost straight.
+    - en: Let the handle rise slowly until you feel your lats stretch overhead.
+
+- id: ex.dumbbell-pullover
+  name: { en: Dumbbell pullover }
+  synonyms: [lying dumbbell pullover, db pullover]
+  pattern: verticalPull
+  mechanics: isolation
+  substitutionGroups: [sg.lat-isolation]
+  equipment:
+    allOf: [eq.dumbbells]
+    anyOf: [[eq.flat-bench, eq.adjustable-bench]]
+  muscles:
+    - { muscle: mu.lats, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.chest.sternocostal, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+  load: { type: dumbbell, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [10, 20], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 3-0-X-0
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 2 }
+  cues:
+    - en: Lie on a bench holding one dumbbell with both hands above your chest.
+    - en: Keep a slight bend in your elbows and lower the weight in an arc behind your head until your lats stretch.
+    - en: Pull it back over your chest along the same arc without bending your elbows further.

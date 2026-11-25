@@ -24,9 +24,11 @@ import { haptics } from '../infrastructure/platform/haptics';
 import { uuidv7Generator } from '../infrastructure/platform/ids';
 import { notifications } from '../infrastructure/platform/notifications';
 import { alertScheduler, runtimeFlags } from '../infrastructure/platform/runtime-flags';
+import type { FileShare } from '../infrastructure/platform/share';
 import { browserStorage } from '../infrastructure/platform/storage';
 import { applyTheme } from '../infrastructure/platform/theme';
 import { wakeLock } from '../infrastructure/platform/wake-lock';
+import { installState, type InstallState } from '../infrastructure/pwa/install';
 import type { ServiceWorkerController } from '../infrastructure/pwa/registration';
 import { createRulesProvider } from '../infrastructure/rules/provider';
 
@@ -98,6 +100,15 @@ export interface Platform {
   readonly capabilities: CapabilityProbe;
   readonly applyTheme: typeof applyTheme;
   readonly downloadText: (name: string, text: string) => void;
+  /** Web Share with files where the browser accepts the file type (PWA-09, P-04); lazy. */
+  readonly share: () => Promise<FileShare>;
+  /** Install promotion (PWA-02): first visit on this browser and the dismissal. */
+  readonly install: InstallState;
+  /**
+   * "Delete all data" (DAT-13): stops the alerts, then deletes every database of the app and
+   * clears its local storage. The wipe code is a lazy chunk. Afterwards the container is dead.
+   */
+  readonly deleteAllData: () => Promise<{ readonly remaining: readonly string[] }>;
   /** Developer harness state that must survive a page kill (spike S-1); never user data. */
   readonly debugStore: {
     load(key: string): unknown;
@@ -120,6 +131,7 @@ export function createContainer(
   serviceWorker: ServiceWorkerController,
   diagnostics: Diagnostics,
 ): Container {
+  const safety = createSafetySnapshots();
   const deps: Deps = {
     uow: createUnitOfWork(db),
     queries: createLiveQueries(db),
@@ -132,22 +144,23 @@ export function createContainer(
     runtime: runtimeFlags,
     storage: browserStorage,
     files: downloadGateway,
-    safety: createSafetySnapshots(),
+    safety,
   };
+  const timers = lazyTimerKit(async () => {
+    const { createTimerKit } = await import('../infrastructure/alerts');
+    return createTimerKit({
+      haptics,
+      notifications,
+      transport: alertScheduler,
+      log: diagnostics.log,
+    });
+  });
   const platform: Platform = {
     wakeLock,
     haptics,
     notifications,
     alerts: alertScheduler,
-    timers: lazyTimerKit(async () => {
-      const { createTimerKit } = await import('../infrastructure/alerts');
-      return createTimerKit({
-        haptics,
-        notifications,
-        transport: alertScheduler,
-        log: diagnostics.log,
-      });
-    }),
+    timers,
     capabilities: capabilityProbe,
     applyTheme,
     downloadText: (name, text) =>
@@ -156,6 +169,14 @@ export function createContainer(
         bytes: new TextEncoder().encode(text),
         mime: 'text/plain',
       }),
+    share: async () => (await import('../infrastructure/platform/share')).fileShare,
+    install: installState(),
+    deleteAllData: async () => {
+      // Nothing may alert or write after the data is gone (a running rest, the SW timer).
+      timers.current()?.restAlerts.stopAll();
+      const { deleteAllData } = await import('../infrastructure/platform/wipe');
+      return deleteAllData([{ wipe: () => db.delete() }, safety, diagnostics]);
+    },
     debugStore,
   };
   return { deps, platform, diagnostics, serviceWorker };

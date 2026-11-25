@@ -93,7 +93,10 @@ export interface ExerciseState {
   /** Trend states (PRG-02): strength sets only, and all sets. */
   readonly strength: TrendPoint | null;
   readonly all: TrendPoint | null;
-  /** Recent strength trend points (change labels need a reference 4 weeks or 3 sessions back). */
+  /**
+   * Recent strength trend points, oldest first (change labels need a reference 4–12 weeks or 3
+   * sessions back, `load.trend.reference`; at most MAX_POINTS).
+   */
   readonly points: readonly TrendPoint[];
   readonly last: ExposureSummary | null;
   /** PRG-06: prescribed reps met per exposure, oldest first (the last few). */
@@ -101,7 +104,10 @@ export interface ExerciseState {
   readonly bests: ExerciseBests;
   /** E-1: entered RIR of recent working sets, for the personal prior. */
   readonly effort: readonly EffortHistoryEntry[];
-  /** M4a: the last exposures, oldest first (absent in states an M3 build stored). */
+  /**
+   * M4a: the last exposures (at most MAX_RECENT), oldest first (absent in states an M3 build
+   * stored).
+   */
   readonly recent?: readonly RecentExposure[];
 }
 
@@ -155,10 +161,17 @@ export interface FoldInput {
   readonly bodyweightAt: (date: LocalDate) => number | null;
 }
 
-const MAX_POINTS = 30;
+/**
+ * How many strength-trend points and recent exposures the state keeps (TD-60, M5). The change
+ * label needs a point `load.trend.reference` weeks back (12 for advanced lifters) that is not one
+ * of the kept series' first `sessions` (3) points, and the rep-range flag the exposures on or
+ * before that date: 12 weeks × 4 sessions a week + 4 = 52, so both keep 60 (before: 30 points
+ * and 12 exposures, which an 8-week window outgrew at 3.4 sessions a week).
+ */
+const MAX_POINTS = 60;
 const MAX_LINEAR = 6;
 const MAX_EFFORT = 200;
-const MAX_RECENT = 12;
+const MAX_RECENT = 60;
 
 export function emptyExerciseState(exerciseId: ExerciseId, key: string): ExerciseState {
   return {

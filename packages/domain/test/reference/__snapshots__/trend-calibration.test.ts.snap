@@ -1,10 +1,10 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`e1RM trend calibration (PRG-02, rules 1.6.0; 2 sessions a week, 300 seeded runs) > matches the reviewed summary 1`] = `
+exports[`e1RM trend calibration (PRG-02, rules 1.7.0; 2 sessions a week, 300 seeded runs) > matches the reviewed summary 1`] = `
 "novice typical | noise 0.0%/0.0% | stress 6.3%/11.7% | +1.00%/wk: median – wk, noise-free –, ≤12 1.0%, ≤26 12.3% | +2.00%/wk: median 12.6 wk, noise-free 12.6, ≤12 48.0%, ≤26 100.0% | +3.00%/wk: median 9.6 wk, noise-free 10.0, ≤12 99.0%, ≤26 100.0%
-novice heavy | noise 11.3%/63.7% | stress 12.0%/22.3% | +1.00%/wk: median 10.0 wk, noise-free –, ≤12 72.7%, ≤26 100.0% | +2.00%/wk: median 7.0 wk, noise-free 7.0, ≤12 99.7%, ≤26 100.0% | +3.00%/wk: median 5.6 wk, noise-free 5.6, ≤12 100.0%, ≤26 100.0%
+novice heavy | noise 5.7%/14.7% | stress 11.0%/19.7% | +1.00%/wk: median 12.0 wk, noise-free –, ≤12 53.7%, ≤26 95.3% | +2.00%/wk: median 7.0 wk, noise-free 7.0, ≤12 98.7%, ≤26 100.0% | +3.00%/wk: median 5.6 wk, noise-free 5.6, ≤12 100.0%, ≤26 100.0%
 intermediate typical | noise 0.0%/0.0% | stress 9.0%/15.0% | +0.50%/wk: median – wk, noise-free –, ≤12 0.0%, ≤26 6.0% | +1.00%/wk: median 15.0 wk, noise-free 15.0, ≤12 10.0%, ≤26 100.0% | +3.00%/wk: median 7.0 wk, noise-free 7.0, ≤12 100.0%, ≤26 100.0%
 intermediate heavy | noise 3.7%/6.0% | stress 11.0%/21.3% | +0.50%/wk: median 12.0 wk, noise-free 13.0, ≤12 51.0%, ≤26 100.0% | +1.00%/wk: median 8.3 wk, noise-free 8.0, ≤12 99.7%, ≤26 100.0% | +3.00%/wk: median 4.6 wk, noise-free 4.6, ≤12 100.0%, ≤26 100.0%
-advanced typical | noise 0.0%/0.0% | stress 7.0%/10.3% | +0.25%/wk: median – wk, noise-free –, ≤12 0.0%, ≤26 0.0% | +0.50%/wk: median – wk, noise-free –, ≤12 0.0%, ≤26 4.7%
-advanced heavy | noise 2.7%/3.0% | stress 7.7%/10.3% | +0.25%/wk: median – wk, noise-free –, ≤12 9.3%, ≤26 43.7% | +0.50%/wk: median 13.6 wk, noise-free 17.0, ≤12 39.3%, ≤26 100.0%"
+advanced typical | noise 0.0%/0.0% | stress 6.7%/14.3% | +0.25%/wk: median – wk, noise-free –, ≤12 0.0%, ≤26 0.3% | +0.50%/wk: median 24.0 wk, noise-free 25.0, ≤12 0.0%, ≤26 70.3%
+advanced heavy | noise 3.7%/5.0% | stress 7.3%/14.7% | +0.25%/wk: median 19.8 wk, noise-free –, ≤12 11.0%, ≤26 78.3% | +0.50%/wk: median 13.6 wk, noise-free 13.6, ≤12 40.0%, ≤26 100.0%"
 `;

@@ -6,7 +6,6 @@ import {
   CircleCheck,
   CloudOff,
   Flame,
-  HardDriveDownload,
   Scale,
   TrendingUp,
   Trophy,
@@ -25,18 +24,14 @@ import { useOfflineReady } from '../../hooks/use-app';
 import { useLiveInsight, type Insights } from '../../hooks/use-insights';
 import { useActivePlan, usePlannedSessions } from '../../hooks/use-planning';
 import { useActiveSession, useSessionSets } from '../../hooks/use-session';
-import {
-  addLocalDays,
-  daysBetweenLocal,
-  formatLocalDate,
-  formatMinutes,
-  todayLocal,
-} from '../../i18n/format';
+import { addLocalDays, formatLocalDate, formatMinutes, todayLocal } from '../../i18n/format';
 import { useBodyWords, useBodyweightUnit } from '../body/words';
+import { BackupReminder } from '../data/BackupReminder';
 import { useHeatSentence, useStreakWords } from '../insights/words';
 import { useLabels } from '../labels';
 import { useSummaryWords } from '../session/past/parts';
 import { massFromKg, useLoadUnit, useSessionWords } from '../session/words';
+import { InstallPromotion } from '../shell/InstallPromotion';
 import { WhyButton } from '../why/WhySheet';
 import { Sparkline } from './Sparkline';
 
@@ -45,9 +40,6 @@ const MiniHeatMap = lazy(() => import('../insights/MiniHeatMap'));
 
 const linkButtonClass =
   'flex min-h-target-lg w-full items-center justify-center rounded-xl px-4 text-lg font-semibold';
-
-/** DAT-08 default cadence: a backup older than this is overdue (reminder settings are M5). */
-const BACKUP_DAYS = 14;
 
 const openHome = (insights: Insights, deps: Deps) => insights.observeHome(deps);
 
@@ -96,6 +88,9 @@ export function HomeScreen() {
       ) : (
         <TodayCard />
       )}
+
+      {/* PWA-02: never on the first visit or during a workout (the card checks both). */}
+      <InstallPromotion />
 
       <output data-testid="home-status" className="block text-sm text-fg-muted empty:hidden">
         {view === null ? (
@@ -540,11 +535,10 @@ function MeetCard({ view }: { view: HomeView }) {
 }
 
 /**
- * ANL-01 backup indicator (DAT-08): once there is training data and no backup in the last 14
- * days. The reminder cadence and dismissing it are settings of M5.
+ * ANL-01 backup indicator (DAT-08): without training data the restore offer for a new phone;
+ * with it, the M5d backup reminder (cadence, workouts since, "Remind me later"; TD-57).
  */
 function BackupCard({ view }: { view: HomeView }) {
-  const today = todayLocal();
   if (view.lastSession === null) {
     return (
       <Card>
@@ -557,25 +551,5 @@ function BackupCard({ view }: { view: HomeView }) {
       </Card>
     );
   }
-  const last = view.lastBackupAt ? view.lastBackupAt.slice(0, 10) : null;
-  const overdue = last === null || daysBetweenLocal(last, today) > BACKUP_DAYS;
-  if (!overdue) return null;
-  return (
-    <Card>
-      <h2 className="flex items-center gap-2 text-lg font-bold">
-        <HardDriveDownload aria-hidden="true" />
-        <Trans>Back up your training</Trans>
-      </h2>
-      <p className="text-fg-muted">
-        {last === null ? (
-          <Trans>Your training lives only on this phone. A backup file keeps it safe.</Trans>
-        ) : (
-          <Trans>Your last backup is from {formatLocalDate(last, 'long')}.</Trans>
-        )}
-      </p>
-      <Link to="/data" className={buttonClass({ size: 'lg' })}>
-        <Trans>Back up now</Trans>
-      </Link>
-    </Card>
-  );
+  return <BackupReminder />;
 }

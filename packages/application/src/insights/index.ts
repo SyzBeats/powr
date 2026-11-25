@@ -49,6 +49,7 @@ export {
   type MarkBreakError,
   type StreakView,
 } from './streak';
+export { exerciseSummaries, type ExerciseSummary, type SummaryQuery } from './summaries';
 export {
   compareTrends,
   exercisePerformance,

@@ -461,7 +461,11 @@ function WelcomeStep({
             account, analytics or tracking. Only you can export it, as a backup file.
           </Trans>
         </p>
-        <Link to="/legal/privacy" className="min-h-target-min font-semibold text-info underline">
+        <Link
+          to="/legal/$page"
+          params={{ page: 'privacy' }}
+          className="min-h-target-min font-semibold text-info underline"
+        >
           <Trans>Read the full privacy notice</Trans>
         </Link>
       </Card>
@@ -477,7 +481,11 @@ function WelcomeStep({
             what you do with the suggestions.
           </Trans>
         </p>
-        <Link to="/legal/disclaimer" className="min-h-target-min font-semibold text-info underline">
+        <Link
+          to="/legal/$page"
+          params={{ page: 'disclaimer' }}
+          className="min-h-target-min font-semibold text-info underline"
+        >
           <Trans>Read the full health notice</Trans>
         </Link>
       </Card>
@@ -698,9 +706,10 @@ function PreviewStep({
 
 /**
  * Step completeness (the use cases re-check every range when the answers are stored). A hook, so
- * the Lingui macro sees `t` from `useLingui()`.
+ * the Lingui macro sees `t` from `useLingui()`. Also used by Settings to change one answer
+ * (SET-08).
  */
-function useStepValidation() {
+export function useStepValidation() {
   const { t } = useLingui();
   const labels = useLabels();
   return (step: Step, draft: Draft): Record<string, string> => {
@@ -751,8 +760,8 @@ function useStepValidation() {
   };
 }
 
-/** The use case's rejected fields, in words, each pointing to its step. */
-function useFieldErrors() {
+/** The use case's rejected fields, in words, each pointing to its step (also SET-08). */
+export function useFieldErrors() {
   const { t } = useLingui();
   return (fields: readonly string[]): Record<string, string> =>
     Object.fromEntries(

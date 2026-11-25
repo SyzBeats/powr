@@ -74,6 +74,14 @@ jobs:
     concurrency: deploy-production
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .node-version
+      # Legal release gate (M5s, product-owner decision 2026-11-25): no production deploy while a
+      # legal placeholder remains (publisher postal address, legal review). Plain Node, no install.
+      - name: Legal release check
+        run: pnpm release:check
       - uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
         with:
           registry: ghcr.io

@@ -20,6 +20,11 @@ export function usePlatform() {
   return useContainer().platform;
 }
 
+/** "Reload" after another window updated or deleted the database (§6.8, TD-14). */
+export function useStaleWindow(): boolean {
+  return useAppUi((state) => state.staleWindow);
+}
+
 export function useDiagnostics() {
   const { diagnostics, platform, serviceWorker } = useContainer();
   return {

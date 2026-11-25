@@ -21,3 +21,53 @@
     - en: Sit with your forearms on your thighs, palms up and wrists just past your knees.
     - en: Let the dumbbells roll down to your fingertips for a full stretch.
     - en: Curl your wrists up as far as they go without lifting your forearms.
+
+# M5 additions (content 0.3.0): barbell and band wrist curls, convention (C) as above.
+
+- id: ex.barbell-wrist-curl
+  name: { en: Barbell wrist curl }
+  synonyms: [barbell seated wrist curl]
+  pattern: wristFlexion
+  mechanics: isolation
+  substitutionGroups: [sg.wrist-curl]
+  equipment:
+    allOf: [eq.plates]
+    anyOf:
+      - [eq.barbell-olympic, eq.barbell-womens, eq.ez-bar]
+      - [eq.flat-bench, eq.adjustable-bench]
+  muscles:
+    - { muscle: mu.forearms.flexors, credit: 1, evidence: C, source: src.powr-eb-mapping }
+  load: { type: barbell, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [10, 25], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 3, subRegions: [mu.forearms.flexors] }
+  cues:
+    - en: Kneel beside a bench with your forearms on it, wrists just past the edge and palms up.
+    - en: Let the bar roll down toward your fingertips, then curl it back up into your palms.
+    - en: Curl your wrists up as far as they go without lifting your forearms off the bench.
+
+- id: ex.band-wrist-curl
+  name: { en: Band wrist curl }
+  synonyms: [resistance band wrist curl]
+  pattern: wristFlexion
+  mechanics: isolation
+  substitutionGroups: [sg.wrist-curl]
+  equipment: { allOf: [eq.resistance-bands], anyOf: [] }
+  muscles:
+    - { muscle: mu.forearms.flexors, credit: 1, evidence: C, source: src.powr-eb-mapping }
+  load: { type: band, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [15, 30], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 0, subRegions: [mu.forearms.flexors] }
+  cues:
+    - en: Sit with your forearms on your thighs, palms up, and the band anchored under your feet.
+    - en: Curl your wrists up against the band as far as they go.
+    - en: Lower slowly until your wrists are fully bent back.

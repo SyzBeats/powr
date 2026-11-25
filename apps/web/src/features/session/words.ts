@@ -11,7 +11,7 @@ import type {
 } from '@powr/domain/session';
 
 import { useProfile } from '../../hooks/use-planning';
-import { formatMass, formatNumber } from '../../i18n/format';
+import { formatMass } from '../../i18n/format';
 import { assertNever } from '../exhaustive';
 import { useLabels } from '../labels';
 
@@ -31,12 +31,6 @@ export function massFromKg(valueKg: number, unit: MassUnit, digits = 2): string 
   const factor = 10 ** digits;
   const value = unit === 'kg' ? valueKg : valueKg / KG_PER_LB;
   return formatMass(Math.round(value * factor) / factor, unit);
-}
-
-/** Effort as the user enters it (WKT-03): RIR in half steps, "5+" for open-ended. */
-export function rirText(rir: number | null, openEnded = false): string {
-  if (rir === null) return '';
-  return openEnded ? `${formatNumber(rir, 1)}+` : formatNumber(rir, 1);
 }
 
 /** A load with its unit, or null for none (pure bodyweight). Assistance shows as negative. */

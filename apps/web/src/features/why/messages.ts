@@ -100,7 +100,7 @@ export const WHY_MESSAGES: { readonly [K in RuleId]: WhyMessage } = {
     full: msg({
       id: 'why.trend.change.none',
       message:
-        "Since {referenceDate}, your estimated max changed by {deltaPct, number}%. That's within normal day-to-day variation (about {typicalErrorPct, number}%), so there's no real change yet.",
+        "Since {referenceDate}, your estimated max changed by {deltaPct, number}%. {reason, select, unconfirmed {That's more than normal day-to-day variation (about {typicalErrorPct, number}%), but it isn't a confirmed change yet. POWR calls it real once the trend is clear enough and the change holds over a few sessions in a row.} other {That's within normal day-to-day variation (about {typicalErrorPct, number}%), so there's no real change yet.}}",
     }),
   },
   'trend.change.likely': {

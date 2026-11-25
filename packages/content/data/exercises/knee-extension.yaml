@@ -45,3 +45,30 @@
     - en: Kneel on a soft surface with your knees hip-width apart and your hips straight.
     - en: Lean back as one piece from knees to head, only as far as you can return under control.
     - en: Pull yourself back up with your thighs without bending at the hips.
+
+# M5 addition (content 0.3.0): the sissy squat keeps the hips extended while the knees bend
+# deeply, like the reverse Nordic; it reuses the leg-extension row as convention (C) and ranks the
+# rectus femoris (a hip-extended position, PubMed 39699974).
+
+- id: ex.sissy-squat
+  name: { en: Sissy squat }
+  synonyms: [bodyweight sissy squat]
+  pattern: kneeExtension
+  mechanics: isolation
+  substitutionGroups: [sg.knee-extension]
+  # Holding on to a rack, a door frame or a sturdy post: no catalog item needed.
+  equipment: { allOf: [], anyOf: [] }
+  muscles:
+    - { muscle: mu.quads, credit: 1, evidence: C, source: src.powr-eb-mapping }
+  load: { type: bodyweightAdded, curveClass: pooled, unilateral: false, bodyweightLoaded: true }
+  defaults:
+    repRange: { hypertrophy: [8, 20], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 3-0-X-0
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 1, subRegions: [mu.quads.rectus-femoris] }
+  cues:
+    - en: Hold on to something sturdy and rise onto the balls of your feet.
+    - en: Push your knees forward and lean back so knees, hips and shoulders stay in one line.
+    - en: Lower as far as you can control, then straighten your knees to come back up.

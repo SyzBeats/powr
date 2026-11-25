@@ -1,9 +1,9 @@
 import { useLingui as useLinguiRuntime } from '@lingui/react';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { useRouter } from '@tanstack/react-router';
 import { CircleHelp } from 'lucide-react';
 import { createContext, useContext, useState, type ReactNode } from 'react';
 
-import type { EvidenceTag } from '@powr/domain';
 import { paramsUsed, type Explanation, type ParamRef } from '@powr/domain/explain';
 
 import { Badge } from '#ui/badge';
@@ -11,10 +11,13 @@ import { cn } from '#ui/cn';
 import { Sheet } from '#ui/sheet';
 
 import { formatMass } from '../../i18n/format';
-import { assertNever } from '../exhaustive';
 import { useLabels } from '../labels';
-import { paramName, setFacts, whyValues, type WhyNames } from './format';
+import { useEffortWords } from '../settings/effort';
+import { CitationText, useCitations, useSourceName, type Citation } from './citations';
+import { useEvidenceLabels } from './evidence';
+import { setFacts, whyValues, type WhyNames } from './format';
 import { WHY_MESSAGES } from './messages';
+import { useParamLabel } from './param-labels';
 
 /** Plan days for day and slot names in explanations (set by the plan screens). */
 export const WhyNamesContext = createContext<WhyNames>({});
@@ -34,9 +37,11 @@ export function WhyText({ why, simple }: { why: Explanation; simple?: boolean })
 
 /**
  * "Why?" button and sheet (PRG-09, NFR-USE-04): renders an `Explanation` tree, its message, the
- * registry parameters with their evidence label, sources, origin and a "preliminary value" flag
- * when unverified (LEG-05, §8.6.4), and the steps it was built from. Reused by the session screen
- * (M3). The visible label stays in the accessible name (WCAG 2.5.3).
+ * registry parameters with their label, evidence label, origin and a "preliminary value" flag when
+ * unverified (LEG-05, §8.6.4), each linked to its entry in "How POWR decides", the steps it was
+ * built from, and the full citations of its sources (TD-33, M5s; labels and citations are lazy
+ * chunks loaded when a sheet opens). Reused by the session screen (M3). The visible label stays
+ * in the accessible name (WCAG 2.5.3).
  */
 export function WhyButton({
   why,
@@ -129,19 +134,46 @@ function WhyBody({ why }: { why: Explanation }) {
           <Steps steps={steps} depth={0} />
         </section>
       ) : null}
-      {params.length > 0 ? (
-        <section className="flex flex-col gap-2">
+      {params.length > 0 ? <BasedOn params={params} /> : null}
+    </div>
+  );
+}
+
+/** The parameters with their labels and evidence, then the full citations of their sources. */
+function BasedOn({ params }: { params: readonly ParamRef[] }) {
+  const citations = useCitations();
+  const sourceName = useSourceName(citations);
+  const cited = [...new Set(params.flatMap((param) => param.sources))]
+    .map((id) => citations?.get(id))
+    .filter((citation): citation is Citation => citation !== undefined)
+    .toSorted((a, b) => sourceName(a.id).localeCompare(sourceName(b.id)));
+  return (
+    <>
+      <section className="flex flex-col gap-2">
+        <h3 className="font-semibold">
+          <Trans>Based on</Trans>
+        </h3>
+        <ul className="flex flex-col gap-2">
+          {params.map((param) => (
+            <ParamItem key={param.id} param={param} sourceName={sourceName} />
+          ))}
+        </ul>
+      </section>
+      {cited.length > 0 ? (
+        <section className="flex flex-col gap-2" data-testid="why-sources">
           <h3 className="font-semibold">
-            <Trans>Based on</Trans>
+            <Trans>Sources</Trans>
           </h3>
-          <ul className="flex flex-col gap-2">
-            {params.map((param) => (
-              <ParamItem key={param.id} param={param} />
+          <ol className="flex list-decimal flex-col gap-3 pl-5">
+            {cited.map((citation) => (
+              <li key={citation.id}>
+                <CitationText citation={citation} />
+              </li>
             ))}
-          </ul>
+          </ol>
         </section>
       ) : null}
-    </div>
+    </>
   );
 }
 
@@ -171,27 +203,31 @@ function Steps({ steps, depth }: { steps: readonly Explanation[]; depth: number 
 }
 
 function SetList({ why }: { why: Explanation }) {
+  const effortWords = useEffortWords();
   const sets = setFacts(why);
   if (sets.length === 0) return null;
   return (
     <ul className="flex flex-col gap-1 tabular">
-      {sets.map((set) => (
-        <li key={set.index}>
-          <Trans>
-            Set {set.index + 1}: {set.load ? formatMass(set.load.value, set.load.unit) : '–'} ×{' '}
-            {set.reps ?? '–'}
-            {set.rir !== null ? ` @ RIR ${set.rir}` : ''}
-          </Trans>
-        </li>
-      ))}
+      {sets.map((set) => {
+        const effort = set.rir === null ? '' : ` @ ${effortWords.value(set.rir)}`;
+        return (
+          <li key={set.index}>
+            <Trans>
+              Set {set.index + 1}: {set.load ? formatMass(set.load.value, set.load.unit) : '–'} ×{' '}
+              {set.reps ?? '–'}
+              {effort}
+            </Trans>
+          </li>
+        );
+      })}
     </ul>
   );
 }
 
-function ParamItem({ param }: { param: ParamRef }) {
+function ParamItem({ param, sourceName }: { param: ParamRef; sourceName: (id: string) => string }) {
   const { t } = useLingui();
-  const evidenceLabels = useEvidenceLabels();
-  const sourceName = useSourceName();
+  const evidence = useEvidenceLabels();
+  const label = useParamLabel();
   const origin =
     param.origin === 'user'
       ? t`Your setting`
@@ -200,13 +236,14 @@ function ParamItem({ param }: { param: ParamRef }) {
         : param.origin === 'variant'
           ? t`Default for your situation`
           : t`Default`;
+  const name = label(param.id);
   return (
     <li className="flex flex-col gap-1 rounded-xl border border-border p-3">
-      <span className="font-medium">{paramName(param.id)}</span>
+      <span className="font-medium">{name}</span>
       <span className="flex flex-wrap gap-2">
-        {evidenceLabels(param.evidence).map((label) => (
-          <Badge key={label} tone="info" icon={null}>
-            {label}
+        {evidence.of(param.evidence).map((text) => (
+          <Badge key={text} tone="info" icon={null}>
+            {text}
           </Badge>
         ))}
         {param.verified ? null : <Badge tone="warning">{t`Preliminary value`}</Badge>}
@@ -219,57 +256,36 @@ function ParamItem({ param }: { param: ParamRef }) {
           <Trans>Sources: {param.sources.map(sourceName).join('; ')}</Trans>
         </span>
       ) : null}
+      <HowDecidesLink paramId={param.id} label={t`How POWR decides: ${name}`} />
     </li>
   );
 }
 
-/** 'src.iversen2021' → 'Iversen 2021'; 'src.pmid34644424' → 'PubMed 34644424' (TD-33). */
-function useSourceName() {
-  const { t } = useLingui();
-  return (id: string): string => {
-    const body = id.replace(/^src\./, '');
-    const [, pmid] = /^pmid(\d+)$/.exec(body) ?? [];
-    if (pmid !== undefined) return t`PubMed ${pmid}`;
-    if (body.startsWith('powr-')) {
-      const topic = body.slice(5).replaceAll('-', ' ');
-      return t`POWR ${topic}`;
-    }
-    const author = /^([a-z-]+?)(\d{4})([a-z]?)$/.exec(body);
-    if (author) {
-      const [, name = '', year = '', suffix = ''] = author;
-      return `${name.charAt(0).toUpperCase()}${name.slice(1)} ${year}${suffix}`;
-    }
-    return body;
-  };
-}
-
-/** EB tags → the user-facing evidence labels of §8.6.4 (LEG-05), each label once. */
-function useEvidenceLabels() {
-  const { t } = useLingui();
-  const label = (tag: EvidenceTag): string => {
-    switch (tag) {
-      case 'MA':
-      case 'SR':
-      case 'POS':
-      case 'RCT-T':
-        return t`Strong research`;
-      case 'RCT':
-      case 'RCT-U':
-      case 'OBS':
-      case 'PREPRINT':
-      case 'NARR':
-        return t`Limited research`;
-      case 'PRACT':
-      case 'DELPHI/SURVEY':
-        return t`Coaching convention`;
-      case 'INF':
-      case 'MODEL':
-        return t`App estimate`;
-      case 'OFFICIAL':
-        return t`Official standard`;
-      default:
-        return assertNever(tag);
-    }
-  };
-  return (tags: readonly EvidenceTag[]): string[] => [...new Set(tags.map(label))];
+/**
+ * The parameter's entry in "How POWR decides" (LEG-05, TD-33). An in-app navigation when a router
+ * is there; the sheet also renders without one (component previews), then the link is a plain
+ * same-origin link.
+ */
+function HowDecidesLink({ paramId, label }: { paramId: string; label: string }) {
+  const router = useRouter({ warn: false });
+  const hash = `param-${paramId}`;
+  return (
+    <a
+      href={`/legal/how-powr-decides#${hash}`}
+      aria-label={label}
+      onClick={(event) => {
+        if (!router || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey)
+          return;
+        event.preventDefault();
+        void router.navigate({
+          to: '/legal/$page',
+          params: { page: 'how-powr-decides' },
+          hash,
+        });
+      }}
+      className="flex min-h-target-min items-center text-sm font-semibold text-info underline underline-offset-4"
+    >
+      <Trans>How POWR decides</Trans>
+    </a>
+  );
 }

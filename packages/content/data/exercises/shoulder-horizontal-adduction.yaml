@@ -49,3 +49,127 @@
     - en: Adjust the seat so the handles are at chest height.
     - en: Let the handles travel back until you feel a stretch, shoulders down and chest up.
     - en: Squeeze the handles together in front of you and return slowly.
+
+# M5 additions (content 0.3.0): dumbbell, incline, low-to-high cable, band and ring flies, "Fly /
+# pec deck" row (C). The incline and low-to-high flies move the arm up toward the face and credit
+# the clavicular head directly. They do not rank it (MAP-03 (e)), so a plain chest-fly slot keeps
+# the flat fly or pec deck.
+
+- id: ex.dumbbell-fly
+  name: { en: Dumbbell fly }
+  synonyms: [flat dumbbell fly, db fly]
+  pattern: shoulderHorizontalAdduction
+  mechanics: isolation
+  substitutionGroups: [sg.chest-fly]
+  equipment:
+    allOf: [eq.dumbbells]
+    anyOf: [[eq.flat-bench, eq.adjustable-bench]]
+  muscles:
+    - { muscle: mu.chest, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.front-delts, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+  load: { type: dumbbell, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [10, 20], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 3-0-X-0
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 2 }
+  cues:
+    - en: Lie on a bench with the dumbbells above your chest, palms facing each other and elbows slightly bent.
+    - en: Open your arms in a wide arc until you feel a deep stretch across your chest.
+    - en: Bring the dumbbells back together along the same arc while the elbow angle stays fixed.
+
+- id: ex.incline-dumbbell-fly
+  name: { en: Incline dumbbell fly }
+  synonyms: [incline fly, incline db fly]
+  pattern: shoulderHorizontalAdduction
+  mechanics: isolation
+  substitutionGroups: [sg.chest-fly]
+  equipment: { allOf: [eq.dumbbells, eq.adjustable-bench], anyOf: [] }
+  muscles:
+    - { muscle: mu.chest.clavicular, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.front-delts, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+  load: { type: dumbbell, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [10, 20], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 3-0-X-0
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 2 }
+  cues:
+    - en: Set the bench to about 30 degrees and start with the dumbbells above your upper chest.
+    - en: Lower them in a wide arc with soft elbows until your chest is fully stretched.
+    - en: Squeeze them back up and together without turning the movement into a press.
+
+- id: ex.low-to-high-cable-fly
+  name: { en: Low-to-high cable fly }
+  synonyms: [low cable fly, upward cable fly]
+  pattern: shoulderHorizontalAdduction
+  mechanics: isolation
+  substitutionGroups: [sg.chest-fly]
+  equipment:
+    allOf: []
+    anyOf: [[eq.cable-station, eq.dual-cable-station]]
+  muscles:
+    - { muscle: mu.chest.clavicular, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.front-delts, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+  load: { type: machine, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [10, 20], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-1
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 2 }
+  cues:
+    - en: Set the pulleys low and stand between them, a handle in each hand with your arms down and slightly back.
+    - en: Sweep your hands up and together in front of your upper chest with soft elbows.
+    - en: Lower them along the same arc until your chest stretches; with one pulley, train one arm at a time.
+
+- id: ex.band-chest-fly
+  name: { en: Band chest fly }
+  synonyms: [resistance band fly, band fly]
+  pattern: shoulderHorizontalAdduction
+  mechanics: isolation
+  substitutionGroups: [sg.chest-fly]
+  equipment: { allOf: [eq.resistance-bands], anyOf: [] }
+  muscles:
+    - { muscle: mu.chest, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.front-delts, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+  load: { type: band, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [12, 30], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-1
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 0 }
+  cues:
+    - en: Anchor the band behind you at chest height and hold one end in each hand with your arms open wide.
+    - en: Bring your hands together in front of your chest in a hugging arc.
+    - en: Open back up slowly until your arms are in line with your shoulders.
+
+- id: ex.ring-fly
+  name: { en: Ring fly }
+  synonyms: [suspended fly, ring chest fly]
+  pattern: shoulderHorizontalAdduction
+  mechanics: isolation
+  substitutionGroups: [sg.chest-fly]
+  equipment: { allOf: [eq.rings], anyOf: [] }
+  muscles:
+    - { muscle: mu.chest, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.front-delts, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+  load: { type: bodyweightAdded, curveClass: pooled, unilateral: false, bodyweightLoaded: true }
+  defaults:
+    repRange: { hypertrophy: [8, 20], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 3-0-X-0
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 1 }
+  cues:
+    - en: Set the rings at about hip height and lean into them on straight arms, body in one line.
+    - en: Let your arms open out to the sides as your chest lowers between the rings.
+    - en: Pull your arms back together to return; stand more upright to make it easier.

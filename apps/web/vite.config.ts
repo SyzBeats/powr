@@ -12,6 +12,7 @@ import { VitePWA } from 'vite-plugin-pwa';
 import { licenceCollector, licenceFixturePlugin } from '@powr/tools-licence';
 
 import packageJson from './package.json' with { type: 'json' };
+import { citationsPlugin } from './scripts/citations-plugin.ts';
 import { compilerReport } from './scripts/compiler-report.ts';
 import { TRUSTED_TYPES_CSP } from './scripts/trusted-types.ts';
 
@@ -112,11 +113,22 @@ export default defineConfig({
             purpose: 'maskable',
           },
         ],
+        // PWA-05 (M5d): opened offline like any deep link (navigation route → index.html); the
+        // app puts Home beneath them in the history, so Back goes to Home (PWA-12).
         shortcuts: [
           {
-            name: 'Log a set',
-            short_name: 'Log',
-            url: '/session?source=shortcut',
+            name: "Start today's session",
+            short_name: 'Train',
+            description: "Starts today's planned session, or opens the workout start screen.",
+            url: '/session?start=today&source=shortcut',
+            icons: [{ src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' }],
+          },
+          {
+            name: 'Log bodyweight',
+            short_name: 'Bodyweight',
+            description: "Opens the bodyweight log with today's date and time.",
+            url: '/body/log?source=shortcut',
+            icons: [{ src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' }],
           },
         ],
       },
@@ -142,6 +154,8 @@ export default defineConfig({
       devOptions: { enabled: false },
     }),
     licenceCollector({ label: 'app', reportDir: licenceReportDir }),
+    // TD-33 (M5s): the source registry's citations as a lazy chunk.
+    citationsPlugin(),
     licenceFixturePlugin(process.env['POWR_LICENCE_FIXTURE'], `${root}src/main.tsx`),
     versionFile(),
     compiler.plugin,

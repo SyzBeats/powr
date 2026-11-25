@@ -1,0 +1,723 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2026-11-25 15:08+0100\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: pseudo\n"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.progression.apre.sixRm"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.baseline.refineAfterDays"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.planning.sessionBudget.tolerancePct"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.unknownEffort.priorRirDefault"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.scoring.allometric.exponent"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.scoring.dots.bodyweightClampKg"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.scoring.wilks.bodyweightClampKg"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.scoring.wilks2020.bodyweightClampKg"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.deload.returnFromBreak.sorenessNoteAfterDays"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.monitoring.readiness.adjustments"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.monitoring.readiness.baseline"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.rirBias"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.session.techniqueCredit.cluster"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.session.techniqueCredit.drop"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.session.techniqueCredit.lengthenedPartials"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.session.techniqueCredit.myoReps"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.session.techniqueCredit.partialExtension"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.session.techniqueCredit.restPause"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.trend.noiseHeavySd"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.trend.noiseTypicalSd"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.bodyweight.rate.windowDays"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.session.tempo.default"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.scoring.dots.coefficients"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.deload.returnFromBreak"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.curve.rts"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.volume.effort.strengthAccessoryRpe"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.volume.effort.hypertrophyRir"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.volume.effort.strengthRpe"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.planning.novice.maxWorkingExercises"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.planning.rotation.perMuscle"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.planning.variety.pool"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.trend.processSdPerWeek"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.volume.strength.minimumDosePerLift"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.volume.hypertrophy.minimumDose"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.progression.calibration"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.e1rm.equation"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.volume.hypertrophy.tiers"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.volume.effort.hypertrophySlopePerRir"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.reanchor.trigger"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.volume.strength.perSessionHeavySets"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.monitoring.readiness.pmFromHour"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.progression.model.accessory"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.ranking.effectiveness"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.progression.model.mainLift"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.deload.planned.everyWeeks"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.volume.counting.default"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.scoring.ipfGl.coefficients"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.scoring.ipfPoints.coefficients"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.progression.double.incrementGuardPct"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.deload.planned.durationDays"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.volume.load.hypertrophyMinPct1rm"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.bodyweight.trend.winsorizePct"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.scoring.ipfGl.minBodyweightKg"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.scoring.ipfPoints.minBodyweightKg"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.session.rest.countUpSoftMin"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.progression.stall.failedSessions"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.volume.startingVolume.maxFactor"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.volume.hardSet.maxRir"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.planning.timeBudget.fallback"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.session.rest.supersetTransition"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.trend.reference"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.scoring.display"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.deload.planned.postpone"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.unknownEffort.eligibleForE1rmPr"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.trend.repRangeShift"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.session.tempo.warnRepSeconds"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.curve.nuzzoPooled"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.curve.nuzzoBench"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.curve.nuzzoLegPress"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.volume.repRange.hypertrophy"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.volume.repRange.strength"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.trend.strengthMaxReff"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.curve.classMap"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.session.rest.warmupLight"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.session.rest.warmupBeforeWork"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.monitoring.spacing"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.session.rest.hypertrophyCompound"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.session.rest.hypertrophyIsolation"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.session.rest.strength"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.session.rest.timeSaver"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.motivation.streak.graceSessions"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.volume.frequency.strengthPerLift"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.volume.frequency.hypertrophyPerMuscle"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.planning.strength.accessorySets"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.planning.slot.sets"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.progression.calibration.reliableSetWeight"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.pr.minSetWeight"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.volume.maintenance"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.volume.hardSet.unknownRirCounts"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.motivation.streak.partialMinShare"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.monitoring.readiness.sleep"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.session.rest.competitionMinimum"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.deload.reactive"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.progression.increment.microplateKgPerSide"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.bodyweight.trend.alphaPerDay"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.volume.strength.tiers"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.progression.classification.slopePctPerWeek"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.session.tempo.eccentricSeconds"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.session.duration.repSeconds"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.session.duration.warmupSetSeconds"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.session.duration.transitionSeconds"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.progression.classification.trainingAgeMonths"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.planning.mesocycle.accumulationWeeks"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.trend.typicalErrorCv"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.unknownEffort.priorRirSd"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.volume.hypertrophy.perSessionSoftCap"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.session.warmup.heavy"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.session.warmup.compound"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.session.warmup.isolation"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.session.warmup.feeder"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.session.warmup.pruning"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.bodyweight.rate.maintain"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.bodyweight.rate.bulk"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.volume.strength.weeklyHeavySetsPerLift"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.bodyweight.rate.cut"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.motivation.streak.defaultWeeklyTarget"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.volume.puos"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.volume.hypertrophy.weeklyBands"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.progression.increment.intermediatePctPerWeek"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.motivation.streak.retroactiveBreakWeeks"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.progression.increment.advancedLoadJumpWeeks"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.bodyweight.trend.initialWeighIns"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.progression.stall.resetPct"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.e1rm.weightByRpe"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.e1rm.weightByReff"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.e1rm.setOrderDecay"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.unknownEffort.weightMultiplier"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.progression.increment.noviceLowerKg"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.progression.increment.noviceUpperKg"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.deload.content"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.trend.heavySet"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.volume.strength.heavySet"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.planning.missed.mergePriorities"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.volume.hardSet.highReps"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.trend.changeThresholds"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.monitoring.readiness.thresholds"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.session.warmup.heavyTrigger"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.progression.pace.window"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.planning.volume.startPosition"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.trend.noviceWidening"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.scoring.wilks.coefficients"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.scoring.wilks2020.coefficients"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.unknownEffort.personalPrior"
+msgstr ""

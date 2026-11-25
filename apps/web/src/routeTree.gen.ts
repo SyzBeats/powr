@@ -18,11 +18,11 @@ import { Route as DebugBodyMapRouteImport } from './routes/debug/body-map'
 import { Route as DebugCapabilitiesRouteImport } from './routes/debug/capabilities'
 import { Route as DebugChartsRouteImport } from './routes/debug/charts'
 import { Route as ExploreIndexRouteImport } from './routes/explore/index'
-import { Route as LegalDisclaimerRouteImport } from './routes/legal/disclaimer'
-import { Route as LegalPrivacyRouteImport } from './routes/legal/privacy'
+import { Route as LegalPageRouteImport } from './routes/legal/$page'
 import { Route as OnboardingIndexRouteImport } from './routes/onboarding/index'
 import { Route as OnboardingStepRouteImport } from './routes/onboarding/$step'
 import { Route as PlanIndexRouteImport } from './routes/plan/index'
+import { Route as PlanCalendarRouteImport } from './routes/plan/calendar'
 import { Route as PlanEditRouteImport } from './routes/plan/edit'
 import { Route as PlanNextRouteImport } from './routes/plan/next'
 import { Route as ProgressIndexRouteImport } from './routes/progress/index'
@@ -34,6 +34,9 @@ import { Route as ProgressStreakRouteImport } from './routes/progress/streak'
 import { Route as ProgressVolumeRouteImport } from './routes/progress/volume'
 import { Route as SessionIndexRouteImport } from './routes/session/index'
 import { Route as SettingsIndexRouteImport } from './routes/settings/index'
+import { Route as SettingsDeviceSupportRouteImport } from './routes/settings/device-support'
+import { Route as SettingsExercisesRouteImport } from './routes/settings/exercises'
+import { Route as SettingsRestRouteImport } from './routes/settings/rest'
 import { Route as ExploreBodyMapIndexRouteImport } from './routes/explore/body-map/index'
 import { Route as ExploreBodyMapMuscleIdRouteImport } from './routes/explore/body-map/$muscleId'
 import { Route as ExploreExercisesIndexRouteImport } from './routes/explore/exercises/index'
@@ -47,6 +50,7 @@ import { Route as SessionPastNewRouteImport } from './routes/session/past/new'
 import { Route as SessionSummarySessionIdRouteImport } from './routes/session/summary.$sessionId'
 import { Route as SettingsEquipmentIndexRouteImport } from './routes/settings/equipment/index'
 import { Route as SettingsEquipmentProfileIdRouteImport } from './routes/settings/equipment/$profileId'
+import { Route as SettingsProfileAnswerRouteImport } from './routes/settings/profile.$answer'
 import { Route as ExploreExercisesEditExerciseIdRouteImport } from './routes/explore/exercises/edit.$exerciseId'
 
 const IndexRoute = IndexRouteImport.update({
@@ -94,14 +98,9 @@ const ExploreIndexRoute = ExploreIndexRouteImport.update({
   path: '/explore/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LegalDisclaimerRoute = LegalDisclaimerRouteImport.update({
-  id: '/legal/disclaimer',
-  path: '/legal/disclaimer',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LegalPrivacyRoute = LegalPrivacyRouteImport.update({
-  id: '/legal/privacy',
-  path: '/legal/privacy',
+const LegalPageRoute = LegalPageRouteImport.update({
+  id: '/legal/$page',
+  path: '/legal/$page',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OnboardingIndexRoute = OnboardingIndexRouteImport.update({
@@ -117,6 +116,11 @@ const OnboardingStepRoute = OnboardingStepRouteImport.update({
 const PlanIndexRoute = PlanIndexRouteImport.update({
   id: '/plan/',
   path: '/plan/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlanCalendarRoute = PlanCalendarRouteImport.update({
+  id: '/plan/calendar',
+  path: '/plan/calendar',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PlanEditRoute = PlanEditRouteImport.update({
@@ -172,6 +176,21 @@ const SessionIndexRoute = SessionIndexRouteImport.update({
 const SettingsIndexRoute = SettingsIndexRouteImport.update({
   id: '/settings/',
   path: '/settings/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsDeviceSupportRoute = SettingsDeviceSupportRouteImport.update({
+  id: '/settings/device-support',
+  path: '/settings/device-support',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsExercisesRoute = SettingsExercisesRouteImport.update({
+  id: '/settings/exercises',
+  path: '/settings/exercises',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRestRoute = SettingsRestRouteImport.update({
+  id: '/settings/rest',
+  path: '/settings/rest',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ExploreBodyMapIndexRoute = ExploreBodyMapIndexRouteImport.update({
@@ -242,6 +261,11 @@ const SettingsEquipmentProfileIdRoute =
     path: '/settings/equipment/$profileId',
     getParentRoute: () => rootRouteImport,
   } as any)
+const SettingsProfileAnswerRoute = SettingsProfileAnswerRouteImport.update({
+  id: '/settings/profile/$answer',
+  path: '/settings/profile/$answer',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ExploreExercisesEditExerciseIdRoute =
   ExploreExercisesEditExerciseIdRouteImport.update({
     id: '/explore/exercises/edit/$exerciseId',
@@ -257,9 +281,9 @@ export interface FileRoutesByFullPath {
   '/debug/body-map': typeof DebugBodyMapRoute
   '/debug/capabilities': typeof DebugCapabilitiesRoute
   '/debug/charts': typeof DebugChartsRoute
-  '/legal/disclaimer': typeof LegalDisclaimerRoute
-  '/legal/privacy': typeof LegalPrivacyRoute
+  '/legal/$page': typeof LegalPageRoute
   '/onboarding/$step': typeof OnboardingStepRoute
+  '/plan/calendar': typeof PlanCalendarRoute
   '/plan/edit': typeof PlanEditRoute
   '/plan/next': typeof PlanNextRoute
   '/progress/calendar': typeof ProgressCalendarRoute
@@ -268,6 +292,9 @@ export interface FileRoutesByFullPath {
   '/progress/scores': typeof ProgressScoresRoute
   '/progress/streak': typeof ProgressStreakRoute
   '/progress/volume': typeof ProgressVolumeRoute
+  '/settings/device-support': typeof SettingsDeviceSupportRoute
+  '/settings/exercises': typeof SettingsExercisesRoute
+  '/settings/rest': typeof SettingsRestRoute
   '/body/': typeof BodyIndexRoute
   '/explore/': typeof ExploreIndexRoute
   '/onboarding/': typeof OnboardingIndexRoute
@@ -284,6 +311,7 @@ export interface FileRoutesByFullPath {
   '/session/past/new': typeof SessionPastNewRoute
   '/session/summary/$sessionId': typeof SessionSummarySessionIdRoute
   '/settings/equipment/$profileId': typeof SettingsEquipmentProfileIdRoute
+  '/settings/profile/$answer': typeof SettingsProfileAnswerRoute
   '/explore/body-map/': typeof ExploreBodyMapIndexRoute
   '/explore/exercises/': typeof ExploreExercisesIndexRoute
   '/session/past/': typeof SessionPastIndexRoute
@@ -298,9 +326,9 @@ export interface FileRoutesByTo {
   '/debug/body-map': typeof DebugBodyMapRoute
   '/debug/capabilities': typeof DebugCapabilitiesRoute
   '/debug/charts': typeof DebugChartsRoute
-  '/legal/disclaimer': typeof LegalDisclaimerRoute
-  '/legal/privacy': typeof LegalPrivacyRoute
+  '/legal/$page': typeof LegalPageRoute
   '/onboarding/$step': typeof OnboardingStepRoute
+  '/plan/calendar': typeof PlanCalendarRoute
   '/plan/edit': typeof PlanEditRoute
   '/plan/next': typeof PlanNextRoute
   '/progress/calendar': typeof ProgressCalendarRoute
@@ -309,6 +337,9 @@ export interface FileRoutesByTo {
   '/progress/scores': typeof ProgressScoresRoute
   '/progress/streak': typeof ProgressStreakRoute
   '/progress/volume': typeof ProgressVolumeRoute
+  '/settings/device-support': typeof SettingsDeviceSupportRoute
+  '/settings/exercises': typeof SettingsExercisesRoute
+  '/settings/rest': typeof SettingsRestRoute
   '/body': typeof BodyIndexRoute
   '/explore': typeof ExploreIndexRoute
   '/onboarding': typeof OnboardingIndexRoute
@@ -325,6 +356,7 @@ export interface FileRoutesByTo {
   '/session/past/new': typeof SessionPastNewRoute
   '/session/summary/$sessionId': typeof SessionSummarySessionIdRoute
   '/settings/equipment/$profileId': typeof SettingsEquipmentProfileIdRoute
+  '/settings/profile/$answer': typeof SettingsProfileAnswerRoute
   '/explore/body-map': typeof ExploreBodyMapIndexRoute
   '/explore/exercises': typeof ExploreExercisesIndexRoute
   '/session/past': typeof SessionPastIndexRoute
@@ -340,9 +372,9 @@ export interface FileRoutesById {
   '/debug/body-map': typeof DebugBodyMapRoute
   '/debug/capabilities': typeof DebugCapabilitiesRoute
   '/debug/charts': typeof DebugChartsRoute
-  '/legal/disclaimer': typeof LegalDisclaimerRoute
-  '/legal/privacy': typeof LegalPrivacyRoute
+  '/legal/$page': typeof LegalPageRoute
   '/onboarding/$step': typeof OnboardingStepRoute
+  '/plan/calendar': typeof PlanCalendarRoute
   '/plan/edit': typeof PlanEditRoute
   '/plan/next': typeof PlanNextRoute
   '/progress/calendar': typeof ProgressCalendarRoute
@@ -351,6 +383,9 @@ export interface FileRoutesById {
   '/progress/scores': typeof ProgressScoresRoute
   '/progress/streak': typeof ProgressStreakRoute
   '/progress/volume': typeof ProgressVolumeRoute
+  '/settings/device-support': typeof SettingsDeviceSupportRoute
+  '/settings/exercises': typeof SettingsExercisesRoute
+  '/settings/rest': typeof SettingsRestRoute
   '/body/': typeof BodyIndexRoute
   '/explore/': typeof ExploreIndexRoute
   '/onboarding/': typeof OnboardingIndexRoute
@@ -367,6 +402,7 @@ export interface FileRoutesById {
   '/session/past/new': typeof SessionPastNewRoute
   '/session/summary/$sessionId': typeof SessionSummarySessionIdRoute
   '/settings/equipment/$profileId': typeof SettingsEquipmentProfileIdRoute
+  '/settings/profile/$answer': typeof SettingsProfileAnswerRoute
   '/explore/body-map/': typeof ExploreBodyMapIndexRoute
   '/explore/exercises/': typeof ExploreExercisesIndexRoute
   '/session/past/': typeof SessionPastIndexRoute
@@ -383,9 +419,9 @@ export interface FileRouteTypes {
     | '/debug/body-map'
     | '/debug/capabilities'
     | '/debug/charts'
-    | '/legal/disclaimer'
-    | '/legal/privacy'
+    | '/legal/$page'
     | '/onboarding/$step'
+    | '/plan/calendar'
     | '/plan/edit'
     | '/plan/next'
     | '/progress/calendar'
@@ -394,6 +430,9 @@ export interface FileRouteTypes {
     | '/progress/scores'
     | '/progress/streak'
     | '/progress/volume'
+    | '/settings/device-support'
+    | '/settings/exercises'
+    | '/settings/rest'
     | '/body/'
     | '/explore/'
     | '/onboarding/'
@@ -410,6 +449,7 @@ export interface FileRouteTypes {
     | '/session/past/new'
     | '/session/summary/$sessionId'
     | '/settings/equipment/$profileId'
+    | '/settings/profile/$answer'
     | '/explore/body-map/'
     | '/explore/exercises/'
     | '/session/past/'
@@ -424,9 +464,9 @@ export interface FileRouteTypes {
     | '/debug/body-map'
     | '/debug/capabilities'
     | '/debug/charts'
-    | '/legal/disclaimer'
-    | '/legal/privacy'
+    | '/legal/$page'
     | '/onboarding/$step'
+    | '/plan/calendar'
     | '/plan/edit'
     | '/plan/next'
     | '/progress/calendar'
@@ -435,6 +475,9 @@ export interface FileRouteTypes {
     | '/progress/scores'
     | '/progress/streak'
     | '/progress/volume'
+    | '/settings/device-support'
+    | '/settings/exercises'
+    | '/settings/rest'
     | '/body'
     | '/explore'
     | '/onboarding'
@@ -451,6 +494,7 @@ export interface FileRouteTypes {
     | '/session/past/new'
     | '/session/summary/$sessionId'
     | '/settings/equipment/$profileId'
+    | '/settings/profile/$answer'
     | '/explore/body-map'
     | '/explore/exercises'
     | '/session/past'
@@ -465,9 +509,9 @@ export interface FileRouteTypes {
     | '/debug/body-map'
     | '/debug/capabilities'
     | '/debug/charts'
-    | '/legal/disclaimer'
-    | '/legal/privacy'
+    | '/legal/$page'
     | '/onboarding/$step'
+    | '/plan/calendar'
     | '/plan/edit'
     | '/plan/next'
     | '/progress/calendar'
@@ -476,6 +520,9 @@ export interface FileRouteTypes {
     | '/progress/scores'
     | '/progress/streak'
     | '/progress/volume'
+    | '/settings/device-support'
+    | '/settings/exercises'
+    | '/settings/rest'
     | '/body/'
     | '/explore/'
     | '/onboarding/'
@@ -492,6 +539,7 @@ export interface FileRouteTypes {
     | '/session/past/new'
     | '/session/summary/$sessionId'
     | '/settings/equipment/$profileId'
+    | '/settings/profile/$answer'
     | '/explore/body-map/'
     | '/explore/exercises/'
     | '/session/past/'
@@ -507,9 +555,9 @@ export interface RootRouteChildren {
   DebugBodyMapRoute: typeof DebugBodyMapRoute
   DebugCapabilitiesRoute: typeof DebugCapabilitiesRoute
   DebugChartsRoute: typeof DebugChartsRoute
-  LegalDisclaimerRoute: typeof LegalDisclaimerRoute
-  LegalPrivacyRoute: typeof LegalPrivacyRoute
+  LegalPageRoute: typeof LegalPageRoute
   OnboardingStepRoute: typeof OnboardingStepRoute
+  PlanCalendarRoute: typeof PlanCalendarRoute
   PlanEditRoute: typeof PlanEditRoute
   PlanNextRoute: typeof PlanNextRoute
   ProgressCalendarRoute: typeof ProgressCalendarRoute
@@ -518,6 +566,9 @@ export interface RootRouteChildren {
   ProgressScoresRoute: typeof ProgressScoresRoute
   ProgressStreakRoute: typeof ProgressStreakRoute
   ProgressVolumeRoute: typeof ProgressVolumeRoute
+  SettingsDeviceSupportRoute: typeof SettingsDeviceSupportRoute
+  SettingsExercisesRoute: typeof SettingsExercisesRoute
+  SettingsRestRoute: typeof SettingsRestRoute
   BodyIndexRoute: typeof BodyIndexRoute
   ExploreIndexRoute: typeof ExploreIndexRoute
   OnboardingIndexRoute: typeof OnboardingIndexRoute
@@ -534,6 +585,7 @@ export interface RootRouteChildren {
   SessionPastNewRoute: typeof SessionPastNewRoute
   SessionSummarySessionIdRoute: typeof SessionSummarySessionIdRoute
   SettingsEquipmentProfileIdRoute: typeof SettingsEquipmentProfileIdRoute
+  SettingsProfileAnswerRoute: typeof SettingsProfileAnswerRoute
   ExploreBodyMapIndexRoute: typeof ExploreBodyMapIndexRoute
   ExploreExercisesIndexRoute: typeof ExploreExercisesIndexRoute
   SessionPastIndexRoute: typeof SessionPastIndexRoute
@@ -606,18 +658,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ExploreIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/legal/disclaimer': {
-      id: '/legal/disclaimer'
-      path: '/legal/disclaimer'
-      fullPath: '/legal/disclaimer'
-      preLoaderRoute: typeof LegalDisclaimerRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/legal/privacy': {
-      id: '/legal/privacy'
-      path: '/legal/privacy'
-      fullPath: '/legal/privacy'
-      preLoaderRoute: typeof LegalPrivacyRouteImport
+    '/legal/$page': {
+      id: '/legal/$page'
+      path: '/legal/$page'
+      fullPath: '/legal/$page'
+      preLoaderRoute: typeof LegalPageRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/onboarding/': {
@@ -639,6 +684,13 @@ declare module '@tanstack/react-router' {
       path: '/plan'
       fullPath: '/plan/'
       preLoaderRoute: typeof PlanIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/plan/calendar': {
+      id: '/plan/calendar'
+      path: '/plan/calendar'
+      fullPath: '/plan/calendar'
+      preLoaderRoute: typeof PlanCalendarRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/plan/edit': {
@@ -716,6 +768,27 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings/'
       preLoaderRoute: typeof SettingsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings/device-support': {
+      id: '/settings/device-support'
+      path: '/settings/device-support'
+      fullPath: '/settings/device-support'
+      preLoaderRoute: typeof SettingsDeviceSupportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings/exercises': {
+      id: '/settings/exercises'
+      path: '/settings/exercises'
+      fullPath: '/settings/exercises'
+      preLoaderRoute: typeof SettingsExercisesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings/rest': {
+      id: '/settings/rest'
+      path: '/settings/rest'
+      fullPath: '/settings/rest'
+      preLoaderRoute: typeof SettingsRestRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/explore/body-map/': {
@@ -809,6 +882,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsEquipmentProfileIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/settings/profile/$answer': {
+      id: '/settings/profile/$answer'
+      path: '/settings/profile/$answer'
+      fullPath: '/settings/profile/$answer'
+      preLoaderRoute: typeof SettingsProfileAnswerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/explore/exercises/edit/$exerciseId': {
       id: '/explore/exercises/edit/$exerciseId'
       path: '/explore/exercises/edit/$exerciseId'
@@ -827,9 +907,9 @@ const rootRouteChildren: RootRouteChildren = {
   DebugBodyMapRoute: DebugBodyMapRoute,
   DebugCapabilitiesRoute: DebugCapabilitiesRoute,
   DebugChartsRoute: DebugChartsRoute,
-  LegalDisclaimerRoute: LegalDisclaimerRoute,
-  LegalPrivacyRoute: LegalPrivacyRoute,
+  LegalPageRoute: LegalPageRoute,
   OnboardingStepRoute: OnboardingStepRoute,
+  PlanCalendarRoute: PlanCalendarRoute,
   PlanEditRoute: PlanEditRoute,
   PlanNextRoute: PlanNextRoute,
   ProgressCalendarRoute: ProgressCalendarRoute,
@@ -838,6 +918,9 @@ const rootRouteChildren: RootRouteChildren = {
   ProgressScoresRoute: ProgressScoresRoute,
   ProgressStreakRoute: ProgressStreakRoute,
   ProgressVolumeRoute: ProgressVolumeRoute,
+  SettingsDeviceSupportRoute: SettingsDeviceSupportRoute,
+  SettingsExercisesRoute: SettingsExercisesRoute,
+  SettingsRestRoute: SettingsRestRoute,
   BodyIndexRoute: BodyIndexRoute,
   ExploreIndexRoute: ExploreIndexRoute,
   OnboardingIndexRoute: OnboardingIndexRoute,
@@ -854,6 +937,7 @@ const rootRouteChildren: RootRouteChildren = {
   SessionPastNewRoute: SessionPastNewRoute,
   SessionSummarySessionIdRoute: SessionSummarySessionIdRoute,
   SettingsEquipmentProfileIdRoute: SettingsEquipmentProfileIdRoute,
+  SettingsProfileAnswerRoute: SettingsProfileAnswerRoute,
   ExploreBodyMapIndexRoute: ExploreBodyMapIndexRoute,
   ExploreExercisesIndexRoute: ExploreExercisesIndexRoute,
   SessionPastIndexRoute: SessionPastIndexRoute,

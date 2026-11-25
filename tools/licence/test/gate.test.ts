@@ -1,3 +1,6 @@
+import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'vitest';
@@ -42,10 +45,51 @@ describe('licence gate over bundled modules', () => {
     expect(result.failures).toEqual([]);
     expect(result.attributions).toEqual([
       expect.objectContaining({
+        kind: 'npm',
         name: 'dual-licensed',
         licence: 'MIT',
         copyright: ['Copyright (c) 2026 Fixture Author'],
       }),
     ]);
+  });
+
+  it('lists distributed own-work assets in the attributions, never build-only ones (LEG-06, M5s)', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'powr-assets-'));
+    const file = join(dir, 'assets-inventory.yaml');
+    writeFileSync(
+      file,
+      [
+        'assets:',
+        '  - name: own-artwork',
+        '    version: 1.0.0',
+        '    licence: LicenseRef-Own-Work',
+        '    distributed: true',
+        '    copyright: Original artwork (own work)',
+        '  - name: design-sketches',
+        '    licence: LicenseRef-Own-Work',
+        '    distributed: false',
+      ].join('\n'),
+    );
+    try {
+      const result = runGate({
+        policy: { ...policy, allowed: ['MIT', 'LicenseRef-Own-Work'] },
+        bundled: [],
+        assetsInventoryFile: file,
+      });
+      expect(result.failures).toEqual([]);
+      expect(result.attributions).toEqual([
+        {
+          kind: 'asset',
+          name: 'own-artwork',
+          version: '1.0.0',
+          licence: 'LicenseRef-Own-Work',
+          copyright: ['Original artwork (own work)'],
+          licenceText: null,
+          noticeText: null,
+        },
+      ]);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
   });
 });

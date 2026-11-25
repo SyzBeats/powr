@@ -14,6 +14,7 @@
     "./resolve": "./src/resolve.ts",
     "./sources": "./src/sources/index.ts",
     "./sources/node": "./scripts/sources.ts",
+    "./citations/node": "./scripts/citations.ts",
     "./build/node": "./scripts/build.ts"
   },
   "scripts": {

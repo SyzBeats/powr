@@ -1,6 +1,6 @@
 import { customizableCatalog } from '@powr/content';
 import { builtInContent } from '@powr/content/built-in';
-import { makeInstantTz, type SessionId } from '@powr/domain';
+import { makeInstantTz, toIsoWithOffset, type SessionId } from '@powr/domain';
 import type { WeeklyRecord } from '@powr/domain/analytics';
 import type { ExerciseState, PrRecord, SessionE1rmPoint } from '@powr/domain/session';
 import { RAW_TABLE_NAMES, emptyRawTables, type RawTableName, type RawTables } from '@powr/formats';
@@ -364,7 +364,14 @@ export function createTestDeps(
   let idCounter = 0;
   const runtime = { activeSession: null as { id: SessionId; build: string } | null };
   const savedFiles: { name: string; bytes: Uint8Array }[] = [];
-  const safetySnapshots: { fileName: string; bytes: Uint8Array }[] = [];
+  const safetySnapshots: {
+    id: number;
+    fileName: string;
+    bytes: Uint8Array;
+    reason: 'import' | 'migration';
+    at: string;
+  }[] = [];
+  let safetyCounter = 0;
   let persistGranted = false;
   let saveOutcome: 'saved' | 'downloaded' | 'cancelled' = 'downloaded';
 
@@ -426,7 +433,20 @@ export function createTestDeps(
     },
     safety: {
       save: async (snapshot) => {
-        safetySnapshots.push({ fileName: snapshot.fileName, bytes: snapshot.bytes });
+        safetySnapshots.push({
+          id: ++safetyCounter,
+          fileName: snapshot.fileName,
+          bytes: snapshot.bytes,
+          reason: snapshot.reason,
+          at: toIsoWithOffset(snapshot.at),
+        });
+      },
+      list: async () =>
+        safetySnapshots.map(({ bytes, ...info }) => ({ ...info, size: bytes.length })).toReversed(),
+      read: async (id) => safetySnapshots.find((entry) => entry.id === id)?.bytes,
+      delete: async (id) => {
+        const index = safetySnapshots.findIndex((entry) => entry.id === id);
+        if (index >= 0) safetySnapshots.splice(index, 1);
       },
     },
   };

@@ -1,6 +1,6 @@
 {
   "name": "@powr/content",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "Exercise library, muscle taxonomy, equipment catalog and presets, templates.",
   "type": "module",

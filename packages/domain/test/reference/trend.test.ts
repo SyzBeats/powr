@@ -66,6 +66,20 @@ describe('observation noise', () => {
     expect(novice.logSd).toBeCloseTo(0.135, 12);
   });
 
+  it("never falls below the level's typical error (TD-59)", () => {
+    const heavy = estimate({ reff: 4, rir: 1 });
+    // Novices after the 8-week widening: 4% would be below their 5.5% typical error.
+    const settled = { level: 'novice' as const, weeksOfData: 20 };
+    expect(trendObservation(heavy, START, settled, RULES).logSd).toBe(0.055);
+    // During the widening 4% × 1.5 = 6% is above it; typical sets (9%) always are.
+    const early = { level: 'novice' as const, weeksOfData: 4 };
+    expect(trendObservation(heavy, START, early, RULES).logSd).toBeCloseTo(0.06, 12);
+    expect(trendObservation(estimate(), START, settled, RULES).logSd).toBe(0.09);
+    // Trained lifters' typical error (3.3%) is below the heavy-set noise: no change.
+    const advanced = { level: 'advanced' as const, weeksOfData: 20 };
+    expect(trendObservation(heavy, START, advanced, RULES).logSd).toBe(0.04);
+  });
+
   it('the strength trend takes sets with r_eff ≤ 8', () => {
     expect(isStrengthSet(estimate({ reff: 8 }), RULES)).toBe(true);
     expect(isStrengthSet(estimate({ reff: 9 }), RULES)).toBe(false);
@@ -179,13 +193,18 @@ describe('change labels', () => {
     expect(label(weekly(0.97))).toMatchObject({ label: 'veryLikely', direction: 'down' });
   });
 
-  it('measures the change over the level window: 8 weeks for trained lifters, 4 for novices', () => {
+  it('measures the change over the level window: 4 weeks for novices, 8 intermediate, 12 advanced', () => {
     const observations = series(weekly(1.01, 12), 7, 0.04);
-    const at = (level: 'novice' | 'intermediate' | 'advanced') =>
-      labelChange(runTrend(observations, level, RULES).value, level, RULES).value.referenceDate;
+    const at = (level: 'novice' | 'intermediate' | 'advanced', input = observations) =>
+      labelChange(runTrend(input, level, RULES).value, level, RULES).value.referenceDate;
     expect(at('intermediate')).toBe(addDays(START, 3 * 7));
     expect(at('advanced')).toBe(addDays(START, 3 * 7));
     expect(at('novice')).toBe(addDays(START, 7 * 7));
+    // 17 weekly sessions (week 16 last): 8 weeks back for intermediates, 12 for advanced lifters
+    // (rules 1.7.0, TD-60).
+    const longer = series(weekly(1.01, 17), 7, 0.04);
+    expect(at('intermediate', longer)).toBe(addDays(START, 8 * 7));
+    expect(at('advanced', longer)).toBe(addDays(START, 4 * 7));
   });
 
   it('never compares against one of the first three points; before the window, the oldest after them', () => {
@@ -215,6 +234,23 @@ describe('change labels', () => {
     });
     // SD 2%: the 95% interval excludes zero: "very likely".
     expect(labelChange(steps(0.0002), 'intermediate', RULES).value.label).toBe('veryLikely');
+  });
+
+  it('tells the two kinds of "no change" apart for the "Why?" text (TD-62)', () => {
+    const reason = (points: readonly TrendPoint[]) =>
+      labelChange(points, 'intermediate', RULES).why.args['reason'];
+    // A 5% step, beyond 1 TE (3.3%) but within its own uncertainty: not confirmed yet.
+    expect(labelChange(steps(0.002), 'intermediate', RULES).value.label).toBe('none');
+    expect(reason(steps(0.002))).toBe('unconfirmed');
+    // A 1% step stays within one typical error: day-to-day variation.
+    const small = [
+      ...[0, 1, 2, 3, 4, 5].map((week) => point(week, 0, 0.0002)),
+      ...[6, 7, 8].map((week) => point(week, 0.01, 0.0002)),
+    ];
+    expect(labelChange(small, 'intermediate', RULES).value.label).toBe('none');
+    expect(reason(small)).toBe('noise');
+    // Claims carry no reason.
+    expect(reason(steps(0.0002))).toBeUndefined();
   });
 
   it('uses the novice typical error (5.5%) for novices', () => {

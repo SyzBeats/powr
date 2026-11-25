@@ -340,6 +340,10 @@
   ebRef: 'EB §Load › Real change (trained median CV 3.3%, untrained 5.5%); technical concept §8.7.5'
   verified: true
   userOverridable: false
+  note: >-
+    Also the floor of the trend's observation noise (rules 1.7.0, TD-59): a session e1RM is never
+    modelled as less noisy than a tested 1RM, so a novice's heavy sets (load.trend.noiseHeavySd 4%)
+    count at 5.5% once the novice widening ends.
 
 - id: load.trend.changeThresholds
   value: { likelyTe: 1, likelyZ: 1.5, sustainSessions: 3, veryLikelyTe: 2.8 }
@@ -369,7 +373,7 @@
     seeded simulation (packages/domain/test/reference/trend-calibration.test.ts).
 
 - id: load.trend.reference
-  value: { weeks: { novice: 4, intermediate: 8, advanced: 8 }, sessions: 3 }
+  value: { weeks: { novice: 4, intermediate: 8, advanced: 12 }, sessions: 3 }
   unit: mixed
   evidence: [MA, OBS, INF]
   sources:
@@ -388,10 +392,12 @@
     trained lifters needed more than 0.83% a week (3.3% / 4) and a realistic intermediate 0.5% a
     week was never labelled. 8 weeks lets 0.5% a week show (4% > 3.3%); novices keep 4 weeks
     (5.5% / 4 = 1.4% a week, below their usual 1–2%) so stalls and dips still show quickly. The
-    EB classifies by the slope over 8–12 weeks; advanced stays at 8 because the session engine
-    keeps the last 30 trend points (12 weeks at 3 sessions a week would need 39). The series'
-    first `sessions` points are never the reference (barely smoothed); while a series is shorter
-    than the window its oldest point after them is. A POWR design value.
+    EB classifies by the slope over 8–12 weeks. Rules 1.7.0 (TD-60): advanced lifters get the
+    12-week end (their good-block 0.25–0.5% a week needs the longer window to pass one TE: 3–6%
+    over 12 weeks), now that the session engine keeps 60 trend points and exposures (12 weeks at
+    up to 4 sessions a week); rules 1.6.0 had 8 because it kept 30. The series' first `sessions`
+    points are never the reference (barely smoothed); while a series is shorter than the window
+    its oldest point after them is. A POWR design value.
 
 - id: load.reanchor.trigger
   value: { maxReps: 3, minRpe: 9 }

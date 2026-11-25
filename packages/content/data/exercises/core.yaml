@@ -116,3 +116,248 @@
     - en: Stand tall with one dumbbell at your side and the other hand on your hip.
     - en: Lean toward the dumbbell side until you feel a stretch along the opposite side.
     - en: Pull yourself back upright with your obliques, then switch sides after the set.
+
+# M5 additions (content 0.3.0), all convention (C):
+# - Rollouts, sit-ups, leg raises and band crunches: trunk flexion or anti-extension, abs 1.0 and
+#   obliques 0.5 as above.
+# - Woodchops and Pallof presses resist or produce trunk rotation: obliques 1.0, abs 0.5. The
+#   cable side bend is lateral flexion: obliques 1.0.
+# - The floor back extension is spinal extension: spinal erectors 1.0, glute max 0.5. It sits in
+#   the core pattern, the trunk's catch-all, because the contract has no spinal-extension pattern.
+
+- id: ex.barbell-rollout
+  name: { en: Barbell rollout }
+  synonyms: [ab rollout, ab wheel rollout]
+  pattern: core
+  mechanics: isolation
+  substitutionGroups: [sg.ab-flexion]
+  equipment:
+    allOf: [eq.plates]
+    anyOf: [[eq.barbell-olympic, eq.barbell-womens]]
+  muscles:
+    - { muscle: mu.abs, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.obliques, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+  load: { type: bodyweightAdded, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [6, 15], strength: [6, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 3-0-X-0
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 1 }
+  cues:
+    - en: Kneel behind a barbell loaded with round plates and hold it at shoulder-width.
+    - en: Roll it forward slowly with your ribs pulled toward your hips, only as far as your lower back stays flat.
+    - en: Pull the bar back to your knees by curling your trunk, not by bending at the hips.
+
+- id: ex.decline-sit-up
+  name: { en: Decline sit-up }
+  synonyms: [decline crunch, decline bench sit-up]
+  pattern: core
+  mechanics: isolation
+  substitutionGroups: [sg.ab-flexion]
+  equipment: { allOf: [eq.decline-bench], anyOf: [] }
+  muscles:
+    - { muscle: mu.abs, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.obliques, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+  load: { type: bodyweightAdded, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [8, 20], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 2 }
+  cues:
+    - en: Hook your feet under the pads of a decline bench and lie back.
+    - en: Curl your torso up by rounding your spine, chin tucked, until you are nearly upright.
+    - en: Lower slowly all the way back; hold a plate on your chest to add load.
+
+- id: ex.lying-leg-raise
+  name: { en: Lying leg raise }
+  synonyms: [floor leg raise, lying straight-leg raise]
+  pattern: core
+  mechanics: isolation
+  substitutionGroups: [sg.ab-flexion]
+  equipment: { allOf: [], anyOf: [] }
+  muscles:
+    - { muscle: mu.abs, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.obliques, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+  load: { type: bodyweightAdded, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [10, 25], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 1 }
+  cues:
+    - en: Lie on your back with your hands under your hips and your legs straight.
+    - en: Raise your legs until they point at the ceiling, then lift your hips slightly off the floor.
+    - en: Lower your legs slowly without letting your lower back arch away from the floor.
+
+- id: ex.band-crunch
+  name: { en: Band crunch }
+  synonyms: [kneeling band crunch]
+  pattern: core
+  mechanics: isolation
+  substitutionGroups: [sg.ab-flexion]
+  equipment: { allOf: [eq.resistance-bands], anyOf: [] }
+  muscles:
+    - { muscle: mu.abs, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.obliques, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+  load: { type: band, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [12, 30], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-1
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 0 }
+  cues:
+    - en: Anchor a band high, kneel facing away from the anchor and hold the band beside your head.
+    - en: Curl your ribcage toward your pelvis by rounding your back.
+    - en: Return slowly until your torso is upright again.
+
+- id: ex.bicycle-crunch
+  name: { en: Bicycle crunch }
+  synonyms: [cross-body crunch, bicycle kick crunch]
+  pattern: core
+  mechanics: isolation
+  substitutionGroups: [sg.trunk-rotation]
+  equipment: { allOf: [], anyOf: [] }
+  muscles:
+    - { muscle: mu.obliques, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.abs, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+  load: { type: bodyweightAdded, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [10, 30], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 1 }
+  cues:
+    - en: Lie on your back with your hands lightly behind your head and your knees raised.
+    - en: Turn one shoulder toward the opposite knee as you straighten the other leg.
+    - en: Switch sides in a slow, controlled rhythm and count one rep per side.
+
+- id: ex.cable-woodchop
+  name: { en: Cable woodchop }
+  synonyms: [woodchopper, cable chop]
+  pattern: core
+  mechanics: isolation
+  substitutionGroups: [sg.trunk-rotation]
+  equipment:
+    allOf: []
+    anyOf: [[eq.cable-station, eq.dual-cable-station]]
+  muscles:
+    - { muscle: mu.obliques, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.abs, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+  load: { type: machine, curveClass: pooled, unilateral: true, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [10, 20], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 2 }
+  cues:
+    - en: Set a pulley high, stand side-on and hold the handle with both hands above your far shoulder.
+    - en: Pull it down and across your body to the opposite hip by turning your trunk.
+    - en: Return under control and finish all reps before you turn around.
+
+- id: ex.cable-pallof-press
+  name: { en: Cable Pallof press }
+  synonyms: [pallof press, anti-rotation press]
+  pattern: core
+  mechanics: isolation
+  substitutionGroups: [sg.trunk-rotation]
+  equipment:
+    allOf: []
+    anyOf: [[eq.cable-station, eq.dual-cable-station]]
+  muscles:
+    - { muscle: mu.obliques, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.abs, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+  load: { type: machine, curveClass: pooled, unilateral: true, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [8, 15], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 1-0-1-2
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 2 }
+  cues:
+    - en: Stand side-on to a chest-high pulley and hold the handle against your breastbone.
+    - en: Press it straight out in front of you and hold for two seconds without letting your torso turn.
+    - en: Bring it back to your chest slowly; step further from the stack to make it harder.
+
+- id: ex.band-pallof-press
+  name: { en: Band Pallof press }
+  synonyms: [band anti-rotation press]
+  pattern: core
+  mechanics: isolation
+  substitutionGroups: [sg.trunk-rotation]
+  equipment: { allOf: [eq.resistance-bands], anyOf: [] }
+  muscles:
+    - { muscle: mu.obliques, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.abs, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+  load: { type: band, curveClass: pooled, unilateral: true, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [10, 20], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 1-0-1-2
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 0 }
+  cues:
+    - en: Anchor a band at chest height and stand side-on, holding the end against your chest.
+    - en: Press your hands straight out and hold for two seconds while the band tries to twist you.
+    - en: Return to your chest under control; move away from the anchor to add tension.
+
+- id: ex.cable-side-bend
+  name: { en: Cable side bend }
+  synonyms: [cable oblique bend]
+  pattern: core
+  mechanics: isolation
+  substitutionGroups: [sg.lateral-flexion]
+  equipment:
+    allOf: []
+    anyOf: [[eq.cable-station, eq.dual-cable-station]]
+  muscles:
+    - { muscle: mu.obliques, credit: 1, evidence: C, source: src.powr-eb-mapping }
+  load: { type: machine, curveClass: pooled, unilateral: true, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [10, 20], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 2 }
+  cues:
+    - en: Stand side-on to a low pulley holding the handle in your near hand.
+    - en: Let the cable pull you into a side bend toward it while your hips stay still.
+    - en: Bend the other way past upright using the obliques on your far side.
+
+- id: ex.floor-back-extension
+  name: { en: Floor back extension }
+  synonyms: [superman, prone back extension]
+  pattern: core
+  mechanics: isolation
+  substitutionGroups: [sg.back-extension]
+  equipment: { allOf: [], anyOf: [] }
+  muscles:
+    - { muscle: mu.lower-back, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.glutes.max, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+  load: { type: bodyweightAdded, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [10, 25], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-1
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 1 }
+  cues:
+    - en: Lie face down with your arms by your sides or reaching forward.
+    - en: Lift your chest and legs a few centimetres off the floor by tightening your back and glutes.
+    - en: Hold for a second at the top and lower slowly, keeping your neck in line with your spine.

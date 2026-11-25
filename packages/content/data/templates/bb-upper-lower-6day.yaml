@@ -1,0 +1,210 @@
+# Bodybuilding, 6 days: upper/lower ×3, an alternative to push/pull/legs ×2 (TD-37; a POWR
+# addition, PLN-02 names only push/pull/legs for this cell). See bb-full-body-3day.yaml for how
+# slots work. Every muscle gets a slot on two or three days; the three rotations use different
+# targets, so the generator picks different exercises (A: flat and horizontal, B: incline and
+# vertical, C: dips, flies and single-leg work).
+
+id: tpl.bb-upper-lower-6day
+name: { en: Upper/lower ×3 }
+description:
+  en: Three upper-body and three lower-body sessions a week. Shorter sessions than push/pull/legs, with each muscle trained two or three times.
+style: bodybuilding
+daysPerWeek: 6
+split: upperLower
+levels: [intermediate, advanced]
+default: false
+periodization: linear
+progression: { main: doubleProgression, accessory: doubleProgression, novice: doubleProgression }
+mesocycle: { accumulationWeeks: 5, deloadWeeks: 1, deloadRule: deload.content }
+days:
+  - key: upper-a
+    name: { en: Upper A }
+    slots:
+      - key: upper-a.chest
+        pattern: horizontalPush
+        targets: [mu.chest]
+        priority: primary
+        goal: hypertrophy
+        mode: doubleProgression
+      - key: upper-a.row
+        pattern: horizontalPull
+        targets: [mu.lats, mu.mid-back]
+        priority: primary
+        goal: hypertrophy
+        mode: doubleProgression
+      - key: upper-a.press
+        pattern: verticalPush
+        targets: [mu.front-delts]
+        priority: secondary
+        goal: hypertrophy
+        mode: doubleProgression
+      - key: upper-a.lateral-raise
+        pattern: shoulderAbduction
+        targets: [mu.side-delts]
+        priority: secondary
+        goal: hypertrophy
+        mode: doubleProgression
+      - key: upper-a.curl
+        pattern: elbowFlexion
+        targets: [mu.elbow-flexors]
+        priority: optional
+        goal: hypertrophy
+        mode: doubleProgression
+
+  - key: lower-a
+    name: { en: Lower A }
+    slots:
+      - key: lower-a.squat
+        pattern: squat
+        targets: [mu.quads, mu.glutes]
+        priority: primary
+        goal: hypertrophy
+        mode: doubleProgression
+      - key: lower-a.leg-curl
+        pattern: kneeFlexion
+        targets: [mu.hamstrings]
+        priority: secondary
+        goal: hypertrophy
+        mode: doubleProgression
+      - key: lower-a.calf
+        pattern: calf
+        targets: [mu.calves.gastrocnemius]
+        priority: optional
+        goal: hypertrophy
+        mode: doubleProgression
+      - key: lower-a.abs
+        pattern: core
+        targets: [mu.abs]
+        priority: optional
+        goal: hypertrophy
+        mode: doubleProgression
+
+  - key: upper-b
+    name: { en: Upper B }
+    slots:
+      - key: upper-b.pulldown
+        pattern: verticalPull
+        targets: [mu.lats]
+        priority: primary
+        goal: hypertrophy
+        mode: doubleProgression
+      - key: upper-b.incline
+        pattern: horizontalPush
+        targets: [mu.chest.clavicular, mu.front-delts]
+        priority: primary
+        goal: hypertrophy
+        mode: doubleProgression
+      - key: upper-b.rear-delts
+        pattern: shoulderHorizontalAbduction
+        targets: [mu.rear-delts]
+        priority: secondary
+        goal: hypertrophy
+        mode: doubleProgression
+      - key: upper-b.triceps
+        pattern: elbowExtension
+        targets: [mu.triceps.long-head]
+        priority: secondary
+        goal: hypertrophy
+        mode: doubleProgression
+      - key: upper-b.curl
+        pattern: elbowFlexion
+        targets: [mu.elbow-flexors.brachialis]
+        priority: optional
+        goal: hypertrophy
+        mode: doubleProgression
+
+  - key: lower-b
+    name: { en: Lower B }
+    slots:
+      - key: lower-b.hinge
+        pattern: hinge
+        targets: [mu.hamstrings, mu.glutes]
+        priority: primary
+        goal: hypertrophy
+        mode: doubleProgression
+      - key: lower-b.leg-extension
+        pattern: kneeExtension
+        targets: [mu.quads]
+        priority: secondary
+        goal: hypertrophy
+        mode: doubleProgression
+      - key: lower-b.calf
+        pattern: calf
+        targets: [mu.calves.soleus]
+        priority: optional
+        goal: hypertrophy
+        mode: doubleProgression
+      - key: lower-b.abs
+        pattern: core
+        targets: [mu.abs, mu.obliques]
+        priority: optional
+        goal: hypertrophy
+        mode: doubleProgression
+
+  - key: upper-c
+    name: { en: Upper C }
+    slots:
+      - key: upper-c.row
+        pattern: horizontalPull
+        targets: [mu.mid-back, mu.rear-delts]
+        priority: primary
+        goal: hypertrophy
+        mode: doubleProgression
+      - key: upper-c.dip
+        pattern: verticalPush
+        targets: [mu.chest, mu.triceps]
+        priority: primary
+        goal: hypertrophy
+        mode: doubleProgression
+      - key: upper-c.fly
+        pattern: shoulderHorizontalAdduction
+        targets: [mu.chest]
+        priority: secondary
+        goal: hypertrophy
+        mode: doubleProgression
+      - key: upper-c.lateral-raise
+        pattern: shoulderAbduction
+        targets: [mu.side-delts]
+        priority: secondary
+        goal: hypertrophy
+        mode: doubleProgression
+      - key: upper-c.triceps
+        pattern: elbowExtension
+        targets: [mu.triceps.lateral-medial]
+        priority: optional
+        goal: hypertrophy
+        mode: doubleProgression
+      - key: upper-c.shrug
+        pattern: shrug
+        targets: [mu.upper-traps]
+        priority: optional
+        goal: hypertrophy
+        mode: doubleProgression
+
+  - key: lower-c
+    name: { en: Lower C }
+    slots:
+      - key: lower-c.lunge
+        pattern: lunge
+        targets: [mu.quads, mu.glutes]
+        priority: primary
+        goal: hypertrophy
+        mode: doubleProgression
+      - key: lower-c.hip-thrust
+        pattern: hipExtension
+        targets: [mu.glutes]
+        priority: secondary
+        goal: hypertrophy
+        mode: doubleProgression
+      - key: lower-c.leg-curl
+        pattern: kneeFlexion
+        targets: [mu.hamstrings]
+        priority: secondary
+        goal: hypertrophy
+        mode: doubleProgression
+      - key: lower-c.calf
+        pattern: calf
+        targets: [mu.calves]
+        priority: optional
+        goal: hypertrophy
+        mode: doubleProgression

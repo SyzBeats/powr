@@ -188,3 +188,233 @@
     - en: Stand on one leg with that knee softly bent; hold a weight in the opposite hand if you have one.
     - en: Tip forward from the hip while your free leg reaches back in line with your torso.
     - en: Keep your hips square to the floor and lower until your hamstring is fully stretched.
+
+# M5 additions (content 0.3.0):
+# - Block pull and paused deadlift are close variants of the competition deadlift: deadlift row
+#   (C), equation curve class. The tempo format has no field for a pause during the concentric, so
+#   the paused deadlift's pause is in its cues.
+# - Trap-bar deadlift: the deadlift row as convention, with spinal erectors at 0.5 for the more
+#   upright torso.
+# - Good morning: the EB names it in the "RDL / stiff-leg deadlift / good morning" row, so it
+#   follows the RDLs (hamstrings H by analogy, Bourne 2017; the rest C). The band good morning
+#   has a different resistance profile and is tagged C.
+# - Kettlebell swing and pull-throughs are not in the EB table: glute max 1.0, hamstrings 0.5 (C).
+
+- id: ex.block-pull
+  name: { en: Block pull }
+  synonyms: [block deadlift, deadlift from blocks]
+  pattern: hinge
+  mechanics: compound
+  variantOf: ex.barbell-deadlift
+  substitutionGroups: [sg.deadlift]
+  equipment:
+    allOf: [eq.plates]
+    anyOf: [[eq.barbell-olympic, eq.barbell-womens]]
+  muscles:
+    - { muscle: mu.glutes, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.lower-back, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.quads, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.hamstrings, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.adductors, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.upper-traps, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.forearms.flexors, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+  load: { type: barbell, curveClass: equation, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [6, 10], strength: [1, 5] }
+    restClass: strength
+    tempo: 2-0-X-0
+    fixedRom: true
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 3 }
+  cues:
+    - en: Rest the plates on sturdy blocks or stacked plates so the bar starts just below your knees.
+    - en: Set up as you would from the floor, with the bar close and the slack pulled out.
+    - en: Lock out hips and knees together, then lower the bar back onto the blocks under control.
+
+- id: ex.paused-deadlift
+  name: { en: Paused deadlift }
+  synonyms: [pause deadlift]
+  pattern: hinge
+  mechanics: compound
+  variantOf: ex.barbell-deadlift
+  substitutionGroups: [sg.deadlift]
+  equipment:
+    allOf: [eq.plates]
+    anyOf: [[eq.barbell-olympic, eq.barbell-womens]]
+  muscles:
+    - { muscle: mu.glutes, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.lower-back, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.quads, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.hamstrings, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.adductors, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.upper-traps, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.forearms.flexors, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+  load: { type: barbell, curveClass: equation, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [6, 10], strength: [1, 5] }
+    restClass: strength
+    tempo: 2-0-X-0
+    fixedRom: true
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 3 }
+  cues:
+    - en: Start the pull exactly as in your competition deadlift.
+    - en: Stop when the bar is a few centimetres off the floor and hold it there for one to two seconds.
+    - en: Keep your back flat and the bar against your shins during the pause.
+    - en: Finish the pull from the pause in the same positions you held.
+
+- id: ex.trap-bar-deadlift
+  name: { en: Trap-bar deadlift }
+  synonyms: [hex bar deadlift, trap bar pull]
+  pattern: hinge
+  mechanics: compound
+  substitutionGroups: [sg.deadlift]
+  equipment: { allOf: [eq.plates, eq.trap-bar], anyOf: [] }
+  muscles:
+    - { muscle: mu.glutes, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.lower-back, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.quads, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.hamstrings, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.adductors, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.upper-traps, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.forearms.flexors, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+  load: { type: barbell, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [6, 12], strength: [6, 10] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 3 }
+  cues:
+    - en: Stand in the middle of the bar with your feet about hip-width apart and grip the handles.
+    - en: Bend at your hips and knees with your chest up until your arms hang straight to the handles.
+    - en: Brace and push the floor away until you stand tall, then lower along the same path.
+
+- id: ex.barbell-good-morning
+  name: { en: Barbell good morning }
+  synonyms: [good morning]
+  pattern: hinge
+  mechanics: compound
+  substitutionGroups: [sg.romanian-deadlift]
+  equipment:
+    allOf: [eq.plates]
+    anyOf: [[eq.barbell-olympic, eq.barbell-womens], [eq.power-rack, eq.squat-stand]]
+  muscles:
+    - { muscle: mu.hamstrings, credit: 1, evidence: H, source: src.bourne2017 }
+    - { muscle: mu.glutes.max, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.adductors, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.lower-back, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.quads, credit: 0, evidence: C, source: src.powr-eb-mapping }
+  load: { type: barbell, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [8, 15], strength: [6, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 2, subRegions: [mu.hamstrings.biarticular] }
+  cues:
+    - en: Rest the bar on your upper back as for a squat and unlock your knees slightly.
+    - en: Push your hips back and let your torso tip forward with your back flat.
+    - en: Go down until your hamstrings are fully stretched, usually with your torso a little above horizontal.
+    - en: Drive your hips forward to stand up, and start light, because this loads your lower back hard.
+
+- id: ex.kettlebell-swing
+  name: { en: Kettlebell swing }
+  synonyms: [two-hand kettlebell swing, kb swing]
+  pattern: hinge
+  mechanics: compound
+  substitutionGroups: [sg.pull-through]
+  equipment:
+    allOf: []
+    anyOf: [[eq.kettlebells, eq.dumbbells]]
+  muscles:
+    - { muscle: mu.glutes.max, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.hamstrings, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.lower-back, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+  load: { type: dumbbell, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [10, 20], strength: [6, 12] }
+    restClass: hypertrophyCompound
+    tempo: 1-0-X-0
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 1, subRegions: [mu.glutes.max] }
+  cues:
+    - en: Stand with the bell a step in front of you, hinge and grip it with both hands.
+    - en: Hike it back between your legs, then snap your hips forward so it floats to chest height.
+    - en: Let your arms only guide the bell; the power comes from your hips, not from a squat or a lift.
+    - en: Hinge again as the bell comes down and keep your back flat throughout.
+
+- id: ex.cable-pull-through
+  name: { en: Cable pull-through }
+  synonyms: [pull-through, rope pull-through]
+  pattern: hinge
+  mechanics: compound
+  substitutionGroups: [sg.pull-through]
+  equipment:
+    allOf: []
+    anyOf: [[eq.cable-station, eq.dual-cable-station]]
+  muscles:
+    - { muscle: mu.glutes.max, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.hamstrings, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+  load: { type: machine, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [10, 20], strength: [8, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-1
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 2, subRegions: [mu.glutes.max] }
+  cues:
+    - en: Stand facing away from a low pulley with the rope passing between your legs.
+    - en: Hinge at the hips and let the rope draw your hands back through your legs.
+    - en: Drive your hips forward and squeeze your glutes to stand tall, arms staying long.
+
+- id: ex.band-pull-through
+  name: { en: Band pull-through }
+  synonyms: [resistance band pull-through]
+  pattern: hinge
+  mechanics: compound
+  substitutionGroups: [sg.pull-through]
+  equipment: { allOf: [eq.resistance-bands], anyOf: [] }
+  muscles:
+    - { muscle: mu.glutes.max, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.hamstrings, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+  load: { type: band, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [12, 30], strength: [8, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-1
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 0 }
+  cues:
+    - en: Anchor a band low behind you and hold it between your legs with both hands.
+    - en: Hinge back until you feel your hamstrings stretch, keeping your back flat.
+    - en: Snap your hips forward against the band and finish standing tall.
+
+- id: ex.band-good-morning
+  name: { en: Band good morning }
+  synonyms: [resistance band good morning]
+  pattern: hinge
+  mechanics: compound
+  substitutionGroups: [sg.romanian-deadlift]
+  equipment: { allOf: [eq.resistance-bands], anyOf: [] }
+  muscles:
+    - { muscle: mu.hamstrings, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.glutes.max, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.lower-back, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+  load: { type: band, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [12, 30], strength: [8, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 0 }
+  cues:
+    - en: Stand on the middle of a band and loop the top across your upper back.
+    - en: Push your hips back with soft knees and a flat back until your torso nears horizontal.
+    - en: Drive your hips forward to stand up against the band's pull.

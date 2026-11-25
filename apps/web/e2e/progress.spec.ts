@@ -55,6 +55,17 @@ test.describe('Progress tab (M4b: ANL-02…07, ANL-11)', () => {
     await page.goto('/progress');
     await expect(page.getByRole('heading', { level: 1, name: 'Progress' })).toBeVisible();
     await expect(page.getByTestId('trained-exercises')).toContainText('4 workouts');
+    // TD-55: the current estimate in the user's unit and the change label in words. Four sessions
+    // are too few for a reference point, so the label says so rather than claiming a change.
+    const benchRow = page
+      .getByTestId('trained-exercises')
+      .getByRole('link', { name: /Barbell bench press/ });
+    await expect(benchRow.getByTestId('trained-e1rm')).toHaveText(
+      /^Estimated 1-rep max [\d.,]+ (kg|lb)/,
+    );
+    await expect(benchRow.getByTestId('trained-change')).toHaveText(
+      'Not enough sessions yet to tell a real change',
+    );
     await checkScreen(page, 'progress');
     await checkReflow(page, 'progress');
 

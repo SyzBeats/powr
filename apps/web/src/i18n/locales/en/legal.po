@@ -1,0 +1,533 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2026-11-25 15:08+0100\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: en\n"
+
+#: src/features/legal/texts/Attributions.tsx
+msgid "{name} version {version}"
+msgstr "{name} version {version}"
+
+#: src/features/legal/texts/HowPowrDecides.tsx
+msgid "A value marked \"Preliminary value\" has not yet been checked against the original publication, comes from a study that is not yet peer-reviewed (a preprint), or is a design choice of POWR where research only gives a direction. It may change after a review; any change comes with a new registry version. {preliminary} of the {total} values are preliminary in this version."
+msgstr "A value marked \"Preliminary value\" has not yet been checked against the original publication, comes from a study that is not yet peer-reviewed (a preprint), or is a design choice of POWR where research only gives a direction. It may change after a review; any change comes with a new registry version. {preliminary} of the {total} values are preliminary in this version."
+
+#: src/features/legal/texts/HowPowrDecides.tsx
+msgid "A value or model POWR chose where research gives only a direction. Treat it as a starting point."
+msgstr "A value or model POWR chose where research gives only a direction. Treat it as a starting point."
+
+#: src/features/legal/texts/HowPowrDecides.tsx
+msgid "A week counts for your streak when you did the sessions you planned. Breaks pause it, they never break it."
+msgstr "A week counts for your streak when you did the sessions you planned. Breaks pause it, they never break it."
+
+#: src/features/legal/texts/Imprint.tsx
+msgid "About this app"
+msgstr "About this app"
+
+#: src/features/legal/texts/HowPowrDecides.tsx
+msgid "After a block of training weeks comes a lighter week with fewer sets and a little more in reserve. POWR offers it earlier when several signs suggest it. After a break, the first sessions ease back in."
+msgstr "After a block of training weeks comes a lighter week with fewer sets and a little more in reserve. POWR offers it earlier when several signs suggest it. After a break, the first sessions ease back in."
+
+#: src/features/legal/texts/Privacy.tsx
+msgid "All of it stays in your browser's storage on this device, for this app only. POWR uses it for one purpose: to run the app for you, for example to plan your training, suggest weights and show your progress. Some of it, such as body data, pain notes and check-ins, can be health data. It never leaves your device unless you export it."
+msgstr "All of it stays in your browser's storage on this device, for this app only. POWR uses it for one purpose: to run the app for you, for example to plan your training, suggest weights and show your progress. Some of it, such as body data, pain notes and check-ins, can be health data. It never leaves your device unless you export it."
+
+#: src/features/legal/texts/HowPowrDecides.tsx
+msgid "Assistance exercises add reps until the top of the range, then a small weight step (double progression). Main lifts use your estimated 1-rep max and the target effort; beginners add a fixed step each session. Steps follow your equipment and your level."
+msgstr "Assistance exercises add reps until the top of the range, then a small weight step (double progression). Main lifts use your estimated 1-rep max and the target effort; beginners add a fixed step each session. Steps follow your equipment and your level."
+
+#: src/features/legal/texts/Privacy.tsx
+msgid "Backups and exported files"
+msgstr "Backups and exported files"
+
+#: src/features/legal/texts/Privacy.tsx
+msgid "Backups, calendar files and other exports are created on your device and are under your control. If you store or share them elsewhere, for example in a cloud drive, by e-mail or in a messenger, that service's terms and privacy policy apply. Backup files are not encrypted, so keep them somewhere safe."
+msgstr "Backups, calendar files and other exports are created on your device and are under your control. If you store or share them elsewhere, for example in a cloud drive, by e-mail or in a messenger, that service's terms and privacy policy apply. Backup files are not encrypted, so keep them somewhere safe."
+
+#: src/features/legal/texts/Privacy.tsx
+msgid "Because your training data is only on your device, you exercise most of these rights yourself in the app: view it, correct it, export it as a backup or delete it. For anything else, for example a question about the hosting, write to us."
+msgstr "Because your training data is only on your device, you exercise most of these rights yourself in the app: view it, correct it, export it as a backup or delete it. For anything else, for example a question about the hosting, write to us."
+
+#: src/features/legal/texts/Disclaimer.tsx
+msgid "Before you start"
+msgstr "Before you start"
+
+#: src/features/legal/texts/Privacy.tsx
+msgid "body weight and body measurements you log;"
+msgstr "body weight and body measurements you log;"
+
+#: src/features/legal/texts/Disclaimer.tsx
+msgid "Body-weight goals and nutrition guidance are estimates for healthy adults. They are not suitable for people with an eating disorder or a history of one, during pregnancy or breastfeeding, or for anyone under 18. For people under 18, POWR limits these features."
+msgstr "Body-weight goals and nutrition guidance are estimates for healthy adults. They are not suitable for people with an eating disorder or a history of one, during pregnancy or breastfeeding, or for anyone under 18. For people under 18, POWR limits these features."
+
+#: src/features/legal/texts/HowPowrDecides.tsx
+msgid "Body-weight trend"
+msgstr "Body-weight trend"
+
+#: src/features/legal/texts/HowPowrDecides.tsx
+msgid "Building your plan"
+msgstr "Building your plan"
+
+#: src/features/legal/texts/HowPowrDecides.tsx
+msgid "Calculation engine: {engine}"
+msgstr "Calculation engine: {engine}"
+
+#: src/features/legal/texts/Privacy.tsx
+msgid "Changes and contact"
+msgstr "Changes and contact"
+
+#: src/features/legal/texts/Privacy.tsx
+msgid "check-ins (sleep, energy, soreness) and pain notes;"
+msgstr "check-ins (sleep, energy, soreness) and pain notes;"
+
+#: src/features/legal/texts/HowPowrDecides.tsx
+msgid "Check-ins and readiness"
+msgstr "Check-ins and readiness"
+
+#: src/features/legal/texts/Privacy.tsx
+msgid "Clearing your browser data, uninstalling the app or the browser freeing up space can delete your data. Because we never have a copy, we cannot restore it. Export a backup regularly."
+msgstr "Clearing your browser data, uninstalling the app or the browser freeing up space can delete your data. Because we never have a copy, we cannot restore it. Export a backup regularly."
+
+#: src/features/legal/texts/HowPowrDecides.tsx
+msgid "Counting your training volume"
+msgstr "Counting your training volume"
+
+#: src/features/legal/texts/HowPowrDecides.tsx
+msgid "Daily weigh-ins vary with water and food, so POWR shows a smoothed trend and a weekly rate, and compares it with ranges research considers sensible for your goal."
+msgstr "Daily weigh-ins vary with water and food, so POWR shows a smoothed trend and a weekly rate, and compares it with ranges research considers sensible for your goal."
+
+#: src/features/legal/texts/Privacy.tsx
+msgid "Data loss"
+msgstr "Data loss"
+
+#: src/features/legal/texts/Privacy.tsx
+msgid "Deleting your data"
+msgstr "Deleting your data"
+
+#: src/features/legal/texts/parts.tsx
+msgid "E-mail: <0/>"
+msgstr "E-mail: <0/>"
+
+#: src/features/legal/texts/HowPowrDecides.tsx
+msgid "Estimated 1-rep max and strength trends"
+msgstr "Estimated 1-rep max and strength trends"
+
+#: src/features/legal/texts/HowPowrDecides.tsx
+msgid "Every number POWR uses is a value in one versioned list, the rules registry. Each value names its evidence and its sources, so any suggestion can be traced back. Where research gives a clear answer, POWR uses it. Where research is thin, it uses an established coaching convention, and where neither gives a number, its own estimate, labelled as such."
+msgstr "Every number POWR uses is a value in one versioned list, the rules registry. Each value names its evidence and its sources, so any suggestion can be traced back. Where research gives a clear answer, POWR uses it. Where research is thin, it uses an established coaching convention, and where neither gives a number, its own estimate, labelled as such."
+
+#: src/features/legal/texts/Privacy.tsx
+msgid "Everything you enter is stored only on this device. We never receive it: there is no account, analytics or tracking. Only you can export it, as a backup file."
+msgstr "Everything you enter is stored only on this device. We never receive it: there is no account, analytics or tracking. Only you can export it, as a backup file."
+
+#: src/features/legal/texts/HowPowrDecides.tsx
+msgid "Exercise library and templates: {contentVersion}"
+msgstr "Exercise library and templates: {contentVersion}"
+
+#: src/features/legal/texts/HowPowrDecides.tsx
+msgid "From the weight, reps and effort of your sets, POWR estimates the most you could lift once (your estimated 1-rep max). Heavy, hard sets count most. The trend is smoothed, because single sessions vary by several percent; a change is only called likely real once it is larger than that day-to-day variation and lasts for a few sessions."
+msgstr "From the weight, reps and effort of your sets, POWR estimates the most you could lift once (your estimated 1-rep max). Heavy, hard sets count most. The trend is smoothed, because single sessions vary by several percent; a change is only called likely real once it is larger than that day-to-day variation and lasts for a few sessions."
+
+#: src/features/legal/texts/Privacy.tsx
+msgid "Hosting"
+msgstr "Hosting"
+
+#: src/features/legal/texts/Privacy.tsx
+msgid "If this notice changes in substance, POWR shows the new version and asks you to confirm it before you continue. The version is shown at the top of this page."
+msgstr "If this notice changes in substance, POWR shows the new version and asks you to confirm it before you continue. The version is shown at the top of this page."
+
+#: src/features/legal/texts/Privacy.tsx
+msgid "In short"
+msgstr "In short"
+
+#: src/features/legal/texts/Privacy.tsx
+msgid "Keeping the screen on during a workout and asking the browser to keep your data (persistent storage) need no personal data."
+msgstr "Keeping the screen on during a workout and asking the browser to keep your data (persistent storage) need no personal data."
+
+#: src/features/legal/texts/Disclaimer.tsx
+msgid "learn the technique of an exercise with light weights first;"
+msgstr "learn the technique of an exercise with light weights first;"
+
+#: src/features/legal/texts/Privacy.tsx
+msgid "Legal framework"
+msgstr "Legal framework"
+
+#: src/features/legal/texts/Attributions.tsx
+msgid "Licence text"
+msgstr "Licence text"
+
+#: src/features/legal/texts/Attributions.tsx
+msgid "Licence: {licence}"
+msgstr "Licence: {licence}"
+
+#: src/features/legal/texts/Disclaimer.tsx
+msgid "Lifting safely"
+msgstr "Lifting safely"
+
+#: src/features/legal/texts/Disclaimer.tsx
+msgid "Lifting weights, and heavy weights in particular, carries a risk of injury. You can lower it:"
+msgstr "Lifting weights, and heavy weights in particular, carries a risk of injury. You can lower it:"
+
+#: src/features/legal/texts/HowPowrDecides.tsx
+msgid "Lighter weeks and breaks"
+msgstr "Lighter weeks and breaks"
+
+#: src/features/legal/texts/HowPowrDecides.tsx
+msgid "Meta-analyses, systematic reviews, position stands and trials repeated in trained people."
+msgstr "Meta-analyses, systematic reviews, position stands and trials repeated in trained people."
+
+#: src/features/legal/texts/Attributions.tsx
+msgid "NOTICE"
+msgstr "NOTICE"
+
+#: src/features/legal/texts/Privacy.tsx
+msgid "Notifications: only for rest-timer alerts, and only after you allow them. They are created on your device; nothing is sent over the internet. You can turn them off in your browser's site settings at any time."
+msgstr "Notifications: only for rest-timer alerts, and only after you allow them. They are created on your device; nothing is sent over the internet. You can turn them off in your browser's site settings at any time."
+
+#: src/features/legal/texts/Disclaimer.tsx
+msgid "Nutrition and body weight"
+msgstr "Nutrition and body weight"
+
+#: src/features/legal/texts/HowPowrDecides.tsx
+msgid "Nutrition targets"
+msgstr "Nutrition targets"
+
+#: src/features/legal/texts/HowPowrDecides.tsx
+msgid "Official documents, for example the federation's scoring formulas."
+msgstr "Official documents, for example the federation's scoring formulas."
+
+#: src/features/legal/texts/Attributions.tsx
+msgid "Open-source software ({softwareCount})"
+msgstr "Open-source software ({softwareCount})"
+
+#: src/features/legal/texts/Attributions.tsx
+msgid "Own work"
+msgstr "Own work"
+
+#: src/features/legal/texts/Disclaimer.tsx
+msgid "Pain notes and check-ins are for your own overview. They are not a diagnosis, and POWR does not predict injuries. If pain does not go away or gets worse, see a doctor or physiotherapist."
+msgstr "Pain notes and check-ins are for your own overview. They are not a diagnosis, and POWR does not predict injuries. If pain does not go away or gets worse, see a doctor or physiotherapist."
+
+#: src/features/legal/texts/Disclaimer.tsx
+msgid "Pain, check-ins and readiness"
+msgstr "Pain, check-ins and readiness"
+
+#: src/features/legal/texts/Privacy.tsx
+msgid "Permissions"
+msgstr "Permissions"
+
+#: src/features/legal/texts/HowPowrDecides.tsx
+msgid "Points such as IPF GL and DOTS compare totals across body weights. They are worked out from the official formulas."
+msgstr "Points such as IPF GL and DOTS compare totals across body weights. They are worked out from the official formulas."
+
+#: src/features/legal/texts/parts.tsx
+msgid "Postal address: to be added before the public release."
+msgstr "Postal address: to be added before the public release."
+
+#: src/features/legal/texts/HowPowrDecides.tsx
+msgid "Powerlifting points"
+msgstr "Powerlifting points"
+
+#: src/features/legal/texts/HowPowrDecides.tsx
+msgid "POWR does not diagnose anything and does not predict injuries. It describes training, not health."
+msgstr "POWR does not diagnose anything and does not predict injuries. It describes training, not health."
+
+#: src/features/legal/texts/HowPowrDecides.tsx
+msgid "POWR does not set calorie or protein targets in this version. Body-weight goals only describe the weekly change that research considers sensible."
+msgstr "POWR does not set calorie or protein targets in this version. Body-weight goals only describe the weekly change that research considers sensible."
+
+#: src/features/legal/texts/Privacy.tsx
+msgid "POWR does not use your camera, microphone, contacts or location."
+msgstr "POWR does not use your camera, microphone, contacts or location."
+
+#: src/features/legal/texts/Disclaimer.tsx
+msgid "POWR is a training planner and log for healthy people aged 16 and over. It gives general fitness information and training suggestions based on published research and on what you enter."
+msgstr "POWR is a training planner and log for healthy people aged 16 and over. It gives general fitness information and training suggestions based on published research and on what you enter."
+
+#: src/features/legal/texts/Attributions.tsx
+msgid "POWR is built with open-source software. This list is generated from the licence inventory when the app is built, so it always matches this version. It shows every component shipped with the app, its licence and copyright, and the notices its licence asks for."
+msgstr "POWR is built with open-source software. This list is generated from the licence inventory when the app is built, so it always matches this version. It shows every component shipped with the app, its licence and copyright, and the notices its licence asks for."
+
+#: src/features/legal/texts/Imprint.tsx
+msgid "POWR is free to use. It is a general fitness app, not a medical device, and it stores your data only on your device."
+msgstr "POWR is free to use. It is a general fitness app, not a medical device, and it stores your data only on your device."
+
+#: src/features/legal/texts/Disclaimer.tsx
+msgid "POWR is not medical advice. It does not diagnose, treat or prevent any illness or injury, and it does not replace a doctor, physiotherapist, dietitian or qualified coach."
+msgstr "POWR is not medical advice. It does not diagnose, treat or prevent any illness or injury, and it does not replace a doctor, physiotherapist, dietitian or qualified coach."
+
+#: src/features/legal/texts/Imprint.tsx
+msgid "POWR is published and run by:"
+msgstr "POWR is published and run by:"
+
+#: src/features/legal/texts/HowPowrDecides.tsx
+msgid "POWR pre-fills every weight, rep target and effort, builds your plan and points out what might need attention. It never decides for you: you confirm or change each suggestion, and a change is never treated as a mistake. Your sleep, stress, technique and how you feel on the day matter more than any formula."
+msgstr "POWR pre-fills every weight, rep target and effort, builds your plan and points out what might need attention. It never decides for you: you confirm or change each suggestion, and a change is never treated as a mistake. Your sleep, stress, technique and how you feel on the day matter more than any formula."
+
+#: src/features/legal/texts/Privacy.tsx
+msgid "POWR stores what you enter or create while you use it:"
+msgstr "POWR stores what you enter or create while you use it:"
+
+#: src/features/legal/texts/HowPowrDecides.tsx
+msgid "POWR suggests; you decide"
+msgstr "POWR suggests; you decide"
+
+#: src/features/legal/texts/Disclaimer.tsx
+msgid "POWR suggests; you decide. You are responsible for what you do with its suggestions. Change or skip anything that does not feel right for you on the day."
+msgstr "POWR suggests; you decide. You are responsible for what you do with its suggestions. Change or skip anything that does not feel right for you on the day."
+
+#: src/features/legal/texts/Attributions.tsx
+msgid "POWR's own work ({ownCount})"
+msgstr "POWR's own work ({ownCount})"
+
+#: src/features/legal/texts/HowPowrDecides.tsx
+msgid "Preliminary value"
+msgstr "Preliminary value"
+
+#: src/features/legal/texts/HowPowrDecides.tsx
+msgid "Preliminary values"
+msgstr "Preliminary values"
+
+#: src/features/legal/texts/Privacy.tsx
+msgid "profile answers, such as your goal, experience, training days, and optionally your sex, birth year, height and the lifts you know;"
+msgstr "profile answers, such as your goal, experience, training days, and optionally your sex, birth year, height and the lifts you know;"
+
+#: src/features/legal/texts/HowPowrDecides.tsx
+msgid "Progression: when the weight goes up"
+msgstr "Progression: when the weight goes up"
+
+#: src/features/legal/texts/Imprint.tsx
+msgid "Publisher"
+msgstr "Publisher"
+
+#: src/features/legal/texts/Privacy.tsx
+msgid "Questions about privacy: <0/>"
+msgstr "Questions about privacy: <0/>"
+
+#: src/features/legal/texts/Disclaimer.tsx
+msgid "Questions about this notice: <0/>"
+msgstr "Questions about this notice: <0/>"
+
+#: src/features/legal/texts/HowPowrDecides.tsx
+msgid "Ranking exercises for a muscle"
+msgstr "Ranking exercises for a muscle"
+
+#: src/features/legal/texts/HowPowrDecides.tsx
+msgid "Rest times"
+msgstr "Rest times"
+
+#: src/features/legal/texts/HowPowrDecides.tsx
+msgid "Rest times follow the kind of set: longer for heavy strength work, shorter for isolation exercises. You can change each one in Settings, Workout, Rest times."
+msgstr "Rest times follow the kind of set: longer for heavy strength work, shorter for isolation exercises. You can change each one in Settings, Workout, Rest times."
+
+#: src/features/legal/texts/HowPowrDecides.tsx
+msgid "Rules registry: {rulesVersion}"
+msgstr "Rules registry: {rulesVersion}"
+
+#: src/features/legal/texts/HowPowrDecides.tsx
+msgid "Single trials, observational studies, narrative reviews and studies not yet peer-reviewed. Useful, but less certain."
+msgstr "Single trials, observational studies, narrative reviews and studies not yet peer-reviewed. Useful, but less certain."
+
+#: src/features/legal/texts/HowPowrDecides.tsx
+msgid "Sources"
+msgstr "Sources"
+
+#. placeholder {0}: param.meta.sources.map(sourceName).join('; ')
+#: src/features/legal/texts/HowPowrDecides.tsx
+msgid "Sources: {0}"
+msgstr "Sources: {0}"
+
+#: src/features/legal/texts/Disclaimer.tsx
+msgid "stay within what you can lift with good form."
+msgstr "stay within what you can lift with good form."
+
+#: src/features/legal/texts/Disclaimer.tsx
+msgid "Stop and get help"
+msgstr "Stop and get help"
+
+#: src/features/legal/texts/Disclaimer.tsx
+msgid "Stop training straight away and get medical help if you feel chest pain or pressure, dizziness or faintness, unusual shortness of breath, an irregular heartbeat, or sudden or sharp pain. In an emergency, call your local emergency number (112 in Switzerland and the EU)."
+msgstr "Stop training straight away and get medical help if you feel chest pain or pressure, dizziness or faintness, unusual shortness of breath, an irregular heartbeat, or sudden or sharp pain. In an emergency, call your local emergency number (112 in Switzerland and the EU)."
+
+#: src/features/legal/texts/HowPowrDecides.tsx
+msgid "Streaks"
+msgstr "Streaks"
+
+#: src/features/legal/texts/Disclaimer.tsx
+msgid "Suggested weights are estimates from what you logged. If a weight feels wrong on the day, use less: you can always change a suggestion."
+msgstr "Suggested weights are estimates from what you logged. If a weight feels wrong on the day, use less: you can always change a suggestion."
+
+#: src/features/legal/texts/Disclaimer.tsx
+msgid "Talk to a doctor before you start or change a training or nutrition programme, especially if:"
+msgstr "Talk to a doctor before you start or change a training or nutrition programme, especially if:"
+
+#: src/features/legal/texts/HowPowrDecides.tsx
+msgid "Tempo, techniques and session length"
+msgstr "Tempo, techniques and session length"
+
+#: src/features/legal/texts/HowPowrDecides.tsx
+msgid "The \"Why?\" button next to a suggestion shows the rule in words, the sets it used, how it was worked out and the values it was based on, each with its evidence label, its sources and a link to its entry below."
+msgstr "The \"Why?\" button next to a suggestion shows the rule in words, the sets it used, how it was worked out and the values it was based on, each with its evidence label, its sources and a link to its entry below."
+
+#: src/features/legal/texts/Imprint.tsx
+msgid "The app files are hosted on a server in {location}, rented from {provider}."
+msgstr "The app files are hosted on a server in {location}, rented from {provider}."
+
+#: src/features/legal/texts/Privacy.tsx
+msgid "The app files are served from a server in {location} that we rent from {provider} and operate ourselves. To send the files when you open or update the app, the server has to handle technical connection data, such as your IP address and browser type, for the moment of the request. We do not keep access logs. Your training data never reaches this server."
+msgstr "The app files are served from a server in {location} that we rent from {provider} and operate ourselves. To send the files when you open or update the app, the server has to handle technical connection data, such as your IP address and browser type, for the moment of the request. We do not keep access logs. Your training data never reaches this server."
+
+#: src/features/legal/texts/Privacy.tsx
+msgid "The app loads nothing from other companies: no fonts, scripts or services from third parties."
+msgstr "The app loads nothing from other companies: no fonts, scripts or services from third parties."
+
+#: src/features/legal/texts/Attributions.tsx
+msgid "The body-map figure, the app icons, the exercise library, the muscle names, the equipment lists and the plan templates were created for POWR."
+msgstr "The body-map figure, the app icons, the exercise library, the muscle names, the equipment lists and the plan templates were created for POWR."
+
+#: src/features/legal/texts/HowPowrDecides.tsx
+msgid "The default tempo, how special techniques such as drop sets count, and how long a session will take."
+msgstr "The default tempo, how special techniques such as drop sets count, and how long a session will take."
+
+#: src/features/legal/texts/Imprint.tsx
+msgid "The fastest way to reach us is by e-mail."
+msgstr "The fastest way to reach us is by e-mail."
+
+#: src/features/legal/texts/HowPowrDecides.tsx
+msgid "The optional check-in compares today with your usual sleep, energy and soreness. On a low day POWR can offer a lighter session; you choose."
+msgstr "The optional check-in compares today with your usual sleep, energy and soreness. On a low day POWR can offer a lighter session; you choose."
+
+#: src/features/legal/texts/Privacy.tsx
+msgid "The publisher of POWR is responsible for this app and this notice:"
+msgstr "The publisher of POWR is responsible for this app and this notice:"
+
+#: src/features/legal/texts/Privacy.tsx
+msgid "The revFADP applies because the publisher is based in Switzerland. Whether the GDPR also applies to users in the EU is being confirmed in a legal review; this notice is written to meet both."
+msgstr "The revFADP applies because the publisher is based in Switzerland. Whether the GDPR also applies to users in the EU is being confirmed in a legal review; this notice is written to meet both."
+
+#: src/features/legal/texts/HowPowrDecides.tsx
+msgid "The values behind it ({count})"
+msgstr "The values behind it ({count})"
+
+#: src/features/legal/texts/Privacy.tsx
+msgid "There is no account and no sign-in. We do not know who uses POWR."
+msgstr "There is no account and no sign-in. We do not know who uses POWR."
+
+#: src/features/legal/texts/Privacy.tsx
+msgid "There is no analytics, no telemetry, no advertising and no tracking of any kind."
+msgstr "There is no analytics, no telemetry, no advertising and no tracking of any kind."
+
+#: src/features/legal/texts/Privacy.tsx
+msgid "Under the Swiss Federal Act on Data Protection (revFADP) and, where it applies, the EU General Data Protection Regulation (GDPR), you have the right to information about and access to your personal data, to have it corrected or deleted, to restrict or object to its processing, and to receive it in a portable format."
+msgstr "Under the Swiss Federal Act on Data Protection (revFADP) and, where it applies, the EU General Data Protection Regulation (GDPR), you have the right to information about and access to your personal data, to have it corrected or deleted, to restrict or object to its processing, and to receive it in a portable format."
+
+#: src/features/legal/texts/Disclaimer.tsx
+msgid "use a spotter or safety equipment such as rack safeties and collars, especially near your limit;"
+msgstr "use a spotter or safety equipment such as rack safeties and collars, especially near your limit;"
+
+#: src/features/legal/texts/HowPowrDecides.tsx
+msgid "Versions in this app"
+msgstr "Versions in this app"
+
+#: src/features/legal/texts/HowPowrDecides.tsx
+msgid "Volume is counted as hard sets per muscle per week: sets close to failure count fully, and an exercise counts fully for its main muscles and in part for helping muscles. Weekly targets sit inside a range from research, with fewer sets for beginners and more for muscles you chose as priorities."
+msgstr "Volume is counted as hard sets per muscle per week: sets close to failure count fully, and an exercise counts fully for its main muscles and in part for helping muscles. Weekly targets sit inside a range from research, with fewer sets for beginners and more for muscles you chose as priorities."
+
+#: src/features/legal/texts/Disclaimer.tsx
+msgid "warm up before heavy sets;"
+msgstr "warm up before heavy sets;"
+
+#: src/features/legal/texts/HowPowrDecides.tsx
+msgid "Warm-up sets"
+msgstr "Warm-up sets"
+
+#: src/features/legal/texts/HowPowrDecides.tsx
+msgid "Warm-up sets ramp up to your first working weight: more steps before heavy sets, fewer for exercises whose muscles are already warm. You can switch them off in Settings."
+msgstr "Warm-up sets ramp up to your first working weight: more steps before heavy sets, fewer for exercises whose muscles are already warm. You can switch them off in Settings."
+
+#: src/features/legal/texts/Privacy.tsx
+msgid "We do not collect, receive, sell or share your training data. We never have a copy of it."
+msgstr "We do not collect, receive, sell or share your training data. We never have a copy of it."
+
+#: src/features/legal/texts/HowPowrDecides.tsx
+msgid "What experienced coaches do, from surveys and expert agreement, where studies are missing."
+msgstr "What experienced coaches do, from surveys and expert agreement, where studies are missing."
+
+#: src/features/legal/texts/Disclaimer.tsx
+msgid "What POWR is, and what it is not"
+msgstr "What POWR is, and what it is not"
+
+#: src/features/legal/texts/Privacy.tsx
+msgid "What POWR stores, where and why"
+msgstr "What POWR stores, where and why"
+
+#: src/features/legal/texts/HowPowrDecides.tsx
+msgid "What the evidence labels mean"
+msgstr "What the evidence labels mean"
+
+#: src/features/legal/texts/Privacy.tsx
+msgid "What we do not do"
+msgstr "What we do not do"
+
+#: src/features/legal/texts/HowPowrDecides.tsx
+msgid "When you pick a muscle, exercises are ranked by how much they train it, how strong the evidence is, and how well they suit heavy loading."
+msgstr "When you pick a muscle, exercises are ranked by how much they train it, how strong the evidence is, and how well they suit heavy loading."
+
+#: src/features/legal/texts/HowPowrDecides.tsx
+msgid "Where the numbers come from"
+msgstr "Where the numbers come from"
+
+#: src/features/legal/texts/Privacy.tsx
+msgid "Who is responsible"
+msgstr "Who is responsible"
+
+#: src/features/legal/texts/Disclaimer.tsx
+msgid "you are pregnant or have recently given birth;"
+msgstr "you are pregnant or have recently given birth;"
+
+#: src/features/legal/texts/Privacy.tsx
+msgid "You can also complain to a data protection authority: in Switzerland the Federal Data Protection and Information Commissioner (FDPIC), in the EU the authority of your country."
+msgstr "You can also complain to a data protection authority: in Switzerland the Federal Data Protection and Information Commissioner (FDPIC), in the EU the authority of your country."
+
+#: src/features/legal/texts/Privacy.tsx
+msgid "You can delete your data at any time: in POWR under Settings, Data and backups, or in your browser by deleting the site data of this app. Uninstalling the app from your home screen may not delete the data on its own."
+msgstr "You can delete your data at any time: in POWR under Settings, Data and backups, or in your browser by deleting the site data of this app. Uninstalling the app from your home screen may not delete the data on its own."
+
+#: src/features/legal/texts/Disclaimer.tsx
+msgid "you have a known health condition, for example of the heart, blood pressure, lungs or joints;"
+msgstr "you have a known health condition, for example of the heart, blood pressure, lungs or joints;"
+
+#: src/features/legal/texts/Disclaimer.tsx
+msgid "you have had an injury or an operation, or you take regular medication;"
+msgstr "you have had an injury or an operation, or you take regular medication;"
+
+#: src/features/legal/texts/Disclaimer.tsx
+msgid "you have not been active for a long time."
+msgstr "you have not been active for a long time."
+
+#: src/features/legal/texts/Disclaimer.tsx
+msgid "Your decisions"
+msgstr "Your decisions"
+
+#: src/features/legal/texts/Privacy.tsx
+msgid "your equipment, settings and the choices you made in the app."
+msgstr "your equipment, settings and the choices you made in the app."
+
+#: src/features/legal/texts/HowPowrDecides.tsx
+msgid "Your plan is built from a template for your goal, days and equipment, with exercises ranked for each muscle, sets per exercise and the length of a training block. It is checked against your time per session."
+msgstr "Your plan is built from a template for your goal, days and equipment, with exercises ranked for each muscle, sets per exercise and the length of a training block. It is checked against your time per session."
+
+#: src/features/legal/texts/HowPowrDecides.tsx
+msgid "Your plans and suggestions store the versions they were made with, so a later update can be traced."
+msgstr "Your plans and suggestions store the versions they were made with, so a later update can be traced."
+
+#: src/features/legal/texts/Privacy.tsx
+msgid "your plans, workouts, sets, rest times and notes;"
+msgstr "your plans, workouts, sets, rest times and notes;"
+
+#: src/features/legal/texts/Privacy.tsx
+msgid "Your rights"
+msgstr "Your rights"

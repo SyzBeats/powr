@@ -47,3 +47,75 @@
     - en: Stand tall with a dumbbell in each hand at your sides.
     - en: Shrug straight up as high as you can and pause.
     - en: Lower slowly until your shoulders are fully down.
+
+# M5 additions (content 0.3.0): cable, band and Smith-machine shrugs, "Shrug" row (C) as above.
+
+- id: ex.cable-shrug
+  name: { en: Cable shrug }
+  synonyms: [cable trap shrug]
+  pattern: shrug
+  mechanics: isolation
+  substitutionGroups: [sg.shrug]
+  equipment:
+    allOf: []
+    anyOf: [[eq.cable-station, eq.dual-cable-station]]
+  muscles:
+    - { muscle: mu.upper-traps, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.forearms.flexors, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+  load: { type: machine, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [10, 20], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-1
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 3 }
+  cues:
+    - en: Stand facing a low pulley and hold a straight bar with your arms hanging straight.
+    - en: Lift your shoulders straight up toward your ears and hold briefly.
+    - en: Lower them as far as they go to stretch your traps.
+
+- id: ex.band-shrug
+  name: { en: Band shrug }
+  synonyms: [resistance band shrug]
+  pattern: shrug
+  mechanics: isolation
+  substitutionGroups: [sg.shrug]
+  equipment: { allOf: [eq.resistance-bands], anyOf: [] }
+  muscles:
+    - { muscle: mu.upper-traps, credit: 1, evidence: C, source: src.powr-eb-mapping }
+  load: { type: band, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [15, 30], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-1
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 0 }
+  cues:
+    - en: Stand on the middle of the band and hold the ends at your sides.
+    - en: Shrug your shoulders straight up against the band and hold for a second.
+    - en: Lower slowly until your shoulders hang fully down.
+
+- id: ex.smith-machine-shrug
+  name: { en: Smith-machine shrug }
+  synonyms: [smith shrug]
+  pattern: shrug
+  mechanics: isolation
+  substitutionGroups: [sg.shrug]
+  equipment: { allOf: [eq.smith-machine, eq.plates], anyOf: [] }
+  muscles:
+    - { muscle: mu.upper-traps, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.forearms.flexors, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+  load: { type: machine, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [8, 20], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-1
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 3 }
+  cues:
+    - en: Set the bar at mid-thigh height and grip it just outside your hips.
+    - en: Turn the bar off the hooks and shrug straight up, keeping your arms straight.
+    - en: Lower until your shoulders are fully down, and hook the bar again after the set.

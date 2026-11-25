@@ -17,32 +17,44 @@ import { contentCoverage } from '../src/coverage.ts';
  * delete it from the list). They are the work list from these first exercises to the MVP library.
  */
 
+/** PRD A-05 and EXL-01: the MVP library has at least 150 exercises (TD-23, M5). */
+const MIN_LIBRARY_SIZE = 150;
 /** EXL-01: "at least 2 exercises crediting the muscle ≥ 0.5". */
 const MIN_EXERCISES_PER_GROUP = 2;
 /** Every preset with equipment offers at least this many exercises (EQP-02, EQP-04). */
 const MIN_EXERCISES_PER_PRESET = 15;
 
-/** No exercise yet: the M1 contract has no movement pattern for ankle dorsiflexion. */
+/** No exercise yet: the contract has no movement pattern for ankle dorsiflexion. */
 const GROUPS_WITHOUT_EXERCISES = ['mu.tibialis'];
-/** Preset × display group below MIN_EXERCISES_PER_GROUP (EXL-01's per-preset rule), for M4. */
-const KNOWN_PRESET_GAPS = [
-  'preset.bodyweight-bands × mu.calves',
-  'preset.bodyweight-bands × mu.forearms',
-  'preset.bodyweight-bands × mu.lower-back',
-  'preset.bodyweight-bands × mu.upper-traps',
-  'preset.dumbbells-bench × mu.upper-traps',
-  'preset.hotel-gym × mu.upper-traps',
-];
-/** Patterns of MOVEMENT_PATTERNS without an exercise yet. */
+/**
+ * Preset × display group below MIN_EXERCISES_PER_GROUP (EXL-01's per-preset rule). The six M1
+ * gaps (bodyweight and bands × calves, forearms, lower back and upper traps; upper traps with
+ * dumbbells and a bench and in the hotel gym) were closed in M5 (TD-23).
+ */
+const KNOWN_PRESET_GAPS: string[] = [];
+/**
+ * Patterns of MOVEMENT_PATTERNS without an exercise yet: carries need duration or distance
+ * defaults, which `ExerciseDefaults` does not have (`repRange` is required).
+ */
 const PATTERNS_WITHOUT_EXERCISES = ['carry'];
 /** PLN-02 style × days cells without a template (none since M2, TD-24). */
 const CELLS_WITHOUT_TEMPLATE: string[] = [];
+/**
+ * TD-37: the alternatives the PLN-02 table names next to a cell's default ("Upper/Lower + PPL
+ * hybrid or Full body ×5"), as style × days × split.
+ */
+const PRD_ALTERNATIVES = ['bodybuilding × 5 × fullBody'];
 
 const { bundle } = buildContent();
 if (!bundle) throw new Error('the content does not build; see build.test.ts');
 const coverage = contentCoverage(bundle);
 
 describe('content coverage', () => {
+  it(`ships at least ${MIN_LIBRARY_SIZE} active exercises (PRD A-05)`, () => {
+    const active = bundle.exercises.filter((exercise) => exercise.status === 'active');
+    expect(active.length).toBeGreaterThanOrEqual(MIN_LIBRARY_SIZE);
+  });
+
   it(`gives every display group ≥ ${MIN_EXERCISES_PER_GROUP} exercises crediting it ≥ 0.5`, () => {
     const thin = [...coverage.groups]
       .filter(([, ids]) => ids.length < MIN_EXERCISES_PER_GROUP)
@@ -115,6 +127,25 @@ describe('content coverage', () => {
         .map((days) => `${style} × ${days}`),
     );
     expect(missing).toEqual(CELLS_WITHOUT_TEMPLATE);
+  });
+
+  it('ships the alternatives PLN-02 names, and only alternatives to a cell with a default (TD-37)', () => {
+    const alternatives = bundle.templates.filter((template) => !template.default);
+    const named = alternatives.map((t) => `${t.style} × ${t.daysPerWeek} × ${t.split}`);
+    for (const alternative of PRD_ALTERNATIVES) expect(named).toContain(alternative);
+    // An alternative serves no level its cell's default does not serve (the override then always
+    // has a recommended plan to go back to), and differs from it in split.
+    const misfits = alternatives.filter((template) => {
+      const fallback = bundle.templates.find(
+        (t) => t.default && t.style === template.style && t.daysPerWeek === template.daysPerWeek,
+      );
+      return (
+        fallback === undefined ||
+        !template.levels.every((level) => fallback.levels.includes(level)) ||
+        template.split === fallback.split
+      );
+    });
+    expect(misfits.map((template) => template.id)).toEqual([]);
   });
 });
 

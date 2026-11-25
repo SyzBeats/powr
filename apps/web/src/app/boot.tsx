@@ -8,10 +8,13 @@ import {
 } from '@powr/application';
 import type { ContentCatalog } from '@powr/content';
 import { DATA_VERSION } from '@powr/formats';
+import { rulesStamp } from '@powr/rules';
 
 import { activateLocale } from '../i18n';
 import { PowrDb } from '../infrastructure/db';
+import { pendingUpgrade } from '../infrastructure/db/stored-version';
 import { applyTheme, storedTheme } from '../infrastructure/platform/theme';
+import { captureInstallPrompt } from '../infrastructure/pwa/install';
 import {
   registerServiceWorker,
   type ServiceWorkerController,
@@ -20,11 +23,18 @@ import { loadBuiltInRules } from '../infrastructure/rules/provider';
 import { App } from './App';
 import { createAppDiagnostics, createContainer, type Container } from './container';
 import { resolveDebugMode } from './debug-mode';
+import { seedLaunchHistory } from './launch';
+import { router } from './router';
 import { StartupError } from './StartupError';
-import { useAppUi } from './ui-store';
+import { useAppUi, type DeferredInstallPrompt } from './ui-store';
 
 /** Boot sequence (§6.7): theme is already applied by theme-init.js before first paint. */
 export async function boot(rootElement: HTMLElement): Promise<void> {
+  // PWA-02: the browser's install prompt fires early; keep it for a meaningful moment.
+  captureInstallPrompt({
+    onPrompt: (event) => useAppUi.setState({ installPrompt: event as DeferredInstallPrompt }),
+    onInstalled: () => useAppUi.setState({ installPrompt: null, installed: true }),
+  });
   const locale = activateLocale();
   useAppUi.setState({ debug: resolveDebugMode(location.search) });
 
@@ -32,25 +42,58 @@ export async function boot(rootElement: HTMLElement): Promise<void> {
   const diagnostics = createAppDiagnostics();
   installErrorLogging(diagnostics);
 
-  // DB gate: open (and upgrade, §8.2.3) before anything reads data. The built-in content and the
-  // rules data are lazy chunks (§8.19, TD-17, TD-31) and load in parallel.
+  // The built-in content and the rules data are lazy chunks (§8.19, TD-17, TD-31) and load in
+  // parallel with the database.
+  const contentLoad = loadBuiltInContent();
+  const rulesLoad = loadBuiltInRules();
+  const guard = {
+    root,
+    diagnostics,
+    versions: async () => {
+      const [content, rules] = await Promise.allSettled([contentLoad, rulesLoad]);
+      return {
+        content: content.status === 'fulfilled' ? content.value.version : 'unknown',
+        rules: rules.status === 'fulfilled' ? rulesStamp(rules.value) : 'unknown',
+      };
+    },
+  };
+
+  // DAT-14 (§6.7 step 3): a data update runs only after a safety copy of the stored data. The
+  // guard is a lazy chunk, loaded only when the stored database is older than the code.
+  const pending = await pendingUpgrade();
+  if (pending) {
+    await locale.catch(() => undefined);
+    const { prepareUpgrade } = await import('./upgrade');
+    if (!(await prepareUpgrade(guard, pending))) return;
+  }
+
+  // DB gate: open (and upgrade, §8.2.3) before anything reads data.
   const db = new PowrDb();
   const openedAt = performance.now();
   const [opened, content, rules, catalog] = await Promise.allSettled([
     db.open().then(() => Math.round(performance.now() - openedAt)),
-    loadBuiltInContent(),
-    loadBuiltInRules(),
+    contentLoad,
+    rulesLoad,
     // The UI catalog is a lazy chunk too (§8.19).
     locale,
   ]);
-  const failed = (
-    code: 'db.error' | 'content.error' | 'rules.error' | 'i18n.error',
-    error: unknown,
-  ) => {
+  const failed = (code: 'content.error' | 'rules.error' | 'i18n.error', error: unknown) => {
     diagnostics.log('error', code, { name: error instanceof Error ? error.name : 'unknown' });
     root.render(<StartupError />);
   };
-  if (opened.status === 'rejected') return failed('db.error', opened.reason);
+  if (opened.status === 'rejected') {
+    // §6.8: a failed upgrade is rolled back by IndexedDB; never delete, offer a copy instead.
+    const error: unknown = opened.reason;
+    diagnostics.log('error', 'db.error', { name: error instanceof Error ? error.name : 'unknown' });
+    const { showRecovery } = await import('./upgrade');
+    showRecovery(guard, pending ? 'upgrade' : 'open');
+    return;
+  }
+  // §6.8: another window updated the database; this one lets go and asks for a reload.
+  db.on('versionchange', () => {
+    diagnostics.log('info', 'db.versionchange');
+    useAppUi.setState({ staleWindow: true });
+  });
   if (content.status === 'rejected') return failed('content.error', content.reason);
   if (rules.status === 'rejected') return failed('rules.error', rules.reason);
   if (catalog.status === 'rejected') return failed('i18n.error', catalog.reason);
@@ -59,6 +102,9 @@ export async function boot(rootElement: HTMLElement): Promise<void> {
   const serviceWorker = lazyServiceWorker(diagnostics);
   const container = createContainer(db, content.value, rules.value, serviceWorker, diagnostics);
   await reconcileStartupState(container);
+  // PWA-12: a shortcut or deep link opened as the first page gets Home beneath it, so Back
+  // goes up the hierarchy instead of closing the app.
+  seedLaunchHistory(router, location, history.length);
 
   root.render(
     <StrictMode>

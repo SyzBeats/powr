@@ -94,3 +94,77 @@
     - en: Hold a band at shoulder height with straight arms and hands shoulder-width apart.
     - en: Pull the band apart until it touches your chest, squeezing your shoulder blades together.
     - en: Return slowly; move your hands closer together on the band to make it harder.
+
+# M5 additions (content 0.3.0): cable, incline-bench and band rear-delt work, "Rear-delt fly / face
+# pull" row (C) as above.
+
+- id: ex.cable-rear-delt-fly
+  name: { en: Cable rear-delt fly }
+  synonyms: [cable reverse fly, single-arm cable rear-delt fly]
+  pattern: shoulderHorizontalAbduction
+  mechanics: isolation
+  substitutionGroups: [sg.rear-delt]
+  equipment:
+    allOf: []
+    anyOf: [[eq.cable-station, eq.dual-cable-station]]
+  muscles:
+    - { muscle: mu.rear-delts, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.mid-back, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+  load: { type: machine, curveClass: pooled, unilateral: true, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [10, 20], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-1
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 2 }
+  cues:
+    - en: Set a pulley at shoulder height and hold the handle with the opposite hand, arm across your body.
+    - en: Sweep your arm out and back in a wide arc until it is in line with your shoulders.
+    - en: Let it return across your body slowly to stretch the rear delt.
+
+- id: ex.incline-bench-rear-delt-fly
+  name: { en: Incline-bench rear-delt fly }
+  synonyms: [chest-supported reverse fly, prone rear-delt raise]
+  pattern: shoulderHorizontalAbduction
+  mechanics: isolation
+  substitutionGroups: [sg.rear-delt]
+  equipment: { allOf: [eq.dumbbells, eq.adjustable-bench], anyOf: [] }
+  muscles:
+    - { muscle: mu.rear-delts, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.mid-back, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+  load: { type: dumbbell, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [10, 20], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-1
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 2 }
+  cues:
+    - en: Lie face down on a bench set to about 30 degrees with a light dumbbell in each hand.
+    - en: Raise your arms out to the sides with soft elbows, leading with your knuckles.
+    - en: Stop when your arms are in line with your body and lower slowly.
+
+- id: ex.band-face-pull
+  name: { en: Band face pull }
+  synonyms: [resistance band face pull]
+  pattern: shoulderHorizontalAbduction
+  mechanics: isolation
+  substitutionGroups: [sg.rear-delt]
+  equipment: { allOf: [eq.resistance-bands], anyOf: [] }
+  muscles:
+    - { muscle: mu.rear-delts, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.mid-back, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+  load: { type: band, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [12, 30], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-1
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 0 }
+  cues:
+    - en: Anchor the band at face height and hold the ends with your palms facing down.
+    - en: Pull toward your forehead, spreading your hands apart and turning your knuckles up.
+    - en: Return slowly until your arms are straight.

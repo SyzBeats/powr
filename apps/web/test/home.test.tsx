@@ -76,8 +76,8 @@ describe('Home (ANL-01, MOT-03)', () => {
     expect(screen.getByRole('link', { name: 'Log bodyweight' }).getAttribute('href')).toBe(
       '/body/log',
     );
-    // Recent workouts and no backup yet: the backup indicator (DAT-08) shows.
-    expect(screen.getByRole('heading', { name: 'Back up your training' })).toBeTruthy();
+    // Recent workouts and no backup yet: the backup reminder (DAT-08, M5d) shows.
+    expect(await screen.findByRole('heading', { name: 'Back up your training' })).toBeTruthy();
     await waitFor(() => expect(screen.getByTestId('home-status').textContent).toBe(''));
     expect(await seriousViolations()).toEqual([]);
   });

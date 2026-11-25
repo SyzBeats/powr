@@ -38,6 +38,11 @@ export interface StepProps {
   /** Field errors of this step, shown after Continue (WCAG 3.3.1). */
   readonly errors: Readonly<Record<string, string>>;
   readonly weekStart: IsoWeekday;
+  /**
+   * SET-08 (M5s): the step edits one answer in Settings. The body step then leaves out the
+   * units (their own setting, SET-02) and the body weight (logged under Body, BOD-01).
+   */
+  readonly inSettings?: boolean;
 }
 
 /** A visible error under a question, tied to it by proximity and announced with the summary. */
@@ -228,35 +233,37 @@ export function ScheduleStep({ draft, update, errors, weekStart }: StepProps) {
 }
 
 /** ONB-02: units first (they set the equipment's unit); body data optional. */
-export function BodyStep({ draft, update, errors }: StepProps) {
+export function BodyStep({ draft, update, errors, inSettings = false }: StepProps) {
   const { t } = useLingui();
   const units = draftUnits(draft);
   const sex = draft.sex ?? null;
   return (
     <>
-      <div className="flex flex-col gap-2">
-        <p className="text-lg font-semibold">
-          <Trans>Units</Trans>
-        </p>
-        <Segmented
-          label={t`Weights in`}
-          value={units.load}
-          onChange={(load) => update({ units: { ...units, load, bodyweight: load } })}
-          options={[
-            { value: 'kg', label: t`Kilograms (kg)` },
-            { value: 'lb', label: t`Pounds (lb)` },
-          ]}
-        />
-        <Segmented
-          label={t`Lengths in`}
-          value={units.length}
-          onChange={(length) => update({ units: { ...units, length } })}
-          options={[
-            { value: 'cm', label: t`Centimetres (cm)` },
-            { value: 'in', label: t`Inches (in)` },
-          ]}
-        />
-      </div>
+      {inSettings ? null : (
+        <div className="flex flex-col gap-2">
+          <p className="text-lg font-semibold">
+            <Trans>Units</Trans>
+          </p>
+          <Segmented
+            label={t`Weights in`}
+            value={units.load}
+            onChange={(load) => update({ units: { ...units, load, bodyweight: load } })}
+            options={[
+              { value: 'kg', label: t`Kilograms (kg)` },
+              { value: 'lb', label: t`Pounds (lb)` },
+            ]}
+          />
+          <Segmented
+            label={t`Lengths in`}
+            value={units.length}
+            onChange={(length) => update({ units: { ...units, length } })}
+            options={[
+              { value: 'cm', label: t`Centimetres (cm)` },
+              { value: 'in', label: t`Inches (in)` },
+            ]}
+          />
+        </div>
+      )}
       <Card className="gap-4">
         <p className="text-fg-muted">
           <Trans>
@@ -305,15 +312,17 @@ export function BodyStep({ draft, update, errors }: StepProps) {
             update({ height: value === null ? null : { value, unit: units.length } })
           }
         />
-        <DecimalField
-          label={t`Body weight`}
-          suffix={units.bodyweight}
-          value={draft.bodyweight?.value ?? null}
-          error={errors['bodyweight']}
-          onValueChange={(value) =>
-            update({ bodyweight: value === null ? null : { value, unit: units.bodyweight } })
-          }
-        />
+        {inSettings ? null : (
+          <DecimalField
+            label={t`Body weight`}
+            suffix={units.bodyweight}
+            value={draft.bodyweight?.value ?? null}
+            error={errors['bodyweight']}
+            onValueChange={(value) =>
+              update({ bodyweight: value === null ? null : { value, unit: units.bodyweight } })
+            }
+          />
+        )}
       </Card>
     </>
   );

@@ -4,13 +4,14 @@
  */
 import { describe, expect, it } from 'vitest';
 
-import type {
-  Baseline,
-  ExerciseId,
-  LocalDate,
-  LoggedSet,
-  ReadinessEntry,
-  SessionId,
+import {
+  addDays,
+  type Baseline,
+  type ExerciseId,
+  type LocalDate,
+  type LoggedSet,
+  type ReadinessEntry,
+  type SessionId,
 } from '../../src';
 import {
   calibrationStatus,
@@ -389,6 +390,35 @@ describe('PR detection (MOT-01, E-1)', () => {
         .prs,
     ).toEqual([]);
     expect(EMPTY_BESTS.reps).toEqual([]);
+  });
+});
+
+describe('trend memory (TD-60)', () => {
+  // 70 sessions every second day (3.5 a week), a steady +0.5% a week on heavy triples.
+  const sessions = Array.from({ length: 70 }, (_, i) => {
+    const localDate = addDays('2026-01-05' as LocalDate, i * 2);
+    const load = Math.round(150 * 1.005 ** ((i * 2) / 7) * 2) / 2;
+    return [pastSet(`t${i}`, squat, 0, { load, reps: 3, rir: 1 }, localDate)];
+  });
+  const rebuilt = rebuildExerciseState(
+    empty(squat),
+    sessions.map((sets) => ({
+      sessionId: sets[0]!.sessionId,
+      localDate: sets[0]!.localDate,
+      sets,
+    })),
+    { ...foldInput(squat), level: 'advanced' },
+  );
+
+  it('keeps the last 60 trend points and recent exposures (before: 30 and 12)', () => {
+    expect(rebuilt.state.points).toHaveLength(60);
+    expect(rebuilt.state.recent).toHaveLength(60);
+    expect(rebuilt.state.points[0]?.localDate).toBe(sessions[10]![0]!.localDate);
+  });
+
+  it("labels an advanced lifter's change against the point 12 weeks back (rules 1.7.0)", () => {
+    const last = rebuilt.points.at(-1)!;
+    expect(last.change?.referenceDate).toBe(addDays(last.localDate, -84));
   });
 });
 

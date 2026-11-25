@@ -21,3 +21,73 @@
     - en: Sit with the pads on the outside of your knees and your back against the seat.
     - en: Push your knees apart as far as the machine allows and hold for a moment.
     - en: Let the pads come back together slowly.
+
+# M5 additions (content 0.3.0): cable, band and side-lying abduction, convention (C) as above.
+
+- id: ex.cable-hip-abduction
+  name: { en: Cable hip abduction }
+  synonyms: [standing cable abduction]
+  pattern: hipAbduction
+  mechanics: isolation
+  substitutionGroups: [sg.hip-abduction]
+  equipment:
+    allOf: []
+    anyOf: [[eq.cable-station, eq.dual-cable-station]]
+  muscles:
+    - { muscle: mu.glutes.med-min, credit: 1, evidence: C, source: src.powr-eb-mapping }
+  load: { type: machine, curveClass: pooled, unilateral: true, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [10, 20], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-1
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 2, subRegions: [mu.glutes.med-min] }
+  cues:
+    - en: Put an ankle strap on a low pulley and stand side-on with the strap on your far ankle.
+    - en: Lift the leg out to the side without leaning your torso away.
+    - en: Return slowly until the leg passes just in front of the standing foot.
+
+- id: ex.seated-band-hip-abduction
+  name: { en: Seated band hip abduction }
+  synonyms: [banded seated abduction, band abduction]
+  pattern: hipAbduction
+  mechanics: isolation
+  substitutionGroups: [sg.hip-abduction]
+  equipment: { allOf: [eq.resistance-bands], anyOf: [] }
+  muscles:
+    - { muscle: mu.glutes.med-min, credit: 1, evidence: C, source: src.powr-eb-mapping }
+  load: { type: band, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [15, 30], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-1
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 0, subRegions: [mu.glutes.med-min] }
+  cues:
+    - en: Sit on the edge of a bench or chair with a band looped just above your knees.
+    - en: Push your knees out against the band as far as you can.
+    - en: Let them come back in slowly without losing tension.
+
+- id: ex.side-lying-hip-abduction
+  name: { en: Side-lying hip abduction }
+  synonyms: [side-lying leg raise]
+  pattern: hipAbduction
+  mechanics: isolation
+  substitutionGroups: [sg.hip-abduction]
+  equipment: { allOf: [], anyOf: [] }
+  muscles:
+    - { muscle: mu.glutes.med-min, credit: 1, evidence: C, source: src.powr-eb-mapping }
+  load: { type: bodyweightAdded, curveClass: pooled, unilateral: true, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [12, 30], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-1
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 1, subRegions: [mu.glutes.med-min] }
+  cues:
+    - en: Lie on your side with the bottom knee bent and the top leg straight in line with your body.
+    - en: Raise the top leg toward the ceiling with your toes pointing forward, not up.
+    - en: Lower slowly; add an ankle weight or a band once 20 reps get easy.

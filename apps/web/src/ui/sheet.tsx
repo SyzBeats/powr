@@ -2,12 +2,14 @@ import { Dialog } from '@base-ui/react/dialog';
 import { X } from 'lucide-react';
 import type { ReactNode } from 'react';
 
+import { useBackDismiss } from '#ui/back-dismiss';
 import { cn } from '#ui/cn';
 
 /**
  * Bottom sheet (§8.9.4) on Base UI's Dialog: modal, traps focus, closes on Escape and the visible
  * Close button (no gesture-only path, NFR-A11Y-04) and returns focus to the element that opened
  * it (§8.14). The motion is a short slide that `prefers-reduced-motion` turns off (app.css).
+ * M5d (PWA-12): the Android back gesture closes the sheet first; the screen stays.
  */
 export function Sheet({
   open,
@@ -26,6 +28,7 @@ export function Sheet({
   children: ReactNode;
   className?: string;
 }) {
+  useBackDismiss(open, () => onOpenChange(false));
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>

@@ -121,7 +121,7 @@ export const EB_DEFAULTS: ParamValues = {
     sustainSessions: 3,
     veryLikelyTe: 2.8,
   },
-  'load.trend.reference': { weeks: { novice: 4, intermediate: 8, advanced: 8 }, sessions: 3 },
+  'load.trend.reference': { weeks: { novice: 4, intermediate: 8, advanced: 12 }, sessions: 3 },
   'load.reanchor.trigger': { maxReps: 3, minRpe: 9 },
   'load.pr.minSetWeight': 0.5,
   'volume.hypertrophy.weeklyBands': {

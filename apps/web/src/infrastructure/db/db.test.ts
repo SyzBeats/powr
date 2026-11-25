@@ -55,7 +55,12 @@ function depsFor(db: PowrDb): Deps {
       estimate: async () => null,
     },
     files: { save: async () => 'downloaded' },
-    safety: { save: async () => {} },
+    safety: {
+      save: async () => {},
+      list: async () => [],
+      read: async () => undefined,
+      delete: async () => {},
+    },
   };
 }
 

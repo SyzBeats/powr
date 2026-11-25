@@ -21,3 +21,77 @@
     - en: Sit with the pads on the inside of your knees, opened as wide as is comfortable.
     - en: Squeeze your knees together until the pads meet.
     - en: Return slowly into the stretch on every rep.
+
+# M5 additions (content 0.3.0): cable, band and Copenhagen adduction, convention (C) as above. The
+# Copenhagen adduction holds the trunk up sideways, so it credits the obliques 0.5.
+
+- id: ex.cable-hip-adduction
+  name: { en: Cable hip adduction }
+  synonyms: [standing cable adduction]
+  pattern: hipAdduction
+  mechanics: isolation
+  substitutionGroups: [sg.hip-adduction]
+  equipment:
+    allOf: []
+    anyOf: [[eq.cable-station, eq.dual-cable-station]]
+  muscles:
+    - { muscle: mu.adductors, credit: 1, evidence: C, source: src.powr-eb-mapping }
+  load: { type: machine, curveClass: pooled, unilateral: true, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [10, 20], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-1
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 2 }
+  cues:
+    - en: Put an ankle strap on a low pulley and stand side-on with the strap on your near ankle.
+    - en: Start with the leg drawn out to the side, then sweep it across in front of your standing leg.
+    - en: Return slowly until you feel a stretch along your inner thigh.
+
+- id: ex.copenhagen-adduction
+  name: { en: Copenhagen adduction }
+  synonyms: [copenhagen plank raise, side-lying adductor raise]
+  pattern: hipAdduction
+  mechanics: isolation
+  substitutionGroups: [sg.hip-adduction]
+  equipment:
+    allOf: []
+    anyOf: [[eq.flat-bench, eq.adjustable-bench]]
+  muscles:
+    - { muscle: mu.adductors, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.obliques, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+  load: { type: bodyweightAdded, curveClass: pooled, unilateral: true, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [6, 15], strength: [6, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-1-X-0
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 1 }
+  cues:
+    - en: Lie on your side with your top leg resting on a bench at the knee or ankle and your elbow under your shoulder.
+    - en: Lift your hips and bottom leg until your body is straight, pressing the top leg into the bench.
+    - en: Lower your hips toward the floor under control; resting the knee instead of the ankle makes it easier.
+
+- id: ex.band-hip-adduction
+  name: { en: Band hip adduction }
+  synonyms: [resistance band adduction]
+  pattern: hipAdduction
+  mechanics: isolation
+  substitutionGroups: [sg.hip-adduction]
+  equipment: { allOf: [eq.resistance-bands], anyOf: [] }
+  muscles:
+    - { muscle: mu.adductors, credit: 1, evidence: C, source: src.powr-eb-mapping }
+  load: { type: band, curveClass: pooled, unilateral: true, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [15, 30], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-1
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 0 }
+  cues:
+    - en: Anchor a band low to your side and loop it around the ankle nearest the anchor.
+    - en: Step away until the band pulls your leg out, then sweep it across your body.
+    - en: Let it return slowly while your hips stay square.

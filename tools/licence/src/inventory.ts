@@ -23,7 +23,13 @@ export interface InventoryEntry {
   readonly reason?: string;
 }
 
-interface Attribution {
+/**
+ * One entry of `attributions.json`, the data of the in-app "Open-source licences and
+ * attributions" screen (LEG-06): every distributed package and, since M5s, every distributed
+ * asset of assets-inventory.yaml (own artwork and content, data sources) with its copyright line.
+ */
+export interface Attribution {
+  readonly kind: 'npm' | 'asset';
   readonly name: string;
   readonly version: string;
   readonly licence: string;
@@ -83,6 +89,7 @@ export function runGate(options: {
     entries.push(toEntry(pkg.name, pkg.version, details.licence, true, 'npm', verdict));
     if (verdict.status === 'allowed') {
       attributions.push({
+        kind: 'npm',
         name: pkg.name,
         version: pkg.version,
         licence: verdict.chosen,
@@ -106,6 +113,17 @@ export function runGate(options: {
       entries.push(
         toEntry(asset.name, version, asset.licence, asset.distributed, 'asset', verdict),
       );
+      if (asset.distributed && verdict.status === 'allowed') {
+        attributions.push({
+          kind: 'asset',
+          name: asset.name,
+          version,
+          licence: verdict.chosen,
+          copyright: asset.copyright ? [asset.copyright] : [],
+          licenceText: null,
+          noticeText: null,
+        });
+      }
     }
   }
 

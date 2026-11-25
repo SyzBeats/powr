@@ -104,3 +104,213 @@
     - en: Support yourself on straight arms and lean your torso slightly forward.
     - en: Lower until your shoulders are just below your elbows, or as deep as your shoulders allow.
     - en: Press back to straight arms; add weight with a dip belt when 15 reps are easy.
+
+# M5 additions (content 0.3.0): the machine, push, Arnold, landmine and band presses and the
+# handstand push-up reuse the "Overhead press" row as convention (the landmine press moves in an
+# arc between incline and overhead pressing, so it credits the clavicular pec 0.5 instead of the
+# lateral delt and upper traps). Ring and band-assisted dips reuse the "Dips (torso forward)" row.
+# The handstand push-up rates overload suitability 0: it cannot be made lighter, so the pike
+# push-up stays the bodyweight press the generator picks first.
+
+- id: ex.machine-shoulder-press
+  name: { en: Machine shoulder press }
+  synonyms: [machine overhead press, seated machine shoulder press]
+  pattern: verticalPush
+  mechanics: compound
+  substitutionGroups: [sg.overhead-press]
+  equipment: { allOf: [eq.shoulder-press-machine], anyOf: [] }
+  muscles:
+    - { muscle: mu.front-delts, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.side-delts, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.triceps, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.upper-traps, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+  load: { type: machine, curveClass: equation, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [8, 15], strength: [6, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 3 }
+  cues:
+    - en: Set the seat so the handles start at about shoulder height.
+    - en: Press up until your arms are straight without shrugging your shoulders toward your ears.
+    - en: Lower the handles back to shoulder height under control.
+
+- id: ex.push-press
+  name: { en: Push press }
+  synonyms: [barbell push press]
+  pattern: verticalPush
+  mechanics: compound
+  substitutionGroups: [sg.overhead-press]
+  equipment:
+    allOf: [eq.plates]
+    anyOf: [[eq.barbell-olympic, eq.barbell-womens], [eq.power-rack, eq.squat-stand]]
+  muscles:
+    - { muscle: mu.front-delts, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.side-delts, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.triceps, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.upper-traps, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+  load: { type: barbell, curveClass: equation, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [6, 10], strength: [3, 6] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 3 }
+  cues:
+    - en: Hold the bar on your front delts with a grip just outside your shoulders.
+    - en: Dip a few centimetres at the knees with your torso upright, then drive up hard through your legs.
+    - en: Let the leg drive start the bar and finish the press overhead with your arms.
+    - en: Lower the bar back to your shoulders under control, absorbing it with your knees.
+
+- id: ex.arnold-press
+  name: { en: Arnold press }
+  synonyms: [rotating dumbbell press]
+  pattern: verticalPush
+  mechanics: compound
+  substitutionGroups: [sg.overhead-press]
+  equipment: { allOf: [eq.dumbbells], anyOf: [] }
+  muscles:
+    - { muscle: mu.front-delts, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.side-delts, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.triceps, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.upper-traps, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+  load: { type: dumbbell, curveClass: equation, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [8, 15], strength: [6, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 2 }
+  cues:
+    - en: Sit tall with the dumbbells in front of your shoulders and your palms facing you.
+    - en: Turn your palms forward as you press up, finishing with straight arms overhead.
+    - en: Reverse the rotation on the way down to return to the start.
+
+- id: ex.landmine-press
+  name: { en: Landmine press }
+  synonyms: [single-arm landmine press, angled barbell press]
+  pattern: verticalPush
+  mechanics: compound
+  substitutionGroups: [sg.overhead-press]
+  equipment:
+    allOf: [eq.plates, eq.landmine]
+    anyOf: [[eq.barbell-olympic, eq.barbell-womens]]
+  muscles:
+    - { muscle: mu.front-delts, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.chest.clavicular, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.triceps, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+  load: { type: barbell, curveClass: pooled, unilateral: true, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [8, 15], strength: [6, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 2 }
+  cues:
+    - en: Set one end of the bar in the landmine and hold the loaded end at your shoulder.
+    - en: Stand in a split stance or half-kneel with your ribs down and your glutes tight.
+    - en: Press the bar up and forward until your arm is straight, then lower it back to your shoulder.
+
+- id: ex.band-overhead-press
+  name: { en: Band overhead press }
+  synonyms: [resistance band shoulder press, band shoulder press]
+  pattern: verticalPush
+  mechanics: compound
+  substitutionGroups: [sg.overhead-press]
+  equipment: { allOf: [eq.resistance-bands], anyOf: [] }
+  muscles:
+    - { muscle: mu.front-delts, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.side-delts, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.triceps, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.upper-traps, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+  load: { type: band, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [12, 30], strength: [8, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 0 }
+  cues:
+    - en: Stand on the middle of the band and hold the ends at shoulder height.
+    - en: Press straight up until your arms are locked, keeping your ribs down.
+    - en: Lower slowly back to your shoulders; a shorter grip on the band adds tension.
+
+- id: ex.handstand-push-up
+  name: { en: Handstand push-up }
+  synonyms: [wall handstand push-up, hspu]
+  pattern: verticalPush
+  mechanics: compound
+  substitutionGroups: [sg.overhead-press]
+  # Against a wall: no catalog item needed.
+  equipment: { allOf: [], anyOf: [] }
+  muscles:
+    - { muscle: mu.front-delts, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.side-delts, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.triceps, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.upper-traps, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+  load: { type: bodyweightAdded, curveClass: equation, unilateral: false, bodyweightLoaded: true }
+  defaults:
+    repRange: { hypertrophy: [5, 12], strength: [3, 8] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 0 }
+  cues:
+    - en: Kick up into a handstand facing a wall, hands a little wider than your shoulders.
+    - en: Lower your head under control until it lightly touches a folded mat.
+    - en: Press back up to straight arms; stay with pike push-ups until you can do several reps.
+
+- id: ex.ring-dip
+  name: { en: Ring dip }
+  synonyms: [gymnastic ring dip]
+  pattern: verticalPush
+  mechanics: compound
+  substitutionGroups: [sg.dip, sg.triceps-press]
+  equipment: { allOf: [eq.rings], anyOf: [] }
+  muscles:
+    - { muscle: mu.chest.sternocostal, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.triceps, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.front-delts, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+  load: { type: bodyweightAdded, curveClass: pooled, unilateral: false, bodyweightLoaded: true }
+  defaults:
+    repRange: { hypertrophy: [5, 15], strength: [6, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 1, subRegions: [mu.chest.sternocostal] }
+  cues:
+    - en: Support yourself on the rings with straight arms and the rings close to your sides.
+    - en: Lower until your shoulders are just below your elbows, leaning slightly forward.
+    - en: Press back up and turn the rings out a little at the top to stay steady.
+
+- id: ex.band-assisted-dip
+  name: { en: Band-assisted dip }
+  synonyms: [assisted dip, banded dip]
+  pattern: verticalPush
+  mechanics: compound
+  substitutionGroups: [sg.dip, sg.triceps-press]
+  equipment: { allOf: [eq.dip-station, eq.resistance-bands], anyOf: [] }
+  muscles:
+    - { muscle: mu.chest.sternocostal, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.triceps, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.front-delts, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+  load: { type: bodyweightAssisted, curveClass: pooled, unilateral: false, bodyweightLoaded: true }
+  defaults:
+    repRange: { hypertrophy: [5, 15], strength: [6, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 1, subRegions: [mu.chest.sternocostal] }
+  cues:
+    - en: Loop a band across the dip bars and rest your knees or feet on it once you are in support.
+    - en: Lower with a slight forward lean until your shoulders are just below your elbows.
+    - en: Press up to straight arms, and switch to a lighter band as you get stronger.

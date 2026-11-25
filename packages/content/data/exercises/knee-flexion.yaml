@@ -76,3 +76,127 @@
     - en: Kneel on a pad with your heels anchored under something solid.
     - en: Keep hips and torso in one line and lower yourself forward as slowly as you can.
     - en: Catch yourself with your hands and push back up just enough to restart.
+
+# M5 additions (content 0.3.0): curls that the EB table does not name (glute-ham raise, dumbbell,
+# cable, band and sliding curls) reuse the leg-curl rows as convention (C). The glute-ham raise
+# also extends the hip, so it credits the glute max 0.25.
+
+- id: ex.glute-ham-raise
+  name: { en: Glute-ham raise }
+  synonyms: [ghr, glute ham raise]
+  pattern: kneeFlexion
+  mechanics: isolation
+  substitutionGroups: [sg.leg-curl]
+  equipment: { allOf: [eq.glute-ham-developer], anyOf: [] }
+  muscles:
+    - { muscle: mu.hamstrings, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.glutes.max, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.calves.gastrocnemius, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+  load: { type: bodyweightAdded, curveClass: pooled, unilateral: false, bodyweightLoaded: true }
+  defaults:
+    repRange: { hypertrophy: [5, 12], strength: [5, 10] }
+    restClass: hypertrophyIsolation
+    tempo: 3-0-X-0
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 1, subRegions: [mu.hamstrings.biarticular] }
+  cues:
+    - en: Set the foot plate so your knees sit just behind the pad, and lock your heels in.
+    - en: Start upright, then lower your torso forward under control by straightening your knees.
+    - en: Pull yourself back up with your hamstrings while your hips stay extended.
+
+- id: ex.dumbbell-leg-curl
+  name: { en: Dumbbell leg curl }
+  synonyms: [dumbbell lying leg curl, db leg curl]
+  pattern: kneeFlexion
+  mechanics: isolation
+  substitutionGroups: [sg.leg-curl]
+  equipment:
+    allOf: [eq.dumbbells]
+    anyOf: [[eq.flat-bench, eq.adjustable-bench]]
+  muscles:
+    - { muscle: mu.hamstrings, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.calves.gastrocnemius, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+  load: { type: dumbbell, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [10, 20], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-1
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 1, subRegions: [mu.hamstrings.short-head] }
+  cues:
+    - en: Lie face down on a bench with your knees just past its end and a dumbbell held between your feet.
+    - en: Curl your heels toward your glutes while your hips stay pressed into the bench.
+    - en: Lower slowly to straight legs, and start light until the dumbbell feels secure between your feet.
+
+- id: ex.standing-cable-leg-curl
+  name: { en: Standing cable leg curl }
+  synonyms: [cable leg curl, single-leg cable curl]
+  pattern: kneeFlexion
+  mechanics: isolation
+  substitutionGroups: [sg.leg-curl]
+  equipment:
+    allOf: []
+    anyOf: [[eq.cable-station, eq.dual-cable-station]]
+  muscles:
+    - { muscle: mu.hamstrings, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.calves.gastrocnemius, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+  load: { type: machine, curveClass: pooled, unilateral: true, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [10, 20], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-1
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 2, subRegions: [mu.hamstrings.short-head] }
+  cues:
+    - en: Put an ankle strap on a low pulley and stand facing the machine, holding on for balance.
+    - en: Curl your heel toward your glutes without letting your thigh swing forward.
+    - en: Lower until the leg is straight, and finish all reps before you switch legs.
+
+- id: ex.band-leg-curl
+  name: { en: Band leg curl }
+  synonyms: [resistance band leg curl]
+  pattern: kneeFlexion
+  mechanics: isolation
+  substitutionGroups: [sg.leg-curl]
+  equipment: { allOf: [eq.resistance-bands], anyOf: [] }
+  muscles:
+    - { muscle: mu.hamstrings, credit: 1, evidence: C, source: src.powr-eb-mapping }
+  load: { type: band, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [12, 30], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-1
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 0 }
+  cues:
+    - en: Lie face down with a band anchored low in front of you and looped around your heels.
+    - en: Curl your heels toward your glutes against the band.
+    - en: Straighten your legs slowly while your hips stay on the floor.
+
+- id: ex.sliding-leg-curl
+  name: { en: Sliding leg curl }
+  synonyms: [slider leg curl, towel leg curl]
+  pattern: kneeFlexion
+  mechanics: isolation
+  substitutionGroups: [sg.leg-curl]
+  # Sliders or a towel on a smooth floor: no catalog item needed.
+  equipment: { allOf: [], anyOf: [] }
+  muscles:
+    - { muscle: mu.hamstrings, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.glutes.max, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+  load: { type: bodyweightAdded, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [8, 20], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 3-0-X-0
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 1 }
+  cues:
+    - en: Lie on your back with your heels on sliders or a towel on a smooth floor.
+    - en: Lift your hips into a bridge and slide your heels out until your legs are almost straight.
+    - en: Pull your heels back toward your glutes while your hips stay up.

@@ -10,6 +10,15 @@ const DIAGNOSTIC_CODES = {
   'app.start': ['releaseTarget', 'standalone'],
   'db.open': ['ms', 'dataVersion'],
   'db.error': ['name'],
+  // M5d (DAT-14): the data update, its safety snapshot and the recovery screen.
+  'db.upgrade': ['from', 'to'],
+  'db.snapshot': ['from', 'bytes', 'ms'],
+  'db.snapshotError': ['name'],
+  'db.recovery': ['kind'],
+  'db.versionchange': [],
+  // M5d: calendar export (CAL-01) and install promotion (PWA-02).
+  'calendar.exported': ['events', 'cancelled', 'delivery'],
+  'install.prompt': ['outcome'],
   'content.error': ['name'],
   'rules.error': ['name'],
   'i18n.error': ['name'],
@@ -66,6 +75,8 @@ class DiagnosticsDb extends Dexie {
 
 export interface Diagnostics extends DiagnosticsPort {
   readonly recent: (limit: number) => Promise<DiagnosticEntry[]>;
+  /** "Delete all data" (DAT-13): deletes `powr-diag`; later log calls write nothing. */
+  readonly wipe: () => Promise<void>;
 }
 
 export function createDiagnostics(options: {
@@ -75,6 +86,7 @@ export function createDiagnostics(options: {
 }): Diagnostics {
   const db = new DiagnosticsDb();
   let writes = 0;
+  let wiped = false;
 
   async function prune(): Promise<void> {
     const count = await db.entries.count();
@@ -88,6 +100,7 @@ export function createDiagnostics(options: {
 
   return {
     log: (level, code, data = {}) => {
+      if (wiped) return;
       const allowed: readonly string[] = DIAGNOSTIC_CODES[code as DiagnosticCode] ?? [];
       const safeData = Object.fromEntries(
         Object.entries(data).filter(([key]) => allowed.includes(key)),
@@ -122,6 +135,11 @@ export function createDiagnostics(options: {
       };
       const stamp = exportedAt.toISOString().slice(0, 16).replace(/[-:T]/g, '');
       return { fileName: `powr-diagnostics-${stamp}.txt`, text: JSON.stringify(payload, null, 2) };
+    },
+
+    wipe: async () => {
+      wiped = true;
+      await db.delete();
     },
   };
 }

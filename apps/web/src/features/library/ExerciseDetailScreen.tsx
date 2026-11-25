@@ -18,7 +18,8 @@ import { useLibraryQuery } from '../../hooks/use-library';
 import { useCatalog } from '../../hooks/use-planning';
 import { formatClock, formatLocalDate } from '../../i18n/format';
 import { useLabels } from '../labels';
-import { massFromKg, massText, rirText, useLoadUnit, useSessionWords } from '../session/words';
+import { massFromKg, massText, useLoadUnit, useSessionWords } from '../session/words';
+import { useEffortWords } from '../settings/effort';
 import { WhyButton } from '../why/WhySheet';
 import { DeleteCustomExercise, MarksCard, SetupMemoryCard } from './detail-parts';
 import { useLibraryWords } from './words';
@@ -414,6 +415,7 @@ function RelationsCard({ detail }: { detail: Detail }) {
 /** EXL-03 and ANL-04 in short: exposures, last time, current e1RM, bests and the latest PRs. */
 function HistoryCard({ detail }: { detail: Detail }) {
   const { t } = useLingui();
+  const effortWords = useEffortWords();
   const unit = useLoadUnit();
   const words = useSessionWords();
   const { history, prs } = detail;
@@ -428,8 +430,8 @@ function HistoryCard({ detail }: { detail: Detail }) {
           const reps = set.reps ?? 0;
           const values = t`${load} × ${reps}`;
           if (set.rir === null) return values;
-          const rir = rirText(set.rir);
-          return t`${values} · RIR ${rir}`;
+          const effort = effortWords.value(set.rir);
+          return t`${values} · ${effort}`;
         })
     : [];
   return (

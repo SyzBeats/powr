@@ -53,3 +53,161 @@
     - en: Take a long split stance with both feet pointing forward.
     - en: Drop your back knee toward the floor until it almost touches.
     - en: Push up through the front foot; add a backpack or a pause when reps get easy.
+
+# M5 additions (content 0.3.0): every lunge, step-up and single-leg squat follows the "Lunge /
+# split squat" row (C). The lateral lunge reaches a long adductor stretch but keeps the row's 0.5
+# adductor credit.
+
+- id: ex.dumbbell-walking-lunge
+  name: { en: Dumbbell walking lunge }
+  synonyms: [walking lunge, db walking lunge]
+  pattern: lunge
+  mechanics: compound
+  substitutionGroups: [sg.split-squat]
+  equipment: { allOf: [eq.dumbbells], anyOf: [] }
+  muscles:
+    - { muscle: mu.quads, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.glutes, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.adductors, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.hamstrings, credit: 0, evidence: C, source: src.powr-eb-mapping }
+  load: { type: dumbbell, curveClass: pooled, unilateral: true, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [8, 15], strength: [6, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 2 }
+  cues:
+    - en: Hold a dumbbell in each hand and take a long step forward.
+    - en: Lower until your back knee nearly touches the floor, front shin close to vertical.
+    - en: Push through the front foot to bring the back leg through into the next step.
+
+- id: ex.reverse-lunge
+  name: { en: Reverse lunge }
+  synonyms: [backward lunge, step-back lunge]
+  pattern: lunge
+  mechanics: compound
+  substitutionGroups: [sg.split-squat]
+  equipment: { allOf: [], anyOf: [] }
+  muscles:
+    - { muscle: mu.quads, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.glutes, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.adductors, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.hamstrings, credit: 0, evidence: C, source: src.powr-eb-mapping }
+  load: { type: bodyweightAdded, curveClass: pooled, unilateral: true, bodyweightLoaded: true }
+  defaults:
+    repRange: { hypertrophy: [8, 20], strength: [6, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 1 }
+  cues:
+    - en: Stand tall and step one foot back far enough that both knees can bend to about 90 degrees.
+    - en: Lower your back knee toward the floor with most of your weight on the front foot.
+    - en: Drive through the front foot to stand up again; hold dumbbells once it gets easy.
+
+- id: ex.barbell-split-squat
+  name: { en: Barbell split squat }
+  synonyms: [barbell static lunge]
+  pattern: lunge
+  mechanics: compound
+  substitutionGroups: [sg.split-squat]
+  equipment:
+    allOf: [eq.plates]
+    anyOf: [[eq.barbell-olympic, eq.barbell-womens], [eq.power-rack, eq.squat-stand]]
+  muscles:
+    - { muscle: mu.quads, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.glutes, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.adductors, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.hamstrings, credit: 0, evidence: C, source: src.powr-eb-mapping }
+  load: { type: barbell, curveClass: pooled, unilateral: true, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [6, 12], strength: [6, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 3 }
+  cues:
+    - en: Unrack the bar onto your upper back and step into a long split stance.
+    - en: Lower straight down until your back knee almost touches the floor.
+    - en: Drive up through your front foot with your torso upright, and switch legs after the set.
+
+- id: ex.dumbbell-step-up
+  name: { en: Dumbbell step-up }
+  synonyms: [step-up, box step-up]
+  pattern: lunge
+  mechanics: compound
+  substitutionGroups: [sg.split-squat]
+  equipment:
+    allOf: [eq.dumbbells]
+    anyOf: [[eq.flat-bench, eq.adjustable-bench]]
+  muscles:
+    - { muscle: mu.quads, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.glutes, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.adductors, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.hamstrings, credit: 0, evidence: C, source: src.powr-eb-mapping }
+  load: { type: dumbbell, curveClass: pooled, unilateral: true, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [8, 15], strength: [6, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 2 }
+  cues:
+    - en: Stand facing a sturdy bench or box about knee height with a dumbbell in each hand.
+    - en: Place one whole foot on top and push through it to stand up on the box.
+    - en: Do not push off the back foot, and lower yourself slowly with the working leg.
+
+- id: ex.pistol-squat
+  name: { en: Pistol squat }
+  synonyms: [single-leg squat, one-leg squat]
+  pattern: lunge
+  mechanics: compound
+  substitutionGroups: [sg.split-squat]
+  equipment: { allOf: [], anyOf: [] }
+  muscles:
+    - { muscle: mu.quads, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.glutes, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.adductors, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.hamstrings, credit: 0, evidence: C, source: src.powr-eb-mapping }
+  load: { type: bodyweightAdded, curveClass: pooled, unilateral: true, bodyweightLoaded: true }
+  defaults:
+    repRange: { hypertrophy: [5, 12], strength: [6, 12] }
+    restClass: hypertrophyCompound
+    tempo: 3-0-X-0
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 1 }
+  cues:
+    - en: Stand on one leg and hold the other leg straight out in front of you.
+    - en: Sit down on the standing leg as deep as you can control, arms forward for balance.
+    - en: Stand up without letting the knee cave in; hold a door frame or sit to a bench while you learn it.
+
+- id: ex.lateral-lunge
+  name: { en: Lateral lunge }
+  synonyms: [side lunge]
+  pattern: lunge
+  mechanics: compound
+  substitutionGroups: [sg.split-squat]
+  equipment: { allOf: [], anyOf: [] }
+  muscles:
+    - { muscle: mu.quads, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.glutes, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.adductors, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.hamstrings, credit: 0, evidence: C, source: src.powr-eb-mapping }
+  load: { type: bodyweightAdded, curveClass: pooled, unilateral: true, bodyweightLoaded: true }
+  defaults:
+    repRange: { hypertrophy: [8, 20], strength: [6, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 1 }
+  cues:
+    - en: Take a wide step to the side and sit back into that hip while the other leg stays straight.
+    - en: Keep both feet flat and your chest up as you lower until your inner thigh stretches.
+    - en: Push off the bent leg to return to the start; hold a weight at your chest to add load.

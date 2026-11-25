@@ -1,164 +1,210 @@
 import { Trans, useLingui } from '@lingui/react/macro';
+import { Suspense, use, useEffect, useState, type ReactNode } from 'react';
 
-import { Card, Screen } from '#ui/screen';
+import { Callout } from '#ui/badge';
+import { Screen } from '#ui/screen';
 
+import { useRegistryInfo } from '../../hooks/use-settings';
+import { loadCatalog } from '../../i18n';
+import { NotFound } from '../shell/NotFound';
+import { fetchAttributions, type AttributionEntry } from './attributions-data';
+import { isPlaceholder, LEGAL_DETAILS } from './publisher';
+import { AttributionsText } from './texts/Attributions';
+import { DisclaimerText } from './texts/Disclaimer';
+import { HowPowrDecidesText } from './texts/HowPowrDecides';
+import { ImprintText } from './texts/Imprint';
+import { PrivacyText } from './texts/Privacy';
 import { LEGAL_VERSIONS } from './versions';
 
 /*
- * The full texts behind the onboarding summaries (LEG-01, LEG-02; PRD §8.1, §8.2). Drafts for the
- * legal review (V-06): the publisher's postal address and e-mail are still to be provided
- * (LEG-09). Available before onboarding completes, offline, and later from Settings.
+ * The legal and trust screens at /legal/$page (LEG-01, LEG-02, LEG-05, LEG-06, LEG-09; SET-09):
+ * available before onboarding completes (the first-run guard keeps /legal open), offline, and
+ * from Settings. Titles and the draft marker are in the boot catalog; the long texts are the lazy
+ * `legal` catalog, loaded when a page opens. Drafts for the legal review (V-05, V-06).
  */
+export const LEGAL_PAGES = [
+  'disclaimer',
+  'privacy',
+  'imprint',
+  'how-powr-decides',
+  'attributions',
+] as const;
+export type LegalPage = (typeof LEGAL_PAGES)[number];
 
-export function DisclaimerScreen() {
-  const { t } = useLingui();
-  const version = LEGAL_VERSIONS.disclaimerVersion;
+function isLegalPage(value: string): value is LegalPage {
+  return (LEGAL_PAGES as readonly string[]).includes(value);
+}
+
+export function LegalPageScreen({ page }: { page: string }) {
+  if (!isLegalPage(page)) return <NotFound />;
+  switch (page) {
+    case 'disclaimer':
+      return <DisclaimerScreen />;
+    case 'privacy':
+      return <PrivacyScreen />;
+    case 'imprint':
+      return <ImprintScreen />;
+    case 'how-powr-decides':
+      return <HowPowrDecidesScreen />;
+    case 'attributions':
+      return <AttributionsScreen />;
+    default:
+      return <NotFound />;
+  }
+}
+
+/** Renders its children once the lazy `legal` catalog is loaded (suspends until then). */
+function LegalCatalog({ children }: { children: ReactNode }) {
+  use(loadCatalog('legal'));
+  return <>{children}</>;
+}
+
+function Loading() {
   return (
-    <Screen title={t`Health and safety notice`}>
-      <p className="text-sm text-fg-muted">
-        <Trans>Version {version}</Trans>
-      </p>
-      <Card>
-        <ul className="flex list-disc flex-col gap-2 pl-5">
-          <li>
-            <Trans>
-              POWR gives general fitness information and training suggestions. It is not medical
-              advice and does not replace a doctor, physiotherapist, dietitian or qualified coach.
-            </Trans>
-          </li>
-          <li>
-            <Trans>
-              Talk to a doctor before you start or change a training or nutrition programme,
-              especially if you have a known condition, are pregnant or have had an injury.
-            </Trans>
-          </li>
-          <li>
-            <Trans>
-              Stop training and get medical help if you feel chest pain, dizziness, shortness of
-              breath or sharp pain.
-            </Trans>
-          </li>
-          <li>
-            <Trans>
-              Lifting heavy weights carries a risk of injury. Use safe technique, a spotter or
-              safety equipment such as rack safeties.
-            </Trans>
-          </li>
-          <li>
-            <Trans>
-              Nutrition targets and weight-cut guidance are estimates for healthy adults. They are
-              not suitable for people with an eating disorder, during pregnancy or for minors.
-            </Trans>
-          </li>
-          <li>
-            <Trans>
-              POWR suggests; you confirm. You are responsible for the decisions you make with its
-              suggestions.
-            </Trans>
-          </li>
-        </ul>
-      </Card>
+    <p className="text-fg-muted">
+      <Trans>Loading…</Trans>
+    </p>
+  );
+}
+
+/**
+ * The visible "Draft" marker while a legal detail is a placeholder (product-owner decision
+ * 2026-11-25): dev and beta builds only, because `pnpm release:check` blocks a production deploy
+ * until every placeholder is filled in.
+ */
+function DraftMarker() {
+  const { t } = useLingui();
+  const missing = [
+    ...(isPlaceholder(LEGAL_DETAILS.postalAddress) ? [t`the publisher's postal address`] : []),
+    ...(isPlaceholder(LEGAL_DETAILS.legalReview) ? [t`the legal review`] : []),
+  ];
+  if (missing.length === 0) return null;
+  const list = missing.join(t`, `);
+  return (
+    <div data-testid="legal-draft">
+      <Callout tone="warning" title={t`Draft`}>
+        <p>
+          <Trans>
+            This text is a draft until its legal review and may still change. Still to come: {list}.
+          </Trans>
+        </p>
+      </Callout>
+    </div>
+  );
+}
+
+function LegalScreen({
+  title,
+  version,
+  children,
+}: {
+  title: string;
+  version?: string;
+  children: ReactNode;
+}) {
+  return (
+    <Screen title={title}>
+      {version ? (
+        <p className="text-sm text-fg-muted" data-testid="legal-version">
+          <Trans>Version {version}</Trans>
+        </p>
+      ) : null}
+      <DraftMarker />
+      <Suspense fallback={<Loading />}>
+        <LegalCatalog>{children}</LegalCatalog>
+      </Suspense>
     </Screen>
   );
 }
 
-export function PrivacyScreen() {
+/** LEG-01, PRD §8.1. */
+function DisclaimerScreen() {
   const { t } = useLingui();
-  const version = LEGAL_VERSIONS.privacyVersion;
   return (
-    <Screen title={t`Privacy notice`}>
-      <p className="text-sm text-fg-muted">
-        <Trans>Version {version}. Draft, pending legal review.</Trans>
-      </p>
-      <Card>
-        <h2 className="text-lg font-bold">
-          <Trans>In short</Trans>
-        </h2>
-        <p>
-          <Trans>
-            Everything you enter is stored only on this device. We never receive it: there is no
-            account, analytics or tracking. Only you can export it, as a backup file.
-          </Trans>
-        </p>
-      </Card>
-      <Card>
-        <h2 className="text-lg font-bold">
-          <Trans>What POWR stores, where and why</Trans>
-        </h2>
-        <p>
-          <Trans>
-            Your training (plans, sessions and sets), body data you choose to enter (such as body
-            weight), check-ins and settings. They are stored in your browser's storage on this
-            device, only to run the app for you.
-          </Trans>
-        </p>
-      </Card>
-      <Card>
-        <h2 className="text-lg font-bold">
-          <Trans>Who is responsible</Trans>
-        </h2>
-        <p>
-          <Trans>
-            Simeon Zimmermann, SZ WEB DEVELOPMENT, Switzerland. Postal address and e-mail: to be
-            added before the public release.
-          </Trans>
-        </p>
-        <p>
-          <Trans>
-            We do not collect, receive or process your training data. There is no account, no
-            analytics, no telemetry and no tracking.
-          </Trans>
-        </p>
-      </Card>
-      <Card>
-        <h2 className="text-lg font-bold">
-          <Trans>Hosting</Trans>
-        </h2>
-        <p>
-          <Trans>
-            The app files are served from a server in Germany that we rent from Hetzner Online GmbH
-            and operate ourselves. We do not keep access logs. Your training data never reaches this
-            server.
-          </Trans>
-        </p>
-      </Card>
-      <Card>
-        <h2 className="text-lg font-bold">
-          <Trans>Permissions</Trans>
-        </h2>
-        <p>
-          <Trans>
-            Notifications are only used for rest-timer alerts, and only after you allow them. POWR
-            asks for nothing else without a reason you can see.
-          </Trans>
-        </p>
-      </Card>
-      <Card>
-        <h2 className="text-lg font-bold">
-          <Trans>Backups and data loss</Trans>
-        </h2>
-        <p>
-          <Trans>
-            Backup files you export are under your control. If you store or share them elsewhere,
-            for example in a cloud drive, that service's terms apply. Clearing your browser data,
-            uninstalling or the browser freeing space can delete your data, so keep backups.
-          </Trans>
-        </p>
-        <p>
-          <Trans>You can delete all your data at any time in Settings, Data and backups.</Trans>
-        </p>
-      </Card>
-      <Card>
-        <h2 className="text-lg font-bold">
-          <Trans>Legal framework</Trans>
-        </h2>
-        <p>
-          <Trans>
-            The Swiss Federal Act on Data Protection (revFADP) applies. Whether the EU GDPR also
-            applies is being confirmed in a legal review; this notice is written to meet both.
-          </Trans>
-        </p>
-      </Card>
+    <LegalScreen title={t`Health and safety notice`} version={LEGAL_VERSIONS.disclaimerVersion}>
+      <DisclaimerText />
+    </LegalScreen>
+  );
+}
+
+/** LEG-02, PRD §8.2. */
+function PrivacyScreen() {
+  const { t } = useLingui();
+  return (
+    <LegalScreen title={t`Privacy notice`} version={LEGAL_VERSIONS.privacyVersion}>
+      <PrivacyText />
+    </LegalScreen>
+  );
+}
+
+/** LEG-09, PRD §8.6. */
+function ImprintScreen() {
+  const { t } = useLingui();
+  return (
+    <LegalScreen title={t`Publisher and imprint`}>
+      <ImprintText />
+    </LegalScreen>
+  );
+}
+
+/** LEG-05, PRG-09: generated from the shipped registry (the resolver is a lazy chunk). */
+function HowPowrDecidesScreen() {
+  const { t } = useLingui();
+  const registry = useRegistryInfo();
+  const [parameters] = useState(() => registry.parameters());
+  return (
+    <Screen title={t`How POWR decides`}>
+      <Suspense fallback={<Loading />}>
+        <LegalCatalog>
+          <HowPowrDecidesText parameters={parameters} />
+        </LegalCatalog>
+      </Suspense>
+    </Screen>
+  );
+}
+
+/** LEG-06: from the build's `attributions.json` (precached; offline). */
+function AttributionsScreen() {
+  const { t } = useLingui();
+  const [state, setState] = useState<
+    | { readonly kind: 'loading' }
+    | { readonly kind: 'ready'; readonly entries: readonly AttributionEntry[] }
+    | { readonly kind: 'missing' }
+  >({ kind: 'loading' });
+  useEffect(() => {
+    let cancelled = false;
+    fetchAttributions().then(
+      (entries) => {
+        if (!cancelled) setState({ kind: 'ready', entries });
+      },
+      () => {
+        if (!cancelled) setState({ kind: 'missing' });
+      },
+    );
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+  return (
+    <Screen title={t`Open-source licences and attributions`}>
+      {state.kind === 'loading' ? (
+        <Loading />
+      ) : state.kind === 'missing' ? (
+        <Callout tone="warning" title={t`The list is not available`}>
+          <p>
+            <Trans>
+              The list of licences is created when the app is built, and this copy of the app does
+              not include it. Reload the app; if that does not help, update it.
+            </Trans>
+          </p>
+        </Callout>
+      ) : (
+        <Suspense fallback={<Loading />}>
+          <LegalCatalog>
+            <AttributionsText entries={state.entries} />
+          </LegalCatalog>
+        </Suspense>
+      )}
     </Screen>
   );
 }

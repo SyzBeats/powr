@@ -1,8 +1,8 @@
 import { plural } from '@lingui/core/macro';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { Link, useNavigate, useSearch } from '@tanstack/react-router';
-import { ChevronRight, SlidersHorizontal, Star, X } from 'lucide-react';
-import { useId, useState } from 'react';
+import { ChevronDown, ChevronRight, SlidersHorizontal, Star, X } from 'lucide-react';
+import { useId, useState, type ReactNode } from 'react';
 
 import {
   EQUIPMENT_CATEGORIES,
@@ -26,15 +26,25 @@ import type { LibrarySearch } from './search';
 import { useLibraryWords } from './words';
 
 type Flag = 'available' | 'favourites' | 'custom' | 'hidden';
+/** The multi-value filters (TD-56), in the order the sheet and the chips show them. */
+const LISTS = ['muscle', 'equipment', 'pattern', 'mechanics'] as const;
+type List = (typeof LISTS)[number];
+const FLAGS: readonly Flag[] = ['available', 'favourites', 'custom', 'hidden'];
 
-/** The domain query of the route's search params (EXL-02: AND across filters). */
+/** A change of the route's search params; `undefined` removes a filter. */
+type Patch = { -readonly [K in keyof LibrarySearch]?: LibrarySearch[K] | undefined };
+
+/**
+ * The domain query of the route's search params (EXL-02, TD-56): any of the values within a
+ * dimension, every dimension in use (AND across).
+ */
 function queryOf(search: LibrarySearch, text: string): LibraryQuery {
   return {
     ...(text.trim() ? { text: text.trim() } : {}),
-    ...(search.muscle ? { muscles: [search.muscle as MuscleId] } : {}),
-    ...(search.equipment ? { equipment: [search.equipment] } : {}),
-    ...(search.pattern ? { patterns: [search.pattern as MovementPattern] } : {}),
-    ...(search.mechanics ? { mechanics: [search.mechanics] } : {}),
+    ...(search.muscle ? { muscles: search.muscle as readonly MuscleId[] } : {}),
+    ...(search.equipment ? { equipment: search.equipment } : {}),
+    ...(search.pattern ? { patterns: search.pattern as readonly MovementPattern[] } : {}),
+    ...(search.mechanics ? { mechanics: search.mechanics } : {}),
     ...(search.available ? { availableOnly: true } : {}),
     ...(search.favourites ? { favouritesOnly: true } : {}),
     ...(search.custom ? { customOnly: true } : {}),
@@ -42,11 +52,19 @@ function queryOf(search: LibrarySearch, text: string): LibraryQuery {
   };
 }
 
+/** The list with `value` added or removed; an empty list removes the filter. */
+function toggled(list: readonly string[] | undefined, value: string, on: boolean) {
+  const rest = (list ?? []).filter((entry) => entry !== value);
+  const next = on ? [...rest, value] : rest;
+  return next.length > 0 ? next : undefined;
+}
+
 /**
  * EXL-02: search by name and synonyms, filters by muscle, equipment, movement pattern and
- * mechanics, "available with my equipment", favourites, custom and hidden exercises. Filters
- * combine with AND; every active filter is a chip that clears it in one tap, "Clear all" clears
- * them all. The query and filters live in the URL, so Back from an exercise returns to the list.
+ * mechanics (several values each, TD-56), "available with my equipment", favourites, custom and
+ * hidden exercises. Values within a dimension combine with OR, dimensions with AND; every active
+ * value is a chip that clears it in one tap, "Clear all" clears them all. The query and filters
+ * live in the URL, so Back from an exercise returns to the list.
  */
 export function LibraryScreen() {
   const { t } = useLingui();
@@ -60,15 +78,18 @@ export function LibraryScreen() {
     library.searchExercises(deps, query),
   );
 
-  const update = (patch: Partial<Record<keyof LibrarySearch, string | true | undefined>>) =>
+  // From the latest search params, so quick taps on several checkboxes all count.
+  const update = (patch: (previous: LibrarySearch) => Patch) =>
     void navigate({
-      search: (previous) => ({ ...previous, ...patch }) as LibrarySearch,
+      search: (previous) => ({ ...previous, ...patch(previous) }) as LibrarySearch,
       replace: true,
     });
+  const toggle = (list: List, value: string, on: boolean) =>
+    update((previous) => ({ [list]: toggled(previous[list], value, on) }));
 
   const onText = (value: string) => {
     setText(value);
-    update({ q: value.trim() ? value : undefined });
+    update(() => ({ q: value.trim() ? value : undefined }));
   };
 
   return (
@@ -87,12 +108,25 @@ export function LibraryScreen() {
           <Trans>Filters</Trans>
         </Button>
       </search>
-      <ActiveFilters search={search} onChange={update} />
+      <ActiveFilters
+        search={search}
+        onRemove={(chip) =>
+          update((previous) =>
+            chip.value === undefined
+              ? { [chip.key]: undefined }
+              : { [chip.key]: toggled(previous[chip.key as List], chip.value, false) },
+          )
+        }
+        onClearAll={() =>
+          update(() => Object.fromEntries([...LISTS, ...FLAGS].map((key) => [key, undefined])))
+        }
+      />
       <FilterSheet
         open={filtersOpen}
         onOpenChange={setFiltersOpen}
         search={search}
-        onChange={update}
+        onToggle={toggle}
+        onFlag={(key, on) => update(() => ({ [key]: on ? true : undefined }))}
         count={results.loaded ? results.value.length : null}
       />
       {results.loaded ? (
@@ -109,38 +143,50 @@ export function LibraryScreen() {
   );
 }
 
-/** The words of each active filter, for its chip. */
-function useFilterLabels() {
+/** One active filter value (a list value) or switch (a flag, without `value`). */
+interface Chip {
+  readonly key: List | Flag;
+  readonly value?: string;
+  readonly label: string;
+}
+
+/** The words of every active filter value, for its chip. */
+function useFilterChips() {
   const { t } = useLingui();
   const labels = useLabels();
   const words = useLibraryWords();
-  return (search: LibrarySearch) => {
-    const chips: { readonly key: keyof LibrarySearch; readonly label: string }[] = [];
-    if (search.muscle) chips.push({ key: 'muscle', label: labels.muscle(search.muscle) });
-    if (search.equipment)
-      chips.push({ key: 'equipment', label: labels.equipment(search.equipment) });
-    if (search.pattern)
-      chips.push({ key: 'pattern', label: labels.pattern(search.pattern as MovementPattern) });
-    if (search.mechanics)
-      chips.push({ key: 'mechanics', label: words.mechanics(search.mechanics) });
-    if (search.available) chips.push({ key: 'available', label: t`Available with my equipment` });
-    if (search.favourites) chips.push({ key: 'favourites', label: t`Favourites` });
-    if (search.custom) chips.push({ key: 'custom', label: t`Custom exercises` });
-    if (search.hidden) chips.push({ key: 'hidden', label: t`Including hidden ones` });
-    return chips;
+  const flagLabels: Record<Flag, string> = {
+    available: t`Available with my equipment`,
+    favourites: t`Favourites`,
+    custom: t`Custom exercises`,
+    hidden: t`Including hidden ones`,
   };
+  const labelOf: Record<List, (value: string) => string> = {
+    muscle: (value) => labels.muscle(value),
+    equipment: (value) => labels.equipment(value),
+    pattern: (value) => labels.pattern(value as MovementPattern),
+    mechanics: (value) => words.mechanics(value as 'compound' | 'isolation'),
+  };
+  return (search: LibrarySearch): Chip[] => [
+    ...LISTS.flatMap((key) =>
+      (search[key] ?? []).map((value) => ({ key, value, label: labelOf[key](value) })),
+    ),
+    ...FLAGS.flatMap((key) => (search[key] ? [{ key, label: flagLabels[key] }] : [])),
+  ];
 }
 
 function ActiveFilters({
   search,
-  onChange,
+  onRemove,
+  onClearAll,
 }: {
   search: LibrarySearch;
-  onChange: (patch: Partial<Record<keyof LibrarySearch, undefined>>) => void;
+  onRemove: (chip: Chip) => void;
+  onClearAll: () => void;
 }) {
   const { t } = useLingui();
   const headingId = useId();
-  const chips = useFilterLabels()(search);
+  const chips = useFilterChips()(search);
   if (chips.length === 0) return null;
   return (
     <section aria-labelledby={headingId} className="flex flex-col gap-2">
@@ -149,15 +195,15 @@ function ActiveFilters({
       </h2>
       <ul className="flex flex-wrap gap-2" data-testid="active-filters">
         {chips.map((chip) => (
-          <li key={chip.key}>
+          <li key={`${chip.key}:${chip.value ?? ''}`}>
             <button
               type="button"
               aria-label={t`Remove filter: ${chip.label}`}
-              onClick={() => onChange({ [chip.key]: undefined })}
-              className="inline-flex min-h-target items-center gap-1.5 rounded-full border-2 border-primary bg-surface px-3 font-medium"
+              onClick={() => onRemove(chip)}
+              className="inline-flex min-h-target items-center gap-1.5 rounded-full border-2 border-primary bg-surface px-3 text-left font-medium"
             >
               {chip.label}
-              <X aria-hidden="true" className="size-4" />
+              <X aria-hidden="true" className="size-4 shrink-0" />
             </button>
           </li>
         ))}
@@ -165,9 +211,7 @@ function ActiveFilters({
           <li>
             <button
               type="button"
-              onClick={() =>
-                onChange(Object.fromEntries(chips.map((chip) => [chip.key, undefined])))
-              }
+              onClick={onClearAll}
               className="inline-flex min-h-target items-center rounded-full border border-control px-3 font-medium"
             >
               <Trans>Clear all</Trans>
@@ -179,33 +223,42 @@ function ActiveFilters({
   );
 }
 
-/** One `<select>` with its visible label; the empty option means "any". */
-function SelectField({
-  label,
-  value,
-  onChange,
+/**
+ * One filter dimension as a disclosure (open when it has choices, so the sheet stays short):
+ * the summary names it and how many values are chosen, the legend says how the values combine.
+ */
+function FilterGroup({
+  title,
+  legend,
+  chosen,
   children,
 }: {
-  label: string;
-  value: string;
-  onChange: (value: string | undefined) => void;
-  children: React.ReactNode;
+  title: string;
+  legend: string;
+  chosen: number;
+  children: ReactNode;
 }) {
-  const id = useId();
+  // Uncontrolled after the first render: React never closes it under the user's finger.
+  const [initiallyOpen] = useState(chosen > 0);
   return (
-    <div className="flex flex-col gap-1">
-      <label htmlFor={id} className="font-medium">
-        {label}
-      </label>
-      <select
-        id={id}
-        value={value}
-        onChange={(event) => onChange(event.target.value || undefined)}
-        className="min-h-target w-full min-w-0 rounded-xl border border-control bg-surface px-3"
-      >
+    <details open={initiallyOpen} className="group rounded-xl border border-control">
+      <summary className="flex min-h-target cursor-pointer list-none items-center gap-2 px-3 font-medium">
+        <span className="flex-1">{title}</span>
+        {chosen > 0 ? (
+          <span className="text-sm text-fg-muted">
+            {plural(chosen, { one: '# chosen', other: '# chosen' })}
+          </span>
+        ) : null}
+        <ChevronDown
+          aria-hidden="true"
+          className="size-5 shrink-0 group-open:rotate-180 motion-safe:transition-transform"
+        />
+      </summary>
+      <fieldset className="flex min-w-0 flex-col gap-0.5 px-1 pb-2">
+        <legend className="px-2 pb-1 text-sm text-fg-muted">{legend}</legend>
         {children}
-      </select>
-    </div>
+      </fieldset>
+    </details>
   );
 }
 
@@ -213,13 +266,15 @@ function FilterSheet({
   open,
   onOpenChange,
   search,
-  onChange,
+  onToggle,
+  onFlag,
   count,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   search: LibrarySearch;
-  onChange: (patch: Partial<Record<keyof LibrarySearch, string | true | undefined>>) => void;
+  onToggle: (list: List, value: string, on: boolean) => void;
+  onFlag: (key: Flag, on: boolean) => void;
   count: number | null;
 }) {
   const { t } = useLingui();
@@ -228,79 +283,77 @@ function FilterSheet({
   const catalog = useCatalog();
   const groups = catalog.muscles().groups;
   const items = catalog.equipment().items;
+  const check = (list: List, value: string, label: string) => (
+    <CheckRow
+      key={value}
+      label={label}
+      checked={search[list]?.includes(value as never) === true}
+      onChange={(checked) => onToggle(list, value, checked)}
+    />
+  );
   const flag = (key: Flag, label: string, description?: string) => (
     <CheckRow
       label={label}
       {...(description ? { description } : {})}
       checked={search[key] === true}
-      onChange={(checked) => onChange({ [key]: checked ? true : undefined })}
+      onChange={(checked) => onFlag(key, checked)}
     />
   );
+  const chosen = (list: List) => search[list]?.length ?? 0;
   return (
     <Sheet
       open={open}
       onOpenChange={onOpenChange}
       title={t`Filters`}
-      description={t`Exercises must match every filter you choose.`}
+      description={t`Choose any number in each group. An exercise is shown when it matches one of your choices in every group you use.`}
       closeLabel={t`Close filters`}
     >
-      <SelectField
-        label={t`Muscle`}
-        value={search.muscle ?? ''}
-        onChange={(value) => onChange({ muscle: value })}
+      <FilterGroup
+        title={t`Muscle`}
+        legend={t`Works any of these muscles`}
+        chosen={chosen('muscle')}
       >
-        <option value="">{t`Any muscle`}</option>
         {groups.map((group) => (
-          <optgroup key={group.id} label={group.name.en}>
-            <option value={group.id}>{group.name.en}</option>
-            {group.subRegions.map((region) => (
-              <option key={region.id} value={region.id}>
-                {region.name.en}
-              </option>
-            ))}
-          </optgroup>
+          <div key={group.id} className="flex flex-col gap-0.5">
+            {check('muscle', group.id, group.name.en)}
+            {group.subRegions.length > 0 ? (
+              <div className="flex flex-col gap-0.5 pl-8">
+                {group.subRegions.map((region) => check('muscle', region.id, region.name.en))}
+              </div>
+            ) : null}
+          </div>
         ))}
-      </SelectField>
-      <SelectField
-        label={t`Equipment`}
-        value={search.equipment ?? ''}
-        onChange={(value) => onChange({ equipment: value })}
+      </FilterGroup>
+      <FilterGroup
+        title={t`Equipment`}
+        legend={t`Uses any of these items`}
+        chosen={chosen('equipment')}
       >
-        <option value="">{t`Any equipment`}</option>
         {EQUIPMENT_CATEGORIES.map((category) => {
           const inCategory = items.filter((item) => item.category === category);
           return inCategory.length === 0 ? null : (
-            <optgroup key={category} label={labels.category(category)}>
-              {inCategory.map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.name.en}
-                </option>
-              ))}
-            </optgroup>
+            <fieldset key={category} className="flex min-w-0 flex-col gap-0.5 pt-1">
+              <legend className="px-2 text-sm font-semibold">{labels.category(category)}</legend>
+              {inCategory.map((item) => check('equipment', item.id, item.name.en))}
+            </fieldset>
           );
         })}
-      </SelectField>
-      <SelectField
-        label={t`Movement`}
-        value={search.pattern ?? ''}
-        onChange={(value) => onChange({ pattern: value })}
+      </FilterGroup>
+      <FilterGroup
+        title={t`Movement`}
+        legend={t`Any of these movements`}
+        chosen={chosen('pattern')}
       >
-        <option value="">{t`Any movement`}</option>
-        {MOVEMENT_PATTERNS.map((pattern) => (
-          <option key={pattern} value={pattern}>
-            {labels.pattern(pattern)}
-          </option>
-        ))}
-      </SelectField>
-      <SelectField
-        label={t`Mechanics`}
-        value={search.mechanics ?? ''}
-        onChange={(value) => onChange({ mechanics: value })}
+        {MOVEMENT_PATTERNS.map((pattern) => check('pattern', pattern, labels.pattern(pattern)))}
+      </FilterGroup>
+      <FilterGroup
+        title={t`Mechanics`}
+        legend={t`Compound, isolation or both`}
+        chosen={chosen('mechanics')}
       >
-        <option value="">{t`Compound or isolation`}</option>
-        <option value="compound">{words.mechanics('compound')}</option>
-        <option value="isolation">{words.mechanics('isolation')}</option>
-      </SelectField>
+        {check('mechanics', 'compound', words.mechanics('compound'))}
+        {check('mechanics', 'isolation', words.mechanics('isolation'))}
+      </FilterGroup>
       <fieldset className="flex flex-col gap-1">
         <legend className="mb-1 font-medium">
           <Trans>Show</Trans>

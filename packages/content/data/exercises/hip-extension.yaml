@@ -61,7 +61,7 @@
   synonyms: [45 degree hip extension, hyperextension, back raise]
   pattern: hipExtension
   mechanics: compound
-  substitutionGroups: [sg.romanian-deadlift]
+  substitutionGroups: [sg.romanian-deadlift, sg.back-extension]
   equipment: { allOf: [eq.back-extension-bench], anyOf: [] }
   muscles:
     - { muscle: mu.hamstrings.biarticular, credit: 1, evidence: H, source: src.bourne2017 }
@@ -80,3 +80,184 @@
     - en: Hinge down from the hips with a neutral back until your hamstrings are stretched.
     - en: Come up until your body forms a straight line; do not arch past it.
     - en: Hold a plate or dumbbell against your chest to add load.
+
+# M5 additions (content 0.3.0):
+# - Machine, Smith-machine, dumbbell and single-leg hip thrusts are the "Hip thrust / bridge" row
+#   (glute max H, Plotkin 2023; quadriceps and hamstrings 0.25 C). The banded glute bridge is
+#   tagged C (a band's resistance profile).
+# - Reverse hyperextension and cable glute kickback are not in the EB table (C): glute max 1.0;
+#   the reverse hyper also credits hamstrings and spinal erectors 0.5, like the back extension.
+
+- id: ex.machine-hip-thrust
+  name: { en: Machine hip thrust }
+  synonyms: [machine glute thrust, plate-loaded hip thrust]
+  pattern: hipExtension
+  mechanics: compound
+  substitutionGroups: [sg.hip-thrust]
+  equipment: { allOf: [eq.hip-thrust-machine], anyOf: [] }
+  muscles:
+    - { muscle: mu.glutes.max, credit: 1, evidence: H, source: src.plotkin2023 }
+    - { muscle: mu.quads, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.hamstrings, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+  load: { type: machine, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [8, 15], strength: [6, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-1
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 3, subRegions: [mu.glutes.max] }
+  cues:
+    - en: Sit with your upper back on the pad and the belt or pad across your hips.
+    - en: Drive through your heels until your torso and thighs form a straight line.
+    - en: Hold the top briefly with your ribs down, then lower until your hips nearly reach the seat.
+
+- id: ex.smith-machine-hip-thrust
+  name: { en: Smith-machine hip thrust }
+  synonyms: [smith hip thrust]
+  pattern: hipExtension
+  mechanics: compound
+  substitutionGroups: [sg.hip-thrust]
+  equipment:
+    allOf: [eq.smith-machine, eq.plates]
+    anyOf: [[eq.flat-bench, eq.adjustable-bench]]
+  muscles:
+    - { muscle: mu.glutes.max, credit: 1, evidence: H, source: src.plotkin2023 }
+    - { muscle: mu.quads, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.hamstrings, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+  load: { type: machine, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [8, 15], strength: [6, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-1
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 3, subRegions: [mu.glutes.max] }
+  cues:
+    - en: Put a bench across the Smith machine and sit with your upper back against it, the padded bar over your hips.
+    - en: Drive your hips up until thighs and torso are level, then turn the bar off the hooks.
+    - en: Lower until your hips almost touch the floor and repeat with your chin tucked.
+
+- id: ex.dumbbell-hip-thrust
+  name: { en: Dumbbell hip thrust }
+  synonyms: [db hip thrust]
+  pattern: hipExtension
+  mechanics: compound
+  substitutionGroups: [sg.hip-thrust]
+  equipment:
+    allOf: [eq.dumbbells]
+    anyOf: [[eq.flat-bench, eq.adjustable-bench]]
+  muscles:
+    - { muscle: mu.glutes.max, credit: 1, evidence: H, source: src.plotkin2023 }
+    - { muscle: mu.quads, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.hamstrings, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+  load: { type: dumbbell, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [10, 20], strength: [8, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-1
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 2, subRegions: [mu.glutes.max] }
+  cues:
+    - en: Sit with your upper back against a bench and hold one dumbbell on your hips.
+    - en: Drive through your heels until your hips are level with your knees and shoulders.
+    - en: Pause at the top, then lower under control.
+
+- id: ex.single-leg-hip-thrust
+  name: { en: Single-leg hip thrust }
+  synonyms: [one-leg hip thrust]
+  pattern: hipExtension
+  mechanics: compound
+  substitutionGroups: [sg.hip-thrust]
+  # Upper back on a bench or a couch: no catalog item needed.
+  equipment: { allOf: [], anyOf: [] }
+  muscles:
+    - { muscle: mu.glutes.max, credit: 1, evidence: H, source: src.plotkin2023 }
+    - { muscle: mu.quads, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.hamstrings, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+  load: { type: bodyweightAdded, curveClass: pooled, unilateral: true, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [8, 20], strength: [8, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-1
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 1, subRegions: [mu.glutes.max] }
+  cues:
+    - en: Rest your upper back on a bench or couch with one foot planted and the other leg lifted.
+    - en: Drive through the planted heel until your hips are level, without twisting.
+    - en: Lower slowly and finish all reps before you switch legs.
+
+- id: ex.banded-glute-bridge
+  name: { en: Banded glute bridge }
+  synonyms: [band glute bridge, band hip thrust]
+  pattern: hipExtension
+  mechanics: compound
+  substitutionGroups: [sg.hip-thrust]
+  equipment: { allOf: [eq.resistance-bands], anyOf: [] }
+  muscles:
+    - { muscle: mu.glutes.max, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.quads, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.hamstrings, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+  load: { type: band, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [12, 30], strength: [8, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-1
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 0 }
+  cues:
+    - en: Lie on your back with knees bent and a band stretched across your hips, ends held down by your hands.
+    - en: Drive your hips up against the band until they line up with your knees and shoulders.
+    - en: Squeeze at the top, then lower under control.
+
+- id: ex.reverse-hyperextension
+  name: { en: Reverse hyperextension }
+  synonyms: [reverse hyper, reverse back extension]
+  pattern: hipExtension
+  mechanics: compound
+  substitutionGroups: [sg.back-extension]
+  equipment: { allOf: [eq.reverse-hyper], anyOf: [] }
+  muscles:
+    - { muscle: mu.glutes.max, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.hamstrings, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.lower-back, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+  load: { type: machine, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [10, 20], strength: [8, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-1
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 2 }
+  cues:
+    - en: Lie face down on the pad with your hips at its edge and hold the handles.
+    - en: Swing your legs up behind you until they line up with your torso, squeezing your glutes.
+    - en: Lower your legs under control instead of letting the pendulum swing them.
+
+- id: ex.cable-glute-kickback
+  name: { en: Cable glute kickback }
+  synonyms: [glute kickback, cable hip extension]
+  pattern: hipExtension
+  mechanics: isolation
+  substitutionGroups: [sg.hip-thrust]
+  equipment:
+    allOf: []
+    anyOf: [[eq.cable-station, eq.dual-cable-station]]
+  muscles:
+    - { muscle: mu.glutes.max, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.hamstrings, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+  load: { type: machine, curveClass: pooled, unilateral: true, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [10, 20], strength: [8, 12] }
+    restClass: hypertrophyIsolation
+    tempo: 2-0-X-1
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 2, subRegions: [mu.glutes.max] }
+  cues:
+    - en: Put an ankle strap on a low pulley and face the machine, holding on with both hands.
+    - en: Lean forward slightly and push the working leg back until your hip is fully extended.
+    - en: Return slowly until the knee comes in front of the hip, keeping your lower back still.

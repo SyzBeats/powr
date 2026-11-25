@@ -1,7 +1,7 @@
 {
   "format": 1,
-  "version": "1.6.0",
-  "hash": "40a446f342a4151b9529d2ddd2a8bff25920cfe96e300b859ebfeefe77cbe168",
+  "version": "1.7.0",
+  "hash": "127ea5b9a286e0d68c34e284f37a6b92f75100602ce258423ba6a166880325a9",
   "params": [
     {
       "id": "bodyweight.rate.bulk",
@@ -1097,7 +1097,7 @@
         "weeks": {
           "novice": 4,
           "intermediate": 8,
-          "advanced": 8
+          "advanced": 12
         },
         "sessions": 3
       },
@@ -1119,7 +1119,7 @@
       "verified": false,
       "userOverridable": false,
       "since": "mvp",
-      "note": "Rules 1.6.0: the window is by level. A label compares the change over the window with one TE, so a steady gain g a week can only show once g × weeks > TE: with 4 weeks for everyone, trained lifters needed more than 0.83% a week (3.3% / 4) and a realistic intermediate 0.5% a week was never labelled. 8 weeks lets 0.5% a week show (4% > 3.3%); novices keep 4 weeks (5.5% / 4 = 1.4% a week, below their usual 1–2%) so stalls and dips still show quickly. The EB classifies by the slope over 8–12 weeks; advanced stays at 8 because the session engine keeps the last 30 trend points (12 weeks at 3 sessions a week would need 39). The series' first `sessions` points are never the reference (barely smoothed); while a series is shorter than the window its oldest point after them is. A POWR design value."
+      "note": "Rules 1.6.0: the window is by level. A label compares the change over the window with one TE, so a steady gain g a week can only show once g × weeks > TE: with 4 weeks for everyone, trained lifters needed more than 0.83% a week (3.3% / 4) and a realistic intermediate 0.5% a week was never labelled. 8 weeks lets 0.5% a week show (4% > 3.3%); novices keep 4 weeks (5.5% / 4 = 1.4% a week, below their usual 1–2%) so stalls and dips still show quickly. The EB classifies by the slope over 8–12 weeks. Rules 1.7.0 (TD-60): advanced lifters get the 12-week end (their good-block 0.25–0.5% a week needs the longer window to pass one TE: 3–6% over 12 weeks), now that the session engine keeps 60 trend points and exposures (12 weeks at up to 4 sessions a week); rules 1.6.0 had 8 because it kept 30. The series' first `sessions` points are never the reference (barely smoothed); while a series is shorter than the window its oldest point after them is. A POWR design value."
     },
     {
       "id": "load.trend.repRangeShift",
@@ -1182,7 +1182,8 @@
       "ebRef": "EB §Load › Real change (trained median CV 3.3%, untrained 5.5%); technical concept §8.7.5",
       "verified": true,
       "userOverridable": false,
-      "since": "mvp"
+      "since": "mvp",
+      "note": "Also the floor of the trend's observation noise (rules 1.7.0, TD-59): a session e1RM is never modelled as less noisy than a tested 1RM, so a novice's heavy sets (load.trend.noiseHeavySd 4%) count at 5.5% once the novice widening ends."
     },
     {
       "id": "load.unknownEffort.eligibleForE1rmPr",

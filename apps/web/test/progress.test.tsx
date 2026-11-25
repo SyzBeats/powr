@@ -2,7 +2,12 @@ import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 
-import { weeklyVolume } from '@powr/application/insights';
+import {
+  exerciseHistory,
+  exerciseSummaries,
+  exerciseTrend,
+  weeklyVolume,
+} from '@powr/application/insights';
 import { logPastSession } from '@powr/application/session';
 import type { ExerciseId, LocalDate } from '@powr/domain';
 
@@ -18,6 +23,7 @@ import { createTestContainer, onboarded, renderRoute, seriousViolations } from '
 
 const BENCH = 'ex.barbell-bench-press' as ExerciseId;
 const SQUAT = 'ex.barbell-back-squat' as ExerciseId;
+const CURL = 'ex.dumbbell-curl' as ExerciseId;
 
 const pad = (value: number) => String(value).padStart(2, '0');
 
@@ -85,6 +91,65 @@ describe('Progress tab (M4b)', () => {
     expect(bench.getAttribute('href')).toBe(`/progress/exercise/${BENCH}`);
     expect(bench.textContent).toContain('1 workout');
     expect(await seriousViolations()).toEqual([]);
+  });
+
+  it('the hub shows each exercise’s current e1RM and the trend screen’s latest label (TD-55)', async () => {
+    const container = await createTestContainer();
+    await onboarded(container);
+    // Eight weeks, so the trend has a reference point and the label is not "not enough data".
+    await logPast(container, -56, BENCH, 75);
+    await logPast(container, -49, BENCH, 77.5);
+    await benchHistory(container);
+    await logPastSession(container.deps, {
+      localDate: day(-2),
+      exercises: [
+        {
+          exerciseId: CURL,
+          sets: [{ load: { value: 12, unit: 'kg' as const }, reps: 10, rir: null }],
+        },
+      ],
+    });
+    const [benchSummary] = await exerciseSummaries(container.deps, { exerciseIds: [BENCH] });
+    const history = await exerciseHistory(container.deps, BENCH);
+    const trend = await exerciseTrend(container.deps, { exerciseId: BENCH });
+    // The hub's numbers are the trend screen's numbers.
+    expect(benchSummary!.e1rm?.kg).toBe(history!.e1rm.strengthKg ?? history!.e1rm.allKg);
+    expect(benchSummary!.change).toEqual(trend.series.latest);
+
+    renderRoute(container, '/progress');
+    const trained = await screen.findByTestId('trained-exercises');
+    const bench = within(trained).getByRole('link', { name: /Barbell bench press/ });
+    expect(bench.textContent).toContain('8 workouts');
+    expect(trend.series.latest?.value.label).not.toBe('insufficientData');
+    const kg = new Intl.NumberFormat(undefined, { maximumFractionDigits: 1 }).format(
+      Math.round(benchSummary!.e1rm!.kg * 10) / 10,
+    );
+    expect(within(bench).getByTestId('trained-e1rm').textContent).toContain(
+      `Estimated 1-rep max ${kg} kg`,
+    );
+    // The label in words, never colour alone.
+    const label = within(bench).getByTestId('trained-change').textContent;
+    expect(label).toMatch(
+      /^(Not enough sessions yet to tell a real change|Within normal day-to-day variation|(Very likely|Likely) a real (gain|drop))$/,
+    );
+    // Curls logged without an effort rating: an all-sets estimate only, still calibrating, and no
+    // strength trend to call a change from.
+    const [curlSummary] = await exerciseSummaries(container.deps, { exerciseIds: [CURL] });
+    expect(curlSummary!.e1rm?.source).toBe('all');
+    expect(curlSummary!.change).toBeNull();
+    const curl = within(trained).getByRole('link', { name: /Dumbbell curl/ });
+    expect(within(curl).getByTestId('trained-e1rm').textContent).toMatch(
+      /^Estimated 1-rep max [\d.,]+ kg, still calibrating$/,
+    );
+    expect(within(curl).getByTestId('trained-change').textContent).toBe(
+      'Not enough sessions yet to tell a real change',
+    );
+    expect(await seriousViolations()).toEqual([]);
+
+    // Opening the row shows the same label as "Latest change".
+    await userEvent.click(bench);
+    const latest = await screen.findByText(/^Latest change: /);
+    expect(latest.textContent).toBe(`Latest change: ${label}`);
   });
 
   it('an exercise trend: summary in words, table view, rep maxes and sessions (ANL-02, ANL-04)', async () => {

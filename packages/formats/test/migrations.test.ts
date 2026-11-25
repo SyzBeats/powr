@@ -19,6 +19,8 @@ import {
 } from '../src/records/v2';
 
 const parseAlertsV2 = (alerts: object) => v2Settings.safeParse({ id: 'me', theme: 'dark', alerts });
+const parseBackupV2 = (backup: unknown) =>
+  v2Settings.safeParse({ id: 'me', theme: 'dark', backup });
 
 // A hypothetical chain v1 -> v2 -> v3, to exercise the mechanism before the first real migration.
 const chain: MigrationChain = {
@@ -114,6 +116,32 @@ describe('record migration chain', () => {
     expect(parse({ ...alerts, ...extras, metronomeHaptics: true }).success).toBe(false);
     expect(
       v1Settings.safeParse({ id: 'me', theme: 'dark', alerts: { ...alerts, ...extras } }).success,
+    ).toBe(false);
+  });
+
+  it('accepts the optional backup reminder cadence at v2 and rejects other values (M5d: DAT-08)', () => {
+    const parse = parseBackupV2;
+    // Absent = the default cadence (records written before M5d stay valid).
+    expect(v2Settings.safeParse({ id: 'me', theme: 'dark' }).success).toBe(true);
+    for (const reminderDays of [7, 14, 30, null]) {
+      expect({ reminderDays, ok: parse({ reminderDays }).success }).toEqual({
+        reminderDays,
+        ok: true,
+      });
+    }
+    for (const reminderDays of [0, 1, 21, 60, '14', undefined]) {
+      expect({ reminderDays, ok: parse({ reminderDays }).success }).toEqual({
+        reminderDays,
+        ok: false,
+      });
+    }
+    expect(parse({}).success).toBe(false);
+    expect(parse(null).success).toBe(false);
+    // Strict: an unknown key is rejected.
+    expect(parse({ reminderDays: 14, sessions: 8 }).success).toBe(false);
+    // v1 has no backup settings: the field is v2-only (an unreleased version, amended in place).
+    expect(
+      v1Settings.safeParse({ id: 'me', theme: 'dark', backup: { reminderDays: 14 } }).success,
     ).toBe(false);
   });
 

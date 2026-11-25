@@ -4,38 +4,130 @@ import { lazy, Suspense } from 'react';
 
 import type { ThemePreference } from '@powr/formats';
 
-import { Card, Screen } from '#ui/screen';
+import { Screen } from '#ui/screen';
 import { Segmented } from '#ui/segmented';
 
 import { isEnabled } from '../../feature-flags';
 import { APP_INFO, useDebugMode } from '../../hooks/use-app';
-import { useSetWeekStart, useWeekStart } from '../../hooks/use-planning';
-import { useSetTheme, useThemePreference } from '../../hooks/use-settings';
-import { localeWeekStart } from '../../i18n/format';
-import { useLabels } from '../labels';
+import { useRegistryInfo, useSetTheme, useThemePreference } from '../../hooks/use-settings';
+import { assertNever } from '../exhaustive';
+import { LEGAL_DETAILS } from '../legal/publisher';
+import { EmailLink } from '../legal/texts/parts';
 import { AlertsSection } from './AlertsSection';
 import { InsightsSection } from './InsightsSection';
+import {
+  SETTINGS_SECTIONS,
+  SettingsSection,
+  settingsLinkClass,
+  type SettingsSectionId,
+} from './parts';
+import { ProfileSection } from './ProfileSection';
+import { TrainingSection } from './TrainingSection';
+import { UnitsSection } from './UnitsSection';
 import { WorkoutSection } from './WorkoutSection';
 
 const DebugTools = lazy(() => import('../debug/DebugTools'));
 
+/**
+ * Settings (SET-01…06, SET-08…11; M5s): one page in clear sections, in this order: profile and
+ * plan, units, training, workout, alerts, insights, appearance, data, legal and about. An "On
+ * this page" list jumps to each. Deeper editors are their own screens (one onboarding answer,
+ * rest times, per-exercise choices, equipment, the legal pages).
+ */
 export function SettingsScreen() {
   const { t } = useLingui();
-  const theme = useThemePreference();
-  const setTheme = useSetTheme();
   const debug = useDebugMode();
-  const labels = useLabels();
-  const { stored } = useWeekStart();
-  const setWeekStart = useSetWeekStart();
-  const localeDay = labels.weekday(localeWeekStart());
-  const linkClass = 'flex min-h-target items-center font-semibold text-primary underline-offset-4';
 
   return (
     <Screen title={t`Settings`}>
-      <Card>
-        <h2 className="text-lg font-semibold">
+      <OnThisPage />
+      <ProfileSection />
+      <UnitsSection />
+      <TrainingSection />
+      <WorkoutSection />
+      {/* The timer kit is a lazy chunk (M3b): the section shows once it is loaded. */}
+      <Suspense fallback={null}>
+        <AlertsSection />
+      </Suspense>
+      <InsightsSection />
+      <AppearanceSection />
+      <DataSection />
+      <LegalSection />
+      <AboutSection />
+
+      {isEnabled('debugTools') && debug ? (
+        <Suspense fallback={null}>
+          <DebugTools />
+        </Suspense>
+      ) : null}
+    </Screen>
+  );
+}
+
+/** A list of the sections with in-page links (WCAG 2.4.5, a second way through a long page). */
+function OnThisPage() {
+  const { t } = useLingui();
+  const name = useSectionNames();
+  return (
+    <nav aria-label={t`Settings sections`}>
+      <ul className="flex flex-wrap gap-x-4 gap-y-1">
+        {SETTINGS_SECTIONS.map((id) => (
+          <li key={id}>
+            <Link
+              to="/settings"
+              hash={id}
+              className="inline-flex min-h-target-min items-center font-medium text-info underline underline-offset-4"
+            >
+              {name(id)}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  );
+}
+
+function useSectionNames() {
+  const { t } = useLingui();
+  return (id: SettingsSectionId): string => {
+    switch (id) {
+      case 'profile':
+        return t`Profile and plan`;
+      case 'units':
+        return t`Units`;
+      case 'training':
+        return t`Training`;
+      case 'workout':
+        return t`Workout`;
+      case 'alerts':
+        return t`Alerts`;
+      case 'insights':
+        return t`Insights`;
+      case 'appearance':
+        return t`Appearance`;
+      case 'data':
+        return t`Data`;
+      case 'legal':
+        return t`Legal`;
+      case 'about':
+        return t`About`;
+      default:
+        return assertNever(id);
+    }
+  };
+}
+
+/** SET-01: light, dark or the phone's theme, applied without a reload. */
+function AppearanceSection() {
+  const { t } = useLingui();
+  const theme = useThemePreference();
+  const setTheme = useSetTheme();
+  return (
+    <SettingsSection id="appearance" title={t`Appearance`}>
+      <div className="flex flex-col gap-1">
+        <span aria-hidden="true" className="px-2 font-medium">
           <Trans>Theme</Trans>
-        </h2>
+        </span>
         <Segmented<ThemePreference>
           label={t`Theme`}
           value={theme}
@@ -46,67 +138,81 @@ export function SettingsScreen() {
             { value: 'dark', label: t`Dark` },
           ]}
         />
-      </Card>
+      </div>
+    </SettingsSection>
+  );
+}
 
-      <Card>
-        <h2 className="text-lg font-semibold">
-          <Trans>First day of the week</Trans>
-        </h2>
-        <Segmented<'locale' | '1' | '7' | '6'>
-          label={t`First day of the week`}
-          value={stored === null ? 'locale' : (String(stored) as '1' | '7' | '6')}
-          onChange={(next) =>
-            void setWeekStart(next === 'locale' ? null : (Number(next) as 1 | 6 | 7))
-          }
-          options={[
-            { value: 'locale', label: t`Like this phone (${localeDay})` },
-            { value: '1', label: labels.weekday(1) },
-            { value: '7', label: labels.weekday(7) },
-            { value: '6', label: labels.weekday(6) },
-          ]}
-        />
-      </Card>
+/** The data screen (backups, restore, storage) is its own page. */
+function DataSection() {
+  const { t } = useLingui();
+  return (
+    <SettingsSection id="data" title={t`Data`}>
+      <Link to="/data" className={settingsLinkClass}>
+        <Trans>Data and backups</Trans>
+      </Link>
+      <p className="text-sm text-fg-muted">
+        <Trans>Your data stays on this phone. Back it up, restore it or delete it here.</Trans>
+      </p>
+    </SettingsSection>
+  );
+}
 
-      <WorkoutSection />
+/** SET-09, LEG-01, LEG-02, LEG-05, LEG-06, LEG-09. */
+function LegalSection() {
+  const { t } = useLingui();
+  const links = [
+    { page: 'disclaimer', label: t`Health and safety notice` },
+    { page: 'privacy', label: t`Privacy notice` },
+    { page: 'imprint', label: t`Publisher and imprint` },
+    { page: 'how-powr-decides', label: t`How POWR decides` },
+    { page: 'attributions', label: t`Open-source licences and attributions` },
+  ] as const;
+  return (
+    <SettingsSection id="legal" title={t`Legal`}>
+      <ul className="flex flex-col">
+        {links.map((link) => (
+          <li key={link.page}>
+            <Link to="/legal/$page" params={{ page: link.page }} className={settingsLinkClass}>
+              {link.label}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </SettingsSection>
+  );
+}
 
-      {/* The timer kit is a lazy chunk (M3b): the section shows once it is loaded. */}
-      <Suspense fallback={null}>
-        <AlertsSection />
-      </Suspense>
-
-      <InsightsSection />
-
-      <Card className="gap-1">
-        <Link to="/settings/equipment" className={linkClass}>
-          <Trans>Equipment</Trans>
-        </Link>
-        <Link to="/data" className={linkClass}>
-          <Trans>Data and backups</Trans>
-        </Link>
-        <Link to="/legal/disclaimer" className={linkClass}>
-          <Trans>Health and safety notice</Trans>
-        </Link>
-        <Link to="/legal/privacy" className={linkClass}>
-          <Trans>Privacy notice</Trans>
-        </Link>
-      </Card>
-
-      <Card>
-        <h2 className="text-lg font-semibold">
-          <Trans>About</Trans>
-        </h2>
-        <p data-testid="app-version" className="text-sm text-fg-muted tabular">
+/** SET-09: version, registry and content versions, the publisher and how to reach them. */
+function AboutSection() {
+  const { t } = useLingui();
+  const { rulesVersion, contentVersion } = useRegistryInfo();
+  const { person, business, country } = LEGAL_DETAILS;
+  return (
+    <SettingsSection id="about" title={t`About`}>
+      <ul className="flex flex-col gap-1 text-sm text-fg-muted tabular">
+        <li data-testid="app-version">
           <Trans>
             Version {APP_INFO.version} ({APP_INFO.build})
           </Trans>
-        </p>
-      </Card>
-
-      {isEnabled('debugTools') && debug ? (
-        <Suspense fallback={null}>
-          <DebugTools />
-        </Suspense>
-      ) : null}
-    </Screen>
+        </li>
+        <li>
+          <Trans>Rules registry {rulesVersion}</Trans>
+        </li>
+        <li>
+          <Trans>Exercise library {contentVersion}</Trans>
+        </li>
+      </ul>
+      <p>
+        <Trans>
+          Published by {person}, {business}, {country}.
+        </Trans>
+      </p>
+      <p>
+        <Trans>
+          Questions or feedback: <EmailLink details={LEGAL_DETAILS} />
+        </Trans>
+      </p>
+    </SettingsSection>
   );
 }

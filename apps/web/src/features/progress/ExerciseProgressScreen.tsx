@@ -37,6 +37,7 @@ import {
 import { useLabels } from '../labels';
 import { useSummaryWords } from '../session/past/parts';
 import { massFromKg, useLoadUnit, useSessionWords } from '../session/words';
+import { useEffortWords } from '../settings/effort';
 import { WhyButton } from '../why/WhySheet';
 import { Loading, SetsSheet } from './parts';
 import type { TrendSource } from './search';
@@ -742,6 +743,7 @@ function RepMaxTable({
 
 function RepMaxLine({ row, unit }: { row: RepMaxRow; unit: MassUnit }) {
   const { t } = useLingui();
+  const effortWords = useEffortWords();
   const reps = row.reps === 12 ? t`12+` : formatNumber(row.reps, 0);
   if (row.loadKg === null) {
     return (
@@ -759,7 +761,7 @@ function RepMaxLine({ row, unit }: { row: RepMaxRow; unit: MassUnit }) {
   const setReps = row.setReps ?? row.reps;
   const date = row.localDate ? formatLocalDateWithYear(row.localDate) : '';
   const effort =
-    row.effortKnown && row.rir !== null ? t`RIR ${formatNumber(row.rir, 1)}` : t`no effort rating`;
+    row.effortKnown && row.rir !== null ? effortWords.value(row.rir) : t`no effort rating`;
   return (
     <tr className="border-t border-border align-top">
       <th scope="row" className="py-1 pr-2 font-semibold">

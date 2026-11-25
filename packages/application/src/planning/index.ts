@@ -73,6 +73,33 @@ export {
   type TemplateChoice,
 } from './plan';
 export {
+  CALENDAR_ALARMS,
+  CALENDAR_EXPORT_KEY,
+  calendarExportStatus,
+  exportCalendar,
+  previewCalendarExport,
+  recordCalendarExport,
+  type CalendarAlarm,
+  type CalendarExportError,
+  type CalendarExportOptions,
+  type CalendarExportRecord,
+  type CalendarFile,
+  type CalendarPreview,
+  type CalendarRange,
+  type CalendarTexts,
+  type CalendarTime,
+} from './calendar';
+export {
+  previewProfileChange,
+  profileAnswers,
+  saveProfileChange,
+  type PlanDifferences,
+  type ProfileAnswers,
+  type ProfileChange,
+  type ProfileChangeError,
+  type Replan,
+} from './profile';
+export {
   endBreak,
   listMissedSessions,
   moveSession,

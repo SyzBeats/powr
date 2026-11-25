@@ -5,13 +5,15 @@ import type { ChangeLabel } from '@powr/domain/trend';
 
 import { formatNumber } from '../../../i18n/format';
 import { assertNever } from '../../exhaustive';
-import { massText, rirText } from '../words';
+import { useEffortWords } from '../../settings/effort';
+import { massText } from '../words';
 
 /** Words for logged sets, e1RM trend labels and the session's accepted changes. */
 export function useSummaryWords() {
   const { t } = useLingui();
+  const effortWords = useEffortWords();
 
-  /** "100 kg × 5 · RIR 2", "Bodyweight × 12", "Skipped". */
+  /** "100 kg × 5 · RIR 2" (or "· RPE 8", SET-05), "Bodyweight × 12", "Skipped". */
   const setValues = (set: LoggedSet): string => {
     if (set.state === 'skipped') return t`Skipped`;
     const load = massText(set.load) ?? t`Bodyweight`;
@@ -22,8 +24,8 @@ export function useSummaryWords() {
         ? t`${load} for ${seconds} s`
         : t`${load} × ${reps}`;
     if (set.effort.rir === null) return values;
-    const rir = rirText(set.effort.rir, set.effort.openEnded === true);
-    return t`${values} · RIR ${rir}`;
+    const effort = effortWords.value(set.effort.rir, set.effort.openEnded === true);
+    return t`${values} · ${effort}`;
   };
 
   /** PRG-02: whether an e1RM change is likely real. */

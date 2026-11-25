@@ -1,7 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
-import { Link, Outlet, useRouterState } from '@tanstack/react-router';
+import { Link, Outlet, useRouter, useRouterState } from '@tanstack/react-router';
 import { Settings } from 'lucide-react';
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 
 import { LiveAnnouncer } from '#ui/announcer';
 
@@ -28,6 +28,12 @@ export function AppShell() {
   // M4b: the derived weeks and the streak catch up once, in idle time after the first screen,
   // never during a workout.
   useInsightsWarmup(session.loaded && !session.value);
+  // M5d (PWA-12): Back closes sheets first; entries of sheets no longer open are skipped. The
+  // watcher is a lazy chunk (shared with the sheets), so it stays off the startup path.
+  const router = useRouter();
+  useEffect(() => {
+    void import('#ui/back-dismiss').then(({ watchSheetHistory }) => watchSheetHistory(router));
+  }, [router]);
   return (
     <div className="flex min-h-dvh flex-col">
       <header className="sticky top-0 z-10 border-b border-border bg-bg pt-safe">

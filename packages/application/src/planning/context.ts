@@ -80,7 +80,7 @@ export function traineeLevel(
 }
 
 /** The user's parameter overrides from settings (§8.6.3). */
-async function userOverrides(deps: Deps): Promise<readonly ParamOverride[]> {
+export async function userOverrides(deps: Deps): Promise<readonly ParamOverride[]> {
   const settings = await deps.uow.read(['settings'], (repos) => repos.settings.get());
   return settings?.overrides ?? [];
 }

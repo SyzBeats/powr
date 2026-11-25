@@ -136,3 +136,114 @@
     - en: Hang under rings or a bar at hip height with your body straight and heels on the floor.
     - en: Pull your chest to your hands, keeping hips in line with shoulders and ankles.
     - en: Walk your feet forward or raise them on a box to make it harder.
+
+# M5 additions (content 0.3.0): "Rows (any)" row as above. The T-bar row and the two-dumbbell
+# bent-over row are bent-over rows (spinal erectors 0.25). The band row keeps the row's credits
+# but tags the elbow flexors C, as the band curl does: a band's resistance profile differs from
+# the loads the study used.
+
+- id: ex.t-bar-row
+  name: { en: T-bar row }
+  synonyms: [landmine row, t bar row]
+  pattern: horizontalPull
+  mechanics: compound
+  substitutionGroups: [sg.row]
+  equipment:
+    allOf: [eq.plates, eq.landmine]
+    anyOf: [[eq.barbell-olympic, eq.barbell-womens]]
+  muscles:
+    - { muscle: mu.lats, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.mid-back, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.rear-delts, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.elbow-flexors, credit: 0.5, evidence: H, source: src.mannarino2021 }
+    - { muscle: mu.lower-back, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+  load: { type: barbell, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [6, 15], strength: [6, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 3 }
+  cues:
+    - en: Straddle the bar near its loaded end and grip it with both hands or a V-handle under the sleeve.
+    - en: Hinge until your torso is at about 45 degrees or lower, back flat.
+    - en: Row the plates toward your lower chest, then lower until your arms are fully straight.
+
+- id: ex.single-arm-cable-row
+  name: { en: Single-arm cable row }
+  synonyms: [one-arm cable row]
+  pattern: horizontalPull
+  mechanics: compound
+  substitutionGroups: [sg.row]
+  equipment:
+    allOf: []
+    anyOf: [[eq.seated-row, eq.cable-station, eq.dual-cable-station]]
+  muscles:
+    - { muscle: mu.lats, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.mid-back, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.rear-delts, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.elbow-flexors, credit: 0.5, evidence: H, source: src.mannarino2021 }
+  load: { type: machine, curveClass: pooled, unilateral: true, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [8, 15], strength: [6, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: true
+  ranking: { overloadSuitability: 3 }
+  cues:
+    - en: Sit or stand facing a low or middle pulley and hold one handle with your arm reaching forward.
+    - en: Let your shoulder blade glide forward at the start of each rep for a full stretch.
+    - en: Row the handle toward your hip without twisting your torso.
+
+- id: ex.band-row
+  name: { en: Band row }
+  synonyms: [resistance band row, seated band row]
+  pattern: horizontalPull
+  mechanics: compound
+  substitutionGroups: [sg.row]
+  equipment: { allOf: [eq.resistance-bands], anyOf: [] }
+  muscles:
+    - { muscle: mu.lats, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.mid-back, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.rear-delts, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.elbow-flexors, credit: 0.5, evidence: C, source: src.powr-eb-mapping }
+  load: { type: band, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [12, 30], strength: [8, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-1
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 0 }
+  cues:
+    - en: Sit with your legs straight and the band looped around your feet, or anchor it at chest height.
+    - en: Pull the ends toward your lower ribs, driving your elbows back past your torso.
+    - en: Return slowly until your arms are straight and your shoulders reach forward.
+
+- id: ex.dumbbell-bent-over-row
+  name: { en: Dumbbell bent-over row }
+  synonyms: [two-arm dumbbell row, bent-over dumbbell row]
+  pattern: horizontalPull
+  mechanics: compound
+  substitutionGroups: [sg.row]
+  equipment: { allOf: [eq.dumbbells], anyOf: [] }
+  muscles:
+    - { muscle: mu.lats, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.mid-back, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.rear-delts, credit: 1, evidence: C, source: src.powr-eb-mapping }
+    - { muscle: mu.elbow-flexors, credit: 0.5, evidence: H, source: src.mannarino2021 }
+    - { muscle: mu.lower-back, credit: 0.25, evidence: C, source: src.powr-eb-mapping }
+  load: { type: dumbbell, curveClass: pooled, unilateral: false, bodyweightLoaded: false }
+  defaults:
+    repRange: { hypertrophy: [8, 15], strength: [6, 12] }
+    restClass: hypertrophyCompound
+    tempo: 2-0-X-0
+    fixedRom: false
+    stretchEmphasis: false
+  ranking: { overloadSuitability: 2 }
+  cues:
+    - en: Hold a dumbbell in each hand and hinge forward to about 45 degrees with a flat back.
+    - en: Row both dumbbells toward your hips, elbows close to your sides.
+    - en: Lower until your arms hang straight while your torso stays still.

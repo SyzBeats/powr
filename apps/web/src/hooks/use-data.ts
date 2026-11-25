@@ -1,9 +1,16 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import { getStorageStatus, requestPersistentStorage, type StorageStatus } from '@powr/application';
+import {
+  getStorageStatus,
+  requestPersistentStorage,
+  type SafetySnapshotInfo,
+  type StorageStatus,
+} from '@powr/application';
 import type { DecodedBackup } from '@powr/application/backup';
+import { deleteSafetyCopy, listSafetyCopies, saveSafetyCopy } from '@powr/application/data';
 
 import { useContainer } from '../app/container-context';
+import { useAppUi } from '../app/ui-store';
 import { useObservable } from './use-observable';
 
 /**
@@ -53,6 +60,57 @@ export function useImportBackup() {
       return result;
     },
   };
+}
+
+/**
+ * Safety copies (§8.2.1, TD-14): the backups POWR took before a restore and before a data update.
+ * The list is read again after a delete.
+ */
+export function useSafetyCopies() {
+  const { deps } = useContainer();
+  const [copies, setCopies] = useState<readonly SafetySnapshotInfo[] | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    void listSafetyCopies(deps).then((next) => {
+      if (!cancelled) setCopies(next);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [deps]);
+  return {
+    copies,
+    save: (id: number) => saveSafetyCopy(deps, id),
+    remove: async (id: number) => {
+      await deleteSafetyCopy(deps, id);
+      setCopies(await listSafetyCopies(deps));
+    },
+  };
+}
+
+/**
+ * "Delete all data" (DAT-13). From the first step on the app shows only the deletion screen
+ * (the router and its live queries unmount), then every database is deleted. The caller loads
+ * that screen's chunk first, so nothing flashes.
+ */
+export function useDeleteAllData() {
+  const { platform } = useContainer();
+  return async () => {
+    useAppUi.setState({ wipe: { kind: 'deleting' } });
+    try {
+      const { remaining } = await platform.deleteAllData();
+      useAppUi.setState({
+        wipe: remaining.length === 0 ? { kind: 'done' } : { kind: 'failed', remaining },
+      });
+    } catch {
+      useAppUi.setState({ wipe: { kind: 'failed', remaining: [] } });
+    }
+  };
+}
+
+/** The delete-all state for the deletion screen. */
+export function useWipeState() {
+  return useAppUi((state) => state.wipe);
 }
 
 export function useStorageStatus() {
