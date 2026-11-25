@@ -1,7 +1,7 @@
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useNavigate } from '@tanstack/react-router';
 import { Plus, Trash2 } from 'lucide-react';
-import { useId, useRef, useState } from 'react';
+import { useId, useState } from 'react';
 
 import type { PastSessionError } from '@powr/application/session';
 import type { ExerciseId, LocalDate, MassUnit } from '@powr/domain';
@@ -12,6 +12,7 @@ import { Button } from '#ui/button';
 import { Field } from '#ui/field';
 import { Card, Screen } from '#ui/screen';
 
+import { useFocusRequest } from '../../../hooks/use-focus-request';
 import { useCatalog } from '../../../hooks/use-planning';
 import { useSessionUseCases } from '../../../hooks/use-workout';
 import { todayLocal } from '../../../i18n/format';
@@ -63,7 +64,7 @@ export function LogPastSessionScreen() {
   const checkSet = useSetChecks();
   const today = todayLocal();
   const noteId = useId();
-  const summaryRef = useRef<HTMLDivElement>(null);
+  const [summaryRef, focusSummary] = useFocusRequest<HTMLDivElement>();
   const [date, setDate] = useState<string>(today);
   const [time, setTime] = useState('');
   const [note, setNote] = useState('');
@@ -132,7 +133,7 @@ export function LogPastSessionScreen() {
 
   const showErrors = (next: FormErrors) => {
     setErrors(next);
-    requestAnimationFrame(() => summaryRef.current?.focus());
+    focusSummary();
   };
 
   const errorText = (error: PastSessionError): string => {

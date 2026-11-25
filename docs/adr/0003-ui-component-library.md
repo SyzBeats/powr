@@ -67,3 +67,9 @@ Source: `IMPLEMENTATION_NOTES.md` §3 (repository root), which records each devi
 - **Proof:** `Input` was re-added through the script (import rewritten, package removed, `package.json` and lockfile unchanged); `scripts/theme-bridge.test.ts` checks AA contrast for the 18 bridged pairs; an E2E test checks the shadcn `Input` in four theme × OS combinations and fails with Tailwind's default `dark:`.
 
 Source: `IMPLEMENTATION_NOTES.md` (repository root): §3 rows marked "Docs amended in v0.4" and the sections "M1-B content" and "M1-A engine and rules".
+
+## Amendment (v0.9, 2026-11-25)
+
+The decision stands. `#ui/button` (Base UI's `Button` with the design system's variants) stays the button of every screen. The shell's route error boundary and the update and stale-window banners are on the startup path, and Base UI's button stack (`Button`, `useButton`, `mergeProps`, `useRenderElement`, `useMergedRefs`, …) was about 3 KB gzip of entry JS for them alone. They now render a native `<button type="button">` with the same classes from `buttonClass` in `ui/button-class.ts` (alias `#ui/button-class`, the second `.ts` exception next to `#ui/cn` in `apps/web/package.json` `imports`; `#ui/button` re-exports `buttonClass`, so no other import changed), as `app/StartupError.tsx` already did. For enabled buttons and a natively disabled one this is the same element and behaviour; anything with Base UI semantics (focusable when disabled, composite widgets) keeps using the components (technical concept §8.9.2, TD-63).
+
+Source: `IMPLEMENTATION_NOTES.md` (repository root), sections "M5z bundle trim, fixes and docs".

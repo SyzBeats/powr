@@ -25,7 +25,7 @@
     tempo: 2-0-X-0
     fixedRom: false
     stretchEmphasis: false
-  ranking: { overloadSuitability: 3 }
+  ranking: { overloadSuitability: 3, standard: true }
   cues:
     - en: Unrack the bar at collarbone height with forearms vertical and glutes squeezed.
     - en: Press straight up, moving your head back just enough for the bar to pass.
@@ -50,7 +50,7 @@
     tempo: 2-0-X-0
     fixedRom: false
     stretchEmphasis: false
-  ranking: { overloadSuitability: 2 }
+  ranking: { overloadSuitability: 2, standard: true }
   cues:
     - en: Sit on an upright bench or stand, dumbbells at shoulder height and palms forward.
     - en: Press up until your arms are straight, letting the dumbbells drift slightly together.
@@ -75,7 +75,7 @@
     tempo: 2-0-X-0
     fixedRom: false
     stretchEmphasis: false
-  ranking: { overloadSuitability: 1 }
+  ranking: { overloadSuitability: 1, standard: true }
   cues:
     - en: Start in a push-up position, then walk your feet in until your hips point up.
     - en: Bend your elbows to lower the top of your head toward the floor in front of your hands.
@@ -99,7 +99,7 @@
     tempo: 2-0-X-0
     fixedRom: false
     stretchEmphasis: true
-  ranking: { overloadSuitability: 2, subRegions: [mu.chest.sternocostal] }
+  ranking: { overloadSuitability: 2, subRegions: [mu.chest.sternocostal], standard: true }
   cues:
     - en: Support yourself on straight arms and lean your torso slightly forward.
     - en: Lower until your shoulders are just below your elbows, or as deep as your shoulders allow.
@@ -131,7 +131,7 @@
     tempo: 2-0-X-0
     fixedRom: false
     stretchEmphasis: false
-  ranking: { overloadSuitability: 3 }
+  ranking: { overloadSuitability: 3, standard: true }
   cues:
     - en: Set the seat so the handles start at about shoulder height.
     - en: Press up until your arms are straight without shrugging your shoulders toward your ears.

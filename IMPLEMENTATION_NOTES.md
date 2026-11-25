@@ -17,28 +17,29 @@ follow-up still needed, if any.
 
 ### Everyday commands (repository root)
 
-| Command                                       | What it does                                                                                                               |
-| --------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| `pnpm install`                                | Install (lockfile committed; dependency install scripts are blocked, see `pnpm-workspace.yaml`)                            |
-| `pnpm dev`                                    | Vite dev server on http://localhost:5173 (no service worker in dev)                                                        |
-| `pnpm build`                                  | Lingui catalog check, then the production build into `apps/web/dist` (service worker, licence collector, `version.json`)   |
-| `pnpm preview`                                | Serve the build on http://localhost:4173 (Vite preview, without the production headers)                                    |
-| `pnpm lint`                                   | oxlint, type-aware, with the layer rules and the alpha JS plugins (warnings)                                               |
-| `pnpm format` / `pnpm format:check`           | oxfmt (Tailwind class and import sorting)                                                                                  |
-| `pnpm typecheck`                              | `tsc -b` over all project references (TypeScript 7.0)                                                                      |
-| `pnpm test`                                   | Vitest: unit, property (fast-check), migration (fake-indexeddb), licence and architecture tests                            |
-| `pnpm e2e`                                    | Playwright against `apps/web/dist`, served with the production headers (run `pnpm build` first)                            |
-| `pnpm knip`                                   | Unused files, exports and dependencies                                                                                     |
-| `pnpm i18n:extract` / `pnpm i18n:check`       | Update / verify the Lingui catalogs                                                                                        |
-| `pnpm licence`                                | Licence gate and `licence-inventory.json` (after `pnpm build`)                                                             |
-| `pnpm licence:demo-gpl`                       | Proves the gate: a build with a GPL fixture fails, `MIT OR GPL` passes as MIT, a clean build passes                        |
-| `pnpm size`                                   | size-limit budgets (entry JS/CSS, service worker) and the precache budget (after `pnpm build`)                             |
-| `pnpm icons`                                  | Regenerates the placeholder icons (own artwork)                                                                            |
-| `pnpm --filter @powr/web ui:add <component>`  | Adds a shadcn component via `scripts/ui-add.ts` (pinned CLI, `cn` → `#ui/cn`, formatting), then review the diff per §8.9.2 |
-| `pnpm verify`                                 | The whole CI pipeline locally: lint, format, knip, i18n, typecheck, test, build, licence, size, e2e                        |
-| `pnpm docker:build` / `pnpm docker:run`       | Build and run the nginx image on http://localhost:8080 (after `pnpm build`)                                                |
-| `pnpm docker:smoke`                           | Header, caching and SPA smoke test against http://localhost:8080                                                           |
-| `E2E_BASE_URL=http://localhost:8080 pnpm e2e` | The E2E suite against the running image (tests that stop or swap the server are skipped)                                   |
+| Command                                       | What it does                                                                                                                  |
+| --------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `pnpm install`                                | Install (lockfile committed; dependency install scripts are blocked, see `pnpm-workspace.yaml`)                               |
+| `pnpm dev`                                    | Vite dev server on http://localhost:5173 (no service worker in dev)                                                           |
+| `pnpm build`                                  | Lingui catalog check, then the production build into `apps/web/dist` (service worker, licence collector, `version.json`)      |
+| `pnpm preview`                                | Serve the build on http://localhost:4173 (Vite preview, without the production headers)                                       |
+| `pnpm lint`                                   | oxlint, type-aware, with the layer rules and the alpha JS plugins (warnings)                                                  |
+| `pnpm format` / `pnpm format:check`           | oxfmt (Tailwind class and import sorting)                                                                                     |
+| `pnpm typecheck`                              | `tsc -b` over all project references (TypeScript 7.0)                                                                         |
+| `pnpm test`                                   | Vitest: unit, property (fast-check), migration (fake-indexeddb), licence and architecture tests                               |
+| `pnpm e2e`                                    | Playwright against `apps/web/dist`, served with the production headers (run `pnpm build` first)                               |
+| `pnpm knip`                                   | Unused files, exports and dependencies                                                                                        |
+| `pnpm i18n:extract` / `pnpm i18n:check`       | Update / verify the Lingui catalogs                                                                                           |
+| `pnpm licence`                                | Licence gate and `licence-inventory.json` (after `pnpm build`)                                                                |
+| `pnpm licence:demo-gpl`                       | Proves the gate: a build with a GPL fixture fails, `MIT OR GPL` passes as MIT, a clean build passes                           |
+| `pnpm size`                                   | size-limit budgets (entry JS/CSS, service worker) and the precache budget (after `pnpm build`)                                |
+| `pnpm icons`                                  | Regenerates the placeholder icons (own artwork)                                                                               |
+| `pnpm --filter @powr/web ui:add <component>`  | Adds a shadcn component via `scripts/ui-add.ts` (pinned CLI, `cn` → `#ui/cn`, formatting), then review the diff per §8.9.2    |
+| `pnpm verify`                                 | The whole CI pipeline locally: lint, format, knip, i18n, typecheck, test, build, licence, size, e2e                           |
+| `pnpm docker:build` / `pnpm docker:run`       | Build and run the nginx image on http://localhost:8080 (after `pnpm build`)                                                   |
+| `pnpm docker:smoke`                           | Header, caching and SPA smoke test against http://localhost:8080                                                              |
+| `E2E_BASE_URL=http://localhost:8080 pnpm e2e` | The E2E suite against the running image (tests that stop or swap the server are skipped)                                      |
+| `POWR_TEST_BROWSER_PORT=24123 pnpm test`      | The component tests' browser server from another first port (default 23315; a busy port moves on to the next free one, TD-58) |
 
 `pnpm ci` is a pnpm built-in (clean install), hence the name `pnpm verify`.
 
@@ -313,6 +314,9 @@ Member values are camelCase, like the existing unions (`TechniqueKind`, `curveCl
 - 2026-11-24/25: M2 tooling, M2c planning gaps, M3a session core, M3t timers and alerts and M3b
   session screens with the M3 docs pass (technical concept v0.7, `docs/device-tests/S-1-protocol.md`):
   one section each at the end; section 1 points to the S-1 protocol.
+- 2026-11-25: M4a, M4v, M4b with the M4 docs pass (technical concept v0.8), the trend-label
+  calibration, M5d, M5s, M5p, and M5z with the M5 docs pass (technical concept v0.9): one section
+  each at the end; section 1 lists `POWR_TEST_BROWSER_PORT`.
 
 ## M1-B content
 
@@ -3780,3 +3784,295 @@ the plan-matrix test (1,944 combinations, plans and next blocks) takes about 10 
 - **§7.8:** `ENGINE_VERSION` 0.2.0, rules 1.7.0.
 - **§11.2:** TD-23 closed except carries and tibialis (needs a contract change); TD-37 closed for
   bodybuilding (PL and PB pending a product decision); TD-59, TD-60 and TD-62 closed.
+
+## M5z bundle trim, fixes and docs
+
+Written 2026-11-25 by the M5z work, the last step of M5 after M5d, M5s and M5p were merged: the
+entry-JS trim (TD-63), the product-owner decisions after M5, the past-session wording, the
+component-test port (TD-58) and the docs pass for M5 (technical concept v0.9, eight ADR
+amendments). Status: `pnpm verify` green (numbers under "Evidence"). Nothing committed; the
+product owner commits.
+
+**Product-owner answers after M5 (2026-11-25):**
+
+- **Focus race: fix it.** The custom-exercise form and onboarding focused their error summary in a
+  `requestAnimationFrame` right after `setState`, sometimes before React had drawn it, so a
+  keyboard or screen-reader user could miss the summary. Fixed by focusing after the summary
+  rendered; the tests' assertions stay.
+- **Content:** keep the two extra bodybuilding templates (Full body ×4, Upper/lower ×3); no
+  powerlifting or powerbuilding alternatives for now; add a "standard variant first" tie-break to
+  the exercise ranking and the generator's selection, as an explicit, documented content field or
+  ranking rule (no ID renames), and update the plan-matrix snapshot deliberately.
+- **Public origin:** one origin, the production one, shared by beta and production; wired into the
+  CI image build from a repository variable, so it stays `powr.invalid` while unset; the product
+  owner sets it once the domain is chosen.
+- **Accepted as built:** Settings as one long page with "On this page"; "Update my plan from next
+  week" keeps this week's sessions under the ended plan; the legal-review date as a second
+  release-gate placeholder; RPE chips 10…6 and ≤5; no APRE or RTS option and no in-session "keep as
+  last time" button; the calendar defaults (current block, 30-minute alarm, 18:00); the backup
+  "Remind me later" after 3 days; the install and dismissal state on the device.
+
+### What landed
+
+| Area                     | Where                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| TD-63 bundle trim        | `app/route-search.ts` (`deferredSearch`, `RawSearch`), the 15 route files with search params, `features/{search,body/search,bodymap/search,library/search,progress/search,session/search}.ts` (named search types), `LibraryScreen.tsx` (validates its own search), `hooks/insights-loader.ts`, `hooks/use-insights-warmup.ts`, `hooks/use-insights.ts`, `app/container.ts` (lazy capability probe), `app/boot.tsx` (lazy service-worker registration), `vite.config.ts` (`modulePreload.polyfill: false`), `ui/button-class.ts` with the alias `#ui/button-class` in `apps/web/package.json`, `ui/button.tsx`, `features/shell/RouteError.tsx` and `UpdateBanner.tsx` (native buttons) |
+| Focus fix                | `hooks/use-focus-request.ts` (`useFocusRequest`: a ref and a `request()`; focus in a layout effect after the commit), used by `CustomExerciseScreen.tsx`, `OnboardingFlow.tsx` and, with the same race, `ProfileAnswerScreen.tsx` and `LogPastSessionScreen.tsx`                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| Past-session wording     | `@powr/domain/trend` `ChangeLabel.reason` (`NoLabelReason`), carried by `PointChange` (`session/history.ts`) and the series summary (`analytics/trends.ts`); `features/session/past/parts.tsx` `trend()`; callers in `HomeScreen.tsx`, `ExerciseProgressScreen.tsx`, `progress/words.ts`                                                                                                                                                                                                                                                                                                                                                                                                |
+| TD-58 test port          | `apps/web/vitest.components.config.ts` (`POWR_TEST_BROWSER_PORT`, default `defaultBrowserPort` 23315; `server.strictPort: false`, `test.api: { port, strictPort: false }`)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| Standard-variant ranking | `ExerciseRanking.standard` (`packages/domain/src/model/exercise.ts`), `compareStandard` (`planning/rank.ts`) in `rankCandidates` (`planning/select.ts`) and `muscleRanking` (`analytics/bodymap.ts`); content schema `ranking.standard: z.literal(true)`; 86 exercises marked in `packages/content/data/exercises/*.yaml`; `content.json` rebuilt (0.3.0, new hash)                                                                                                                                                                                                                                                                                                                     |
+| Public origin            | `.github/workflows/ci.yml` (workflow `env`: `VITE_PUBLIC_ORIGIN: ${{ vars.PUBLIC_ORIGIN }}`), `deploy.yml` header, `deploy/runbook.md` §2 (the repository variable), `e2e/m5d.spec.ts` (expects the UID host of the build's origin)                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| Device support link      | `features/settings/SettingsScreen.tsx`: Settings → About → "Device support: what works on this phone" (PWA-13; M5d's open item)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| Tests                    | `packages/domain/test/planning/generate.test.ts` (the tie-break in both rankings), `test/fixtures/planning.ts` (`standard`), `reference/trend.test.ts` (the value's `reason`), `tools/content-build/test/coverage.test.ts` (a standard exercise in every substitution group, none among close variants), `packages/application/test/plan-matrix.test.ts` (new exercise-picks snapshot), `apps/web/test/past-sessions.test.tsx` (the three "no label" texts), `progress.test.tsx` (the new text allowed), `settings-m5.test.tsx` (the About link)                                                                                                                                        |
+| Docs                     | `docs/technical-concept.md` v0.9; ADR-0003, 0006, 0008, 0010, 0011, 0014, 0016, 0020 amendments and `docs/adr/README.md`; this section. `docs/PRD.md` not edited (proposals below)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+
+### TD-63: what moved out of the entry chunk
+
+Measured on the built entry (`gzip -9` of `dist/assets/index-*.js`; `pnpm size` reports
+size-limit's number):
+
+| Step                                                                                                 | Entry gzip              | Change  |
+| ---------------------------------------------------------------------------------------------------- | ----------------------- | ------- |
+| Baseline (M5 merged)                                                                                 | 183.79 kB (size 184.08) |         |
+| The 15 route search validators into their route chunks (`deferredSearch`)                            | 182.79 kB               | −1.0 kB |
+| The insight hooks, the capability probe, the service-worker registration, the modulepreload polyfill | 180.72 kB               | −2.1 kB |
+| Base UI's button stack (native buttons in the route error boundary and the update banners)           | 177.70 kB (size 177.97) | −3.0 kB |
+
+- **Route search validation (the product owner's TD-63).** TanStack Router evaluates
+  `validateSearch` from the route definition before it loads the route's chunk. The definitions
+  now take `deferredSearch<T>()`: typed for links and `navigate` through TanStack's
+  `SearchSchemaInput` (so `<Link search={{ mode: 'week' }}>` is still checked), a pass-through at
+  runtime, and `Route.useSearch()` returns `RawSearch<T>` (every key `unknown`, any other key
+  allowed), so a component cannot use a value before it validated it. Each route's component, which
+  the router plugin splits, calls the route's own validator; the library list validates in
+  `LibraryScreen`, also inside its functional `navigate` update. The session route's validator still
+  throws on an invalid `start` or `source`, now inside the route's error boundary instead of the
+  router's search step (the same `RouteError` screen).
+- **Whole modules in the entry because one export was needed.** `use-insights.ts` (and through it
+  `use-load.ts`) sat in the entry only because the shell's warm-up lived in it; the warm-up and the
+  chunk loader are now `use-insights-warmup.ts` and `insights-loader.ts` (still the one sanctioned
+  `import('@powr/application/insights')`).
+- **Not needed for the first paint.** The capability probe (`probe()` is async anyway; diagnostics,
+  Device support and the harnesses ask), the service-worker registration (imported when `start()`
+  runs after the first render; it took its Trusted Types policy module along) and Vite's
+  modulepreload polyfill (every supported Chromium has `modulepreload`).
+- **Base UI's button stack** (`Button`, `useButton`, `mergeProps`, `useRenderElement`,
+  `useMergedRefs`, `useFocusableWhenDisabled`, …) was pulled in only by the root route's error
+  boundary and the update banner. Both now render a native `<button type="button">` with the
+  design system's classes (`buttonClass` from the new `#ui/button-class`; `#ui/button` re-exports
+  it), as `StartupError` already did: the same element and behaviour for these buttons (the "Update"
+  button is natively disabled during a workout, as before).
+- **Tried and dropped:** a lazy update banner (−0.1 kB, not worth a Suspense boundary).
+- **Larger levers left:** the Temporal ponyfill (about 30 kB gzip; native from Chrome 144 and Samsung
+  Internet 31, so a conditional load would work on the S22 but changes the time code's runtime,
+  ADR-0015) and tailwind-merge (about 7 kB, `cn` everywhere). Not needed now.
+
+Result: **entry JS 184.08 → 177.97 kB** gzip of 186 (target about 180), **startup path 1 script, 0
+with Zod**; CSS 7.33 kB; service worker 9.39 → 9.51 kB (its precache list has 10 more chunks);
+precache 203 → 213 files + `sw.js`, 1069.2 → 1072.4 kB.
+
+### Focus fix
+
+`useFocusRequest()` returns a ref for the summary and `request()`; each request bumps a counter, and
+a layout effect keyed to it focuses the element after React committed it (before paint). A frame
+callback scheduled right after `setState` could run first when the render was scheduled (a
+`setState` after an `await`, as in the custom-exercise form) or when the test resumed before the
+frame (the legal gate asserts `document.activeElement` right after `findByRole('alert')`). The same
+pattern was in `ProfileAnswerScreen` and `LogPastSessionScreen`; all four use the hook now. No test
+assertion changed.
+
+Evidence, consecutive runs of each file on its own (`npx vitest run --project components <file>`):
+`test/library.test.tsx` 5 of 5 (4 tests each), `test/onboarding.test.tsx` 5 of 5 (5 tests each);
+`test/profile-edit.test.tsx` and `test/past-sessions.test.tsx` passed too, and the full component
+project passed in every run since.
+
+### Past-session wording (TD-62's follow-up)
+
+The short label said "Within normal day-to-day variation" for every change without a claim. The
+domain's label value now carries the reason the "Why?" text already used (`ChangeLabel.reason`:
+`noise` within one typical error, `unconfirmed` beyond it but not yet confirmed), and so do the
+derived points (`PointChange.reason`) and the series summary. `trend()` in
+`features/session/past/parts.tsx` (Home, Progress, the summary, the past sessions) says "Within
+normal day-to-day variation" or "More than normal day-to-day variation, not confirmed yet"; a point
+derived before the field existed says "No confirmed change yet", which is true either way.
+`ENGINE_VERSION` stays 0.2.0 (unreleased; the field extends its output); derived points rebuild on the
+next derivation-key change.
+
+### TD-58: the component-test port
+
+The browser project merged the app's Vite config, whose dev server is strict about its port, so a
+second checkout's `pnpm test` failed with "port already in use" on Vitest's browser port 23315.
+`vitest.components.config.ts` sets `server.strictPort: false` and `test.api: { port, strictPort:
+false }` with `port = POWR_TEST_BROWSER_PORT || 23315` (`defaultBrowserPort`): a busy port moves on to
+the next free one, and `POWR_TEST_BROWSER_PORT=24123 pnpm test:components` picks a port explicitly.
+Checked by holding 23315 with another process: before, "port already in use" and no tests; after, the
+run passes on the next port. (Vitest 5 moved `browser.api` to `test.api`.)
+
+### "Standard variant first": the rule
+
+- **Field:** `ranking.standard: true` on an exercise (domain `ExerciseRanking.standard?: true`;
+  content schema `z.literal(true).exactOptional()`; never set on custom exercises, whose backup
+  schema stays strict without it). **Meaning:** the standard variant of its movement, the form
+  programs prescribe by default, as opposed to a specialised variant (a technique, setup, angle or
+  implement chosen for a purpose). Several exercises of one movement may be standard (pull-up and
+  chin-up; barbell and dumbbell forms).
+- **Ranking rule:** only a tie-break, never part of a score. `rankCandidates`: favourite
+  (`preferred`) → MAP-03 score → standard → ID; that covers the generator, the next block's
+  rotation, the equipment editor's substitutes and the session's alternatives. The body map's muscle
+  ranking: available → (focus: credit) → score → favourite → last done → standard → ID. IDs are
+  unchanged.
+- **Content rule (coverage test):** every substitution group has at least one standard exercise;
+  no close variant of a competition lift (`variantOf`) is standard; the two examples of the decision
+  are asserted.
+- **Marked (86):** calf: standing, seated, dumbbell calf raise · core: crunch, cable crunch, hanging
+  leg raise, dumbbell side bend, cable Pallof press · elbow extension: cable pressdown, overhead cable
+  and dumbbell overhead extension, EZ-bar skull crusher, dumbbell kickback · elbow flexion: barbell,
+  dumbbell, hammer, incline dumbbell, EZ-bar preacher and cable curl · hinge: deadlift, barbell and
+  dumbbell RDL, good morning, kettlebell swing, cable pull-through · hip abduction and adduction
+  machines · hip extension: barbell and dumbbell hip thrust, glute bridge, 45° back extension ·
+  horizontal pull: barbell bent-over, chest-supported dumbbell, one-arm dumbbell, seated cable,
+  inverted and T-bar row · horizontal push: barbell and dumbbell bench, incline barbell and dumbbell
+  press, machine chest press, push-up · leg extension · lying, seated and Nordic curl · lunge:
+  bodyweight split squat, Bulgarian split squat, walking lunge, reverse lunge, step-up · lateral
+  raises (dumbbell, cable, band), dumbbell and cable upright row · rear delts: reverse pec deck,
+  dumbbell rear-delt fly, cable and band face pull, band pull-apart · flies: pec deck, cable and
+  dumbbell fly · barbell and dumbbell shrug · squat: back, front, goblet, leg press, hack squat,
+  bodyweight squat · vertical pull: lat pulldown, pull-up, chin-up, straight-arm pulldown · vertical
+  push: barbell overhead press, dumbbell shoulder press, machine shoulder press, dip, pike push-up ·
+  barbell and dumbbell wrist curls and reverse wrist curls.
+- **Before:** among equal scores the ID decided, and content 0.3.0's 116 new exercises made
+  specialised variants win by ID: 60 tie groups at the top of a slot or a muscle's list (for
+  example `arnold-press` = `dumbbell-shoulder-press`, `behind-the-body-cable-curl` =
+  `incline-dumbbell-curl`, `bicycle-crunch` = `crunch` = …, `ez-bar-overhead-triceps-extension` =
+  `overhead-cable-triceps-extension`, `leg-press-calf-raise` = `standing-calf-raise`,
+  `incline-push-up` = `push-up`, `cable-side-bend` = `dumbbell-side-bend`).
+
+### Plan matrix: the snapshot diff (deliberate)
+
+Content with the flag against the same content without it (the old ID tie-break), every template,
+preset and level at 60 minutes: **104 of 166 first plans** and **133 of 166 next blocks** pick at
+least one other exercise. Per exercise in the first plans: +incline dumbbell curl 43
+(−behind-the-body cable curl 35, −dumbbell preacher curl 8), +dumbbell shoulder press 34 (−Arnold
+press 34), +overhead cable triceps extension 32 (−EZ-bar overhead extension 32), +standing calf raise
+28 (−leg-press calf raise 28), +crunch 24 (−bicycle crunch 24), +push-up 20 (−incline push-up 20),
++dumbbell side bend 4 (−cable side bend 4); a few plans fit one more or one fewer exercise in the
+60-minute budget because the picks' time estimates differ. **No competition-lift slot changed.** The
+next block's rotation now goes from the standard to the variant (the Arnold press after the dumbbell
+shoulder press, the straight-arm pulldown after the lat pulldown).
+
+`packages/application/test/__snapshots__/plan-matrix.test.ts.snap`, updated deliberately:
+
+- **First-plan summary:** 324 lines, **38 changed**, all bodybuilding templates (2-day 4, 3-day 6,
+  4-day 2, Full body ×5 6, PPL ×2 2, Upper/lower ×2 4, Upper/lower ×3 6, Upper/lower + PPL 8); by
+  preset custom 10, dumbbells and bench 10, commercial gym 8, hotel gym 6, bodyweight and bands 4.
+  No powerlifting or powerbuilding line changed (their picks changed only where set counts and
+  violations stayed equal). In the changed lines: exercises 824 → 822, sets 2,912 → 2,950,
+  violations 198 → 194 (`volume.low[timeBudget]` 94 → 90, `volume.belowFloor[timeBudget]` 2 → 0,
+  `volume.low[slotLimit]` 10 → 12), all with a cause.
+- **Next-block summary:** 166 lines, **73 changed** (bodybuilding and the powerbuilding 5- and 6-day
+  templates); exercises 1,652 → 1,642, sets 5,898 → 5,928, violations 290 → 286, all with a cause.
+- **New third part:** the exercise picks of every intermediate plan at 60 minutes, day by day (66
+  lines). The summaries show only counts, so a changed pick (from content or ranking) now shows in
+  review.
+
+The matrix guarantees hold unchanged (1,944 combinations: no avoidable violation, only available
+exercises, every over-budget day flagged, determinism, < 1 s per plan).
+
+### Public origin in CI
+
+`ci.yml` sets `VITE_PUBLIC_ORIGIN: ${{ vars.PUBLIC_ORIGIN }}` in the workflow's `env`, so the build
+job's `pnpm build` (the `dist` that becomes the image) and the E2E job (which tests that `dist` and
+the image) see the same value; an unset repository variable expands to an empty string, which
+`publicOrigin()` turns into `https://powr.invalid`. A workflow-level variable rather than an
+environment one, because beta and production run the **same** image. The E2E calendar test no longer
+hard-codes `@powr.invalid`: it expects the host the app derives from the same variable. The Dockerfile
+needs nothing (it copies the built `dist`). Documented in `deploy/runbook.md` §2 and the
+`deploy.yml` header; the product owner sets `PUBLIC_ORIGIN` (Settings → Secrets and variables →
+Actions → Variables) once the production domain is chosen, and never changes it afterwards.
+
+### Decisions and deviations
+
+| Brief says                                                             | What I did                                                                                                                                                                                                                                                                     |
+| ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Fix the focus race in two screens                                      | The same `requestAnimationFrame` after `setState` was in `ProfileAnswerScreen` and `LogPastSessionScreen`; all four use `useFocusRequest` (a layout effect, so the focus lands in the commit, before any test or assistive technology can look)                                |
+| "An effect keyed to the errors, or a ref callback"                     | A request counter keyed effect: it focuses on every request, also when the same summary was already on screen (a ref callback runs only when the element mounts)                                                                                                               |
+| Move route search validation into the lazy chunks                      | A typed pass-through in the definition and validation in the split component; the types (`RawSearch<T>`) make an unvalidated read a compile error. TanStack Router has no lazy `validateSearch`                                                                                |
+| "Anything else not needed for the first paint"                         | The insight hooks, the capability probe, the service-worker registration, the modulepreload polyfill and Base UI's button stack; the Temporal ponyfill and tailwind-merge stay (larger changes, not needed for the target)                                                     |
+| Tie-break "with an explicit, documented content field or ranking rule" | Both: the field `ranking.standard` and the rule `compareStandard` after the score and before the ID, in both rankings; documented in the domain type, the concept (§8.7.6, §8.12) and ADR-0020                                                                                 |
+| Which exercises are standard                                           | A curated list (86) by the rule above, checked against every tie group of the generator and the body map; a content test keeps a standard member in every substitution group (so the lat-isolation and upright-row groups got the straight-arm pulldown and both upright rows) |
+| Content version                                                        | 0.3.0 amended in place (unreleased); its hash part changed (`0.3.0+sha.…`)                                                                                                                                                                                                     |
+| Wire `VITE_PUBLIC_ORIGIN` into the CI image build                      | Workflow-level `env` in `ci.yml` (build and E2E jobs see the same value); the E2E UID check follows it                                                                                                                                                                         |
+| Not in the brief                                                       | Settings → About → "Device support: what works on this phone" (M5d's open item, PWA-13's "Settings → About → Device support")                                                                                                                                                  |
+
+### Evidence
+
+`pnpm verify` green on 2026-11-25 (exit 0): lint (0 errors, 0 warnings), format, token gate, knip,
+catalog check, typecheck, **1,039 unit tests in 86 files** (1,036 before) and **123 component tests in
+22 files** (122 before), build, licence gate, size (**entry JS 177.97 kB** gzip of 186, 1 first-wave
+script, 0 with Zod) and **78 E2E tests** (3 opt-in skipped; unchanged). The baseline run before any
+change: 1,036 + 122 tests, 78 E2E, entry 184.08 kB. One earlier full run of the final state stopped at
+the last stage: `e2e/alerts.spec.ts` "variant B: the service-worker timer fires while the page is
+hidden" saw no "Rest over" notification within 6 s of a 2 s rest under the parallel E2E load (every
+stage before it was green). That path posts to the worker through `navigator.serviceWorker
+.getRegistration()` and does not depend on the page's (now lazy) registration call; the spec then
+passed 3 of 3 runs on its own, and the next full `pnpm verify` passed everything. Worth watching in
+M6 (a timing margin under load, not seen before).
+
+### Open items and decisions for the product owner
+
+- **Product decisions:** safety copies' auto-prune (TD-67: keep the rotation of two only, or prune
+  after 30 days or a newer backup with a notice); whether to compile S-2's results into a matrix
+  like S-1's (TD-66); whether Home's one-tap start should also offer a waiting update (TD-64); the
+  M5p content judgement calls (the diamond push-up's pec credit 0.5, the handstand push-up's overload
+  0, incline and low-to-high flies that credit but do not rank the clavicular head, the floor back
+  extension in `core`); a review of the 86 standard exercises (for example the dumbbell over the cable
+  side bend, the straight-arm pulldown as the lat-isolation standard).
+- **PRD:** the proposed wording below.
+- **M6:** S-1, S-2, S-6 and the TalkBack and timing checks on the S22 (TD-38, TD-50); the legal
+  review (fill `postalAddress` and `legalReview` in `features/legal/publisher.ts`, then
+  `pnpm release:check` passes); the production domain (`PUBLIC_ORIGIN`); TD-22's format
+  documentation; TD-64…TD-72.
+
+### Proposed PRD wording (collected from the M5 notes; `docs/PRD.md` not edited)
+
+- **A-05 / EXL-01 (M5p):** met: 190 exercises; every display group except the optional tibialis has
+  at least 2 exercises crediting it ≥ 0.5 under every preset with equipment; §7.1 "carry" still has
+  no exercise (TD-65).
+- **PLN-02 table (M5p, kept by the product owner on 2026-11-25):** bodybuilding 4 days "Upper/Lower
+  ×2 or Full body ×4", 6 days "Push/Pull/Legs ×2 or Upper/Lower ×3" (5 days unchanged: "Upper/Lower +
+  PPL hybrid or Full body ×5"); powerlifting and powerbuilding without alternatives for now.
+- **PLN-05 / MAP-03 (M5z):** "Among exercises with equal scores, the standard variant of a movement
+  ranks first (for example the dumbbell shoulder press before the Arnold press)."
+- **PWA-05 (M5d):** the two shortcuts built: "Start today's workout" and "Log bodyweight" ("Quick
+  timer" with TMR-15, "Last workout summary" later).
+- **DAT-08 (M5d):** "… 'Remind me later' hides a due reminder for 3 days."
+- **DAT-13 (M5d):** "… a confirmation screen ('All data deleted') precedes the first run."
+- **CAL-02 (M5d):** "a time chosen at export" includes "All-day events".
+- **SET-05 (M5s):** "RPE or RIR display and entry (RPE = 10 − RIR; records keep RIR); RIR entry by
+  one tap per value (0–4, 5+) or in half steps."
+- **SET-08 (M5s):** "… choose whether to update the current plan from the start of next week (this
+  week stays as planned) or keep it; experience, priorities, exercises to avoid and the reference set
+  then reach the next block's proposal, style and training days the next plan. Only an answer that
+  changes the plan asks; the new plan is shown before anything is stored."
+- **SET-09 (M5s):** "… and a contact route by e-mail (`tools@sz-development.com`)."
+- **LEG-09 (M5s):** "… a postal contact address (a release check blocks production until it is
+  provided) and e-mail."
+
+### Doc changes (docs pass for M5)
+
+- **`docs/technical-concept.md` v0.9:** the amendments listed under "M5d", "M5s" and "M5p" and the
+  M5z work folded in: §0 (version, status, sources), §0.3 (row 0.9), §6.3, §6.4, §6.6 (the calendar
+  as built, the public-origin decision), §6.7, §6.8, §7.5 (release gate, `PUBLIC_ORIGIN`), §7.8 (one
+  public origin; rules, content and engine versions), §8.2.1, §8.2.2 (M5 state of version 2),
+  §8.2.5, §8.2.6, §8.3.4 (`encodeRawSnapshot`), §8.4, §8.6.4 (How POWR decides), §8.7.5 (TE floor,
+  windows, 60/60, the `reason`), §8.7.6 (the tie-break, the alternative templates, the matrix and
+  its picks snapshot), §8.8.7 (TD-42, TD-49), §8.9.1 (M5 routes, deferred search validation, Back and
+  sheets), §8.9.2 (native buttons on the startup path), new §8.9.11 (screens as built in M5), §8.12
+  (content 0.3.0, `ranking.standard`), §8.13, §8.14 (the focus fix), §8.15 (lazy catalogs), §8.19
+  (entry JS in M5 and what moved), §8.20 (M5 tests, the test port), §8.21, §8.23, §9, §11.2 (TD-14,
+  TD-23, TD-33, TD-37, TD-42, TD-49, TD-55…TD-60, TD-62, TD-63 closed; TD-15, TD-20, TD-22, TD-32,
+  TD-50 updated; TD-64…TD-72 added), Appendix A.4 (M5 row and status).
+- **ADRs (v0.9 amendments):** 0003, 0006, 0008, 0010, 0011, 0014, 0016, 0020; the index's v0.9
+  paragraph and status cells.
+- **`deploy/runbook.md` §2:** the repository variable `PUBLIC_ORIGIN`.
+- **`docs/PRD.md`:** not edited.

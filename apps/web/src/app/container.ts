@@ -10,7 +10,6 @@ import { customizableCatalog, isCustomizable, type ContentCatalog } from '@powr/
 import type { CompiledRules } from '@powr/rules';
 
 import type { TimerKit } from '../infrastructure/alerts';
-import { capabilityProbe } from '../infrastructure/capabilities/probe';
 import {
   createLiveQueries,
   createSafetySnapshots,
@@ -161,7 +160,7 @@ export function createContainer(
     notifications,
     alerts: alertScheduler,
     timers,
-    capabilities: capabilityProbe,
+    capabilities: lazyCapabilityProbe,
     applyTheme,
     downloadText: (name, text) =>
       void downloadGateway.save({
@@ -199,9 +198,17 @@ const debugStore: Platform['debugStore'] = {
   },
 };
 
+/**
+ * Feature detection (§8.23) is a lazy chunk (TD-63): only diagnostics exports, the device-support
+ * screen and the developer harnesses ask for it, never the first screen.
+ */
+const lazyCapabilityProbe: CapabilityProbe = {
+  probe: async () => (await import('../infrastructure/capabilities/probe')).capabilityProbe.probe(),
+};
+
 export function createAppDiagnostics(): Diagnostics {
   return createDiagnostics({
     app: APP,
-    context: async () => ({ capabilities: await capabilityProbe.probe() }),
+    context: async () => ({ capabilities: await lazyCapabilityProbe.probe() }),
   });
 }

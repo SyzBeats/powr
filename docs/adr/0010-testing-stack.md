@@ -66,3 +66,12 @@ v0.5 also folds in the M2 tooling (TD-09 native Lingui macro, TD-10 native React
 - **Lighthouse CI with per-environment baselines.** `apps/web/scripts/lighthouse.ts` (`pnpm lighthouse`) runs Lighthouse CI 0.16.1 (Lighthouse 13.6.0, mobile preset, 3 runs, median) against the production build, served by the same test server with `trustedTypes: false`, so exactly with the production headers. FCP, LCP, Speed Index, TTI and TBT fail at more than 20% above the stored baseline, with a minimum margin of 100 ms (TTI 150 ms). Baselines are kept per environment in `apps/web/lighthouse-baseline.json` (`local`, later `ci`), because simulated throttling scales the CPU time of the measuring machine. Without a baseline a run only reports. The CI job `lighthouse` runs on `main`, nightly and on demand, never on pull requests. Lighthouse CI is not part of `pnpm verify` and is not a device measurement (technical concept §8.19, §8.21).
 
 Source: `IMPLEMENTATION_NOTES.md` (repository root), sections "M2b screens" and "M2 tooling (TD-09, TD-10, TD-12)".
+
+## Amendment (v0.9, 2026-11-25)
+
+The decision stands. Two test-infrastructure changes (technical concept §8.14, §8.20):
+
+- **Component-test port (TD-58):** the browser project inherited the app's strict dev-server port, so parallel checkouts collided on Vitest's browser port 23315. `apps/web/vitest.components.config.ts` starts at `POWR_TEST_BROWSER_PORT` (default 23315) and is not strict, so a busy port moves on to the next free one.
+- **Focus after render:** two component tests (the custom-exercise error summary, the legal gate) flaked because the screens focused their error summary in a `requestAnimationFrame` right after `setState`, which could run before React committed the summary. The screens now focus in a layout effect (`hooks/use-focus-request.ts`); the assertions stayed, and each file passed 5 of 5 consecutive runs. A real accessibility bug, found by a flaky test.
+
+Source: `IMPLEMENTATION_NOTES.md` (repository root), sections "M5p content and engine follow-ups" and "M5z bundle trim, fixes and docs".

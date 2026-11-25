@@ -20,7 +20,7 @@
     tempo: 2-0-X-1
     fixedRom: false
     stretchEmphasis: true
-  ranking: { overloadSuitability: 3 }
+  ranking: { overloadSuitability: 3, standard: true }
   cues:
     - en: Kneel facing a high pulley and hold the rope beside your head.
     - en: Curl your ribcage toward your pelvis by rounding your spine, not by bending at the hips.
@@ -43,7 +43,7 @@
     tempo: 2-0-X-0
     fixedRom: false
     stretchEmphasis: false
-  ranking: { overloadSuitability: 1 }
+  ranking: { overloadSuitability: 1, standard: true }
   cues:
     - en: Hang from the bar with straight arms and stop any swing before you start.
     - en: Raise your knees or straight legs and curl your pelvis up toward your chest.
@@ -66,7 +66,7 @@
     tempo: 2-0-X-1
     fixedRom: false
     stretchEmphasis: false
-  ranking: { overloadSuitability: 1 }
+  ranking: { overloadSuitability: 1, standard: true }
   cues:
     - en: Lie on your back with knees bent and hands lightly at your temples or crossed on your chest.
     - en: Curl your shoulders off the floor by shortening the distance between ribs and pelvis.
@@ -111,7 +111,7 @@
     tempo: 2-0-X-0
     fixedRom: false
     stretchEmphasis: true
-  ranking: { overloadSuitability: 2 }
+  ranking: { overloadSuitability: 2, standard: true }
   cues:
     - en: Stand tall with one dumbbell at your side and the other hand on your hip.
     - en: Lean toward the dumbbell side until you feel a stretch along the opposite side.
@@ -286,7 +286,7 @@
     tempo: 1-0-1-2
     fixedRom: false
     stretchEmphasis: false
-  ranking: { overloadSuitability: 2 }
+  ranking: { overloadSuitability: 2, standard: true }
   cues:
     - en: Stand side-on to a chest-high pulley and hold the handle against your breastbone.
     - en: Press it straight out in front of you and hold for two seconds without letting your torso turn.

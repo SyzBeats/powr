@@ -24,7 +24,7 @@
     tempo: 2-0-X-1
     fixedRom: false
     stretchEmphasis: false
-  ranking: { overloadSuitability: 3, subRegions: [mu.glutes.max] }
+  ranking: { overloadSuitability: 3, subRegions: [mu.glutes.max], standard: true }
   cues:
     - en: Rest your upper back on the bench edge with a padded bar over your hips.
     - en: Place your feet so your shins are vertical at the top.
@@ -50,7 +50,7 @@
     tempo: 2-0-X-1
     fixedRom: false
     stretchEmphasis: false
-  ranking: { overloadSuitability: 1, subRegions: [mu.glutes.max] }
+  ranking: { overloadSuitability: 1, subRegions: [mu.glutes.max], standard: true }
   cues:
     - en: Lie on your back with knees bent and heels about a foot from your hips.
     - en: Brace your abs and push through your heels until your hips are fully extended.
@@ -74,7 +74,7 @@
     tempo: 2-0-X-1
     fixedRom: false
     stretchEmphasis: true
-  ranking: { overloadSuitability: 2, subRegions: [mu.hamstrings.biarticular] }
+  ranking: { overloadSuitability: 2, subRegions: [mu.hamstrings.biarticular], standard: true }
   cues:
     - en: Set the pad just below your hip crease so your hips can bend freely.
     - en: Hinge down from the hips with a neutral back until your hamstrings are stretched.
@@ -158,7 +158,7 @@
     tempo: 2-0-X-1
     fixedRom: false
     stretchEmphasis: false
-  ranking: { overloadSuitability: 2, subRegions: [mu.glutes.max] }
+  ranking: { overloadSuitability: 2, subRegions: [mu.glutes.max], standard: true }
   cues:
     - en: Sit with your upper back against a bench and hold one dumbbell on your hips.
     - en: Drive through your heels until your hips are level with your knees and shoulders.

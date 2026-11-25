@@ -16,7 +16,7 @@
     tempo: 2-0-X-1
     fixedRom: false
     stretchEmphasis: false
-  ranking: { overloadSuitability: 3, subRegions: [mu.glutes.med-min] }
+  ranking: { overloadSuitability: 3, subRegions: [mu.glutes.med-min], standard: true }
   cues:
     - en: Sit with the pads on the outside of your knees and your back against the seat.
     - en: Push your knees apart as far as the machine allows and hold for a moment.

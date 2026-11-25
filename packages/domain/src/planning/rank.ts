@@ -55,6 +55,17 @@ function child(rule: RuleId, value: number, weight: number): Explanation {
   return explain(rule, { args: { value, weight, contribution: value * weight } });
 }
 
+/**
+ * The tie-break after equal scores (M5z, product owner 2026-11-25): the standard variant of a
+ * movement first (`ranking.standard`), so the common choice wins over a specialised one with the
+ * same score (the dumbbell shoulder press over the Arnold press); callers break the remaining ties
+ * by ID. Used by the slot ranking (generator, next block, substitutes, session alternatives) and
+ * the body map's muscle ranking.
+ */
+export function compareStandard(a: ExerciseDef, b: ExerciseDef): number {
+  return Number(b.ranking.standard === true) - Number(a.ranking.standard === true);
+}
+
 /** A slot's score for a candidate: the mean effectiveness over the slot's target muscles. */
 export function slotScore(
   exercise: ExerciseDef,

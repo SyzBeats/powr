@@ -18,7 +18,7 @@
     tempo: 2-0-X-1
     fixedRom: false
     stretchEmphasis: false
-  ranking: { overloadSuitability: 3, subRegions: [mu.quads.rectus-femoris] }
+  ranking: { overloadSuitability: 3, subRegions: [mu.quads.rectus-femoris], standard: true }
   cues:
     - en: Line up your knees with the pivot and set the pad just above your ankles.
     - en: Recline the backrest if you can; a more open hip trains the rectus femoris harder.

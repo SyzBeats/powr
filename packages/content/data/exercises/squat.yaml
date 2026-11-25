@@ -38,7 +38,7 @@
     tempo: 2-0-X-0
     fixedRom: true
     stretchEmphasis: true
-  ranking: { overloadSuitability: 3, subRegions: [mu.quads.vasti] }
+  ranking: { overloadSuitability: 3, subRegions: [mu.quads.vasti], standard: true }
   cues:
     - en: Brace before you unrack and keep the bar over mid-foot.
     - en: Sit down between your hips until your hip crease is below the knee.
@@ -97,7 +97,7 @@
     tempo: 2-0-X-0
     fixedRom: false
     stretchEmphasis: true
-  ranking: { overloadSuitability: 3, subRegions: [mu.quads.vasti] }
+  ranking: { overloadSuitability: 3, subRegions: [mu.quads.vasti], standard: true }
   cues:
     - en: Rest the bar on your front delts with high elbows and a relaxed grip.
     - en: Keep your torso upright and sit straight down as deep as you can stay braced.
@@ -125,7 +125,7 @@
     tempo: 2-0-X-0
     fixedRom: false
     stretchEmphasis: true
-  ranking: { overloadSuitability: 2 }
+  ranking: { overloadSuitability: 2, standard: true }
   cues:
     - en: Hold one dumbbell or kettlebell vertically against your chest.
     - en: Sit down between your heels, elbows inside your knees at the bottom.
@@ -151,7 +151,7 @@
     tempo: 2-0-X-0
     fixedRom: false
     stretchEmphasis: false
-  ranking: { overloadSuitability: 3, subRegions: [mu.quads.vasti] }
+  ranking: { overloadSuitability: 3, subRegions: [mu.quads.vasti], standard: true }
   cues:
     - en: Place your feet shoulder-width in the middle of the platform.
     - en: Lower the sled until your knees are well bent, without your lower back lifting off the pad.
@@ -272,7 +272,7 @@
     tempo: 2-0-X-0
     fixedRom: false
     stretchEmphasis: true
-  ranking: { overloadSuitability: 3, subRegions: [mu.quads.vasti] }
+  ranking: { overloadSuitability: 3, subRegions: [mu.quads.vasti], standard: true }
   cues:
     - en: Set your shoulders under the pads and your feet shoulder-width in the middle of the platform.
     - en: Release the safety handles and sink until your thighs are at least parallel to the platform.
@@ -357,7 +357,7 @@
     tempo: 3-0-X-0
     fixedRom: false
     stretchEmphasis: true
-  ranking: { overloadSuitability: 1 }
+  ranking: { overloadSuitability: 1, standard: true }
   cues:
     - en: Stand with your feet about shoulder-width apart and your toes turned slightly out.
     - en: Sit down between your heels as deep as you can while your heels stay flat.

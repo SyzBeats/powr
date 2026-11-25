@@ -94,14 +94,7 @@ export function useTrendSentence() {
     const weeks = Math.max(0, Math.round(summary.weeks));
     const span = plural(weeks, { one: '# week', other: '# weeks' });
     const pct = formatSignedPercent(summary.deltaPct ?? 0);
-    const label = words.trend({
-      label: summary.label,
-      direction: summary.direction,
-      deltaLog: 0,
-      deltaPct: summary.deltaPct ?? 0,
-      referenceDate: null,
-      typicalError: 0,
-    });
+    const label = words.trend(summary);
     return weeks === 0
       ? t`${name}: ${to} estimated 1-rep max. ${label}.`
       : t`${name}: ${from} → ${to} estimated 1-rep max over ${span} (${pct}). ${label}.`;

@@ -20,6 +20,7 @@ import {
   repRangeShift,
   type ChangeLabel,
   type ChangeRules,
+  type NoLabelReason,
   type TrendPoint,
 } from '../trend';
 import { toKg } from '../units';
@@ -61,6 +62,8 @@ export interface SeriesSummary {
   /** The latest label; `insufficientData` until enough points exist. */
   readonly label: ChangeLabel['label'];
   readonly direction: ChangeLabel['direction'];
+  /** Why the latest change has no label (TD-62). */
+  readonly reason?: NoLabelReason;
 }
 
 export interface E1rmSeries {
@@ -130,6 +133,7 @@ export function e1rmSeries(input: SeriesInput, rules: SeriesRules): E1rmSeries {
       repRange:
         real &&
         repRangeShift(samples.slice(0, position + 1), label.referenceDate, rules).value.shifted,
+      ...(label.reason ? { reason: label.reason } : {}),
     };
   };
   const all: E1rmSeriesPoint[] = ordered.map((point, position) => ({
@@ -207,6 +211,7 @@ export function seriesSummary(points: readonly E1rmSeriesPoint[]): SeriesSummary
     weeks: first && last ? daysBetween(first.localDate, last.localDate) / 7 : 0,
     label: last?.change?.label ?? 'insufficientData',
     direction: last?.change?.direction ?? null,
+    ...(last?.change?.reason ? { reason: last.change.reason } : {}),
   };
 }
 

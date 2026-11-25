@@ -251,6 +251,10 @@ describe('change labels', () => {
     expect(reason(small)).toBe('noise');
     // Claims carry no reason.
     expect(reason(steps(0.0002))).toBeUndefined();
+    // The value carries the same reason (M5z), for the short labels in lists and summaries.
+    expect(labelChange(steps(0.002), 'intermediate', RULES).value.reason).toBe('unconfirmed');
+    expect(labelChange(small, 'intermediate', RULES).value.reason).toBe('noise');
+    expect(labelChange(steps(0.0002), 'intermediate', RULES).value.reason).toBeUndefined();
   });
 
   it('uses the novice typical error (5.5%) for novices', () => {

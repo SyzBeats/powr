@@ -42,6 +42,9 @@ export default defineConfig({
     // Everything stays a same-origin file: no data: URLs, simpler CSP and precaching.
     assetsInlineLimit: 0,
     sourcemap: false,
+    // Every supported browser (Chromium 130+) has `<link rel="modulepreload">` natively, so Vite's
+    // polyfill for older browsers is not shipped in the entry chunk (TD-63, M5z).
+    modulePreload: { polyfill: false },
     // The startup chunk below is about 550 kB minified; the gate is the gzip budget (size-limit,
     // §8.19), not Vite's 500 kB minified warning.
     chunkSizeWarningLimit: 700,

@@ -4,10 +4,12 @@ import type {
   EquipmentDef,
   EquipmentId,
   EquipmentPresetDef,
+  ExerciseDef,
   ExerciseId,
   MuscleId,
   PresetId,
 } from '../../src';
+import { muscleRanking } from '../../src/analytics';
 import {
   implementFor,
   isAvailable,
@@ -17,14 +19,32 @@ import {
 import {
   effectiveness,
   generatePlan,
+  rankCandidates,
   selectTemplate,
   setsOf,
   validatePlan,
 } from '../../src/planning';
-import { exercise, LIBRARY, PL_TEMPLATE, request, TEMPLATES, lookup } from '../fixtures/planning';
+import {
+  ALL_EQUIPMENT,
+  exercise,
+  LIBRARY,
+  PL_TEMPLATE,
+  request,
+  TEMPLATES,
+  lookup,
+} from '../fixtures/planning';
 import { rules } from '../fixtures/rules';
 
 const RULES = rules();
+
+/** A dumbbell press for the tie-break test: equal MAP-03 scores, `standard` set or not. */
+const press = (name: string, standard?: true) =>
+  exercise(name, {
+    pattern: 'verticalPush',
+    type: 'dumbbell',
+    muscles: [['mu.front-delts', 1]],
+    ...(standard ? { standard } : {}),
+  });
 const catalog = { exercises: LIBRARY, templates: TEMPLATES };
 const id = (value: string) => value as ExerciseId;
 
@@ -181,6 +201,56 @@ describe('MAP-03 ranking', () => {
     expect(
       effectiveness(lookup(id('ex.back-squat'))!, 'mu.glutes' as MuscleId, RULES).value,
     ).toBeGreaterThan(0);
+  });
+
+  it('puts the standard variant first among equal scores, then the ID (M5z)', () => {
+    // The Arnold press sorts first by ID; the standard dumbbell shoulder press wins the tie.
+    const arnold = press('ex.arnold-press');
+    const standard = press('ex.dumbbell-shoulder-press', true);
+    const slot = { pattern: 'verticalPush', targets: ['mu.front-delts' as MuscleId] } as const;
+    const rank = (exercises: readonly ExerciseDef[], preferred: readonly string[] = []) =>
+      rankCandidates(
+        slot,
+        exercises,
+        request({ equipment: ALL_EQUIPMENT, preferred: preferred as ExerciseId[] }),
+        lookup,
+        RULES,
+      ).map((candidate) => candidate.exerciseId);
+    expect(rank([arnold, standard])).toEqual(['ex.dumbbell-shoulder-press', 'ex.arnold-press']);
+    expect(rank([standard, arnold])).toEqual(['ex.dumbbell-shoulder-press', 'ex.arnold-press']);
+    // Without the flag the ID decides, as before.
+    expect(rank([arnold, press('ex.dumbbell-shoulder-press')])).toEqual([
+      'ex.arnold-press',
+      'ex.dumbbell-shoulder-press',
+    ]);
+    // Only a tie-break: a higher score and the user's preference still come first.
+    const better = exercise('ex.arnold-press', {
+      pattern: 'verticalPush',
+      type: 'dumbbell',
+      muscles: [['mu.front-delts', 1]],
+      overload: 3,
+    });
+    expect(rank([better, standard])[0]).toBe('ex.arnold-press');
+    expect(rank([arnold, standard], ['ex.arnold-press'])[0]).toBe('ex.arnold-press');
+    // The body map's muscle ranking (MAP-02/03) breaks its ties the same way.
+    const ranked = muscleRanking(
+      {
+        muscle: 'mu.front-delts' as MuscleId,
+        mode: 'effectiveness',
+        exercises: [arnold, standard],
+        equipment: null,
+        favourites: [],
+        hidden: [],
+        avoid: { exercises: [], patterns: [] },
+        history: () => null,
+        includeUnavailable: false,
+      },
+      RULES,
+    );
+    expect(ranked.map((entry) => entry.exerciseId)).toEqual([
+      'ex.dumbbell-shoulder-press',
+      'ex.arnold-press',
+    ]);
   });
 });
 

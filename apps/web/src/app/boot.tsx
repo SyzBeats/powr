@@ -15,10 +15,7 @@ import { PowrDb } from '../infrastructure/db';
 import { pendingUpgrade } from '../infrastructure/db/stored-version';
 import { applyTheme, storedTheme } from '../infrastructure/platform/theme';
 import { captureInstallPrompt } from '../infrastructure/pwa/install';
-import {
-  registerServiceWorker,
-  type ServiceWorkerController,
-} from '../infrastructure/pwa/registration';
+import type { ServiceWorkerController } from '../infrastructure/pwa/registration';
 import { loadBuiltInRules } from '../infrastructure/rules/provider';
 import { App } from './App';
 import { createAppDiagnostics, createContainer, type Container } from './container';
@@ -144,27 +141,39 @@ async function reconcileStartupState(container: Container): Promise<void> {
   if (settings && settings.theme !== storedTheme()) applyTheme(settings.theme);
 }
 
-/** Defers registration until after first paint while handing out a stable controller now. */
+/**
+ * Defers registration until after first paint while handing out a stable controller now. The
+ * registration code is a lazy chunk too (TD-63): nothing before the first screen needs it.
+ */
 function lazyServiceWorker(
   diagnostics: Container['diagnostics'],
 ): ServiceWorkerController & { start(): void } {
   let controller: ServiceWorkerController | null = null;
+  let starting: Promise<void> | null = null;
+  const register = async () => {
+    const { registerServiceWorker } = await import('../infrastructure/pwa/registration');
+    controller = registerServiceWorker({
+      onOfflineReady: () => {
+        useAppUi.setState({ offlineReady: true });
+        diagnostics.log('info', 'sw.offlineReady');
+      },
+      onUpdateAvailable: () => {
+        useAppUi.setState({ updateAvailable: true });
+        diagnostics.log('info', 'sw.updateAvailable');
+      },
+      onError: (error) =>
+        diagnostics.log('error', 'sw.error', {
+          name: error instanceof Error ? error.name : 'unknown',
+        }),
+    });
+  };
   return {
     start() {
-      controller ??= registerServiceWorker({
-        onOfflineReady: () => {
-          useAppUi.setState({ offlineReady: true });
-          diagnostics.log('info', 'sw.offlineReady');
-        },
-        onUpdateAvailable: () => {
-          useAppUi.setState({ updateAvailable: true });
-          diagnostics.log('info', 'sw.updateAvailable');
-        },
-        onError: (error) =>
-          diagnostics.log('error', 'sw.error', {
-            name: error instanceof Error ? error.name : 'unknown',
-          }),
-      });
+      starting ??= register().catch((error: unknown) =>
+        diagnostics.log('error', 'sw.error', {
+          name: error instanceof Error ? error.name : 'unknown',
+        }),
+      );
     },
     checkForUpdate: async () => controller?.checkForUpdate(),
     applyUpdate: () => controller?.applyUpdate(),

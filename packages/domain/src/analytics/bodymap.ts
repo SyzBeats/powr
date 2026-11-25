@@ -12,7 +12,7 @@ import { explained, type Explained } from '../explain';
 import type { ExerciseId, LocalDate, MuscleId } from '../ids';
 import type { AvoidList, ExerciseDef } from '../model';
 import { creditFor, evidenceFor, groupCredits } from '../planning/credits';
-import { effectiveness, type RankingRules } from '../planning/rank';
+import { compareStandard, effectiveness, type RankingRules } from '../planning/rank';
 import type { ExposureSummary } from '../session/history';
 
 export type RankMode = 'effectiveness' | 'focus';
@@ -93,6 +93,8 @@ export function muscleRanking(input: MuscleRankingInput, rules: RankingRules): R
       primary(b) - primary(a) ||
       Number(b.favourite) - Number(a.favourite) ||
       compareDates(b.lastDate, a.lastDate) ||
+      // M5z: among equal scores the standard variant first, then the ID.
+      compareStandard(a.exercise, b.exercise) ||
       (a.exercise.id < b.exercise.id ? -1 : a.exercise.id > b.exercise.id ? 1 : 0),
   );
   return ordered.map((entry, index) => ({

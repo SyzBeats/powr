@@ -1,7 +1,7 @@
 {
   "format": 1,
-  "version": "0.3.0+sha.43d64f94",
-  "hash": "43d64f9483dde636e38b8c722013413a1c5a614243173df901592f831647d64b",
+  "version": "0.3.0+sha.30836840",
+  "hash": "30836840c6117544030600b5023729f8c032ac4ed8bfe9e7d6cfced0ac1ff663",
   "muscles": [
     {
       "id": "mu.chest",
@@ -1869,7 +1869,8 @@
         "overloadSuitability": 3,
         "subRegions": [
           "mu.quads.vasti"
-        ]
+        ],
+        "standard": true
       },
       "cues": [
         {
@@ -1969,7 +1970,8 @@
         "overloadSuitability": 3,
         "subRegions": [
           "mu.chest.sternocostal"
-        ]
+        ],
+        "standard": true
       },
       "cues": [
         {
@@ -2081,7 +2083,8 @@
         "stretchEmphasis": false
       },
       "ranking": {
-        "overloadSuitability": 3
+        "overloadSuitability": 3,
+        "standard": true
       },
       "cues": [
         {
@@ -2401,7 +2404,8 @@
         "overloadSuitability": 3,
         "subRegions": [
           "mu.quads.vasti"
-        ]
+        ],
+        "standard": true
       },
       "cues": [
         {
@@ -2495,7 +2499,8 @@
         "stretchEmphasis": true
       },
       "ranking": {
-        "overloadSuitability": 2
+        "overloadSuitability": 2,
+        "standard": true
       },
       "cues": [
         {
@@ -2590,7 +2595,8 @@
         "overloadSuitability": 3,
         "subRegions": [
           "mu.quads.vasti"
-        ]
+        ],
+        "standard": true
       },
       "cues": [
         {
@@ -2993,7 +2999,8 @@
         "overloadSuitability": 3,
         "subRegions": [
           "mu.quads.vasti"
-        ]
+        ],
+        "standard": true
       },
       "cues": [
         {
@@ -3289,7 +3296,8 @@
         "stretchEmphasis": true
       },
       "ranking": {
-        "overloadSuitability": 1
+        "overloadSuitability": 1,
+        "standard": true
       },
       "cues": [
         {
@@ -3497,7 +3505,8 @@
         "overloadSuitability": 3,
         "subRegions": [
           "mu.hamstrings.biarticular"
-        ]
+        ],
+        "standard": true
       },
       "cues": [
         {
@@ -3594,7 +3603,8 @@
         "overloadSuitability": 2,
         "subRegions": [
           "mu.hamstrings.biarticular"
-        ]
+        ],
+        "standard": true
       },
       "cues": [
         {
@@ -4115,7 +4125,8 @@
         "overloadSuitability": 2,
         "subRegions": [
           "mu.hamstrings.biarticular"
-        ]
+        ],
+        "standard": true
       },
       "cues": [
         {
@@ -4203,7 +4214,8 @@
         "overloadSuitability": 1,
         "subRegions": [
           "mu.glutes.max"
-        ]
+        ],
+        "standard": true
       },
       "cues": [
         {
@@ -4285,7 +4297,8 @@
         "overloadSuitability": 2,
         "subRegions": [
           "mu.glutes.max"
-        ]
+        ],
+        "standard": true
       },
       "cues": [
         {
@@ -4713,7 +4726,8 @@
         "overloadSuitability": 2,
         "subRegions": [
           "mu.chest.sternocostal"
-        ]
+        ],
+        "standard": true
       },
       "cues": [
         {
@@ -4797,7 +4811,8 @@
         "overloadSuitability": 2,
         "subRegions": [
           "mu.chest.clavicular"
-        ]
+        ],
+        "standard": true
       },
       "cues": [
         {
@@ -4876,7 +4891,8 @@
         "stretchEmphasis": false
       },
       "ranking": {
-        "overloadSuitability": 3
+        "overloadSuitability": 3,
+        "standard": true
       },
       "cues": [
         {
@@ -4953,7 +4969,8 @@
         "stretchEmphasis": false
       },
       "ranking": {
-        "overloadSuitability": 1
+        "overloadSuitability": 1,
+        "standard": true
       },
       "cues": [
         {
@@ -5330,7 +5347,8 @@
         "overloadSuitability": 3,
         "subRegions": [
           "mu.chest.clavicular"
-        ]
+        ],
+        "standard": true
       },
       "cues": [
         {
@@ -6082,7 +6100,8 @@
         "stretchEmphasis": false
       },
       "ranking": {
-        "overloadSuitability": 3
+        "overloadSuitability": 3,
+        "standard": true
       },
       "cues": [
         {
@@ -6168,7 +6187,8 @@
         "stretchEmphasis": false
       },
       "ranking": {
-        "overloadSuitability": 2
+        "overloadSuitability": 2,
+        "standard": true
       },
       "cues": [
         {
@@ -6251,7 +6271,8 @@
         "stretchEmphasis": false
       },
       "ranking": {
-        "overloadSuitability": 1
+        "overloadSuitability": 1,
+        "standard": true
       },
       "cues": [
         {
@@ -6335,7 +6356,8 @@
         "overloadSuitability": 2,
         "subRegions": [
           "mu.chest.sternocostal"
-        ]
+        ],
+        "standard": true
       },
       "cues": [
         {
@@ -6420,7 +6442,8 @@
         "stretchEmphasis": false
       },
       "ranking": {
-        "overloadSuitability": 3
+        "overloadSuitability": 3,
+        "standard": true
       },
       "cues": [
         {
@@ -7116,7 +7139,8 @@
         "stretchEmphasis": false
       },
       "ranking": {
-        "overloadSuitability": 3
+        "overloadSuitability": 3,
+        "standard": true
       },
       "cues": [
         {
@@ -7206,7 +7230,8 @@
         "stretchEmphasis": true
       },
       "ranking": {
-        "overloadSuitability": 2
+        "overloadSuitability": 2,
+        "standard": true
       },
       "cues": [
         {
@@ -7292,7 +7317,8 @@
         "stretchEmphasis": false
       },
       "ranking": {
-        "overloadSuitability": 2
+        "overloadSuitability": 2,
+        "standard": true
       },
       "cues": [
         {
@@ -7382,7 +7408,8 @@
         "stretchEmphasis": true
       },
       "ranking": {
-        "overloadSuitability": 3
+        "overloadSuitability": 3,
+        "standard": true
       },
       "cues": [
         {
@@ -7472,7 +7499,8 @@
         "stretchEmphasis": false
       },
       "ranking": {
-        "overloadSuitability": 1
+        "overloadSuitability": 1,
+        "standard": true
       },
       "cues": [
         {
@@ -7569,7 +7597,8 @@
         "stretchEmphasis": false
       },
       "ranking": {
-        "overloadSuitability": 3
+        "overloadSuitability": 3,
+        "standard": true
       },
       "cues": [
         {
@@ -7923,7 +7952,8 @@
         "stretchEmphasis": true
       },
       "ranking": {
-        "overloadSuitability": 3
+        "overloadSuitability": 3,
+        "standard": true
       },
       "cues": [
         {
@@ -8008,7 +8038,8 @@
         "stretchEmphasis": true
       },
       "ranking": {
-        "overloadSuitability": 2
+        "overloadSuitability": 2,
+        "standard": true
       },
       "cues": [
         {
@@ -8093,7 +8124,8 @@
         "stretchEmphasis": true
       },
       "ranking": {
-        "overloadSuitability": 2
+        "overloadSuitability": 2,
+        "standard": true
       },
       "cues": [
         {
@@ -8424,7 +8456,8 @@
         "stretchEmphasis": true
       },
       "ranking": {
-        "overloadSuitability": 3
+        "overloadSuitability": 3,
+        "standard": true
       },
       "cues": [
         {
@@ -8593,7 +8626,8 @@
         "stretchEmphasis": true
       },
       "ranking": {
-        "overloadSuitability": 2
+        "overloadSuitability": 2,
+        "standard": true
       },
       "cues": [
         {
@@ -8679,7 +8713,8 @@
         "stretchEmphasis": true
       },
       "ranking": {
-        "overloadSuitability": 1
+        "overloadSuitability": 1,
+        "standard": true
       },
       "cues": [
         {
@@ -8764,7 +8799,8 @@
         "stretchEmphasis": true
       },
       "ranking": {
-        "overloadSuitability": 2
+        "overloadSuitability": 2,
+        "standard": true
       },
       "cues": [
         {
@@ -8847,7 +8883,8 @@
         "stretchEmphasis": true
       },
       "ranking": {
-        "overloadSuitability": 1
+        "overloadSuitability": 1,
+        "standard": true
       },
       "cues": [
         {
@@ -9030,7 +9067,8 @@
         "stretchEmphasis": false
       },
       "ranking": {
-        "overloadSuitability": 2
+        "overloadSuitability": 2,
+        "standard": true
       },
       "cues": [
         {
@@ -9265,7 +9303,8 @@
         "overloadSuitability": 3,
         "subRegions": [
           "mu.quads.rectus-femoris"
-        ]
+        ],
+        "standard": true
       },
       "cues": [
         {
@@ -9476,7 +9515,8 @@
         "subRegions": [
           "mu.hamstrings.biarticular",
           "mu.hamstrings.short-head"
-        ]
+        ],
+        "standard": true
       },
       "cues": [
         {
@@ -9552,7 +9592,8 @@
         "overloadSuitability": 3,
         "subRegions": [
           "mu.hamstrings.short-head"
-        ]
+        ],
+        "standard": true
       },
       "cues": [
         {
@@ -9620,7 +9661,8 @@
         "overloadSuitability": 1,
         "subRegions": [
           "mu.hamstrings.biarticular"
-        ]
+        ],
+        "standard": true
       },
       "cues": [
         {
@@ -10082,7 +10124,8 @@
         "overloadSuitability": 3,
         "subRegions": [
           "mu.elbow-flexors.biceps"
-        ]
+        ],
+        "standard": true
       },
       "cues": [
         {
@@ -10159,7 +10202,8 @@
         "overloadSuitability": 2,
         "subRegions": [
           "mu.elbow-flexors.biceps"
-        ]
+        ],
+        "standard": true
       },
       "cues": [
         {
@@ -10235,7 +10279,8 @@
         "overloadSuitability": 2,
         "subRegions": [
           "mu.elbow-flexors.brachialis"
-        ]
+        ],
+        "standard": true
       },
       "cues": [
         {
@@ -10312,7 +10357,8 @@
         "overloadSuitability": 2,
         "subRegions": [
           "mu.elbow-flexors.biceps"
-        ]
+        ],
+        "standard": true
       },
       "cues": [
         {
@@ -10464,7 +10510,8 @@
         "stretchEmphasis": true
       },
       "ranking": {
-        "overloadSuitability": 3
+        "overloadSuitability": 3,
+        "standard": true
       },
       "cues": [
         {
@@ -10621,7 +10668,8 @@
         "overloadSuitability": 3,
         "subRegions": [
           "mu.elbow-flexors.biceps"
-        ]
+        ],
+        "standard": true
       },
       "cues": [
         {
@@ -11150,7 +11198,8 @@
         "overloadSuitability": 3,
         "subRegions": [
           "mu.triceps.lateral-medial"
-        ]
+        ],
+        "standard": true
       },
       "cues": [
         {
@@ -11223,7 +11272,8 @@
         "overloadSuitability": 3,
         "subRegions": [
           "mu.triceps.long-head"
-        ]
+        ],
+        "standard": true
       },
       "cues": [
         {
@@ -11294,7 +11344,8 @@
         "overloadSuitability": 2,
         "subRegions": [
           "mu.triceps.long-head"
-        ]
+        ],
+        "standard": true
       },
       "cues": [
         {
@@ -11374,7 +11425,8 @@
         "overloadSuitability": 3,
         "subRegions": [
           "mu.triceps.lateral-medial"
-        ]
+        ],
+        "standard": true
       },
       "cues": [
         {
@@ -11595,7 +11647,8 @@
         "overloadSuitability": 1,
         "subRegions": [
           "mu.triceps.lateral-medial"
-        ]
+        ],
+        "standard": true
       },
       "cues": [
         {
@@ -11955,7 +12008,8 @@
         "stretchEmphasis": false
       },
       "ranking": {
-        "overloadSuitability": 2
+        "overloadSuitability": 2,
+        "standard": true
       },
       "cues": [
         {
@@ -12030,7 +12084,8 @@
         "stretchEmphasis": true
       },
       "ranking": {
-        "overloadSuitability": 2
+        "overloadSuitability": 2,
+        "standard": true
       },
       "cues": [
         {
@@ -12102,7 +12157,8 @@
         "stretchEmphasis": false
       },
       "ranking": {
-        "overloadSuitability": 0
+        "overloadSuitability": 0,
+        "standard": true
       },
       "cues": [
         {
@@ -12247,7 +12303,8 @@
         "stretchEmphasis": false
       },
       "ranking": {
-        "overloadSuitability": 2
+        "overloadSuitability": 2,
+        "standard": true
       },
       "cues": [
         {
@@ -12322,7 +12379,8 @@
         "stretchEmphasis": false
       },
       "ranking": {
-        "overloadSuitability": 3
+        "overloadSuitability": 3,
+        "standard": true
       },
       "cues": [
         {
@@ -12485,7 +12543,8 @@
         "overloadSuitability": 3,
         "subRegions": [
           "mu.glutes.max"
-        ]
+        ],
+        "standard": true
       },
       "cues": [
         {
@@ -12568,7 +12627,8 @@
         "overloadSuitability": 1,
         "subRegions": [
           "mu.glutes.max"
-        ]
+        ],
+        "standard": true
       },
       "cues": [
         {
@@ -12652,7 +12712,8 @@
         "overloadSuitability": 2,
         "subRegions": [
           "mu.hamstrings.biarticular"
-        ]
+        ],
+        "standard": true
       },
       "cues": [
         {
@@ -12910,7 +12971,8 @@
         "overloadSuitability": 2,
         "subRegions": [
           "mu.glutes.max"
-        ]
+        ],
+        "standard": true
       },
       "cues": [
         {
@@ -13297,7 +13359,8 @@
         "overloadSuitability": 3,
         "subRegions": [
           "mu.glutes.med-min"
-        ]
+        ],
+        "standard": true
       },
       "cues": [
         {
@@ -13574,7 +13637,8 @@
         "stretchEmphasis": true
       },
       "ranking": {
-        "overloadSuitability": 3
+        "overloadSuitability": 3,
+        "standard": true
       },
       "cues": [
         {
@@ -13864,7 +13928,8 @@
         "overloadSuitability": 3,
         "subRegions": [
           "mu.calves.gastrocnemius"
-        ]
+        ],
+        "standard": true
       },
       "cues": [
         {
@@ -14014,7 +14079,8 @@
         "overloadSuitability": 3,
         "subRegions": [
           "mu.calves.soleus"
-        ]
+        ],
+        "standard": true
       },
       "cues": [
         {
@@ -14247,7 +14313,8 @@
         "overloadSuitability": 2,
         "subRegions": [
           "mu.calves.gastrocnemius"
-        ]
+        ],
+        "standard": true
       },
       "cues": [
         {
@@ -14399,7 +14466,8 @@
         "stretchEmphasis": true
       },
       "ranking": {
-        "overloadSuitability": 3
+        "overloadSuitability": 3,
+        "standard": true
       },
       "cues": [
         {
@@ -14472,7 +14540,8 @@
         "stretchEmphasis": false
       },
       "ranking": {
-        "overloadSuitability": 1
+        "overloadSuitability": 1,
+        "standard": true
       },
       "cues": [
         {
@@ -14543,7 +14612,8 @@
         "stretchEmphasis": false
       },
       "ranking": {
-        "overloadSuitability": 1
+        "overloadSuitability": 1,
+        "standard": true
       },
       "cues": [
         {
@@ -14680,7 +14750,8 @@
         "stretchEmphasis": true
       },
       "ranking": {
-        "overloadSuitability": 2
+        "overloadSuitability": 2,
+        "standard": true
       },
       "cues": [
         {
@@ -15197,7 +15268,8 @@
         "stretchEmphasis": false
       },
       "ranking": {
-        "overloadSuitability": 2
+        "overloadSuitability": 2,
+        "standard": true
       },
       "cues": [
         {
@@ -15491,7 +15563,8 @@
         "stretchEmphasis": true
       },
       "ranking": {
-        "overloadSuitability": 2
+        "overloadSuitability": 2,
+        "standard": true
       },
       "cues": [
         {
@@ -15570,7 +15643,8 @@
         "stretchEmphasis": true
       },
       "ranking": {
-        "overloadSuitability": 3
+        "overloadSuitability": 3,
+        "standard": true
       },
       "cues": [
         {
@@ -15648,7 +15722,8 @@
         "stretchEmphasis": true
       },
       "ranking": {
-        "overloadSuitability": 2
+        "overloadSuitability": 2,
+        "standard": true
       },
       "cues": [
         {
@@ -16017,7 +16092,8 @@
         "stretchEmphasis": false
       },
       "ranking": {
-        "overloadSuitability": 3
+        "overloadSuitability": 3,
+        "standard": true
       },
       "cues": [
         {
@@ -16093,7 +16169,8 @@
         "stretchEmphasis": false
       },
       "ranking": {
-        "overloadSuitability": 2
+        "overloadSuitability": 2,
+        "standard": true
       },
       "cues": [
         {
@@ -16167,7 +16244,8 @@
         "stretchEmphasis": false
       },
       "ranking": {
-        "overloadSuitability": 2
+        "overloadSuitability": 2,
+        "standard": true
       },
       "cues": [
         {
@@ -16239,7 +16317,8 @@
         "stretchEmphasis": false
       },
       "ranking": {
-        "overloadSuitability": 0
+        "overloadSuitability": 0,
+        "standard": true
       },
       "cues": [
         {
@@ -16461,7 +16540,8 @@
         "stretchEmphasis": false
       },
       "ranking": {
-        "overloadSuitability": 0
+        "overloadSuitability": 0,
+        "standard": true
       },
       "cues": [
         {
@@ -16540,7 +16620,8 @@
         "stretchEmphasis": false
       },
       "ranking": {
-        "overloadSuitability": 3
+        "overloadSuitability": 3,
+        "standard": true
       },
       "cues": [
         {
@@ -16612,7 +16693,8 @@
         "stretchEmphasis": false
       },
       "ranking": {
-        "overloadSuitability": 2
+        "overloadSuitability": 2,
+        "standard": true
       },
       "cues": [
         {
@@ -16896,7 +16978,8 @@
         "overloadSuitability": 2,
         "subRegions": [
           "mu.forearms.flexors"
-        ]
+        ],
+        "standard": true
       },
       "cues": [
         {
@@ -16975,7 +17058,8 @@
         "overloadSuitability": 3,
         "subRegions": [
           "mu.forearms.flexors"
-        ]
+        ],
+        "standard": true
       },
       "cues": [
         {
@@ -17114,7 +17198,8 @@
         "overloadSuitability": 2,
         "subRegions": [
           "mu.forearms.extensors"
-        ]
+        ],
+        "standard": true
       },
       "cues": [
         {
@@ -17193,7 +17278,8 @@
         "overloadSuitability": 2,
         "subRegions": [
           "mu.forearms.extensors"
-        ]
+        ],
+        "standard": true
       },
       "cues": [
         {

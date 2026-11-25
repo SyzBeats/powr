@@ -18,7 +18,7 @@
     tempo: 2-0-X-0
     fixedRom: false
     stretchEmphasis: false
-  ranking: { overloadSuitability: 2 }
+  ranking: { overloadSuitability: 2, standard: true }
   cues:
     - en: Stand tall with the dumbbells at your sides and a slight bend in your elbows.
     - en: Raise your arms out to the side until they are about level with your shoulders.
@@ -43,7 +43,7 @@
     tempo: 2-0-X-0
     fixedRom: false
     stretchEmphasis: true
-  ranking: { overloadSuitability: 2 }
+  ranking: { overloadSuitability: 2, standard: true }
   cues:
     - en: Set the pulley low and hold the handle with the hand farther from the machine.
     - en: Start with the hand in front of your hip so the side delt begins in a stretch.
@@ -66,7 +66,7 @@
     tempo: 2-0-X-0
     fixedRom: false
     stretchEmphasis: false
-  ranking: { overloadSuitability: 0 }
+  ranking: { overloadSuitability: 0, standard: true }
   cues:
     - en: Stand on the middle of a band and hold one end in each hand.
     - en: Raise your arms out to the side to shoulder height, elbows slightly bent.
@@ -119,7 +119,7 @@
     tempo: 2-0-X-0
     fixedRom: false
     stretchEmphasis: false
-  ranking: { overloadSuitability: 2 }
+  ranking: { overloadSuitability: 2, standard: true }
   cues:
     - en: Hold the dumbbells in front of your thighs, hands about shoulder-width apart.
     - en: Lead with your elbows and lift until your upper arms are about parallel to the floor.
@@ -144,7 +144,7 @@
     tempo: 2-0-X-0
     fixedRom: false
     stretchEmphasis: false
-  ranking: { overloadSuitability: 3 }
+  ranking: { overloadSuitability: 3, standard: true }
   cues:
     - en: Stand close to a low pulley holding a rope or bar with your hands about shoulder-width apart.
     - en: Pull up along your body, elbows leading, until your upper arms are about parallel to the floor.

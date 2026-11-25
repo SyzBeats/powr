@@ -21,7 +21,7 @@
     tempo: 2-0-X-0
     fixedRom: false
     stretchEmphasis: false
-  ranking: { overloadSuitability: 3, subRegions: [mu.triceps.lateral-medial] }
+  ranking: { overloadSuitability: 3, subRegions: [mu.triceps.lateral-medial], standard: true }
   cues:
     - en: Set the pulley high and hold a rope or bar with your elbows pinned to your sides.
     - en: Push down until your arms are straight, spreading the rope ends at the bottom.
@@ -45,7 +45,7 @@
     tempo: 2-0-X-0
     fixedRom: false
     stretchEmphasis: true
-  ranking: { overloadSuitability: 3, subRegions: [mu.triceps.long-head] }
+  ranking: { overloadSuitability: 3, subRegions: [mu.triceps.long-head], standard: true }
   cues:
     - en: Face away from a low or mid pulley with the rope behind your head and elbows pointing up.
     - en: Let your hands sink behind your head until your triceps are fully stretched.
@@ -67,7 +67,7 @@
     tempo: 2-0-X-0
     fixedRom: false
     stretchEmphasis: true
-  ranking: { overloadSuitability: 2, subRegions: [mu.triceps.long-head] }
+  ranking: { overloadSuitability: 2, subRegions: [mu.triceps.long-head], standard: true }
   cues:
     - en: Hold one dumbbell with both hands under the top plate, arms straight overhead.
     - en: Lower it behind your head until your elbows are fully bent, elbows pointing forward.
@@ -93,7 +93,7 @@
     tempo: 2-0-X-0
     fixedRom: false
     stretchEmphasis: false
-  ranking: { overloadSuitability: 3, subRegions: [mu.triceps.lateral-medial] }
+  ranking: { overloadSuitability: 3, subRegions: [mu.triceps.lateral-medial], standard: true }
   cues:
     - en: Lie on a bench and hold the bar over your shoulders with a narrow grip.
     - en: Bend only at the elbows to lower the bar toward your forehead or just behind it.
@@ -168,7 +168,7 @@
     tempo: 2-0-X-1
     fixedRom: false
     stretchEmphasis: false
-  ranking: { overloadSuitability: 1, subRegions: [mu.triceps.lateral-medial] }
+  ranking: { overloadSuitability: 1, subRegions: [mu.triceps.lateral-medial], standard: true }
   cues:
     - en: Hinge forward with a flat back and hold your upper arm alongside your torso.
     - en: Straighten your elbow until your arm is in line with your body.

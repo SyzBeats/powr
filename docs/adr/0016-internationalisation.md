@@ -64,3 +64,9 @@ Source: `IMPLEMENTATION_NOTES.md` (repository root), section "M2 tooling (TD-09,
 The decision stands. `lingui/no-unlocalized-strings` still reports a warning, but since M2c the lint gate denies warnings (`oxlint --type-aware --deny-warnings`, ADR-0017), so the rule blocks in practice; the code base has no unlocalized UI string left. The page title (`{title} · POWR`) and the evidence-source names in the "Why?" sheet became messages. The rule's `ignore` list also skips route patterns with `$params` and single camelCase tokens, because the plugin's type-aware option cannot run in oxlint.
 
 Source: `IMPLEMENTATION_NOTES.md` (repository root), section "M2c planning gaps".
+
+## Amendment (v0.9, 2026-11-25)
+
+The decision stands. Two lazy catalogs joined the boot catalog (technical concept §8.15): `legal` (the legal texts, about 6.2 KB gzip) and `params` (the 143 parameter labels of the "Why?" sheet and "How POWR decides", about 3.2 KB gzip). `loadCatalog(name)` merges a catalog on first use, and the catalog check covers every catalog. The legal texts are React elements with `<Trans>`, so their markup and links stay in the code and their wording in the catalog.
+
+Source: `IMPLEMENTATION_NOTES.md` (repository root), sections "M5s settings, legal and explainability".

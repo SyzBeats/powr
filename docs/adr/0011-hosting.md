@@ -66,3 +66,12 @@ The v0.1 criteria are kept, except that "privacy and jurisdiction" now also cove
 - Negative: a single VPS is a single point of failure (risk T-14). The impact is limited because installed clients run offline from the service-worker cache; an outage blocks only first visits, installs and updates. An EU CDN or a second VPS can be added later.
 - Negative: the Swiss-hosting argument of v0.1 is gone. The privacy claims rest on the architecture (no data leaves the device, CSP `connect-src 'self'`, no access logs), not on the host's country.
 - Follow-ups: spike S-7 (provisioning, hardening, Traefik log check, deploy webhook, rollback, Coolify backup to S3-compatible storage, restore drill); uptime monitoring resolved 2026-11-24 (OQ-T9: hosted free-tier monitor, preferably EU-based, chosen in S-7); DNS resolved 2026-11-24 (OQ-T11: stays at the current provider; `beta.`, `coolify.` and CAA records; business-domain name filled in by the product owner in S-7/WP0.7).
+
+## Amendment (v0.9, 2026-11-25)
+
+The decision stands. Two additions (technical concept §7.5, §7.8):
+
+- **One public origin (product-owner decision of 2026-11-25).** The app has one configured public origin for calendar UIDs and public URLs, `VITE_PUBLIC_ORIGIN`, read at build time (default `https://powr.invalid`). Because the image is built once in CI and promoted unchanged from beta to production, it is the **production** origin for both: `ci.yml` reads it from the repository variable `PUBLIC_ORIGIN`, which the product owner sets once the production domain is chosen (after V-05) and never changes afterwards (`deploy/runbook.md` §2).
+- **Legal release gate.** The production job runs `pnpm release:check` before the image is promoted: it fails while the publisher's postal address or the legal-review date is still a placeholder (V-05, V-06).
+
+Source: `IMPLEMENTATION_NOTES.md` (repository root), sections "M5s settings, legal and explainability" and "M5z bundle trim, fixes and docs".

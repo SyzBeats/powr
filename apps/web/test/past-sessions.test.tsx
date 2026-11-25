@@ -11,7 +11,14 @@ import {
 import type { ExerciseId, SessionId } from '@powr/domain';
 
 import type { Container } from '../src/app/container';
-import { createTestContainer, onboarded, renderRoute, seriousViolations } from './harness';
+import { useSummaryWords } from '../src/features/session/past/parts';
+import {
+  createTestContainer,
+  onboarded,
+  renderRoute,
+  renderWith,
+  seriousViolations,
+} from './harness';
 
 /*
  * WKT-15: the past-sessions list, logging a session for a past date, and editing a finished one
@@ -121,5 +128,33 @@ describe('past sessions (WKT-15)', () => {
 
     expect(await screen.findByRole('heading', { level: 1, name: 'Edit workout' })).toBeTruthy();
     expect((await screen.findByTestId('past-set')).textContent).toContain('62.5 kg × 8');
+  });
+});
+
+/** The three "no label" texts of the short trend label. */
+function NoLabelTexts() {
+  const words = useSummaryWords();
+  return (
+    <ul>
+      {(['noise', 'unconfirmed', undefined] as const).map((reason) => (
+        <li key={reason ?? 'none'}>
+          {words.trend({ label: 'none', direction: null, ...(reason ? { reason } : {}) })}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+describe('the short trend label (PRG-02, TD-62)', () => {
+  it('says why there is no label, as the "Why?" text does', async () => {
+    const container = await createTestContainer();
+    renderWith(container, <NoLabelTexts />);
+    const items = (await screen.findAllByRole('listitem')).map((item) => item.textContent);
+    expect(items).toEqual([
+      'Within normal day-to-day variation',
+      'More than normal day-to-day variation, not confirmed yet',
+      // A point derived before the reason existed: true either way.
+      'No confirmed change yet',
+    ]);
   });
 });

@@ -33,6 +33,8 @@ interface ExerciseSpec {
   readonly overload?: 0 | 1 | 2 | 3;
   readonly evidence?: 'H' | 'EMG' | 'C';
   readonly subRegions?: readonly string[];
+  /** `ranking.standard` (M5z): the standard variant, the tie-break among equal scores. */
+  readonly standard?: true;
 }
 
 export function exercise(id: string, spec: ExerciseSpec): ExerciseDef {
@@ -73,6 +75,7 @@ export function exercise(id: string, spec: ExerciseSpec): ExerciseDef {
     ranking: {
       overloadSuitability: spec.overload ?? 2,
       ...(spec.subRegions ? { subRegions: spec.subRegions as MuscleId[] } : {}),
+      ...(spec.standard ? { standard: true } : {}),
     },
     cues: [{ en: 'Brace.' }, { en: 'Move with control.' }, { en: 'Finish the rep.' }],
     custom: false,

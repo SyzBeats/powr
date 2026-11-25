@@ -16,7 +16,7 @@
     tempo: 2-0-X-0
     fixedRom: false
     stretchEmphasis: false
-  ranking: { overloadSuitability: 2, subRegions: [mu.forearms.extensors] }
+  ranking: { overloadSuitability: 2, subRegions: [mu.forearms.extensors], standard: true }
   cues:
     - en: Sit with your forearms on your thighs, palms down and wrists past your knees.
     - en: Lift the back of your hands as high as you can, keeping your forearms still.
@@ -44,7 +44,7 @@
     tempo: 2-0-X-0
     fixedRom: false
     stretchEmphasis: false
-  ranking: { overloadSuitability: 2, subRegions: [mu.forearms.extensors] }
+  ranking: { overloadSuitability: 2, subRegions: [mu.forearms.extensors], standard: true }
   cues:
     - en: Kneel beside a bench with your forearms on it, palms down and wrists just past the edge.
     - en: Raise the backs of your hands toward you as far as you can.

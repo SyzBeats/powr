@@ -19,6 +19,20 @@ import { addExercise, finishWorkout, logSet, startEmptyWorkout } from './session
 /** A Monday morning: with Monday as a training day, today's planned session exists. */
 const MONDAY = new Date('2026-11-23T08:00:00');
 
+/**
+ * The UID host of the build under test, as `src/app/public-origin.ts` derives it: CI builds with
+ * `VITE_PUBLIC_ORIGIN` from the repository variable `PUBLIC_ORIGIN` (M5z) and passes the same
+ * value to this job; unset or not an http(s) origin, the reserved `powr.invalid`.
+ */
+const UID_HOST = ((configured: string | undefined): string => {
+  try {
+    const url = new URL(configured ?? '');
+    return url.protocol === 'https:' || url.protocol === 'http:' ? url.host : 'powr.invalid';
+  } catch {
+    return 'powr.invalid';
+  }
+})(process.env['VITE_PUBLIC_ORIGIN']);
+
 /** Names of the app's IndexedDB databases on this origin. */
 async function databases(page: Page): Promise<string[]> {
   return page.evaluate(async () =>
@@ -322,7 +336,10 @@ test.describe('calendar export (M5d: CAL-01…05)', () => {
     expect(unfolded.match(/^BEGIN:VEVENT$/gm)).toHaveLength(sessions);
     const uids = unfolded.match(/^UID:.*$/gm)!;
     expect(uids).toHaveLength(sessions);
-    for (const uid of uids) expect(uid).toMatch(/^UID:[^@\s]+@powr\.invalid$/);
+    for (const uid of uids) {
+      expect(uid).toMatch(/^UID:[^@\s]+@[^@\s]+$/);
+      expect(uid.slice(uid.indexOf('@') + 1)).toBe(UID_HOST);
+    }
     expect(unfolded.match(/^TRIGGER:-PT30M$/gm)).toHaveLength(sessions);
     // 18:30 in Zurich in winter is 17:30 UTC.
     for (const start of unfolded.match(/^DTSTART:.*$/gm)!) expect(start).toMatch(/T173000Z$/);

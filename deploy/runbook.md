@@ -28,6 +28,15 @@ Create two GitHub environments, `beta` and `production`. Add required reviewers 
 | Secret   | `COOLIFY_APP_UUID`    | UUID of the environment's Coolify application                           | per environment   |
 | Secret   | `COOLIFY_WEBHOOK_URL` | The application's deploy webhook (`…/api/v1/deploy?uuid=…&force=false`) | per environment   |
 | Variable | `APP_URL`             | `https://beta.<business-domain>` or the production URL                  | per environment   |
+| Variable | `PUBLIC_ORIGIN`       | The **production** origin, e.g. `https://<production-domain>`           | repository        |
+
+`PUBLIC_ORIGIN` is a **repository** variable, not an environment one: the CI build job reads it as
+`VITE_PUBLIC_ORIGIN` (`.github/workflows/ci.yml`), and the image built there is promoted unchanged
+to beta and production, so both run with the same origin, the production one (product-owner
+decision 2026-11-25). It names the app in calendar UIDs (`<planned-session-id>@<host>`) and any
+public URL. While it is unset, builds use the reserved `https://powr.invalid`, which calendar apps
+accept. The product owner sets it once, when the production domain is chosen (after the trademark
+check V-05); never change it afterwards, or exported calendar events stop updating and duplicate.
 
 The workflows use the built-in `GITHUB_TOKEN` to push to GHCR; no personal token is stored.
 Never put secret values into the repository.

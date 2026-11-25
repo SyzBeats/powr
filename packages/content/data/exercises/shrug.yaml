@@ -19,7 +19,7 @@
     tempo: 2-0-X-1
     fixedRom: false
     stretchEmphasis: false
-  ranking: { overloadSuitability: 3 }
+  ranking: { overloadSuitability: 3, standard: true }
   cues:
     - en: Hold the bar at arm's length with a shoulder-width grip; use straps if your grip fails first.
     - en: Lift your shoulders straight up toward your ears without rolling them.
@@ -42,7 +42,7 @@
     tempo: 2-0-X-1
     fixedRom: false
     stretchEmphasis: false
-  ranking: { overloadSuitability: 2 }
+  ranking: { overloadSuitability: 2, standard: true }
   cues:
     - en: Stand tall with a dumbbell in each hand at your sides.
     - en: Shrug straight up as high as you can and pause.

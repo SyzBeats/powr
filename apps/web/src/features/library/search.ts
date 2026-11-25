@@ -1,7 +1,7 @@
 /*
- * Search-param validators of the library routes (EXL-02, EXL-04): plain functions, because route
- * definitions are on the startup path and Zod is not (TD-17). Unknown or invalid values are
- * dropped; the use cases ignore an ID that is not in the catalog.
+ * Search-param validators of the library routes (EXL-02, EXL-04): plain functions without Zod
+ * (TD-17), run by the route's lazy component (TD-63, `app/route-search.ts`). Unknown or invalid
+ * values are dropped; the use cases ignore an ID that is not in the catalog.
  */
 
 export interface LibrarySearch {
@@ -50,8 +50,12 @@ export function validateLibrarySearch(search: Record<string, unknown>): LibraryS
   ) as LibrarySearch;
 }
 
+export interface NewCustomSearch {
+  readonly from?: string;
+}
+
 /** `/explore/exercises/new?from=<exerciseId>`: copy an exercise (EXL-04). */
-export function validateNewCustomSearch(search: Record<string, unknown>): { from?: string } {
+export function validateNewCustomSearch(search: Record<string, unknown>): NewCustomSearch {
   const from = id(search['from']);
   return from ? { from } : {};
 }

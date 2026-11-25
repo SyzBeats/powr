@@ -24,7 +24,7 @@
     tempo: 2-0-X-0
     fixedRom: false
     stretchEmphasis: false
-  ranking: { overloadSuitability: 3 }
+  ranking: { overloadSuitability: 3, standard: true }
   cues:
     - en: Hinge forward until your torso is at about 30–45 degrees above the floor, back neutral.
     - en: Pull the bar to your lower ribs, driving the elbows back past your torso.
@@ -51,7 +51,7 @@
     tempo: 2-0-X-0
     fixedRom: false
     stretchEmphasis: true
-  ranking: { overloadSuitability: 2 }
+  ranking: { overloadSuitability: 2, standard: true }
   cues:
     - en: Support yourself with one hand and knee on a bench, the other foot on the floor.
     - en: Let the dumbbell hang straight down until your shoulder blade stretches forward.
@@ -76,7 +76,7 @@
     tempo: 2-0-X-1
     fixedRom: false
     stretchEmphasis: false
-  ranking: { overloadSuitability: 2 }
+  ranking: { overloadSuitability: 2, standard: true }
   cues:
     - en: Lie chest-down on a bench set to about 30 degrees with a dumbbell in each hand.
     - en: Row both dumbbells up until your elbows pass your torso.
@@ -103,7 +103,7 @@
     tempo: 2-0-X-0
     fixedRom: false
     stretchEmphasis: true
-  ranking: { overloadSuitability: 3 }
+  ranking: { overloadSuitability: 3, standard: true }
   cues:
     - en: Sit tall with a slight knee bend and reach forward until your shoulder blades spread.
     - en: Pull the handle to your lower ribs while your torso stays nearly upright.
@@ -131,7 +131,7 @@
     tempo: 2-0-X-1
     fixedRom: false
     stretchEmphasis: false
-  ranking: { overloadSuitability: 1 }
+  ranking: { overloadSuitability: 1, standard: true }
   cues:
     - en: Hang under rings or a bar at hip height with your body straight and heels on the floor.
     - en: Pull your chest to your hands, keeping hips in line with shoulders and ankles.
@@ -164,7 +164,7 @@
     tempo: 2-0-X-0
     fixedRom: false
     stretchEmphasis: false
-  ranking: { overloadSuitability: 3 }
+  ranking: { overloadSuitability: 3, standard: true }
   cues:
     - en: Straddle the bar near its loaded end and grip it with both hands or a V-handle under the sleeve.
     - en: Hinge until your torso is at about 45 degrees or lower, back flat.

@@ -23,7 +23,7 @@
     tempo: 2-0-X-0
     fixedRom: false
     stretchEmphasis: true
-  ranking: { overloadSuitability: 3 }
+  ranking: { overloadSuitability: 3, standard: true }
   cues:
     - en: Lock your thighs under the pad and grip the bar a little wider than your shoulders.
     - en: Let the bar pull your arms fully straight at the top so your lats stretch.
@@ -48,7 +48,7 @@
     tempo: 2-0-X-0
     fixedRom: false
     stretchEmphasis: true
-  ranking: { overloadSuitability: 2 }
+  ranking: { overloadSuitability: 2, standard: true }
   cues:
     - en: Hang from the bar with an overhand grip slightly wider than your shoulders.
     - en: Pull your elbows down toward your ribs until your chin clears the bar.
@@ -73,7 +73,7 @@
     tempo: 2-0-X-0
     fixedRom: false
     stretchEmphasis: true
-  ranking: { overloadSuitability: 2 }
+  ranking: { overloadSuitability: 2, standard: true }
   cues:
     - en: Hang with an underhand grip about shoulder-width apart.
     - en: Pull until your chin is over the bar, keeping your chest up.
@@ -181,7 +181,7 @@
     tempo: 2-0-X-1
     fixedRom: false
     stretchEmphasis: true
-  ranking: { overloadSuitability: 3 }
+  ranking: { overloadSuitability: 3, standard: true }
   cues:
     - en: Stand facing a high pulley and hold a bar or rope with straight arms at about eye level.
     - en: Hinge slightly forward and sweep your hands down to your thighs with your arms almost straight.

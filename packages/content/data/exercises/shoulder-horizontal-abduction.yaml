@@ -18,7 +18,7 @@
     tempo: 2-0-X-1
     fixedRom: false
     stretchEmphasis: false
-  ranking: { overloadSuitability: 3 }
+  ranking: { overloadSuitability: 3, standard: true }
   cues:
     - en: Face the pad and set the handles so your arms start straight out in front.
     - en: Sweep your arms back in a wide arc until they are in line with your body.
@@ -43,7 +43,7 @@
     tempo: 2-0-X-1
     fixedRom: false
     stretchEmphasis: false
-  ranking: { overloadSuitability: 2 }
+  ranking: { overloadSuitability: 2, standard: true }
   cues:
     - en: Set a rope at upper-chest height or higher and hold it with thumbs pointing back.
     - en: Pull the rope toward your face, spreading the ends apart as your elbows go wide.
@@ -66,7 +66,7 @@
     tempo: 2-0-X-1
     fixedRom: false
     stretchEmphasis: false
-  ranking: { overloadSuitability: 2 }
+  ranking: { overloadSuitability: 2, standard: true }
   cues:
     - en: Hinge forward until your torso is nearly flat, or lie chest-down on an incline bench.
     - en: Raise the dumbbells out to the sides with slightly bent elbows.
@@ -89,7 +89,7 @@
     tempo: 2-0-X-1
     fixedRom: false
     stretchEmphasis: false
-  ranking: { overloadSuitability: 0 }
+  ranking: { overloadSuitability: 0, standard: true }
   cues:
     - en: Hold a band at shoulder height with straight arms and hands shoulder-width apart.
     - en: Pull the band apart until it touches your chest, squeezing your shoulder blades together.
@@ -163,7 +163,7 @@
     tempo: 2-0-X-1
     fixedRom: false
     stretchEmphasis: false
-  ranking: { overloadSuitability: 0 }
+  ranking: { overloadSuitability: 0, standard: true }
   cues:
     - en: Anchor the band at face height and hold the ends with your palms facing down.
     - en: Pull toward your forehead, spreading your hands apart and turning your knuckles up.

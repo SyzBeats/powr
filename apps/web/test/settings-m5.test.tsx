@@ -92,6 +92,12 @@ describe('Settings sections (SET-01…11)', () => {
     expect(
       within(about).getByRole('link', { name: 'tools@sz-development.com' }).getAttribute('href'),
     ).toBe('mailto:tools@sz-development.com');
+    // PWA-13: Settings → About → Device support (M5z).
+    expect(
+      within(about)
+        .getByRole('link', { name: 'Device support: what works on this phone' })
+        .getAttribute('href'),
+    ).toBe('/settings/device-support');
     window.scrollTo(0, 0);
     expect(await axeBothThemes()).toEqual([]);
   });

@@ -22,7 +22,7 @@ import { Sheet } from '#ui/sheet';
 import { useLibraryQuery } from '../../hooks/use-library';
 import { useCatalog } from '../../hooks/use-planning';
 import { useLabels } from '../labels';
-import type { LibrarySearch } from './search';
+import { validateLibrarySearch, type LibrarySearch } from './search';
 import { useLibraryWords } from './words';
 
 type Flag = 'available' | 'favourites' | 'custom' | 'hidden';
@@ -68,7 +68,8 @@ function toggled(list: readonly string[] | undefined, value: string, on: boolean
  */
 export function LibraryScreen() {
   const { t } = useLingui();
-  const search = useSearch({ from: '/explore/exercises/' });
+  // TD-63: the route passes the params through; they are validated here, in the lazy chunk.
+  const search = validateLibrarySearch(useSearch({ from: '/explore/exercises/' }));
   const navigate = useNavigate({ from: '/explore/exercises/' });
   // The typed text is local state (the field never lags behind the URL while typing).
   const [text, setText] = useState(search.q ?? '');
@@ -81,7 +82,10 @@ export function LibraryScreen() {
   // From the latest search params, so quick taps on several checkboxes all count.
   const update = (patch: (previous: LibrarySearch) => Patch) =>
     void navigate({
-      search: (previous) => ({ ...previous, ...patch(previous) }) as LibrarySearch,
+      search: (raw) => {
+        const previous = validateLibrarySearch(raw);
+        return { ...previous, ...patch(previous) } as LibrarySearch;
+      },
       replace: true,
     });
   const toggle = (list: List, value: string, on: boolean) =>

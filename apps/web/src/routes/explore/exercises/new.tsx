@@ -1,14 +1,15 @@
 import { createFileRoute } from '@tanstack/react-router';
 
+import { deferredSearch } from '../../../app/route-search';
 import { NewCustomExerciseScreen } from '../../../features/library/CustomExerciseScreen';
-import { validateNewCustomSearch } from '../../../features/library/search';
+import { validateNewCustomSearch, type NewCustomSearch } from '../../../features/library/search';
 
 export const Route = createFileRoute('/explore/exercises/new')({
-  validateSearch: validateNewCustomSearch,
+  validateSearch: deferredSearch<NewCustomSearch>(),
   component: Page,
 });
 
 function Page() {
-  const { from } = Route.useSearch();
+  const { from } = validateNewCustomSearch(Route.useSearch());
   return <NewCustomExerciseScreen key={from ?? ''} from={from ?? null} />;
 }

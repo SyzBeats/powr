@@ -135,15 +135,8 @@ function defaultFrame(): Frame {
 function useChangeWords() {
   const { t } = useLingui();
   const words = useSummaryWords();
-  return (change: Pick<PointChange, 'label' | 'direction' | 'deltaPct' | 'repRange'>): string => {
-    const text = words.trend({
-      label: change.label,
-      direction: change.direction,
-      deltaLog: 0,
-      deltaPct: change.deltaPct,
-      referenceDate: null,
-      typicalError: 0,
-    });
+  return (change: Pick<PointChange, 'label' | 'direction' | 'repRange' | 'reason'>): string => {
+    const text = words.trend(change);
     return change.repRange ? t`${text}, possibly from a change in rep range` : text;
   };
 }

@@ -16,7 +16,7 @@
     tempo: 2-0-X-1
     fixedRom: false
     stretchEmphasis: true
-  ranking: { overloadSuitability: 3 }
+  ranking: { overloadSuitability: 3, standard: true }
   cues:
     - en: Sit with the pads on the inside of your knees, opened as wide as is comfortable.
     - en: Squeeze your knees together until the pads meet.

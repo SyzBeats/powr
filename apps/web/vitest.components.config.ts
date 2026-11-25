@@ -1,7 +1,7 @@
 import { fileURLToPath } from 'node:url';
 
 import { playwright } from '@vitest/browser-playwright';
-import { defineProject, mergeConfig } from 'vitest/config';
+import { defaultBrowserPort, defineProject, mergeConfig } from 'vitest/config';
 
 import viteConfig from './vite.config.ts';
 
@@ -10,14 +10,24 @@ import viteConfig from './vite.config.ts';
 process.env['LINGUI_CONFIG'] ??= fileURLToPath(new URL('lingui.config.ts', import.meta.url));
 
 /**
+ * TD-58: the browser server's first port, `POWR_TEST_BROWSER_PORT` or Vitest's default 23315.
+ * The app's dev server is strict about its port (`server.strictPort` in vite.config.ts), which
+ * this project inherited, so a second checkout running `pnpm test` at the same time failed with
+ * "port already in use". Here the port is not strict: a busy port moves on to the next free one.
+ */
+const browserPort = Number(process.env['POWR_TEST_BROWSER_PORT']) || defaultBrowserPort;
+
+/**
  * Component tests (TD-11, §8.20): Vitest browser mode in real Chromium with the app's own Vite
  * plugins (Lingui, React Compiler, Tailwind), a phone-sized viewport and a real IndexedDB.
  */
 export default mergeConfig(
   viteConfig,
   defineProject({
+    server: { strictPort: false },
     test: {
       name: 'components',
+      api: { port: browserPort, strictPort: false },
       include: ['test/**/*.test.tsx'],
       setupFiles: ['./test/setup.ts'],
       // Browser tests (charts, the body-map pixel scan, real-time timers) share the CPU with the

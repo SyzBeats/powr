@@ -28,14 +28,21 @@ export function useSummaryWords() {
     return t`${values} · ${effort}`;
   };
 
-  /** PRG-02: whether an e1RM change is likely real. */
-  const trend = (change: ChangeLabel): string => {
+  /**
+   * PRG-02: whether an e1RM change is likely real. "No label" says why, as the "Why?" text does
+   * (TD-62, M5z): within the day-to-day variation, or beyond it but not confirmed yet; a point
+   * derived before the reason existed gets the wording that is true either way.
+   */
+  const trend = (change: Pick<ChangeLabel, 'label' | 'direction' | 'reason'>): string => {
     const up = change.direction === 'up';
     switch (change.label) {
       case 'insufficientData':
         return t`Not enough sessions yet to tell a real change`;
       case 'none':
-        return t`Within normal day-to-day variation`;
+        if (change.reason === 'noise') return t`Within normal day-to-day variation`;
+        if (change.reason === 'unconfirmed')
+          return t`More than normal day-to-day variation, not confirmed yet`;
+        return t`No confirmed change yet`;
       case 'likely':
         return up ? t`Likely a real gain` : t`Likely a real drop`;
       case 'veryLikely':

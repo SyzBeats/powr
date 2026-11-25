@@ -208,6 +208,16 @@ function summary(proposal: {
   return `${exercises} ex, ${sets} sets${violations.length > 0 ? `; ${violations.join(' ')}` : ''}`;
 }
 
+/**
+ * The exercises a plan picked, day by day (M5z): the content and the ranking's tie-break (MAP-03,
+ * `ranking.standard`) decide them, and the summary lines above show only their counts.
+ */
+function exercisesOf(proposal: PlanProposal): string {
+  return proposal.days
+    .map((day) => day.slots.map((slot) => slot.exerciseId.replace(/^ex\./, '')).join(', '))
+    .join(' / ');
+}
+
 /** The next block's line: the week summary plus the targets the time budget lowered (TD-36). */
 function nextSummary(proposal: NextMesocycleProposal): string {
   const { mesocycle } = proposal;
@@ -231,6 +241,7 @@ describe('template matrix (PLN-01, EQP-04)', () => {
 
   const lines: string[] = [];
   const nextLines: string[] = [];
+  const picks: string[] = [];
   let slowest = 0;
 
   describe.each(templates.map((template) => [template.id, template] as const))(
@@ -286,6 +297,9 @@ describe('template matrix (PLN-01, EQP-04)', () => {
             if (proposed) {
               nextLines.push(`${template.id} | ${presetId} | ${level}: ${nextSummary(proposed)}`);
             }
+            if (result.value && level === 'intermediate') {
+              picks.push(`${template.id} | ${presetId}: ${exercisesOf(result.value)}`);
+            }
             // Determinism (PLN-01): the same request gives the same plan.
             expect(generate(template, presetId, level, budget)).toEqual(result);
           }
@@ -300,6 +314,10 @@ describe('template matrix (PLN-01, EQP-04)', () => {
 
   it('matches the reviewed next-block summary (PLN-13 at 60 minutes, no logged sets)', () => {
     expect(nextLines.toSorted().join('\n')).toMatchSnapshot();
+  });
+
+  it('matches the reviewed exercise picks (intermediate, 60 minutes; M5z: a changed pick shows here)', () => {
+    expect(picks.toSorted().join('\n')).toMatchSnapshot();
   });
 
   it('generates any plan of the matrix within 1 s (NFR-PERF-09)', () => {

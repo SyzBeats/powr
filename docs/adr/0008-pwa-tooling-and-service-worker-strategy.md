@@ -54,3 +54,14 @@ Facts checked 2026-11-23:
 - **Lazy chunks are precached.** The precache glob covers every emitted chunk, including the lazily loaded backup chunk; an E2E test exports and restores with the server stopped.
 
 Source: `IMPLEMENTATION_NOTES.md` §3 (repository root), which records each deviation with its reason.
+
+## Amendment (v0.9, 2026-11-25)
+
+The decision stands. As built in M5 (technical concept §8.4):
+
+- **Install promotion (PWA-02):** `beforeinstallprompt` is captured at boot; the card shows from the second page load on, never during a workout, and not for 14 days after "Not now"; the state is in `localStorage` (accepted as built by the product owner on 2026-11-25).
+- **Shortcuts (PWA-05):** "Start today's session" and "Log bodyweight"; a shortcut or deep link opened as a window's first page gets Home beneath it.
+- **Update offer (§6.3 rule 2):** "Update before you start?" on the start screen (TD-14); the stale-window banner when another window updated the database.
+- **Lazy registration (M5z):** the registration code is imported after the first render, when the boot calls `start()`, so it is a precached lazy chunk instead of entry JS. Vite's modulepreload polyfill is off (`build.modulePreload.polyfill: false`), because every supported Chromium has `<link rel="modulepreload">`.
+
+Source: `IMPLEMENTATION_NOTES.md` (repository root), sections "M5d data, calendar and PWA" and "M5z bundle trim, fixes and docs".

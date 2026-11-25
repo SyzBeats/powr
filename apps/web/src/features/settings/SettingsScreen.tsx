@@ -203,6 +203,10 @@ function AboutSection() {
           <Trans>Exercise library {contentVersion}</Trans>
         </li>
       </ul>
+      {/* PWA-13: Settings → About → Device support (M5z; also linked from Data and backups). */}
+      <Link to="/settings/device-support" className={settingsLinkClass}>
+        <Trans>Device support: what works on this phone</Trans>
+      </Link>
       <p>
         <Trans>
           Published by {person}, {business}, {country}.

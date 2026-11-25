@@ -22,7 +22,7 @@
     tempo: 2-0-X-0
     fixedRom: false
     stretchEmphasis: false
-  ranking: { overloadSuitability: 3, subRegions: [mu.elbow-flexors.biceps] }
+  ranking: { overloadSuitability: 3, subRegions: [mu.elbow-flexors.biceps], standard: true }
   cues:
     - en: Hold the bar with an underhand grip at about shoulder-width, elbows at your sides.
     - en: Curl the bar up without swinging your torso or moving your elbows forward much.
@@ -45,7 +45,7 @@
     tempo: 2-0-X-0
     fixedRom: false
     stretchEmphasis: false
-  ranking: { overloadSuitability: 2, subRegions: [mu.elbow-flexors.biceps] }
+  ranking: { overloadSuitability: 2, subRegions: [mu.elbow-flexors.biceps], standard: true }
   cues:
     - en: Stand with the dumbbells at your sides, palms facing forward.
     - en: Curl both dumbbells or one at a time, keeping your upper arms still.
@@ -69,7 +69,7 @@
     tempo: 2-0-X-0
     fixedRom: false
     stretchEmphasis: false
-  ranking: { overloadSuitability: 2, subRegions: [mu.elbow-flexors.brachialis] }
+  ranking: { overloadSuitability: 2, subRegions: [mu.elbow-flexors.brachialis], standard: true }
   cues:
     - en: Hold the dumbbells with your palms facing each other.
     - en: Curl up with the thumbs leading and the elbows staying at your sides.
@@ -92,7 +92,7 @@
     tempo: 2-0-X-0
     fixedRom: false
     stretchEmphasis: true
-  ranking: { overloadSuitability: 2, subRegions: [mu.elbow-flexors.biceps] }
+  ranking: { overloadSuitability: 2, subRegions: [mu.elbow-flexors.biceps], standard: true }
   cues:
     - en: Sit back on a bench set to about 45–60 degrees and let your arms hang behind your torso.
     - en: Curl the dumbbells up without bringing your elbows forward.
@@ -147,7 +147,7 @@
     tempo: 2-0-X-0
     fixedRom: false
     stretchEmphasis: true
-  ranking: { overloadSuitability: 3 }
+  ranking: { overloadSuitability: 3, standard: true }
   cues:
     - en: Sit at the preacher bench with your armpits snug against the top of the pad.
     - en: Lower the bar until your elbows are almost straight, slowing down near the bottom.
@@ -197,7 +197,7 @@
     tempo: 2-0-X-0
     fixedRom: false
     stretchEmphasis: false
-  ranking: { overloadSuitability: 3, subRegions: [mu.elbow-flexors.biceps] }
+  ranking: { overloadSuitability: 3, subRegions: [mu.elbow-flexors.biceps], standard: true }
   cues:
     - en: Face a low pulley holding a straight or EZ attachment with an underhand grip.
     - en: Curl the handle up while your elbows stay at your sides.

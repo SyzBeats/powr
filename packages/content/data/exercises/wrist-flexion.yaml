@@ -16,7 +16,7 @@
     tempo: 2-0-X-0
     fixedRom: false
     stretchEmphasis: true
-  ranking: { overloadSuitability: 2, subRegions: [mu.forearms.flexors] }
+  ranking: { overloadSuitability: 2, subRegions: [mu.forearms.flexors], standard: true }
   cues:
     - en: Sit with your forearms on your thighs, palms up and wrists just past your knees.
     - en: Let the dumbbells roll down to your fingertips for a full stretch.
@@ -44,7 +44,7 @@
     tempo: 2-0-X-0
     fixedRom: false
     stretchEmphasis: true
-  ranking: { overloadSuitability: 3, subRegions: [mu.forearms.flexors] }
+  ranking: { overloadSuitability: 3, subRegions: [mu.forearms.flexors], standard: true }
   cues:
     - en: Kneel beside a bench with your forearms on it, wrists just past the edge and palms up.
     - en: Let the bar roll down toward your fingertips, then curl it back up into your palms.

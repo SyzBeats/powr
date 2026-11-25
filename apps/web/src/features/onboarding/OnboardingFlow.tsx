@@ -1,7 +1,7 @@
 import { Trans, useLingui } from '@lingui/react/macro';
 import { Link, Navigate, useNavigate } from '@tanstack/react-router';
 import { ArrowLeft } from 'lucide-react';
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 
 import type { OnboardingAnswers, PlanPreview, PlanPreviewError } from '@powr/application/planning';
 import type { EquipmentProfile, IsoWeekday, LocalDate, PresetId, TemplateId } from '@powr/domain';
@@ -12,6 +12,7 @@ import { Button } from '#ui/button';
 import { CheckRow } from '#ui/choice';
 import { Card, Screen } from '#ui/screen';
 
+import { useFocusRequest } from '../../hooks/use-focus-request';
 import {
   useEquipmentProfiles,
   usePlanning,
@@ -82,7 +83,7 @@ export function OnboardingFlow({
   const [edits, setEdits] = useState<Draft | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState(false);
-  const summary = useRef<HTMLDivElement>(null);
+  const [summary, focusSummary] = useFocusRequest<HTMLDivElement>();
   const validate = useStepValidation();
   const fieldErrors = useFieldErrors();
 
@@ -166,7 +167,7 @@ export function OnboardingFlow({
   };
   const showErrors = (found: Record<string, string>) => {
     setErrors(found);
-    requestAnimationFrame(() => summary.current?.focus());
+    focusSummary();
   };
   /** Continue: validates the step (with `patch`, the answer just given) and saves the draft. */
   const advance = async (patch?: Draft) => {

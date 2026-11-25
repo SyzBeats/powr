@@ -39,3 +39,13 @@ The decision stands. As built (technical concept §8.9.1):
 - **The body map's muscle panel (MAP-02) is a route of its own** rather than a sheet over the map, so it has its own heading, Back and a deep link, and its follow-up actions (placing an exercise in the plan, "Why?") do not stack dialogs.
 
 Source: `IMPLEMENTATION_NOTES.md` (repository root), section "M4b insight screens".
+
+## Amendment (v0.9, 2026-11-25)
+
+The decision stands. As built in M5 (technical concept §8.9.1):
+
+- **Search validation moved into the lazy route chunks (TD-63).** TanStack Router reads `validateSearch` from the route definition before it loads the route's chunk, so even small plain validators were entry JS for every launch. The definitions now take `deferredSearch<T>()` (`app/route-search.ts`): typed for links and `navigate` through `SearchSchemaInput`, a pass-through at runtime, and `Route.useSearch()` returns `RawSearch<T>` with every value `unknown`. The route's component, which the router plugin splits, validates with the route's own validator, so the types still force validation before use.
+- **M5 routes:** `/data`, `/plan/calendar`, `/settings/device-support`, `/settings/rest`, `/settings/exercises`, `/settings/profile/$answer`, and one `/legal/$page` for the five legal pages (one definition instead of three; the URLs stayed).
+- **Back and sheets (PWA-12):** an open sheet owns one same-URL history entry, so Back closes it before leaving the screen. TanStack's browser history batches the writes of one task into a single native write, so code that pushes after a replace calls `history.flush()` between them (the launch seeding).
+
+Source: `IMPLEMENTATION_NOTES.md` (repository root), sections "M5d data, calendar and PWA", "M5s settings, legal and explainability" and "M5z bundle trim, fixes and docs".

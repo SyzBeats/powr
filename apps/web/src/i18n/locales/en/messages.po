@@ -3398,6 +3398,10 @@ msgstr "Details"
 msgid "Device support"
 msgstr "Device support"
 
+#: src/features/settings/SettingsScreen.tsx
+msgid "Device support: what works on this phone"
+msgstr "Device support: what works on this phone"
+
 #: src/features/shell/DeviceSupportScreen.tsx
 msgid "Device test S-1 has no result for this browser yet."
 msgstr "Device test S-1 has no result for this browser yet."
@@ -5599,6 +5603,10 @@ msgstr "More than 2 months ago"
 msgid "More than 5 years"
 msgstr "More than 5 years"
 
+#: src/features/session/past/parts.tsx
+msgid "More than normal day-to-day variation, not confirmed yet"
+msgstr "More than normal day-to-day variation, not confirmed yet"
+
 #: src/features/session/ExerciseList.tsx
 #: src/features/session/LoggingView.tsx
 msgid "More weight"
@@ -5906,6 +5914,10 @@ msgstr "No backup yet."
 #: src/features/progress/ScoresScreen.tsx
 msgid "No complete total yet."
 msgstr "No complete total yet."
+
+#: src/features/session/past/parts.tsx
+msgid "No confirmed change yet"
+msgstr "No confirmed change yet"
 
 #: src/features/library/ExerciseDetailScreen.tsx
 msgid "No cues yet. You can add your own when you edit a custom exercise."

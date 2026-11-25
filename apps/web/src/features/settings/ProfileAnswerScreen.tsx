@@ -1,6 +1,6 @@
 import { Trans, useLingui } from '@lingui/react/macro';
 import { Link, useNavigate } from '@tanstack/react-router';
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 
 import type {
   PlanDifferences,
@@ -14,6 +14,7 @@ import { Callout } from '#ui/badge';
 import { Button } from '#ui/button';
 import { Card, Screen } from '#ui/screen';
 
+import { useFocusRequest } from '../../hooks/use-focus-request';
 import { usePlanning, useWeekStart } from '../../hooks/use-planning';
 import { formatLocalDate } from '../../i18n/format';
 import { assertNever } from '../exhaustive';
@@ -67,7 +68,7 @@ function AnswerEditor({ answer }: { answer: ProfileAnswer }) {
     readonly replan: Replan;
   } | null>(null);
   const [busy, setBusy] = useState(false);
-  const summary = useRef<HTMLDivElement>(null);
+  const [summary, focusSummary] = useFocusRequest<HTMLDivElement>();
 
   useEffect(() => {
     let cancelled = false;
@@ -115,7 +116,7 @@ function AnswerEditor({ answer }: { answer: ProfileAnswer }) {
   };
   const showErrors = (found: Record<string, string>) => {
     setErrors(found);
-    requestAnimationFrame(() => summary.current?.focus());
+    focusSummary();
   };
   const back = () => void navigate({ to: '/settings', hash: 'profile' });
   const finish = async (change: ProfileChange, replan: Replan | null) => {

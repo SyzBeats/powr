@@ -22,6 +22,12 @@ concurrency:
 
 env:
   CI: 'true'
+  # The app's one public origin (calendar UIDs, any public URL; product owner 2026-11-25): the
+  # production origin, shared by beta and production because the image is built once and promoted.
+  # A repository variable the product owner sets once the domain is chosen; while it is unset the
+  # build keeps the reserved default https://powr.invalid (apps/web/src/app/public-origin.ts). The
+  # E2E job reads it too, to expect the same UID host as the build it tests.
+  VITE_PUBLIC_ORIGIN: ${{ vars.PUBLIC_ORIGIN }}
 
 jobs:
   quality:

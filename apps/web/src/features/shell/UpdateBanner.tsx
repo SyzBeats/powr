@@ -1,11 +1,14 @@
 import { Trans } from '@lingui/react/macro';
 
-import { Button } from '#ui/button';
+import { buttonClass } from '#ui/button-class';
 
 import { useAppUpdate, useStaleWindow } from '../../hooks/use-app';
 import { useActiveSession } from '../../hooks/use-session';
 
-/** Non-blocking update notice (PWA-04); never applies an update during a workout. */
+/**
+ * Non-blocking update notice (PWA-04); never applies an update during a workout. Part of the shell,
+ * so on the startup path: native buttons with the design system's classes, not Base UI's (TD-63).
+ */
 export function UpdateBanner() {
   const { updateAvailable, applyUpdate } = useAppUpdate();
   const stale = useStaleWindow();
@@ -24,9 +27,14 @@ export function UpdateBanner() {
             <Trans>A new version of POWR is ready.</Trans>
           )}
         </output>
-        <Button variant="primary" disabled={sessionActive} onClick={applyUpdate}>
+        <button
+          type="button"
+          className={buttonClass({ variant: 'primary' })}
+          disabled={sessionActive}
+          onClick={applyUpdate}
+        >
           <Trans>Update</Trans>
-        </Button>
+        </button>
       </div>
     </div>
   );
@@ -43,9 +51,13 @@ function StaleWindowBanner() {
         <p role="alert" data-testid="stale-window" className="text-sm">
           <Trans>POWR was updated in another window. Reload to continue.</Trans>
         </p>
-        <Button variant="primary" onClick={() => location.reload()}>
+        <button
+          type="button"
+          className={buttonClass({ variant: 'primary' })}
+          onClick={() => location.reload()}
+        >
           <Trans>Reload</Trans>
-        </Button>
+        </button>
       </div>
     </div>
   );

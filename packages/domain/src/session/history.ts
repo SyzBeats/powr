@@ -30,6 +30,7 @@ import {
   trendObservation,
   trendStep,
   type ChangeLabel,
+  type NoLabelReason,
   type TrendPoint,
 } from '../trend';
 import { toKg, type Mass } from '../units';
@@ -121,6 +122,8 @@ export interface PointChange {
   readonly deltaPct: number;
   readonly referenceDate: LocalDate | null;
   readonly repRange: boolean;
+  /** Why there is no label (TD-62); points derived before M5z lack it. */
+  readonly reason?: NoLabelReason;
 }
 
 /** One point per exercise per session (table `dSessionE1rm`, the chart source of ANL-02). */
@@ -397,6 +400,7 @@ function pointChange(
     deltaPct: label.deltaPct,
     referenceDate: label.referenceDate,
     repRange: real && repRangeShift(recent, label.referenceDate, input.rules).value.shifted,
+    ...(label.reason ? { reason: label.reason } : {}),
   };
 }
 

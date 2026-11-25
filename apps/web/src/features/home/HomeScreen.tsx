@@ -411,7 +411,7 @@ function RecentProgressCard({ view }: { view: HomeView }) {
                   <span>
                     <span className="font-semibold">{name}</span>
                     {': '}
-                    {summaryWords.trend({ ...change.change, deltaLog: 0, typicalError: 0 })}
+                    {summaryWords.trend(change.change)}
                     {' · '}
                     <span className="tabular">{formatSignedPercent(change.change.deltaPct)}</span>
                     {change.change.repRange ? (

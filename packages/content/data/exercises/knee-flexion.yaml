@@ -26,6 +26,7 @@
   ranking:
     overloadSuitability: 3
     subRegions: [mu.hamstrings.biarticular, mu.hamstrings.short-head]
+    standard: true
   cues:
     - en: Line up your knees with the machine's pivot and lock the thigh pad down firmly.
     - en: Sit tall or lean slightly forward so your hamstrings start in a stretch.
@@ -48,7 +49,7 @@
     tempo: 2-0-X-1
     fixedRom: false
     stretchEmphasis: false
-  ranking: { overloadSuitability: 3, subRegions: [mu.hamstrings.short-head] }
+  ranking: { overloadSuitability: 3, subRegions: [mu.hamstrings.short-head], standard: true }
   cues:
     - en: Lie face down with your knees just off the pad and the roller above your heels.
     - en: Keep your hips pressed into the bench as you curl.
@@ -71,7 +72,7 @@
     tempo: 4-0-X-0
     fixedRom: false
     stretchEmphasis: false
-  ranking: { overloadSuitability: 1, subRegions: [mu.hamstrings.biarticular] }
+  ranking: { overloadSuitability: 1, subRegions: [mu.hamstrings.biarticular], standard: true }
   cues:
     - en: Kneel on a pad with your heels anchored under something solid.
     - en: Keep hips and torso in one line and lower yourself forward as slowly as you can.

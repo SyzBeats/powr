@@ -8,10 +8,10 @@ export interface SessionSearch {
 }
 
 /**
- * TanStack Router's `validateSearch` for `/session`, without Zod: the route is on the startup
- * path, and Zod's core alone is about 25 kB gzip of entry JS (TD-17, §8.19). Like the Zod schema
- * it replaces, it drops unknown parameters and throws on an invalid `source` or `start`, which the
- * router turns into the route error boundary.
+ * The search validator of `/session`, without Zod (Zod's core alone is about 25 kB gzip, TD-17,
+ * §8.19), run by the route's lazy component (TD-63, `app/route-search.ts`). Like the Zod schema
+ * it replaced, it drops unknown parameters and throws on an invalid `source` or `start`, which
+ * the route's error boundary shows.
  */
 export function validateSessionSearch(search: Record<string, unknown>): SessionSearch {
   const { source, start } = search;

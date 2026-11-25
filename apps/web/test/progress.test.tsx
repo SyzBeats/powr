@@ -130,7 +130,7 @@ describe('Progress tab (M4b)', () => {
     // The label in words, never colour alone.
     const label = within(bench).getByTestId('trained-change').textContent;
     expect(label).toMatch(
-      /^(Not enough sessions yet to tell a real change|Within normal day-to-day variation|(Very likely|Likely) a real (gain|drop))$/,
+      /^(Not enough sessions yet to tell a real change|Within normal day-to-day variation|More than normal day-to-day variation, not confirmed yet|(Very likely|Likely) a real (gain|drop))$/,
     );
     // Curls logged without an effort rating: an all-sets estimate only, still calibrating, and no
     // strength trend to call a change from.

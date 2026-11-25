@@ -1,7 +1,7 @@
 /*
- * Search parameters of the body-map routes (§8.9.1, M4b): plain functions, because route
- * definitions are on the startup path and Zod is not (TD-17). Defaults are left out of the URL;
- * unknown or invalid values are dropped.
+ * Search parameters of the body-map routes (§8.9.1, M4b): plain functions without Zod (TD-17),
+ * run by the route's lazy component (TD-63, `app/route-search.ts`). Defaults are left out of the
+ * URL; unknown or invalid values are dropped.
  */
 
 export type VolumeMode = 'week' | 'lastWeek' | 'avg4';

@@ -136,6 +136,17 @@ export interface ExerciseRanking {
   readonly overloadSuitability: OverloadSuitability;
   /** Sub-regions the exercise covers especially well (MAP-03 (e)). */
   readonly subRegions?: readonly MuscleId[];
+  /**
+   * The standard variant of its movement (M5z, product owner 2026-11-25): the common form that
+   * programs prescribe by default, as opposed to a specialised variant (a technique, setup, angle
+   * or implement chosen for a purpose), e.g. the dumbbell shoulder press rather than the Arnold
+   * press, the incline dumbbell curl rather than the behind-the-body cable curl. Only a tie-break,
+   * never part of a score: among exercises with equal MAP-03 scores for a slot or a muscle, the
+   * standard ones come first, then the ID decides (`compareStandard`). Several exercises of a
+   * movement may be standard (pull-up and chin-up). Built-in content only; custom exercises never
+   * set it.
+   */
+  readonly standard?: true;
 }
 
 /** An exercise of the library or a custom one (EXL-01…05, PRD §7.1, technical concept §5.6). */

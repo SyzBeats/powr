@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "imports": {
+    "#ui/button-class": "./src/ui/button-class.ts",
     "#ui/cn": "./src/ui/cn.ts",
     "#ui/*": "./src/ui/*.tsx"
   },

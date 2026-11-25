@@ -68,3 +68,14 @@ The decision stands, with one deviation that the product owner accepted on 2026-
 - **Transaction scopes are `async` functions (M3b fix):** Dexie keeps its transaction zone across native `await`s only for a scope function it recognises as async. The unit of work passed a plain arrow, so after a few nested awaits (the FINISH of a planned session: persist, then mark the planned session done) a repository call ran outside the transaction and Dexie reported `PrematureCommitError`. `createUnitOfWork` now passes `async () => fn(repos)`; a component test on real IndexedDB guards it (the application tests run on in-memory fakes).
 
 Source: `IMPLEMENTATION_NOTES.md` (repository root), sections "M3a session core" and "M3b session screens".
+
+## Amendment (v0.9, 2026-11-25)
+
+The decision stands. As built in M5 (technical concept §6.7, §6.8, §8.2.1):
+
+- **Delete all data (DAT-13)** deletes `powr`, `powr-safety`, `powr-diag` and `powr-runtime` through **their own instances** with auto-open off: Dexie closes a database on `versionchange` with auto-open still on, so a later write would recreate a deleted database. Both web storages are cleared; Cache Storage (app files only) stays, so the app still opens offline into the first run.
+- **The data-update guard (DAT-14)** checks the stored version with `indexedDB.databases()` before opening anything, reads every store at the stored version without Dexie (`infrastructure/db/raw-read.ts`, never creating or upgrading) and writes the safety snapshot as a regular backup of the **stored** `dataVersion` (`encodeRawSnapshot`), so the normal restore migrates it; without a writable snapshot the update does not run. A failing upgrade is rolled back by IndexedDB and the recovery screen offers "Try again", "Save a copy of your data" and "Export diagnostics" (no restore: it needs the database at the current version).
+- **Safety copies** are listed, saved and deleted (`SafetySnapshots.list`, `read`, `delete`), but **not auto-pruned** after 30 days or a newer backup; only the rotation of the latest two deletes one (open product decision, TD-67).
+- `dataVersion` 2 was amended once more (settings `backup`, `training`, `display`; `meta.backupReminder`, `meta.calendarExport`); the install-prompt state is in `localStorage`, not in `meta`, because it belongs to the browser rather than to the training data.
+
+Source: `IMPLEMENTATION_NOTES.md` (repository root), sections "M5d data, calendar and PWA" and "M5z bundle trim, fixes and docs".

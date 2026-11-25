@@ -4,6 +4,8 @@
 # Secrets per GitHub environment (beta, production), see deploy/runbook.md:
 #   COOLIFY_API_URL, COOLIFY_TOKEN (Deploy permission only), COOLIFY_APP_UUID, COOLIFY_WEBHOOK_URL
 # Variables per environment: APP_URL (e.g. https://beta.<business-domain>)
+# Repository variable: PUBLIC_ORIGIN, the production origin, read by the CI build (ci.yml) and so
+# baked into the one image both environments run (calendar UIDs; unset: https://powr.invalid)
 name: Deploy
 
 on:

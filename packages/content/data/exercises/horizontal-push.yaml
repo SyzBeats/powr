@@ -30,7 +30,7 @@
     tempo: 2-0-X-0
     fixedRom: true
     stretchEmphasis: false
-  ranking: { overloadSuitability: 3, subRegions: [mu.chest.sternocostal] }
+  ranking: { overloadSuitability: 3, subRegions: [mu.chest.sternocostal], standard: true }
   cues:
     - en: Pull your shoulder blades back and down and keep your feet planted.
     - en: Lower the bar under control to your lower chest, elbows slightly tucked.
@@ -117,7 +117,7 @@
     tempo: 2-0-X-0
     fixedRom: false
     stretchEmphasis: true
-  ranking: { overloadSuitability: 2, subRegions: [mu.chest.sternocostal] }
+  ranking: { overloadSuitability: 2, subRegions: [mu.chest.sternocostal], standard: true }
   cues:
     - en: Kick the dumbbells up from your knees as you lie back, then set your shoulder blades.
     - en: Lower the dumbbells beside your chest until you feel a stretch across the pecs.
@@ -141,7 +141,7 @@
     tempo: 2-0-X-0
     fixedRom: false
     stretchEmphasis: true
-  ranking: { overloadSuitability: 2, subRegions: [mu.chest.clavicular] }
+  ranking: { overloadSuitability: 2, subRegions: [mu.chest.clavicular], standard: true }
   cues:
     - en: Set the bench to about 30–45 degrees.
     - en: Lower the dumbbells to the sides of your upper chest with elbows slightly in front of the torso.
@@ -165,7 +165,7 @@
     tempo: 2-0-X-0
     fixedRom: false
     stretchEmphasis: false
-  ranking: { overloadSuitability: 3 }
+  ranking: { overloadSuitability: 3, standard: true }
   cues:
     - en: Set the seat so the handles line up with the middle of your chest.
     - en: Let the handles come back until you feel a stretch, shoulders staying down.
@@ -189,7 +189,7 @@
     tempo: 2-0-X-0
     fixedRom: false
     stretchEmphasis: false
-  ranking: { overloadSuitability: 1 }
+  ranking: { overloadSuitability: 1, standard: true }
   cues:
     - en: Place your hands slightly wider than your shoulders and hold a straight line from head to heels.
     - en: Lower your chest to a fist's height above the floor with elbows angled back.
@@ -313,7 +313,7 @@
     tempo: 2-0-X-0
     fixedRom: false
     stretchEmphasis: false
-  ranking: { overloadSuitability: 3, subRegions: [mu.chest.clavicular] }
+  ranking: { overloadSuitability: 3, subRegions: [mu.chest.clavicular], standard: true }
   cues:
     - en: Set the bench to about 30–45 degrees inside the rack with the hooks at arm's length.
     - en: Lower the bar to your upper chest, just below the collarbones, with your elbows slightly tucked.

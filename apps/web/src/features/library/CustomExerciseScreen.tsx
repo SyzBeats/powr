@@ -1,7 +1,7 @@
 import { Trans, useLingui } from '@lingui/react/macro';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { Plus, Trash2 } from 'lucide-react';
-import { useId, useRef, useState, type ReactNode } from 'react';
+import { useId, useState, type ReactNode } from 'react';
 
 import {
   CREDIT_VALUES,
@@ -29,6 +29,7 @@ import { ChoiceCards, CheckRow } from '#ui/choice';
 import { DecimalField, Field } from '#ui/field';
 import { Card, Screen } from '#ui/screen';
 
+import { useFocusRequest } from '../../hooks/use-focus-request';
 import { useLibrary, useLibraryQuery } from '../../hooks/use-library';
 import { useCatalog } from '../../hooks/use-planning';
 import { formatNumber } from '../../i18n/format';
@@ -282,7 +283,7 @@ function CustomExerciseForm({
   const words = useLibraryWords();
   const unit = useLoadUnit();
   const catalog = useCatalog();
-  const summaryRef = useRef<HTMLDivElement>(null);
+  const [summaryRef, focusSummary] = useFocusRequest<HTMLDivElement>();
   const [form, setForm] = useState<FormState>(initial);
   const [issues, setIssues] = useState<readonly CustomExerciseIssue[]>([]);
   const [busy, setBusy] = useState(false);
@@ -308,7 +309,7 @@ function CustomExerciseForm({
       setIssues(
         result.error.kind === 'invalid' ? result.error.issues : [{ field: 'name', code: 'empty' }],
       );
-      requestAnimationFrame(() => summaryRef.current?.focus());
+      focusSummary();
       return;
     }
     void navigate({

@@ -160,7 +160,16 @@ export interface ChangeLabel {
   readonly referenceDate: LocalDate | null;
   /** The typical error (CV) of the level. */
   readonly typicalError: number;
+  /** Why there is no label (only with `label: 'none'`; TD-62, M5z): see {@link NoLabelReason}. */
+  readonly reason?: NoLabelReason;
 }
+
+/**
+ * Why a change has no label (TD-62): `noise`, within one typical error (the day-to-day
+ * variation); `unconfirmed`, beyond one typical error but not yet beyond `likelyZ` SD of the
+ * change's own uncertainty, or not for `sustainSessions` sessions in a row.
+ */
+export type NoLabelReason = 'noise' | 'unconfirmed';
 
 /**
  * Labels the change of the latest trend point (or of the point at `at`, M4a: the label a chart
@@ -217,6 +226,11 @@ export function labelChange(
       beyondNoise(earlier.delta, earlier.sd);
   }
   const label = veryLikely ? 'veryLikely' : sustained ? 'likely' : 'none';
+  // TD-62 (M5): "no label" has two causes the "Why?" text tells apart. `noise`: the change is
+  // within one typical error. `unconfirmed`: it is beyond one typical error, but not yet beyond
+  // the change's own uncertainty (likelyZ) or not for `sustainSessions` sessions in a row. The
+  // value carries it too (M5z), so the short labels in lists and summaries say the same.
+  const reason: NoLabelReason = size > thresholds.likelyTe * te ? 'unconfirmed' : 'noise';
   const value: ChangeLabel = {
     label,
     direction: label === 'none' ? null : sign > 0 ? 'up' : 'down',
@@ -224,11 +238,8 @@ export function labelChange(
     deltaPct: (Math.exp(current.delta) - 1) * 100,
     referenceDate: current.reference.localDate,
     typicalError: te,
+    ...(label === 'none' ? { reason } : {}),
   };
-  // TD-62 (M5): "no label" has two causes the "Why?" text tells apart. `noise`: the change is
-  // within one typical error. `unconfirmed`: it is beyond one typical error, but not yet beyond
-  // the change's own uncertainty (likelyZ) or not for `sustainSessions` sessions in a row.
-  const reason = size > thresholds.likelyTe * te ? 'unconfirmed' : 'noise';
   return explained(value, `trend.change.${label}`, {
     args: {
       deltaPct: value.deltaPct,

@@ -31,7 +31,7 @@
     tempo: 2-0-X-0
     fixedRom: true
     stretchEmphasis: false
-  ranking: { overloadSuitability: 3 }
+  ranking: { overloadSuitability: 3, standard: true }
   cues:
     - en: Start with the bar over mid-foot and your shins close to it.
     - en: Brace, pull the slack out of the bar, then push the floor away.
@@ -128,7 +128,7 @@
     tempo: 2-0-X-0
     fixedRom: false
     stretchEmphasis: true
-  ranking: { overloadSuitability: 3, subRegions: [mu.hamstrings.biarticular] }
+  ranking: { overloadSuitability: 3, subRegions: [mu.hamstrings.biarticular], standard: true }
   cues:
     - en: Start standing with the bar in your hands and knees softly bent.
     - en: Push your hips back and slide the bar down your thighs with a neutral back.
@@ -155,7 +155,7 @@
     tempo: 2-0-X-0
     fixedRom: false
     stretchEmphasis: true
-  ranking: { overloadSuitability: 2, subRegions: [mu.hamstrings.biarticular] }
+  ranking: { overloadSuitability: 2, subRegions: [mu.hamstrings.biarticular], standard: true }
   cues:
     - en: Hold the dumbbells in front of your thighs with knees softly bent.
     - en: Hinge at the hips and let the dumbbells travel close to your legs.
@@ -313,7 +313,7 @@
     tempo: 2-0-X-0
     fixedRom: false
     stretchEmphasis: true
-  ranking: { overloadSuitability: 2, subRegions: [mu.hamstrings.biarticular] }
+  ranking: { overloadSuitability: 2, subRegions: [mu.hamstrings.biarticular], standard: true }
   cues:
     - en: Rest the bar on your upper back as for a squat and unlock your knees slightly.
     - en: Push your hips back and let your torso tip forward with your back flat.
@@ -340,7 +340,7 @@
     tempo: 1-0-X-0
     fixedRom: false
     stretchEmphasis: false
-  ranking: { overloadSuitability: 1, subRegions: [mu.glutes.max] }
+  ranking: { overloadSuitability: 1, subRegions: [mu.glutes.max], standard: true }
   cues:
     - en: Stand with the bell a step in front of you, hinge and grip it with both hands.
     - en: Hike it back between your legs, then snap your hips forward so it floats to chest height.
@@ -366,7 +366,7 @@
     tempo: 2-0-X-1
     fixedRom: false
     stretchEmphasis: true
-  ranking: { overloadSuitability: 2, subRegions: [mu.glutes.max] }
+  ranking: { overloadSuitability: 2, subRegions: [mu.glutes.max], standard: true }
   cues:
     - en: Stand facing away from a low pulley with the rope passing between your legs.
     - en: Hinge at the hips and let the rope draw your hands back through your legs.

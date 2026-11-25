@@ -79,6 +79,8 @@ export const exerciseDefSchema = z.strictObject({
   ranking: z.strictObject({
     overloadSuitability: z.literal(OVERLOAD_SUITABILITY),
     subRegions: z.array(muscleId).min(1).exactOptional(),
+    // M5z: the standard variant of its movement, the tie-break among equal scores (`true` only).
+    standard: z.literal(true).exactOptional(),
   }),
   cues: z
     .array(cue)

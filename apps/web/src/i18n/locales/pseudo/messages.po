@@ -3398,6 +3398,10 @@ msgstr ""
 msgid "Device support"
 msgstr ""
 
+#: src/features/settings/SettingsScreen.tsx
+msgid "Device support: what works on this phone"
+msgstr ""
+
 #: src/features/shell/DeviceSupportScreen.tsx
 msgid "Device test S-1 has no result for this browser yet."
 msgstr ""
@@ -5599,6 +5603,10 @@ msgstr ""
 msgid "More than 5 years"
 msgstr ""
 
+#: src/features/session/past/parts.tsx
+msgid "More than normal day-to-day variation, not confirmed yet"
+msgstr ""
+
 #: src/features/session/ExerciseList.tsx
 #: src/features/session/LoggingView.tsx
 msgid "More weight"
@@ -5905,6 +5913,10 @@ msgstr ""
 
 #: src/features/progress/ScoresScreen.tsx
 msgid "No complete total yet."
+msgstr ""
+
+#: src/features/session/past/parts.tsx
+msgid "No confirmed change yet"
 msgstr ""
 
 #: src/features/library/ExerciseDetailScreen.tsx

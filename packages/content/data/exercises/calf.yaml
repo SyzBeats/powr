@@ -24,7 +24,7 @@
     tempo: 2-1-X-0
     fixedRom: false
     stretchEmphasis: true
-  ranking: { overloadSuitability: 3, subRegions: [mu.calves.gastrocnemius] }
+  ranking: { overloadSuitability: 3, subRegions: [mu.calves.gastrocnemius], standard: true }
   cues:
     - en: Stand on the edge of the step with your knees straight but not locked.
     - en: Lower your heels as far as they go and hold the stretch for a second.
@@ -70,7 +70,7 @@
     tempo: 2-1-X-0
     fixedRom: false
     stretchEmphasis: true
-  ranking: { overloadSuitability: 3, subRegions: [mu.calves.soleus] }
+  ranking: { overloadSuitability: 3, subRegions: [mu.calves.soleus], standard: true }
   cues:
     - en: Sit with the pad snug on your lower thighs and the balls of your feet on the platform.
     - en: Drop your heels into a deep stretch and pause before each rep.
@@ -145,7 +145,7 @@
     tempo: 2-1-X-0
     fixedRom: false
     stretchEmphasis: true
-  ranking: { overloadSuitability: 2, subRegions: [mu.calves.gastrocnemius] }
+  ranking: { overloadSuitability: 2, subRegions: [mu.calves.gastrocnemius], standard: true }
   cues:
     - en: Stand with the balls of your feet on a step or a stack of plates, a dumbbell in each hand.
     - en: Lower your heels as far as they go and pause in the stretch.

@@ -1,14 +1,15 @@
 import { createFileRoute } from '@tanstack/react-router';
 
+import { deferredSearch } from '../../app/route-search';
 import { PlanScreen } from '../../features/plan/PlanScreen';
-import { validateWeekSearch } from '../../features/search';
+import { validateWeekSearch, type WeekSearch } from '../../features/search';
 
 export const Route = createFileRoute('/plan/')({
-  validateSearch: validateWeekSearch,
+  validateSearch: deferredSearch<WeekSearch>(),
   component: PlanRoute,
 });
 
 function PlanRoute() {
-  const { week } = Route.useSearch();
+  const { week } = validateWeekSearch(Route.useSearch());
   return <PlanScreen week={week} />;
 }

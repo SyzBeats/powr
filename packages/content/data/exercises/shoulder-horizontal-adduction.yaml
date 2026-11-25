@@ -20,7 +20,7 @@
     tempo: 2-0-X-1
     fixedRom: false
     stretchEmphasis: true
-  ranking: { overloadSuitability: 2 }
+  ranking: { overloadSuitability: 2, standard: true }
   cues:
     - en: Set the pulleys at shoulder height; with one cable, train one arm at a time.
     - en: Keep a soft, fixed bend in your elbows and open your arms until your chest is stretched.
@@ -44,7 +44,7 @@
     tempo: 2-0-X-1
     fixedRom: false
     stretchEmphasis: true
-  ranking: { overloadSuitability: 3 }
+  ranking: { overloadSuitability: 3, standard: true }
   cues:
     - en: Adjust the seat so the handles are at chest height.
     - en: Let the handles travel back until you feel a stretch, shoulders down and chest up.
@@ -74,7 +74,7 @@
     tempo: 3-0-X-0
     fixedRom: false
     stretchEmphasis: true
-  ranking: { overloadSuitability: 2 }
+  ranking: { overloadSuitability: 2, standard: true }
   cues:
     - en: Lie on a bench with the dumbbells above your chest, palms facing each other and elbows slightly bent.
     - en: Open your arms in a wide arc until you feel a deep stretch across your chest.

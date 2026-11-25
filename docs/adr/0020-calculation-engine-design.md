@@ -65,3 +65,12 @@ The decision stands. M3a added the session engine as the domain subpath `@powr/d
 - **Decisions (product owner, 2026-11-24), accepted as built:** no e1RM PR from a set without entered effort, while its load × reps can set rep, load and volume PRs (E-1); rep PRs as the n-rep max; `load.pr.minSetWeight` and `progression.calibration.reliableSetWeight` at 0.5 and the noon cut-off for a "PM session" (all `verified: false`); the deload load in the middle of 85–100%; the readiness proposal sizes; the WKT-03 plausibility limits (3× the e1RM, 100 reps) as code constants rather than registry rows.
 
 Source: `IMPLEMENTATION_NOTES.md` (repository root), section "M3a session core".
+
+## Amendment (v0.9, 2026-11-25)
+
+The decision stands. As built in M5 (technical concept §8.7.5, §8.7.6):
+
+- **Trend model (rules 1.7.0):** the observation noise is floored at the level's typical error (TD-59), advanced lifters use a 12-week reference (TD-60), the session engine keeps 60 trend points and 60 exposures, and a change label without a claim says why (`noise` or `unconfirmed`, TD-62), in the explanation and since M5z in the value (`ChangeLabel.reason`). `ENGINE_VERSION` 0.2.0, because outputs changed for the same inputs.
+- **Standard-variant tie-break (product-owner decision of 2026-11-25):** among candidates with equal MAP-03 scores the standard variant of a movement wins (`ranking.standard`, an explicit content field on 86 exercises), then the ID. It is a tie-break only, never part of a score, so the effectiveness explanation is unchanged; it applies to the slot ranking (generator, next block, substitutes, session alternatives) and the body map's muscle ranking. The plan-matrix snapshot gained the exercise picks, so a changed pick shows in review.
+
+Source: `IMPLEMENTATION_NOTES.md` (repository root), sections "M5p content and engine follow-ups" and "M5z bundle trim, fixes and docs".

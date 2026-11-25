@@ -12,7 +12,7 @@ import type {
 import { restSeconds } from '../rest';
 import type { Param, ProgressionModel, Range, RuleSlice, TraineeLevel } from '../rules';
 import { compareIds, creditFor, liftOf, type ExerciseLookup } from './credits';
-import { slotScore, type RankingRules } from './rank';
+import { compareStandard, slotScore, type RankingRules } from './rank';
 import type { PlanRequest, RestRules, SlotCandidate } from './types';
 
 /**
@@ -83,9 +83,9 @@ function fitsSlot(exercise: ExerciseDef, slot: TemplateSlot, lookup: ExerciseLoo
 
 /**
  * Candidates for a slot, best first (PLN-05, MAP-03): the user's favourites, then the MAP-03
- * effectiveness for the slot's targets, then the ID. `relaxed` drops the pattern (but not the
- * lift rule) and keeps exercises that train a target directly: the fallback when the equipment
- * offers nothing of the slot's pattern.
+ * effectiveness for the slot's targets, then the standard variant (`compareStandard`, M5z), then
+ * the ID. `relaxed` drops the pattern (but not the lift rule) and keeps exercises that train a
+ * target directly: the fallback when the equipment offers nothing of the slot's pattern.
  */
 export function rankCandidates(
   slot: Pick<TemplateSlot, 'pattern' | 'targets' | 'lift' | 'allowVariants'>,
@@ -105,6 +105,7 @@ export function rankCandidates(
         : fitsSlot(exercise, fullSlot, lookup),
     )
     .map((exercise) => ({
+      exercise,
       exerciseId: exercise.id,
       score: slotScore(exercise, slot.targets, rules),
       preferred: preferred.has(exercise.id),
@@ -113,6 +114,7 @@ export function rankCandidates(
       (a, b) =>
         Number(b.preferred) - Number(a.preferred) ||
         b.score - a.score ||
+        compareStandard(a.exercise, b.exercise) ||
         compareIds(a.exerciseId, b.exerciseId),
     )
     .map(({ exerciseId, score }) => ({ exerciseId, score }));

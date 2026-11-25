@@ -5,7 +5,7 @@ import { lazy, Suspense, useEffect } from 'react';
 
 import { LiveAnnouncer } from '#ui/announcer';
 
-import { useInsightsWarmup } from '../../hooks/use-insights';
+import { useInsightsWarmup } from '../../hooks/use-insights-warmup';
 import { useActiveSession } from '../../hooks/use-session';
 import { BottomNav } from './BottomNav';
 import { UpdateBanner } from './UpdateBanner';

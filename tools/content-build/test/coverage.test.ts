@@ -48,6 +48,8 @@ const PRD_ALTERNATIVES = ['bodybuilding × 5 × fullBody'];
 const { bundle } = buildContent();
 if (!bundle) throw new Error('the content does not build; see build.test.ts');
 const coverage = contentCoverage(bundle);
+const isStandard = (id: string) =>
+  bundle.exercises.find((exercise) => exercise.id === id)?.ranking.standard === true;
 
 describe('content coverage', () => {
   it(`ships at least ${MIN_LIBRARY_SIZE} active exercises (PRD A-05)`, () => {
@@ -146,6 +148,33 @@ describe('content coverage', () => {
       );
     });
     expect(misfits.map((template) => template.id)).toEqual([]);
+  });
+
+  it('names a standard variant in every substitution group, never a specialised one (M5z)', () => {
+    // The tie-break among equal MAP-03 scores (`ranking.standard`, product owner 2026-11-25):
+    // every group offers the common form, so a tie never falls to a specialised variant by ID.
+    const groups = new Map<string, string[]>();
+    for (const exercise of bundle.exercises) {
+      for (const group of exercise.substitutionGroups) {
+        if (exercise.ranking.standard)
+          groups.set(group, [...(groups.get(group) ?? []), exercise.id]);
+        else if (!groups.has(group)) groups.set(group, []);
+      }
+    }
+    expect(
+      [...groups].filter(([, standard]) => standard.length === 0).map(([group]) => group),
+    ).toEqual([]);
+    // The examples the decision names, and the competition lifts over their close variants.
+    expect(isStandard('ex.dumbbell-shoulder-press')).toBe(true);
+    expect(isStandard('ex.arnold-press')).toBe(false);
+    expect(isStandard('ex.incline-dumbbell-curl')).toBe(true);
+    expect(isStandard('ex.behind-the-body-cable-curl')).toBe(false);
+    for (const exercise of bundle.exercises.filter((entry) => entry.variantOf !== undefined)) {
+      expect({ id: exercise.id, standard: exercise.ranking.standard === true }).toEqual({
+        id: exercise.id,
+        standard: false,
+      });
+    }
   });
 });
 
