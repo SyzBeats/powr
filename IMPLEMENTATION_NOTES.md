@@ -5429,3 +5429,13 @@ until 2026-12-01, and the `minimumReleaseAgeExclude` list was removed. npm publi
 and its bindings (11-23 ~16:00 UTC, the youngest), oxlint-tsgolint 7.0.2008 (11-21), knip 6.48.0
 (11-22), lucide-react 1.78.0 (11-23), vitest 5.1.1 and `@vitest/*` (11-18), fast-check 4.11.0
 (11-21): all more than 3 days old. ADR-0021, TD-18 and checklist T-09 updated.
+
+## Chromium data-loss decision (2026-11-26)
+
+The product owner decided on the Chromium IndexedDB loss path found in M6d (technical concept T-18,
+checklist T-13): **accept it for the MVP.** The protection is the "Your data could not be read"
+recovery screen (M6d's data guard, never a first run over lost data) and the backups with their
+reminders (DAT-08). It is **not reported to Chromium**; a bug report and standalone reproduction
+were started and stopped at the product owner's request, so none exists. A recovery copy outside
+IndexedDB (TD-77, for example a rolling backup file in the origin private file system) is decided
+after the S22 device tests. Still open in T-13: whether the kill test stays strict.
