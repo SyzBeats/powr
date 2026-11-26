@@ -33,7 +33,7 @@ export function SetTimerButton({
   targetS: number | null;
 }) {
   const { dispatch } = useSessionCommands();
-  const { setTimerLeadIn } = useAlertSettings();
+  const { setTimerLeadIn, loaded: settingsLoaded } = useAlertSettings();
   const leadIn = useLeadIn();
   const cancelButton = useRef<HTMLButtonElement>(null);
   const focusCancel = useRef(false);
@@ -82,6 +82,9 @@ export function SetTimerButton({
   return (
     <Button
       size="lg"
+      // Until the alert settings have loaded, `setTimerLeadIn` is only the default (off): a tap in
+      // that moment would skip a lead-in the user switched on. Loading takes milliseconds.
+      disabled={!settingsLoaded}
       onClick={(event) => {
         if (!setTimerLeadIn) {
           startTimer();

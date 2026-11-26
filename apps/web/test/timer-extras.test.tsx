@@ -12,6 +12,22 @@ import { i18n } from '../src/i18n';
 import { messages } from '../src/i18n/locales/en/messages.po';
 import { createTestContainer, onboarded, renderRoute, seriousViolations } from './harness';
 
+/**
+ * "Start set timer" once it is enabled: it stays disabled until the alert settings have loaded,
+ * so a click cannot race the live query (on a slow CI runner it otherwise could, and skipped the
+ * lead-in).
+ */
+async function startSetTimerButton(
+  dock: HTMLElement,
+  name: string | RegExp = 'Start set timer',
+): Promise<HTMLButtonElement> {
+  return waitFor(() => {
+    const button = within(dock).getByRole<HTMLButtonElement>('button', { name });
+    expect(button.disabled).toBe(false);
+    return button;
+  });
+}
+
 /*
  * M4v timer extras on the session screen: the 3-2-1 lead-in before a timed set and the automatic
  * stop at the target (TMR-09, TD-48), and the tempo metronome (TMR-10, TD-39), with their
@@ -149,7 +165,7 @@ describe('3-2-1 lead-in before a timed set (TMR-09, TD-48)', () => {
     renderRoute(container, '/session');
     const said = await recordAnnouncements();
     const dock = await screen.findByRole('region', { name: 'Log this set' });
-    await userEvent.click(within(dock).getByRole('button', { name: 'Start set timer' }));
+    await userEvent.click(await startSetTimerButton(dock));
 
     // The count renders once the click's state update lands (slower under a full parallel run).
     // The count stays on screen for the whole 3 s lead-in, so a 2.5 s wait is safe and keeps the
@@ -184,7 +200,7 @@ describe('3-2-1 lead-in before a timed set (TMR-09, TD-48)', () => {
     const container = await workout(LEG_RAISE, { setTimerLeadIn: true }, 20);
     const view = renderRoute(container, '/session');
     const dock = await screen.findByRole('region', { name: 'Log this set' });
-    await userEvent.click(within(dock).getByRole('button', { name: 'Start set timer' }));
+    await userEvent.click(await startSetTimerButton(dock));
     await userEvent.click(await within(dock).findByRole('button', { name: 'Cancel' }));
     expect(within(dock).queryByTestId('lead-in')).toBeNull();
     expect(within(dock).getByRole('button', { name: 'Start set timer' })).toBeTruthy();
@@ -196,7 +212,7 @@ describe('3-2-1 lead-in before a timed set (TMR-09, TD-48)', () => {
     const plain = await workout(LEG_RAISE, { setTimerLeadIn: false }, 20);
     renderRoute(plain, '/session');
     const plainDock = await screen.findByRole('region', { name: 'Log this set' });
-    await userEvent.click(within(plainDock).getByRole('button', { name: 'Start set timer' }));
+    await userEvent.click(await startSetTimerButton(plainDock));
     expect(within(plainDock).queryByTestId('lead-in')).toBeNull();
     await within(plainDock).findByRole('button', { name: 'Stop' });
     expect(await storedTimer(plain)).toMatchObject({ kind: 'set', targetMs: 20_000 });
@@ -209,7 +225,7 @@ describe('set timer stops at the target (TMR-09, TD-48)', () => {
     renderRoute(container, '/session');
     const said = await recordAnnouncements();
     const dock = await screen.findByRole('region', { name: 'Log this set' });
-    await userEvent.click(within(dock).getByRole('button', { name: 'Start set timer' }));
+    await userEvent.click(await startSetTimerButton(dock));
     await within(dock).findByRole('button', { name: 'Stop' });
     // The user types something else meanwhile: the stop at the target replaces it.
     const seconds = within(dock).getByRole<HTMLInputElement>('textbox', { name: 'Seconds' });
@@ -229,7 +245,7 @@ describe('set timer stops at the target (TMR-09, TD-48)', () => {
     const container = await workout(LEG_RAISE, { setTimerAutoStop: false }, 1);
     renderRoute(container, '/session');
     const dock = await screen.findByRole('region', { name: 'Log this set' });
-    await userEvent.click(within(dock).getByRole('button', { name: 'Start set timer' }));
+    await userEvent.click(await startSetTimerButton(dock));
     await waitFor(
       () => expect(within(dock).getByTestId('timer-time').textContent).toMatch(/^Time is up/),
       { timeout: 5000 },
@@ -385,7 +401,7 @@ describe('pseudo-locale expansion (+30%, NFR-L10N-02)', () => {
     const timed = await workout(LEG_RAISE, { setTimerLeadIn: true }, 20);
     renderRoute(timed, '/session');
     const dock = await screen.findByRole('region', { name: /^Log this set/ });
-    await userEvent.click(within(dock).getByRole('button', { name: /^Start set timer/ }));
+    await userEvent.click(await startSetTimerButton(dock, /^Start set timer/));
     expect((await within(dock).findByTestId('lead-in-count')).textContent).toBe('3');
     expect({ leadIn: overflows() }).toEqual({ leadIn: [] });
     await userEvent.click(within(dock).getByRole('button', { name: /^Cancel/ }));
