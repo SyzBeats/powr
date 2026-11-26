@@ -1,6 +1,6 @@
 # ADR-0021: Package manager: pnpm 12
 
-- Status: Accepted (resolved 2026-11-24: A, OQ-T8; confirmed by the product owner; v0.3, 2026-11-24: `minimumReleaseAgeExclude`; v0.5, 2026-11-24: `overrides` for never-loaded build-only packages, see below)
+- Status: Accepted (resolved 2026-11-24: A, OQ-T8; confirmed by the product owner; v0.3, 2026-11-24: `minimumReleaseAgeExclude`; v0.5, 2026-11-24: `overrides` for never-loaded build-only packages, see below; v0.11, 2026-11-26: `minimumReleaseAge` 2 days, excludes removed)
 - Date: 2026-11-23
 - Related: technical concept §5.2, §8.18, §8.21; ADR-0001, ADR-0018
 
@@ -37,6 +37,10 @@ Use **pnpm 12** with `packageManager` pinned in the root `package.json`, a commi
 - their platform binary and companion packages by name (`@pnpm/exe.*`, `@oxlint/*`, `@oxfmt/*`, `@oxlint-tsgolint/*`, `@vitest/*`), because name patterns cannot carry versions.
 
 **Remove the excludes after 2026-12-01**, when every listed version is older than 7 days (TD-18; also an open item in `IMPLEMENTATION_NOTES.md` §4). Where an older version was acceptable, it was installed instead: `tailwind-merge` 3.7.0 (3.7.1 was 5 days old) and `@babel/core` 8.1.2 (8.1.3 was too new).
+
+## Amendment (v0.11, 2026-11-26)
+
+The product owner lowered `minimumReleaseAge` from 7 days (`10080`) to **2 days (`2880` minutes)**, so the release work does not have to wait until 2026-12-01. With it, the `minimumReleaseAgeExclude` list was removed (TD-18 closed): on 2026-11-26 every listed version and its platform packages had been on npm for more than 3 days (the youngest, `oxfmt@0.80.0` and its `@oxfmt/*` bindings, since 2026-11-23 16:01 UTC). Trade-off: a compromised or broken release is now blocked for 2 days instead of 7; the committed lockfile, `--frozen-lockfile` in CI, the build-script allowlist and `pnpm audit:prod` (G-05) stay as before.
 
 Source: `IMPLEMENTATION_NOTES.md` §3 (repository root), which records each deviation with its reason.
 

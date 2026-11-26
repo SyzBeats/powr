@@ -168,8 +168,8 @@ On the phone:
 - The pre-session "Update first" offer (§6.3 rule 2) needs the session start sheet (M3); the safety-copy
   UI (download/delete) and the "POWR was updated in another window" handling (§6.8) are not built yet.
 - Save-picker delivery of backups (Android Chrome 132+) after device test S-2.
-- **Reminder: remove `minimumReleaseAgeExclude` from `pnpm-workspace.yaml` after 2026-12-01**
-  (ADR-0021, TD-18).
+- **Done 2026-11-26:** `minimumReleaseAgeExclude` removed from `pnpm-workspace.yaml` after the
+  product owner lowered `minimumReleaseAge` to 2 days (ADR-0021, TD-18).
 - Entry JS is 176.4 kB gzip (budget 186 kB since the M1 cleanup; 211.4 kB in M0, 202.1 kB after the
   M1 merge). The startup path is free of Zod (TD-17 closed; lint rules and `scripts/startup-check.ts`).
 - Tempo of the competition lifts: decided by the content work, `2-0-X-0`; paused variants carry the
@@ -5421,3 +5421,11 @@ notes record that the product owner confirmed them on 2026-11-25.
 4. `docs: T-01 applied (evidence report 1.1, checklist, technical concept v0.11 addendum, notes)` —
    `docs/release/evidence-verification.md`, `docs/release/checklist.md`, `docs/technical-concept.md`,
    `IMPLEMENTATION_NOTES.md`.
+
+**Supply-chain setting changed (coordinator, 2026-11-26).** The product owner lowered pnpm's
+`minimumReleaseAge` from 7 days (`10080`) to 2 days (`2880` minutes) so that T-09 need not wait
+until 2026-12-01, and the `minimumReleaseAgeExclude` list was removed. npm publish times checked on
+2026-11-26: pnpm 12.23.0 (11-22), oxlint 1.95.0 and its bindings (11-23 ~16:00 UTC), oxfmt 0.80.0
+and its bindings (11-23 ~16:00 UTC, the youngest), oxlint-tsgolint 7.0.2008 (11-21), knip 6.48.0
+(11-22), lucide-react 1.78.0 (11-23), vitest 5.1.1 and `@vitest/*` (11-18), fast-check 4.11.0
+(11-21): all more than 3 days old. ADR-0021, TD-18 and checklist T-09 updated.

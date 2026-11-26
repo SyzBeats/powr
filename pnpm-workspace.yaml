@@ -3,26 +3,10 @@ packages:
   - packages/*
   - tools/*
 
-# Supply chain (§8.18, ADR-0021): new versions must be at least 7 days old.
-minimumReleaseAge: 10080
-
-# Exact versions pinned by the technical concept (Appendix B) that were younger than
-# 7 days when M0 was set up. Remove the whole list after 2026-12-01, when all of them have
-# matured (ADR-0021, TD-18; reminder in IMPLEMENTATION_NOTES.md section 4).
-minimumReleaseAgeExclude:
-  - pnpm
-  - '@pnpm/exe.*'
-  - oxlint@1.95.0
-  - '@oxlint/*'
-  - oxfmt@0.80.0
-  - '@oxfmt/*'
-  - oxlint-tsgolint@7.0.2008
-  - '@oxlint-tsgolint/*'
-  - knip@6.48.0
-  - lucide-react@1.78.0
-  - vitest@5.1.1
-  - '@vitest/*'
-  - fast-check@4.11.0
+# Supply chain (§8.18, ADR-0021): new versions must be at least 2 days old (2,880 minutes).
+# Lowered from 7 days by the product owner on 2026-11-26, which also ended the temporary
+# minimumReleaseAgeExclude list (TD-18): every version on it was more than 3 days old.
+minimumReleaseAge: 2880
 
 # Dependency install scripts are blocked unless listed here. None of the current dependencies
 # needs one (Rolldown, oxlint and oxfmt ship prebuilt binaries as optional packages).

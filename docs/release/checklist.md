@@ -102,7 +102,7 @@ Do them in this order. The runbook ([`deploy/runbook.md`](../../deploy/runbook.m
 | T-06 | TD-66: compile S-2's results into a matrix like S-1's, or keep hand-edited Device support texts. Waits for the S-2 results | The decision after S-2, then the matrix or the edited texts | PO, then Agent | Pending device test |
 | T-07 | TD-15: backups by the save picker instead of a download, if S-2 cell 12 shows it works | The S-2 record, then the change or "no change" | PO, then Agent | Pending device test |
 | T-08 | TD-16: the backup codec runs on the main thread; the concept revisits it before the reference-dataset test of NFR-PERF-08 (≤ 10 s each way) | The export and import timings of the [performance protocol](../device-tests/S22-performance-protocol.md#46-backup-export-and-import) decide whether the codec moves into a worker (desktop, M6a: export 5.3 s at 4× CPU) | PO, then Agent | Pending device test |
-| T-09 | TD-18: remove the `minimumReleaseAgeExclude` list from `pnpm-workspace.yaml` after 2026-12-01 | The list removed; `pnpm install --frozen-lockfile` still works | Agent | Pending agent |
+| T-09 | TD-18: remove the `minimumReleaseAgeExclude` list from `pnpm-workspace.yaml` after 2026-12-01 | Done early on 2026-11-26: the product owner lowered `minimumReleaseAge` to 2 days (`2880`); every excluded version was more than 3 days old, so the list was removed (ADR-0021 amendment); `pnpm install --frozen-lockfile` still works | Agent | Done |
 | T-10 | Technical concept §8.18 promises two trust measures for a closed-source app (risk R-17): an in-app "Verify it yourself" help page and SHA-256 checksums of the deployed files in the release notes. Neither is built. Not a PRD exit criterion | Built, or deferred by the product owner with a note | PO decides; Agent builds | Pending product owner |
 | T-11 | Usability metrics M2 (≤ 3 s from the end of a set to a confirmed log) and M13 (SUS ≥ 75; ≥ 70 % "motivating") from the M6 roadmap row; not PRD exit criteria | [Usability test plan](usability-test-plan.md) | PO | Pending product owner |
 | T-12 | TD-73…TD-76: four performance levers M6a measured on the desktop at 4× CPU and left as they are (note: the Progress hub's data at 619 ms, the exercise chart at 711 ms and library search at 125 ms are above their §8.19 targets of 300, 500 and 100 ms, although each screen appears at once): each set confirm reads all weigh-ins twice; the Progress hub reads every e1RM point; the idle warm-up checks every week at each start; "Verify data" makes one request per session | The S22 numbers of the [performance protocol](../device-tests/S22-performance-protocol.md) (row EC-07), then the product owner keeps each or has an agent act on its lever (technical concept §11.2) | PO, then Agent | Pending device test |
@@ -114,12 +114,12 @@ Counted over the 55 rows of sections 2–5 on 2026-11-25, after M6d's results we
 
 | Status | Count | Rows |
 |---|---|---|
-| Done | 14 | EC-08, EC-17, EC-18, G-01, G-02, G-03, G-04, G-05, G-06, G-07, S-04, T-01, T-04, T-05 |
+| Done | 15 | EC-08, EC-17, EC-18, G-01, G-02, G-03, G-04, G-05, G-06, G-07, S-04, T-01, T-04, T-05, T-09 |
 | Pending device test | 15 | EC-06, EC-07, EC-09, EC-10, EC-11, EC-12, EC-13, S-03, D-06, T-02, T-03, T-06, T-07, T-08, T-12 |
 | Pending product owner | 25 | EC-01, EC-02, EC-03, EC-04, EC-05, EC-14, EC-15, EC-16, S-01, S-02, D-01, D-02, D-03, D-04, D-05, D-07, D-08, D-09, D-10, D-11, D-12, D-13, T-10, T-11, T-13 |
-| Pending agent | 1 | T-09 |
+| Pending agent | 0 | — |
 
-Of the 18 exit-criterion rows (section 2): 3 done, 7 pending a device test, 8 pending the product owner, none pending an agent. T-01 (TD-25, the evidence verification) is done: rules 1.8.0 leaves 22 of 143 parameters preliminary; T-09 waits until after 2026-12-01; T-10 and T-13 wait for the product owner's decision.
+Of the 18 exit-criterion rows (section 2): 3 done, 7 pending a device test, 8 pending the product owner, none pending an agent. T-01 (TD-25, the evidence verification) is done: rules 1.8.0 leaves 22 of 143 parameters preliminary; T-09 is done (2026-11-26, `minimumReleaseAge` 2 days); T-10 and T-13 wait for the product owner's decision.
 
 ## 7. Sign-off
 
