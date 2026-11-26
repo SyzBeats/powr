@@ -44,7 +44,7 @@ Editing any file makes these checksums fail, and POWR then refuses to restore th
 |---|---|
 | `manifest.json` | Always first. Describes the backup (section 3). Pretty-printed with two spaces |
 | `data/<table>.json` | One entry per table, in the table order of section 4: a JSON array of records |
-| `README.txt` | A short plain-English note on what the file is. Not checked by the import; its text may change between app versions |
+| `README.txt` | A short plain-English note: what the file is and what it holds, how to restore it in the app (Settings, Data and backups, Restore from a backup; type REPLACE; a safety copy is kept), that this document describes the format (by its path, `docs/formats/backup-format.md`; no web address while the domain is open), and that the backup is not encrypted (since M6d; before, it named an outdated restore path). Not checked by the import, which only allows the name: its text may change between app versions, and backups with an older text, or none, import the same (`packages/formats/test/backup.test.ts`) |
 
 A backup made by the export contains an entry for every table of its `dataVersion`, an empty table as `[]`. A safety copy taken before a data update (section 10) contains only the tables that existed at its older `dataVersion`. The import treats a table without an entry as empty.
 

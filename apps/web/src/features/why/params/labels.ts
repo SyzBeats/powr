@@ -85,7 +85,7 @@ export const PARAM_LABELS = {
   }),
   'load.curve.rts': msg({
     id: 'params.load.curve.rts',
-    message: 'Effort chart for weight, reps and RPE',
+    message: 'RPE chart (common RTS version)',
   }),
   'load.e1rm.equation': msg({
     id: 'params.load.e1rm.equation',

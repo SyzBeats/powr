@@ -15,8 +15,8 @@
   userOverridable: true
   note: >-
     Applies to exercises of curve class equation (load.curve.classMap; TD-30). "rts" selects the
-    exact RTS lookup, which the EB shows tracks Wathan within about 0.6 points for 2–10 effective
-    reps.
+    RPE chart (common RTS version, load.curve.rts), which the EB shows tracks Wathan within about
+    0.6 points for 2–10 effective reps.
 
 - id: load.curve.classMap
   value: { equation: equation, legPressLike: nuzzoLegPress, pooled: nuzzoPooled }
@@ -130,14 +130,21 @@
     - { reff: 13.5, pct: 64.0 }
   unit: table
   evidence: [PRACT]
-  sources: [src.fitnessvolt-rts-chart, src.zourdos2016]
-  ebRef: 'EB §Load › RTS chart (one-dimensional lookup)'
+  sources: [src.fitnessvolt-rts-chart, src.zourdos2016, src.helms2016]
+  ebRef: 'EB §Load › RTS chart (one-dimensional lookup; the commonly circulated decimal version)'
   verified: false
   userOverridable: false
   note: >-
-    Transcribed from a secondary source. Beyond 13.5 effective reps the engine follows Wathan,
-    scaled to meet the chart there. The chart's source warns it is a guide, assumes a fresh set and
-    is less reliable above 10 reps and on isolation lifts.
+    The RPE chart (common RTS version): the decimal chart as commonly circulated, transcribed from
+    a secondary source (all 26 values match two independent transcriptions). It is not
+    Tuchscherer's own chart: his 2014 Beginning RTS chart is 5–8 points lower at 5–11 effective
+    reps, and no primary publication of these decimal values was found. It agrees with Wathan
+    within about 0.6 points and with the research-based chart of Helms 2016 (Table 2) within −2.2
+    to +0.4 points; no study validates it against tested 1RMs. A design value (T-01, 2026-11-25),
+    settled only by such a validation or an RTS-published source for the decimal values. Beyond
+    13.5 effective reps the engine follows Wathan, scaled to meet the chart there. The chart's
+    source warns it is a guide, assumes a fresh set and is less reliable above 10 reps and on
+    isolation lifts.
 
 - id: load.e1rm.weightByRpe
   value:
@@ -173,7 +180,13 @@
   ebRef: 'EB §Load › e1RM algorithm ("down-weight sets after the first working set"); technical concept §8.7.4'
   verified: false
   userOverridable: false
-  note: 'The EB gives the direction only; 0.85 per later working set is a POWR design value.'
+  note: >-
+    The EB gives the direction only; 0.85 per later working set is a POWR design value. T-01
+    (2026-11-25): reps at a fixed load fall from set 2 or 3 even with 3–5 minutes of rest, so a
+    later set's e1RM is biased low rather than noisier (RIR calls are slightly better in later
+    sets); no study gives a per-set weight. A bias correction would fit the evidence better (a
+    model change for later); settled by within-session e1RMs against a measured 1RM, or POWR's own
+    logs.
 
 - id: load.rirBias
   value:
@@ -181,14 +194,17 @@
     - { minRir: 3, add: 0.5 }
   unit: table
   guard: { addForRir3AndAbove: { min: 0.5, max: 1 } }
-  evidence: [MA, RCT]
-  sources: [src.halperin2022, src.refalo2024a]
+  evidence: [MA, SR, OBS, RCT-T]
+  sources: [src.halperin2022, src.refalo2024a, src.russo2025, src.casanova2025, src.martikainen2025]
   ebRef: 'EB §Defaults › Load (RIR bias correction); §Load › RIR accuracy; §Gaps #26'
-  verified: false
+  verified: true
   userOverridable: false
   note: >-
-    Lifters under-call RIR by about one rep, more so far from failure. Preliminary until the
-    verification pass of EB §Gaps #26 (Russo 2025); learned per user from v1.3 (PRG-15).
+    Lifters under-call RIR by about one rep, more so far from failure; learned per user from v1.3
+    (PRG-15). EB §Gaps #26 checked (T-01, 2026-11-25): Russo 2025 is qualitative and confirms the
+    direction; study means +0.2 to +1.6 reps at a called RIR 3, so +0.5 is the conservative half
+    of the evidence range (about +0.5 to +1). The product owner confirmed the conservative +0.5
+    on 2026-11-25 (not the central +1.0).
 
 - id: load.unknownEffort.priorRirDefault
   value: 2
@@ -266,12 +282,22 @@
   value: 0.09
   unit: fraction
   range: { min: 0.08, max: 0.10 }
-  evidence: [PREPRINT]
-  sources: [src.marzagao2026]
+  evidence: [PREPRINT, INF]
+  sources:
+    - src.marzagao2026
+    - src.grgic2020
+    - src.refalo2024a
+    - src.casanova2025
+    - src.lovegrove2022
   ebRef: 'EB §Defaults › Load (smoothing noise 8–10% for typical logged sets); §Load › e1RM algorithm'
   verified: false
   userOverridable: false
-  note: 'The 8.5–10% within-person spread comes from preprint app data (verify before hard-coding).'
+  note: >-
+    The 8.5–10% within-person spread comes from preprint app data, still the only direct
+    measurement (E-2). T-01 (2026-11-25): the peer-reviewed error budget (RIR error about 2–5.5%
+    of e1RM, day-to-day 1RM CV 2–3.3%, novices' chosen loads CV 2.7–6.2%) combines to about 5–8%
+    in the lab; real logging adds entry errors, uncontrolled rest and true change, so 9% is
+    plausible. A design value until a peer-reviewed within-person spread from logged sets exists.
 
 - id: load.trend.heavySet
   value: { maxReff: 5, minRpe: 9 }
@@ -320,17 +346,22 @@
     the slow labels came from the 4-week window (now load.trend.reference). The state-space
     literature fixes the observation noise from reliability data and estimates the process noise
     per person by maximum likelihood once enough data exist (proposed as a later step). A POWR
-    design value.
+    design value; T-01 (2026-11-25) found no study of the week-to-week variance of a lifter's true
+    strength and kept it.
 
 - id: load.trend.noviceWidening
   value: { weeks: 8, factor: 1.5 }
   unit: mixed
   evidence: [INF]
-  sources: [src.powr-eb-load]
+  sources: [src.powr-eb-load, src.grgic2020]
   ebRef: 'EB §Load › e1RM drift ("wider bands for beginners in their first 4–8 weeks"); PRD PRG-02'
   verified: false
   userOverridable: false
-  note: 'The EB gives the window; the factor 1.5 is a POWR design value.'
+  note: >-
+    The EB gives the window; the factor 1.5 is a POWR design value. T-01 (2026-11-25): the 1RM
+    test–retest CV ratios untrained/trained (5.5 / 3.3 = 1.67) and without/with familiarisation
+    (5.3 / 3.8 = 1.39) bracket 1.5 (Grgic 2020); no study measures how long a novice's extra
+    noise lasts.
 
 - id: load.trend.typicalErrorCv
   value: { novice: 0.055, intermediate: 0.033, advanced: 0.033 }
@@ -370,7 +401,10 @@
     typical sets, 1.5 in about 6–9%, at the cost of slower recognition of real gains (median
     weeks to a claim on typical sets: intermediate +1% a week 11.6 → 15, novice +2% a week 10 →
     12.6). likelyZ and sustainSessions 3 (the EB's upper end) are POWR design values from the
-    seeded simulation (packages/domain/test/reference/trend-calibration.test.ts).
+    seeded simulation (packages/domain/test/reference/trend-calibration.test.ts). T-01
+    (2026-11-25): likelyTe and veryLikelyTe (1.96 × √2 × TE ≈ 2.77) follow the EB and Hopkins
+    2000; no study validates labelling rules for smoothed e1RM series, so the row stays a design
+    value.
 
 - id: load.trend.reference
   value: { weeks: { novice: 4, intermediate: 8, advanced: 12 }, sessions: 3 }
@@ -397,7 +431,8 @@
     over 12 weeks), now that the session engine keeps 60 trend points and exposures (12 weeks at
     up to 4 sessions a week); rules 1.6.0 had 8 because it kept 30. The series' first `sessions`
     points are never the reference (barely smoothed); while a series is shorter than the window
-    its oldest point after them is. A POWR design value.
+    its oldest point after them is. A POWR design value: the windows are derived from the
+    verified typical errors and realistic rates, not measured (T-01, 2026-11-25).
 
 - id: load.reanchor.trigger
   value: { maxReps: 3, minRpe: 9 }
@@ -424,7 +459,9 @@
   note: >-
     A POWR design value: the set's base weight (RPE and effective-rep tiers, before the set-order
     decay) must reach the 0.5 tier (RPE ≥ 7 and ≤ 12 effective reps). Sets without entered
-    effort never qualify (load.unknownEffort.eligibleForE1rmPr, E-1).
+    effort never qualify (load.unknownEffort.eligibleForE1rmPr, E-1). T-01 (2026-11-25): RIR
+    errors grow sharply above 12 reps (Halperin 2022) and far from failure (RPE < 7), which
+    supports the cut; where exactly to cut is a product trade-off.
 
 # M4a (rules 1.5.0): the rep-range artefact flag of PRG-02 (TD-26).
 
@@ -433,8 +470,13 @@
   unit: reps
   range: { min: 2, max: 6 }
   evidence: [OBS, INF]
-  sources: [src.braith1993, src.mayhew2008, src.powr-eb-load]
+  sources: [src.braith1993, src.mayhew2008, src.nuzzo2024, src.powr-eb-load]
   ebRef: 'EB §Load › e1RM drift (flag e1RM jumps that coincide with a change in typical rep range); PRD PRG-02'
   verified: false
   userOverridable: false
-  note: 'A POWR design value: a "likely real" change is flagged as possibly a rep-range effect when the median reps of the latest sessions differ from those around the reference by at least this many reps.'
+  note: >-
+    A POWR design value: a "likely real" change is flagged as possibly a rep-range effect when the
+    median reps of the latest sessions differ from those around the reference by at least this
+    many reps. T-01 (2026-11-25): with the between-person spread of reps to failure (Nuzzo 2024:
+    SD 2.51 reps at 80% 1RM), a 3-rep shift can move the e1RM by about half to one trained typical
+    error; no study gives the number.

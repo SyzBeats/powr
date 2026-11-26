@@ -129,11 +129,6 @@ msgstr ""
 
 #. js-lingui-explicit-id
 #: src/features/why/params/labels.ts
-msgid "params.load.curve.rts"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/features/why/params/labels.ts
 msgid "params.volume.effort.strengthAccessoryRpe"
 msgstr ""
 
@@ -405,6 +400,11 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/features/why/params/labels.ts
 msgid "params.session.rest.timeSaver"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.curve.rts"
 msgstr ""
 
 #. js-lingui-explicit-id

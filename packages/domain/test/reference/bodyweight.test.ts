@@ -1,7 +1,8 @@
 /**
  * Bodyweight trend reference suite (PRD BOD-02; EB §Nutrition › Trend smoothing): EMA α 0.1,
  * gaps via α_eff = 1 − (1 − α)^Δdays, initialisation from the first 3–7 weigh-ins, winsorising
- * beyond 2.5% of the trend, and the 14–28-day regression rate.
+ * beyond 2.5% of the trend, and the regression rate over the last 28 days, shown once the readings
+ * span 21 days (rules 1.8.0, T-01; the EB's window is 14–28 days).
  */
 import * as fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
@@ -89,6 +90,12 @@ describe('EMA with gaps and outliers', () => {
   });
 });
 
+/** The standard error of a least-squares slope of daily readings with an SD of 0.5%, %/week. */
+function slopeSePctPerWeek(readings: number): number {
+  const sxx = (readings * (readings ** 2 - 1)) / 12;
+  return (0.5 / Math.sqrt(sxx)) * 7;
+}
+
 describe('weekly rate', () => {
   it('is the regression slope over the last 28 days, in kg and % per week', () => {
     // Losing 0.1 kg a day for 40 days from 90 kg.
@@ -101,11 +108,33 @@ describe('weekly rate', () => {
     expect(rate.value?.pctPerWeek).toBeCloseTo((-0.7 / points.at(-1)!.trendKg!) * 100, 9);
   });
 
-  it('needs readings spanning at least 14 days', () => {
+  it('needs readings spanning at least 21 days ("not enough data yet"; rules 1.8.0, T-01)', () => {
     const points = bodyweightTrend([weighIn(0, 80), weighIn(10, 79)], RULES).value;
     const rate = bodyweightRate(points, RULES);
     expect(rate.value).toBeNull();
     expect(rate.why.rule).toBe('bodyweight.rate.insufficientData');
+    expect(rate.why.args).toMatchObject({ spanDays: 10, readings: 2, minDays: 21 });
     expect(bodyweightRate([], RULES).value).toBeNull();
+    // Daily weigh-ins: 14 and 20 days are not enough any more; 21 days show the rate.
+    const daily = (days: number) =>
+      bodyweightTrend(
+        Array.from({ length: days + 1 }, (_, day) => weighIn(day, 80 - 0.02 * day)),
+        RULES,
+      ).value;
+    expect(bodyweightRate(daily(14), RULES).value).toBeNull();
+    expect(bodyweightRate(daily(20), RULES).why.args).toMatchObject({ spanDays: 20, minDays: 21 });
+    expect(bodyweightRate(daily(21), RULES).value).toMatchObject({ spanDays: 21, readings: 22 });
+    expect(bodyweightRate(daily(21), RULES).value?.kgPerWeek).toBeCloseTo(-0.14, 9);
+  });
+
+  it('the 21-day minimum keeps the slope noise well inside the ±0.25% maintain band [INF]', () => {
+    // T-01 (open question 7): with a day-to-day SD of about 0.5% around the trend, the slope's
+    // standard error is about 0.23%/week over 14 daily readings (about the band's half-width), but
+    // about 0.13%/week over 21 days and 0.08%/week over 28: the band is then about ±2 to ±3 SE.
+    const se = slopeSePctPerWeek;
+    expect(se(14)).toBeCloseTo(0.23, 2);
+    expect(se(21)).toBeCloseTo(0.126, 2);
+    expect(se(28)).toBeCloseTo(0.082, 2);
+    expect(0.25 / se(21)).toBeGreaterThan(1.9);
   });
 });

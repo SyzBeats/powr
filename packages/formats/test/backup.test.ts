@@ -163,6 +163,62 @@ describe('backup round-trip', () => {
   });
 });
 
+/** The README of the backups POWR wrote before M6d (kept fixtures carry it too). */
+const README_BEFORE_M6D = `POWR backup
+===========
+
+This file is a standard ZIP archive created by the POWR training app.
+
+- manifest.json describes the backup: format and data versions, app version, creation time,
+  record counts and a SHA-256 checksum of every data file.
+- data/<table>.json holds the records of one table as a JSON array, sorted by ID.
+
+You can open the files with any text editor. To restore, open POWR and choose
+Settings > Data > Restore from backup. Editing a file makes the checksum fail and the app
+will refuse to import it.
+`;
+
+describe('the README inside every backup (M6d)', () => {
+  it('says what the file is, how to restore it today, where the format is described and that it is not encrypted', async () => {
+    const { bytes } = await encodeBackup(sampleTables(), source);
+    const readme = strFromU8(unzipSync(bytes)['README.txt']!);
+    const text = readme.replaceAll(/\s+/g, ' ');
+    expect(text).toContain('a backup of your training data from the POWR app');
+    // The app's current path and words (DataScreen: "Restore from a backup", REPLACE, the button).
+    expect(text).toContain('Go to Settings, then Data and backups, then Restore from a backup.');
+    expect(text).toContain('Type REPLACE and tap "Replace all data".');
+    expect(text).toContain('Safety copies');
+    expect(text).toContain('docs/formats/backup-format.md');
+    expect(text).toContain('This backup is not encrypted.');
+    // No invented address: the production domain is not chosen yet.
+    expect(readme).not.toMatch(/https?:|www\./);
+    // Plain ASCII lines of at most 88 characters, readable in any editor.
+    for (const line of readme.split('\n')) {
+      expect(line.length).toBeLessThanOrEqual(88);
+      expect(line).toMatch(/^[\x20-\x7e]*$/);
+    }
+  });
+
+  it('is never checked by the import: a backup with the old text, or without one, imports the same', async () => {
+    const { bytes } = await encodeBackup(sampleTables(), source);
+    const current = await decodeBackup(bytes);
+    if (!current.ok) throw new Error(current.error.kind);
+    for (const older of [
+      rezip(bytes, (files) => {
+        files['README.txt'] = strToU8(README_BEFORE_M6D);
+      }),
+      rezip(bytes, (files) => {
+        delete files['README.txt'];
+      }),
+    ]) {
+      const decoded = await decodeBackup(older);
+      if (!decoded.ok) throw new Error(decoded.error.kind);
+      expect(decoded.backup.tables).toEqual(current.backup.tables);
+      expect(decoded.backup.preview).toEqual(current.backup.preview);
+    }
+  });
+});
+
 describe('backup import rejects bad files before anything is written', () => {
   it('rejects one altered byte in sets.json (QS-17)', async () => {
     const { bytes } = await encodeBackup(sampleTables(), source);

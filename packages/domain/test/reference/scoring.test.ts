@@ -50,11 +50,26 @@ describe('official and OPL test vectors', () => {
     expect(at(score('ipfPoints', input('female', 73, 337.5), RULES).value, 2)).toBe(546.67);
   });
 
-  it('IPF GL: M equipped 92.04 / 1035 → 112.85; F classic bench 70.50 / 122.5 → 96.78', () => {
-    expect(at(score('ipfGl', input('male', 92.04, 1035, 'equipped'), RULES).value, 2)).toBe(112.85);
-    expect(
-      at(score('ipfGl', input('female', 70.5, 122.5, 'classic', 'bench'), RULES).value, 2),
-    ).toBe(96.78);
+  it('IPF GL: the IPF document examples, M equipped 92.04 / 1035 → 112.855365; F classic bench 70.50 / 122.5 → 96.783453', () => {
+    // The IPF GL document (IPF 2020) rounds the coefficient to 6 decimals (0.109039, 0.790069),
+    // multiplies it by the result and rounds the points to 6 decimals (rules 1.8.0, T-01). The
+    // EB and OpenPowerlifting vector 112.85 used the unrounded coefficient (112.854854); at 2
+    // decimals the IPF value is 112.86. The women's example stays 96.78 at 2 decimals.
+    const men = score('ipfGl', input('male', 92.04, 1035, 'equipped'), RULES).value;
+    expect(men).toBe(112.855365);
+    expect(at(men, 2)).toBe(112.86);
+    expect(at(men, 3)).toBe(112.855);
+    const women = score('ipfGl', input('female', 70.5, 122.5, 'classic', 'bench'), RULES).value;
+    expect(women).toBe(96.783453);
+    expect(at(women, 2)).toBe(96.78);
+  });
+
+  it('IPF GL rounds the coefficient to 6 decimals before multiplying', () => {
+    // A result of 1 kg shows the coefficient itself: 0.1090385058… → 0.109039 (IPF document).
+    expect(score('ipfGl', input('male', 92.04, 1, 'equipped'), RULES).value).toBe(0.109039);
+    expect(score('ipfGl', input('female', 70.5, 1, 'classic', 'bench'), RULES).value).toBe(
+      0.790069,
+    );
   });
 });
 
@@ -113,6 +128,19 @@ describe('IPF document values, clamps and floors', () => {
     expect(score('ipfPoints', input('male', 93, 0), RULES).value).toBe(0);
     expect(score('ipfPoints', input('male', 93, 50), RULES).value).toBe(0);
     expect(score('ipfGl', input('male', 34.9, 300), RULES).value).toBe(0);
+  });
+
+  it('IPF GL applies from 40 kg for men and 35 kg for women, as the IPF document says (V-5)', () => {
+    expect(RULES['scoring.ipfGl.minBodyweightKg'].value).toEqual({ male: 40, female: 35 });
+    // Men between 35 and 40 kg get no GL score, as at IPF meets (OPL scores them from 35 kg).
+    expect(score('ipfGl', input('male', 39.9, 300), RULES).value).toBe(0);
+    expect(score('ipfGl', input('male', 37, 300), RULES).value).toBe(0);
+    expect(score('ipfGl', input('male', 40, 300), RULES).value).toBeGreaterThan(0);
+    expect(score('ipfGl', input('female', 34.9, 200), RULES).value).toBe(0);
+    expect(score('ipfGl', input('female', 35, 200), RULES).value).toBeGreaterThan(0);
+    expect(
+      score('ipfGl', input('female', 37, 200, 'classic', 'bench'), RULES).value,
+    ).toBeGreaterThan(0);
   });
 
   it('labels single-lift Wilks/DOTS informal and has no IPF/GL squat or deadlift', () => {

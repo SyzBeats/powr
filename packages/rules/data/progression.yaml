@@ -111,26 +111,34 @@
       - { minReps: 3, maxReps: 4, adjustKg: -1.25, rangeKg: { min: -2.5, max: 0 } }
       - { minReps: 5, maxReps: 7, adjustKg: 0, rangeKg: { min: 0, max: 0 } }
       - { minReps: 8, maxReps: 12, adjustKg: 3.75, rangeKg: { min: 2.5, max: 5 } }
-      - { minReps: 13, maxReps: null, adjustKg: 7.5, rangeKg: { min: 5, max: 10 } }
+      - { minReps: 13, maxReps: null, adjustKg: 6.25, rangeKg: { min: 5, max: 7.5 } }
   unit: mixed
-  evidence: [RCT-T, MA]
-  sources: [src.mann2010, src.huang2023, src.zhang2021]
+  evidence: [RCT-T, MA, OBS, PRACT]
+  sources: [src.mann2011, src.mann2017, src.mann2010, src.huang2023, src.zhang2021]
   ebRef: 'EB §Progression › Progression rules (APRE-6 table); §Defaults › Progression (APRE preset)'
-  verified: false
+  verified: true
   userOverridable: false
   note: >-
-    The suggested change is the midpoint of each range, then rounded to the equipment. Secondary
-    sources differ slightly and the original tables were not retrieved.
+    The suggested change is the midpoint of each range, then rounded to the equipment. The
+    original table is in pounds (Mann 2011, Appendix A; Mann 2017): 0–2 reps −5 to 10 lb, 3–4 −0
+    to 5, 5–7 same, 8–12 +5 to 10, 13+ +10 to 15 (10–15 lb = 4.5–6.8 kg), rounded to plates here.
+    Rules 1.8.0 (T-01 V-1, 2026-11-25): the 13+ row is +5 to 7.5 kg (midpoint 6.25); the former +5
+    to 10 kg came from Huang 2023's mis-conversion of 10–15 lb. Not reachable in the MVP (APRE
+    slots run as RPE; no template uses APRE).
 
 - id: progression.calibration
   value: { exposures: { min: 1, max: 2 }, targetRir: { min: 3, max: 4 } }
   unit: mixed
   evidence: [INF]
-  sources: [src.powr-technical-concept, src.halperin2022]
+  sources: [src.powr-prd, src.powr-technical-concept, src.halperin2022]
   ebRef: 'PRD PRG-08; technical concept §8.7.5 (calibration status); EB §Load › RIR accuracy (wide priors)'
-  verified: false
+  verified: true
   userOverridable: false
-  note: 'Data only in M1; a POWR design rule for new users and exercises.'
+  note: >-
+    PRD PRG-08 verbatim: "the first 1–2 exposures prescribe a target RIR of 3–4"; verified as the
+    PRD's own numbers (T-01, 2026-11-25), its evidence label stays "App estimate". The margin
+    fits the evidence: lifters under-predict reps to failure by about 1 rep with a between-person
+    SD of 1.45 reps (Halperin 2022), so RIR 3–4 keeps a typical misjudgement short of failure.
 
 - id: progression.calibration.reliableSetWeight
   value: 0.5
@@ -145,7 +153,9 @@
     A POWR design value for the calibration state machine (TD-27): uncalibrated → calibrating →
     calibrated. One exposure with entered effort calibrates when one of its sets reaches this
     e1RM set weight (the 0.5 tier: RPE ≥ 7 and ≤ 12 effective reps); otherwise the second
-    exposure does (progression.calibration exposures.max).
+    exposure does (progression.calibration exposures.max). T-01 (2026-11-25): the tier follows the
+    RIR-accuracy evidence (Halperin 2022); no study addresses when one calibration exposure
+    suffices. A set at the calibration target RIR 4 (RPE 6) does not calibrate on its own.
 
 - id: progression.classification.slopePctPerWeek
   value: { noviceFrom: 1, advancedBelow: 0.25, minWeeks: 8 }
@@ -166,16 +176,27 @@
   userOverridable: false
   note: >-
     The EB lists four training-age bands but no mapping to three levels; mapping 2+ years to
-    advanced is a POWR choice until the observed slope takes over (≥ 8 weeks of data).
+    advanced is a POWR choice until the observed slope takes over (≥ 8 weeks of data). T-01
+    (2026-11-25): intermediateFrom 6 is ACSM 2009's "approximately 6 months of consistent RT
+    experience"; advancedFrom 24 is a reading of "years" that agrees with the slope classifier for
+    typical lifters with 2–5 years of training. Settled by a validated training-status
+    classification with published cut-offs.
 
 # M4a (rules 1.5.0): PRG-07 (TD-44), the switch from linear increases to RPE loading.
 
 - id: progression.pace.window
-  value: { weeks: 4, minExposures: 4 }
+  value: { weeks: 4, minExposures: 6 }
   unit: mixed
   evidence: [INF]
   sources: [src.hopkins2000, src.grgic2020, src.mcmaster2013, src.powr-technical-concept]
   ebRef: 'PRD PRG-07 (when planned increases exceed the observed e1RM trend, switch to rep/RPE progression); EB §Load › Real change (1 TE "likely real"); EB §Progression › Increment sizing'
   verified: false
   userOverridable: false
-  note: 'A POWR design value: the planned weekly increase must exceed the one-sided 95% upper bound of the session-e1RM slope over the window, and the gap over the window must exceed one typical error.'
+  note: >-
+    A POWR design value: the planned weekly increase must exceed the one-sided 95% upper bound of
+    the session-e1RM slope over the window, and the gap over the window must exceed one typical
+    error. Rules 1.8.0 (T-01, product-owner decision 2026-11-25): the bound uses the Student t
+    quantile for the fit's n − 2 degrees of freedom, and minExposures is 6 (was 4): with the normal
+    quantile and 4 exposures the switch fired on noise in about 12% of windows instead of 5%
+    (packages/domain/test/reference/pace.test.ts). No study defines when linear progression
+    should give way to autoregulation.

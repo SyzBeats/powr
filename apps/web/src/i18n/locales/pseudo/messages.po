@@ -1735,10 +1735,6 @@ msgstr ""
 msgid "A copy of {copiedName}. Give it its own name and change what differs."
 msgstr ""
 
-#: src/features/body/words.ts
-msgid "A few more weigh-ins needed"
-msgstr ""
-
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.progression.linear.stallReset.simple"
@@ -2732,6 +2728,7 @@ msgstr ""
 #: src/features/session/past/PastSessionEditor.tsx
 #: src/features/session/timed-set.tsx
 #: src/features/settings/ProfileAnswerScreen.tsx
+#: src/features/shell/RecoveryScreen.tsx
 msgid "Cancel"
 msgstr ""
 
@@ -5799,10 +5796,6 @@ msgstr ""
 msgid "Needs {0} training days a week."
 msgstr ""
 
-#: src/features/body/BodyScreen.tsx
-msgid "Needs about two weeks"
-msgstr ""
-
 #: src/features/progress/ScoresScreen.tsx
 msgid "Needs all three lifts"
 msgstr ""
@@ -6300,6 +6293,16 @@ msgstr ""
 msgid "Not counted"
 msgstr ""
 
+#: src/features/body/BodyScreen.tsx
+#: src/features/body/words.ts
+msgid "Not enough data yet"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.bodyweight.rate.insufficientData"
+msgstr ""
+
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.trend.change.insufficientData"
@@ -6307,11 +6310,6 @@ msgstr ""
 
 #: src/features/progress/ExerciseProgressScreen.tsx
 msgid "Not enough sets with an effort rating yet"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/features/why/messages.ts
-msgid "why.bodyweight.rate.insufficientData"
 msgstr ""
 
 #: src/features/session/past/parts.tsx
@@ -6982,6 +6980,10 @@ msgstr ""
 msgid "POWR gives general training suggestions, not medical advice. Check with a doctor before you start or change training, especially with a health condition, an injury or a pregnancy. Stop and get help if you feel chest pain, dizziness or sharp pain. You decide what you do with the suggestions."
 msgstr ""
 
+#: src/features/shell/RecoveryScreen.tsx
+msgid "POWR has kept training data on this phone, but this time the browser opened its storage empty. POWR has not deleted or changed anything, and it does not start over by itself."
+msgstr ""
+
 #: src/features/shell/InstallPromotion.tsx
 msgid "POWR is being added to your home screen."
 msgstr ""
@@ -7015,6 +7017,10 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.plan.volume.sets.simple"
+msgstr ""
+
+#: src/features/shell/RecoveryScreen.tsx
+msgid "POWR then starts like a new install on this phone. Your training data comes back only from a backup file."
 msgstr ""
 
 #: src/features/calendar/CalendarExportScreen.tsx
@@ -7689,7 +7695,7 @@ msgid "RPE 5 or less"
 msgstr ""
 
 #: src/features/settings/TrainingAdvanced.tsx
-msgid "RTS chart"
+msgid "RPE chart (common RTS version)"
 msgstr ""
 
 #: src/features/settings/SettingsScreen.tsx
@@ -8364,7 +8370,20 @@ msgid "Start a workout with it: {name}"
 msgstr ""
 
 #: src/features/data/DataDeletedScreen.tsx
+#: src/features/shell/RecoveryScreen.tsx
 msgid "Start again"
+msgstr ""
+
+#: src/features/shell/RecoveryScreen.tsx
+msgid "Start again without data"
+msgstr ""
+
+#: src/features/shell/RecoveryScreen.tsx
+msgid "Start again without data?"
+msgstr ""
+
+#: src/features/shell/RecoveryScreen.tsx
+msgid "Start again without data…"
 msgstr ""
 
 #: src/features/session/StartScreen.tsx
@@ -9551,8 +9570,9 @@ msgid "Trend {0}, changing by {1}."
 msgstr ""
 
 #. placeholder {0}: words.mass(latestTrend, unit)
+#. placeholder {1}: view.rateMinDays
 #: src/features/body/BodyScreen.tsx
-msgid "Trend {0}. The weekly rate needs about two weeks of weigh-ins."
+msgid "Trend {0}. Not enough data yet for a weekly rate: it shows once your weigh-ins span {1} days."
 msgstr ""
 
 #: src/ui/charts/trend-chart.tsx
@@ -9583,6 +9603,10 @@ msgstr ""
 #: src/features/settings/WhatsNewScreen.tsx
 #: src/features/shell/RecoveryScreen.tsx
 msgid "Try again"
+msgstr ""
+
+#: src/features/shell/RecoveryScreen.tsx
+msgid "Try again first. If your data is still missing, the browser has lost it, for example after a crash damaged its storage. Then start again and restore your latest backup file in Settings, under Data and backups, where any safety copies POWR still has are listed too."
 msgstr ""
 
 #: src/features/data/DataScreen.tsx
@@ -10508,6 +10532,10 @@ msgstr ""
 
 #: src/features/library/ExploreScreen.tsx
 msgid "Your custom exercises"
+msgstr ""
+
+#: src/features/shell/RecoveryScreen.tsx
+msgid "Your data could not be read"
 msgstr ""
 
 #: src/app/StartupError.tsx

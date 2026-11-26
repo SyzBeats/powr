@@ -25,9 +25,10 @@ server:
 # The web server image (deploy/Dockerfile): the official nginx image plus the app's files and
 # deploy/nginx.conf. Package list read on 2026-11-25 with `apk list --installed` from
 # nginx:1.30-alpine at the digest below (Alpine 3.24.4, nginx 1.30.8); licences as Alpine
-# declares them (nginx's own "2-clause BSD-like license" is BSD-2-Clause). The tag is not pinned
-# to the digest, so CI saves the package list of every image it builds (`image-packages.txt` in
-# the `reports` artifact); refresh this list from it when the base image changes.
+# declares them (nginx's own "2-clause BSD-like license" is BSD-2-Clause). deploy/Dockerfile
+# pins the image to this digest (M6d), and `pnpm licence` fails while the two differ: a new
+# digest there means regenerating this list from the new image (runbook §6.1; CI saves every
+# image's package list as `image-packages.txt` in the `reports` artifact).
 image:
   reference: nginx:1.30-alpine
   digest: sha256:8eb04fe3b385090e9aa02961f77398ad09b6bf33ab07f6669a5bb7acce22c0d3

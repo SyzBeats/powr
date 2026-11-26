@@ -546,7 +546,8 @@ export interface ParamValues {
   'scoring.ipfPoints.coefficients': BySex<ByDivisionEvent<IpfPointsCoefficients>>;
   'scoring.ipfPoints.minBodyweightKg': number;
   'scoring.ipfGl.coefficients': BySex<ByDivisionEvent<IpfGlCoefficients>>;
-  'scoring.ipfGl.minBodyweightKg': number;
+  /** Rules 1.8.0 (T-01, V-5): by sex, as the IPF GL document applies the formula (40 / 35 kg). */
+  'scoring.ipfGl.minBodyweightKg': BySex<number>;
   'scoring.allometric.exponent': number;
   // planning.yaml
   'planning.mesocycle.accumulationWeeks': Range;

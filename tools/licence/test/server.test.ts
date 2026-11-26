@@ -1,11 +1,11 @@
-import { mkdtempSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'vitest';
 
-import { formatFailures, readServerInventory, runGate } from '../src/inventory.ts';
+import { checkImagePin, formatFailures, readServerInventory, runGate } from '../src/inventory.ts';
 import { evaluate, evaluateServer, loadPolicy, type LicencePolicy } from '../src/policy.ts';
 
 /*
@@ -88,6 +88,42 @@ describe('server-side programs (L-2)', () => {
         { status: 'allowed' },
       );
     }
+  });
+});
+
+/** A server inventory that lists only the image's reference and digest. */
+function inventory(reference: string, pinned: string): string {
+  const file = join(mkdtempSync(join(tmpdir(), 'powr-pin-')), 'server-inventory.yaml');
+  writeFileSync(file, `image:\n  reference: ${reference}\n  digest: ${pinned}\n  packages: []\n`);
+  return file;
+}
+
+describe('the pinned base image (M6d, runbook §6.1)', () => {
+  const digest = `sha256:${'ab'.repeat(32)}`;
+
+  it('passes when the Dockerfile and the inventory name the same digest', () => {
+    expect(
+      checkImagePin(`FROM nginx:1.30-alpine@${digest}\n`, inventory('nginx:1.30-alpine', digest)),
+    ).toBeNull();
+  });
+
+  it('fails on a tag without a digest, and on a digest the inventory does not list', () => {
+    expect(
+      checkImagePin('FROM nginx:1.30-alpine\n', inventory('nginx:1.30-alpine', digest)),
+    ).toContain('without a digest');
+    const other = `sha256:${'cd'.repeat(32)}`;
+    expect(
+      checkImagePin(`FROM nginx:1.30-alpine@${other}\n`, inventory('nginx:1.30-alpine', digest)),
+    ).toContain('regenerate the inventory');
+    expect(
+      checkImagePin(`FROM nginx:1.31-alpine@${digest}\n`, inventory('nginx:1.30-alpine', digest)),
+    ).toContain('regenerate the inventory');
+  });
+
+  it('the real Dockerfile is pinned to the digest of the real inventory', () => {
+    const dockerfile = readFileSync(repo('deploy/Dockerfile'), 'utf8');
+    expect(dockerfile).toMatch(/^FROM nginx:1\.30-alpine@sha256:[0-9a-f]{64}$/m);
+    expect(checkImagePin(dockerfile, repo('deploy/server-inventory.yaml'))).toBeNull();
   });
 });
 

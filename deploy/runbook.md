@@ -13,8 +13,9 @@ Technical concept: §7 (deployment view), §7.6 (operations), ADR-0011.
   - `production`: `https://<production-domain>` (chosen after the trademark check V-05), deployed from a
     `vX.Y.Z` tag after approval in GitHub.
 - The image is `ghcr.io/<owner>/powr-web:<version>-<sha7>` (and `:vX.Y.Z` for releases): the official
-  `nginx:1.30-alpine` image plus `apps/web/dist` and `deploy/nginx.conf`. It listens on port 8080 and
-  answers the health check at `GET /version.json`.
+  `nginx:1.30-alpine` image, pinned to its digest (section 6.1), plus `apps/web/dist` and
+  `deploy/nginx.conf`. It listens on port 8080 and answers the health check at `GET /version.json`.
+  The image stays **private** on GHCR (section 2); the app it serves is public.
 - The server holds **no user data**. Installed clients keep working offline during an outage.
 
 ## 2. GitHub configuration
@@ -40,6 +41,21 @@ check V-05); never change it afterwards, or exported calendar events stop updati
 
 The workflows use the built-in `GITHUB_TOKEN` to push to GHCR; no personal token is stored.
 Never put secret values into the repository.
+
+**The GHCR image stays private.** The app itself is public: anyone can load its files from the
+website, and its own licences and attributions ship with it. The container image is different: it
+also contains the Alpine and nginx packages of the base image, several of them under the GPL
+(busybox, apk-tools and others; `deploy/server-inventory.yaml`). Running them on our own server
+distributes nothing, but making the image public would distribute those programs and bring the
+GPL's duties (offering their exact source) with it (licence review §3, L-2). So:
+
+- The `powr-web` package on GHCR is **Private**: check it after the first push of the deploy
+  workflow, and again whenever the repository's or the organisation's settings change (GitHub →
+  the repository → Packages → `powr-web` → Package settings; the "Danger Zone" there shows the
+  visibility). Never use "Change visibility" to make it public, and do not link the package to
+  a public repository.
+- Coolify pulls with a **read-only** package token (section 3, step 7); nobody else needs access.
+- Do not push the image, or a copy of it, to any other registry.
 
 ## 3. Server setup (spike S-7)
 
@@ -99,11 +115,42 @@ Never put secret values into the repository.
 | Task                                                                      | Cadence                                    |
 | ------------------------------------------------------------------------- | ------------------------------------------ |
 | Coolify upgrade after reading the release notes; Hetzner snapshot first   | Monthly; immediately for security releases |
-| Rebuild the image for `nginx:1.30-alpine` updates (Dependabot opens a PR) | Weekly check                               |
-| Refresh `deploy/server-inventory.yaml` from the CI `image-packages.txt`   | When the base image changes                |
+| Update the pinned `nginx:1.30-alpine` digest (Dependabot opens a PR; 6.1) | Weekly check                               |
+| Regenerate `deploy/server-inventory.yaml` from the new image (6.1)        | With every digest change, in the same PR   |
 | Review `pnpm audit:all` (the CI `audit` artifact)                         | Before each release                        |
 | Review firewall, SSH users and API tokens                                 | Quarterly                                  |
 | Restore drill from this runbook (target: under 2 hours)                   | Once before launch, then yearly            |
+
+### 6.1 Updating the base image digest
+
+`deploy/Dockerfile` builds on `nginx:1.30-alpine@sha256:<digest>`: the tag says which line the
+image follows, the digest fixes the exact image (the digest of the tag's multi-arch index, so it
+resolves on amd64 and arm64 alike). A rebuild therefore uses exactly the packages that
+`deploy/server-inventory.yaml` lists, and the image changes only through a reviewed PR. The
+licence gate enforces the pairing: `pnpm licence` fails when the Dockerfile has no digest or when
+its digest differs from `image.digest` in the inventory.
+
+When a new digest is due (Dependabot's weekly Docker check opens a PR that changes the `FROM`
+line; or by hand, for a security fix in the base image):
+
+1. Read the new digest without pulling: `docker buildx imagetools inspect nginx:1.30-alpine` (the
+   `Digest:` line of the index). After a `docker pull`, `docker image inspect nginx:1.30-alpine
+   --format '{{index .RepoDigests 0}}'` shows the same value.
+2. Put it into `deploy/Dockerfile`: `FROM nginx:1.30-alpine@sha256:<new digest>`.
+3. Build the image and list its packages: `pnpm build && pnpm docker:build`, then
+   `docker run --rm --entrypoint apk powr-web:local list --installed | sort`. CI does the same
+   for the PR and saves the list as `image-packages.txt` in the `reports` artifact.
+4. **Regenerate `deploy/server-inventory.yaml`** in the same PR: `image.digest` (the new digest),
+   `image.read` (today), the Alpine and nginx versions in the comment above it, and the `packages`
+   list (one entry per installed package: `name`, `version`, `origin` and `licence` as Alpine
+   declares it). Never change the digest without the list, and never the list without the digest.
+5. `pnpm licence` passes (the digests agree, no `serverDenied` licence), the image's header smoke
+   test passes (`pnpm docker:run`, then `pnpm docker:smoke`; CI runs both), and a new licence in
+   the list is looked at against licence review §3.
+6. Merge; beta and production follow as usual (section 4).
+
+Moving to another tag (for example the next nginx stable line) is the same change with the new
+tag in both files, plus a line in the release notes.
 
 ## 7. Incident: server down
 

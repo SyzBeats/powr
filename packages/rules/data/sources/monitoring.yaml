@@ -43,12 +43,17 @@
 
 - id: src.craven2022
   citation: >-
-    Craven et al. 2022. [Meta-analysis, 69 publications: sleep loss reduced exercise performance
-    by 7.56%; effects consistent for total deprivation and late restriction; PM tasks impaired,
-    AM tasks largely unaffected.] Sports Med. DOI 10.1007/s40279-022-01706-y.
+    Craven J, McCartney D, Desbrow B, Sabapathy S, Bellinger P, Roberts L & Irwin C 2022. Effects
+    of acute sleep loss on physical performance: a systematic and meta-analytical review. Sports
+    Med 52(11):2669–2690. DOI 10.1007/s40279-022-01706-y.
   url: https://doi.org/10.1007/s40279-022-01706-y
   tag: MA
   status: active
+  note: >-
+    69 publications: sleep loss reduced exercise performance by 7.56%; effects consistent for
+    total deprivation and late restriction; tasks split into ante and post meridiem (before and
+    after noon): PM tasks impaired, AM tasks largely unaffected. Title completed by the T-01
+    evidence verification (2026-11-25).
 
 - id: src.knowles2018
   citation: >-

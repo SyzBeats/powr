@@ -91,9 +91,17 @@ test.describe('Data and backups (M5d: DAT-03…08, DAT-13)', () => {
 
     await expect(page.getByRole('heading', { level: 1, name: 'All data deleted' })).toBeVisible();
     await expect(page.getByRole('heading', { level: 1, name: 'All data deleted' })).toBeFocused();
-    // §8.2.1: nothing of the app is left in IndexedDB or the local storage.
+    // §8.2.1: nothing of the app is left in IndexedDB or the local storage, nor (M6d) the data
+    // marker's file in the origin private file system, so the next start is a first run.
     expect(await databases(page)).toEqual([]);
     expect(await page.evaluate(() => localStorage.length + sessionStorage.length)).toBe(0);
+    expect(
+      await page.evaluate(async () => {
+        const names: string[] = [];
+        for await (const name of (await navigator.storage.getDirectory()).keys()) names.push(name);
+        return names;
+      }),
+    ).toEqual([]);
     await checkScreen(page, 'data-deleted');
 
     await page.getByRole('button', { name: 'Start again' }).click();

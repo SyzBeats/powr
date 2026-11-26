@@ -11,6 +11,7 @@ import {
 } from '../features/shell/RecoveryScreen';
 import { i18n } from '../i18n';
 import { createSafetySnapshots } from '../infrastructure/db';
+import { sharedDataMarker } from '../infrastructure/db/data-guard';
 import { hasUserData, readRawDatabase } from '../infrastructure/db/raw-read';
 import type { PendingUpgrade } from '../infrastructure/db/stored-version';
 import type { Diagnostics } from '../infrastructure/diagnostics/log';
@@ -87,7 +88,11 @@ export async function prepareUpgrade(
   }
 }
 
-/** The recovery screen (§6.8): save a raw copy, export diagnostics, try again. */
+/**
+ * The recovery screen (§6.8): save a raw copy, export diagnostics, try again. For `missing` (M6d:
+ * the data is gone, nothing to copy) it offers to start again without data instead, which forgets
+ * the marker so the next start is a first run.
+ */
 export function showRecovery(context: GuardContext, kind: RecoveryKind): void {
   context.diagnostics.log('info', 'db.recovery', { kind });
   const saveCopy = async (): Promise<CopyOutcome> => {
@@ -113,6 +118,12 @@ export function showRecovery(context: GuardContext, kind: RecoveryKind): void {
         onSaveCopy={saveCopy}
         onExportDiagnostics={exportDiagnostics}
         onRetry={() => location.reload()}
+        onStartAgain={() => {
+          context.diagnostics.log('info', 'db.startAgain');
+          void sharedDataMarker()
+            .clear()
+            .then(() => location.reload());
+        }}
       />
     </I18nProvider>,
   );

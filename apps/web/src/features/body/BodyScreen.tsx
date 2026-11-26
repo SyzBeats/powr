@@ -90,7 +90,7 @@ function TrendCard({ view }: { view: BodyweightView }) {
       ? t`Your trend starts after a few weigh-ins.`
       : rate
         ? t`Trend ${words.mass(latestTrend, unit)}, changing by ${words.rate(rate, unit)}.`
-        : t`Trend ${words.mass(latestTrend, unit)}. The weekly rate needs about two weeks of weigh-ins.`;
+        : t`Trend ${words.mass(latestTrend, unit)}. Not enough data yet for a weekly rate: it shows once your weigh-ins span ${view.rateMinDays} days.`;
   const format = (value: number) =>
     unit === 'kg' ? bodyMass(value, 'kg') : bodyMass(value * KG_PER_LB, 'lb');
   return (
@@ -109,7 +109,7 @@ function TrendCard({ view }: { view: BodyweightView }) {
           <Trans>Weekly rate</Trans>
         </dt>
         <dd className="font-semibold tabular" data-testid="body-rate">
-          {rate ? words.rate(rate, unit) : <Trans>Needs about two weeks</Trans>}
+          {rate ? words.rate(rate, unit) : <Trans>Not enough data yet</Trans>}
         </dd>
         <dt className="text-fg-muted">
           <Trans>Target range</Trans>

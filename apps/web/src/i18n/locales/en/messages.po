@@ -1303,7 +1303,7 @@ msgstr "{status, select, uncalibrated {POWR does not know your strength on this 
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.bodyweight.rate.band"
-msgstr "{status, select, untracked {Set a phase (bulk, cut or maintain) to compare your weekly rate with a target range.} insufficientData {A few more weigh-ins will show how your trend compares with your {phase, select, bulk {bulking} cut {cutting} other {maintenance}} range.} below {Your trend is changing by {pctPerWeek, number}% a week, below your {phase, select, bulk {bulking} cut {cutting} other {maintenance}} range of {min, number}% to {max, number}%.} above {Your trend is changing by {pctPerWeek, number}% a week, above your {phase, select, bulk {bulking} cut {cutting} other {maintenance}} range of {min, number}% to {max, number}%.} other {Your trend is changing by {pctPerWeek, number}% a week, within your {phase, select, bulk {bulking} cut {cutting} other {maintenance}} range of {min, number}% to {max, number}%.}}{warning, select, fastLoss { You have been losing faster than 1% a week for a while; a slower pace helps keep muscle and strength.} fastGain { You have been gaining faster than your range for a few weeks; a smaller surplus usually adds less fat.} other {}}"
+msgstr "{status, select, untracked {Set a phase (bulk, cut or maintain) to compare your weekly rate with a target range.} insufficientData {Not enough data yet: once your weigh-ins span {minDays, plural, one {# day} other {# days}}, POWR compares your weekly rate with your {phase, select, bulk {bulking} cut {cutting} other {maintenance}} range.} below {Your trend is changing by {pctPerWeek, number}% a week, below your {phase, select, bulk {bulking} cut {cutting} other {maintenance}} range of {min, number}% to {max, number}%.} above {Your trend is changing by {pctPerWeek, number}% a week, above your {phase, select, bulk {bulking} cut {cutting} other {maintenance}} range of {min, number}% to {max, number}%.} other {Your trend is changing by {pctPerWeek, number}% a week, within your {phase, select, bulk {bulking} cut {cutting} other {maintenance}} range of {min, number}% to {max, number}%.}}{warning, select, fastLoss { You have been losing faster than 1% a week for a while; a slower pace helps keep muscle and strength.} fastGain { You have been gaining faster than your range for a few weeks; a smaller surplus usually adds less fat.} other {}}"
 
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
@@ -1734,10 +1734,6 @@ msgstr "A coaching convention: no study has measured this credit for {name} yet.
 #: src/features/library/CustomExerciseScreen.tsx
 msgid "A copy of {copiedName}. Give it its own name and change what differs."
 msgstr "A copy of {copiedName}. Give it its own name and change what differs."
-
-#: src/features/body/words.ts
-msgid "A few more weigh-ins needed"
-msgstr "A few more weigh-ins needed"
 
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
@@ -2732,6 +2728,7 @@ msgstr "Can be installed"
 #: src/features/session/past/PastSessionEditor.tsx
 #: src/features/session/timed-set.tsx
 #: src/features/settings/ProfileAnswerScreen.tsx
+#: src/features/shell/RecoveryScreen.tsx
 msgid "Cancel"
 msgstr "Cancel"
 
@@ -5799,10 +5796,6 @@ msgstr "Neck"
 msgid "Needs {0} training days a week."
 msgstr "Needs {0} training days a week."
 
-#: src/features/body/BodyScreen.tsx
-msgid "Needs about two weeks"
-msgstr "Needs about two weeks"
-
 #: src/features/progress/ScoresScreen.tsx
 msgid "Needs all three lifts"
 msgstr "Needs all three lifts"
@@ -6300,6 +6293,16 @@ msgstr "Not available with your equipment"
 msgid "Not counted"
 msgstr "Not counted"
 
+#: src/features/body/BodyScreen.tsx
+#: src/features/body/words.ts
+msgid "Not enough data yet"
+msgstr "Not enough data yet"
+
+#. js-lingui-explicit-id
+#: src/features/why/messages.ts
+msgid "why.bodyweight.rate.insufficientData"
+msgstr "Not enough data yet for a weekly rate: {readings, plural, one {# reading} other {# readings}} over {spanDays, plural, one {# day} other {# days}}. The rate shows once your weigh-ins span {minDays, plural, one {# day} other {# days}}; over a shorter time the day-to-day ups and downs from water and food can look like a trend."
+
 #. js-lingui-explicit-id
 #: src/features/why/messages.ts
 msgid "why.trend.change.insufficientData"
@@ -6308,11 +6311,6 @@ msgstr "Not enough data yet to say whether your strength has changed. A few more
 #: src/features/progress/ExerciseProgressScreen.tsx
 msgid "Not enough sets with an effort rating yet"
 msgstr "Not enough sets with an effort rating yet"
-
-#. js-lingui-explicit-id
-#: src/features/why/messages.ts
-msgid "why.bodyweight.rate.insufficientData"
-msgstr "Not enough weigh-ins yet for a weekly rate: {readings, plural, one {# reading} other {# readings}} over {spanDays, plural, one {# day} other {# days}}. A few more over the coming days will show it."
 
 #: src/features/session/past/parts.tsx
 msgid "Not enough workouts yet to tell a real change"
@@ -6982,6 +6980,10 @@ msgstr "POWR could not update your data"
 msgid "POWR gives general training suggestions, not medical advice. Check with a doctor before you start or change training, especially with a health condition, an injury or a pregnancy. Stop and get help if you feel chest pain, dizziness or sharp pain. You decide what you do with the suggestions."
 msgstr "POWR gives general training suggestions, not medical advice. Check with a doctor before you start or change training, especially with a health condition, an injury or a pregnancy. Stop and get help if you feel chest pain, dizziness or sharp pain. You decide what you do with the suggestions."
 
+#: src/features/shell/RecoveryScreen.tsx
+msgid "POWR has kept training data on this phone, but this time the browser opened its storage empty. POWR has not deleted or changed anything, and it does not start over by itself."
+msgstr "POWR has kept training data on this phone, but this time the browser opened its storage empty. POWR has not deleted or changed anything, and it does not start over by itself."
+
 #: src/features/shell/InstallPromotion.tsx
 msgid "POWR is being added to your home screen."
 msgstr "POWR is being added to your home screen."
@@ -7016,6 +7018,10 @@ msgstr "POWR set your level from how long you have been training. It updates as 
 #: src/features/why/messages.ts
 msgid "why.plan.volume.sets.simple"
 msgstr "POWR spread your sets over the week so each muscle gets close to its weekly goal, without overloading any workout or running over your time."
+
+#: src/features/shell/RecoveryScreen.tsx
+msgid "POWR then starts like a new install on this phone. Your training data comes back only from a backup file."
+msgstr "POWR then starts like a new install on this phone. Your training data comes back only from a backup file."
 
 #: src/features/calendar/CalendarExportScreen.tsx
 msgid "POWR training plan"
@@ -7689,8 +7695,8 @@ msgid "RPE 5 or less"
 msgstr "RPE 5 or less"
 
 #: src/features/settings/TrainingAdvanced.tsx
-msgid "RTS chart"
-msgstr "RTS chart"
+msgid "RPE chart (common RTS version)"
+msgstr "RPE chart (common RTS version)"
 
 #: src/features/settings/SettingsScreen.tsx
 msgid "Rules registry {rulesVersion}"
@@ -8364,8 +8370,21 @@ msgid "Start a workout with it: {name}"
 msgstr "Start a workout with it: {name}"
 
 #: src/features/data/DataDeletedScreen.tsx
+#: src/features/shell/RecoveryScreen.tsx
 msgid "Start again"
 msgstr "Start again"
+
+#: src/features/shell/RecoveryScreen.tsx
+msgid "Start again without data"
+msgstr "Start again without data"
+
+#: src/features/shell/RecoveryScreen.tsx
+msgid "Start again without data?"
+msgstr "Start again without data?"
+
+#: src/features/shell/RecoveryScreen.tsx
+msgid "Start again without data…"
+msgstr "Start again without data…"
 
 #: src/features/session/StartScreen.tsx
 msgid "Start an empty workout"
@@ -9551,9 +9570,10 @@ msgid "Trend {0}, changing by {1}."
 msgstr "Trend {0}, changing by {1}."
 
 #. placeholder {0}: words.mass(latestTrend, unit)
+#. placeholder {1}: view.rateMinDays
 #: src/features/body/BodyScreen.tsx
-msgid "Trend {0}. The weekly rate needs about two weeks of weigh-ins."
-msgstr "Trend {0}. The weekly rate needs about two weeks of weigh-ins."
+msgid "Trend {0}. Not enough data yet for a weekly rate: it shows once your weigh-ins span {1} days."
+msgstr "Trend {0}. Not enough data yet for a weekly rate: it shows once your weigh-ins span {1} days."
 
 #: src/ui/charts/trend-chart.tsx
 msgid "trend {value}"
@@ -9584,6 +9604,10 @@ msgstr "triceps extension"
 #: src/features/shell/RecoveryScreen.tsx
 msgid "Try again"
 msgstr "Try again"
+
+#: src/features/shell/RecoveryScreen.tsx
+msgid "Try again first. If your data is still missing, the browser has lost it, for example after a crash damaged its storage. Then start again and restore your latest backup file in Settings, under Data and backups, where any safety copies POWR still has are listed too."
+msgstr "Try again first. If your data is still missing, the browser has lost it, for example after a crash damaged its storage. Then start again and restore your latest backup file in Settings, under Data and backups, where any safety copies POWR still has are listed too."
 
 #: src/features/data/DataScreen.tsx
 msgid "Type {confirmWord} to confirm"
@@ -10509,6 +10533,10 @@ msgstr "Your current lifts"
 #: src/features/library/ExploreScreen.tsx
 msgid "Your custom exercises"
 msgstr "Your custom exercises"
+
+#: src/features/shell/RecoveryScreen.tsx
+msgid "Your data could not be read"
+msgstr "Your data could not be read"
 
 #: src/app/StartupError.tsx
 msgid "Your data has not been changed. Close other POWR windows, then reload."

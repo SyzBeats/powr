@@ -86,6 +86,34 @@ export function readServerInventory(file: string): ServerEntry[] {
   return [...(raw?.server ?? []), ...(raw?.image?.packages ?? [])];
 }
 
+/**
+ * The base image of deploy/Dockerfile must be pinned to a digest, and it must be the digest whose
+ * packages deploy/server-inventory.yaml lists (`image.reference` and `image.digest`), so the
+ * inventory cannot silently describe another image (M6d; runbook §6.1). Returns the problem, or
+ * null when they agree.
+ */
+export function checkImagePin(dockerfile: string, inventoryFile: string): string | null {
+  const from = /^FROM\s+(\S+)/m.exec(dockerfile)?.[1];
+  if (!from) return 'deploy/Dockerfile has no FROM line.';
+  const pinned = /^(?<reference>[^@\s]+)@(?<digest>sha256:[0-9a-f]{64})$/.exec(from)?.groups;
+  if (!pinned) {
+    return `deploy/Dockerfile uses ${from} without a digest; pin it as <image>:<tag>@sha256:<digest> (runbook §6.1).`;
+  }
+  const image = (
+    parseYaml(readFileSync(inventoryFile, 'utf8')) as {
+      image?: { reference?: string; digest?: string };
+    } | null
+  )?.image;
+  if (image?.reference !== pinned['reference'] || image?.digest !== pinned['digest']) {
+    return (
+      `deploy/Dockerfile pins ${from}, but deploy/server-inventory.yaml lists ` +
+      `${image?.reference ?? '(none)'}@${image?.digest ?? '(none)'}: regenerate the inventory from ` +
+      'the new image (runbook §6.1).'
+    );
+  }
+  return null;
+}
+
 /** Evaluates distributed packages and assets (and optionally build-only packages). */
 export function runGate(options: {
   policy: LicencePolicy;

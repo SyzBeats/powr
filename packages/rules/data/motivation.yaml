@@ -1,7 +1,7 @@
 # Motivation (PRD MOT-03, MOT-04, A-07; M4a, rules 1.5.0). The weekly adherence streak and its
-# fairness rules. No evidence base section covers streaks; the values are the PRD's own numbers,
-# except the default freestyle target, a POWR design value. Tone rules (MOT-10) are copy rules,
-# not parameters.
+# fairness rules. No evidence base section covers streaks; the values are the PRD's own numbers
+# (the default freestyle target since PRD v0.7, verified in rules 1.8.0). Tone rules (MOT-10) are
+# copy rules, not parameters.
 
 - id: motivation.streak.partialMinShare
   value: 0.5
@@ -37,7 +37,12 @@
   range: { min: 1, max: 7 }
   evidence: [INF]
   sources: [src.powr-prd]
-  ebRef: 'PRD MOT-03 (in freestyle mode the user sets a weekly session target); the value before one is set is a POWR design value'
-  verified: false
+  ebRef: 'PRD MOT-03 v0.7 ("Without a plan or a weekly target, one session keeps the week")'
+  verified: true
   userOverridable: true
-  note: 'A POWR design value: weeks without plan sessions and without a user target ask for one session.'
+  note: >-
+    Weeks without plan sessions and without a user target ask for one session (PRD MOT-03 v0.7);
+    verified as the PRD's own number (T-01, 2026-11-25), its evidence label stays "App estimate".
+    A streak rewards consistency, not dose: WHO 2020 recommends muscle strengthening on 2 or more
+    days a week, while one session a week maintains strength and size in younger adults (Spiering
+    2021). The product owner confirmed the default of 1 on 2026-11-25.

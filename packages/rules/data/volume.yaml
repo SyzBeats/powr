@@ -1,20 +1,26 @@
-# Volume, frequency, load and effort (EB §Defaults › Volume; EB §Volume). The Pelland tiers, the
-# PUOS and the Remmert per-session caps come from preprints and ship with verified false (E-2,
-# EB §Gaps #1): recheck against Pelland Sports Med 2026 and the published Remmert paper. The RP
-# landmarks (MV/MEV/MAV/MRV) are a coaching overlay for M4 and are not registry defaults.
+# Volume, frequency, load and effort (EB §Defaults › Volume; EB §Volume). Rules 1.8.0 (T-01
+# evidence verification, 2026-11-25): the weekly bands, set counting, strength frequency, the
+# strength per-session sets and the RIR slope are checked against Pelland Sports Med 2026 (published
+# abstract and its OSF data), ACSM 2026 and the Robinson accepted manuscript and ship verified. The
+# Pelland tiers and the PUOS stay verified false until the published full text (Tables 2A/2B) is
+# read; the Remmert per-session cap stays a preprint value (E-2, EB §Gaps #1). The RP landmarks
+# (MV/MEV/MAV/MRV) are a coaching overlay for M4 and are not registry defaults.
 
 - id: volume.hypertrophy.weeklyBands
   value: { floor: 4, defaultLow: 10, defaultHigh: 20, highHigh: 30, hardWarnAbove: 40 }
   unit: sets
-  guard: { softWarningAbove: 30, softText: no detectable superiority, hardText: no data }
-  evidence: [MA, PREPRINT]
-  sources: [src.pelland2026, src.pelland2024, src.bazvalle2022, src.acsm2026, src.powr-eb-volume]
+  guard: { softWarningAbove: 30, softText: no detectable superiority, hardText: almost no data }
+  evidence: [MA, POS]
+  sources: [src.pelland2026, src.acsm2026, src.bazvalle2022, src.powr-eb-volume]
   ebRef: 'EB §Defaults › Volume (hypertrophy weekly sets per muscle, fractional); §Volume › About 4 sets'
-  verified: false
+  verified: true
   userOverridable: false
   note: >-
     Fractional sets per muscle per week: floor 4, default 10–20, high band 20–30 (an individual
-    experiment), soft warning above 30, hard warning above 40.
+    experiment), soft warning above 30, hard warning above 40. T-01 (2026-11-25): 4 vs 0 sets
+    +2.21% (Pelland 2026 data); ACSM 2026 "≥ 10 sets/wk" and diminishing returns beyond about
+    18–20; Baz-Valle 2022 12–20; the PUOS is 31; only one study in Pelland's dataset tested more
+    than 40 sets (45), hence "almost no data".
 
 - id: volume.hypertrophy.tiers
   value:
@@ -25,46 +31,65 @@
     - { minSets: 30, maxSets: 42, tier: lowestEfficiency, extraSetsPerDetectableGain: 12.5 }
     - { minSets: 43, maxSets: null, tier: unclear, extraSetsPerDetectableGain: null }
   unit: table
-  evidence: [PREPRINT]
-  sources: [src.pelland2024]
+  evidence: [MA, PREPRINT]
+  sources: [src.pelland2026, src.pelland2024]
   ebRef: 'EB §Volume › About 4 sets per week is detectable (hypertrophy efficiency tiers; SDES 2.05%)'
   verified: false
   userOverridable: false
+  note: >-
+    Reproduced from the published paper's supplementary data (OSF): MED 4 and SDES 2.05%; extra
+    sets per detectable gain about 5.8 / 8.1 / 10.6 / 13.1, within the registry's precision. The
+    tier table itself was read in the preprint; it stays verified false until the published Table
+    2A is read (product-owner decision, T-01, 2026-11-25).
 
 - id: volume.strength.tiers
   value:
     - { minSets: 1, maxSets: 1, tier: minimumEffectiveDose, extraSetsPerDetectableGain: null }
-    - { minSets: 2, maxSets: 2, tier: higherEfficiency, extraSetsPerDetectableGain: 0.75 }
-    - { minSets: 3, maxSets: 4, tier: intermediateEfficiency, extraSetsPerDetectableGain: 2.25 }
-    - { minSets: 5, maxSets: null, tier: notDetectable, extraSetsPerDetectableGain: null }
+    - { minSets: 2, maxSets: 2, tier: lowerEfficiency, extraSetsPerDetectableGain: 12 }
+    - { minSets: 3, maxSets: null, tier: notDetectable, extraSetsPerDetectableGain: null }
   unit: table
-  evidence: [PREPRINT]
-  sources: [src.pelland2024]
+  evidence: [MA, INF]
+  sources: [src.pelland2026]
   ebRef: 'EB §Volume › About 4 sets per week is detectable (strength tiers; SDES 3.96%)'
   verified: false
   userOverridable: false
+  note: >-
+    Rules 1.8.0 (T-01 V-2, 2026-11-25): recomputed from the published paper's supplementary data
+    (OSF). From 1 set, 3 more give a detectable gain (P 83.6%); from 2 sets, 12 more (P 52.3%);
+    from 3 sets, no higher volume up to 32 sets does (best P 3.6%), which agrees with the PUOS of
+    3. The preprint's 0.75 and 2.25 and its "not detectable from 5" could not be reproduced.
+    Gains continue below the detection threshold (10 vs 3 sets: +2.63%). Stays verified false
+    until the published Table 2B is read: the table is POWR's recomputation.
 
 - id: volume.puos
   value: { hypertrophyFractionalSets: 31, strengthFractionalSets: 3, strengthSessionsPerWeek: 3 }
   unit: mixed
-  evidence: [PREPRINT]
-  sources: [src.remmert2025, src.pelland2024]
+  evidence: [MA, PREPRINT]
+  sources: [src.pelland2026, src.remmert2025, src.pelland2024]
   ebRef: 'EB §Volume › About 4 sets per week (point of undetectable outcome superiority); §Volume › Frequency'
   verified: false
   userOverridable: false
-  note: 'The authors stress these are not upper limits; more sets still add gains, just not detectably.'
+  note: >-
+    The authors stress these are not upper limits; more sets still add gains, just not
+    detectably. T-01 (2026-11-25): all three values reproduce from the published paper's data (30
+    → 45 sets 61.7%, 31 → 45 46.9%; 2 → 14 sets 52.3%, 3 → 32 3.6%; 2 → 5 sessions 61.85%, 3 → 6
+    0.0%); the hypertrophy 31 is partly set by the end of the comparison grid (45 sets), and the
+    term comes from the Remmert preprint. Stays verified false until the published full text is
+    read (product-owner decision).
 
 - id: volume.counting.default
   value: fractional
   unit: none
   evidence: [MA]
-  sources: [src.pelland2024, src.pelland2026]
+  sources: [src.pelland2026]
   ebRef: 'EB §Defaults › Volume (set counting: primary 1.0, synergist 0.5; show direct and fractional)'
-  verified: false
+  verified: true
   userOverridable: true
   note: >-
-    Both counts are always computed; this picks the default display. Whether the published Pelland
-    version changed the fractional-counting conclusion is not verified (E-2).
+    Both counts are always computed; this picks the default display. The published abstract keeps
+    the conclusion: "The relative evidence for the 'fractional' quantification method was
+    strongest"; the OSF sensitivity plots put the best synergist weight at about 0.38–0.40, and
+    0.5 fits within about 0.1% of it (T-01, 2026-11-25).
 
 - id: volume.hardSet.maxRir
   value: 4
@@ -106,11 +131,15 @@
 - id: volume.frequency.strengthPerLift
   value: { min: 2, max: 3 }
   unit: sessions
-  evidence: [MA]
-  sources: [src.pelland2024]
+  evidence: [MA, POS, DELPHI/SURVEY]
+  sources: [src.pelland2026, src.acsm2026, src.androulakiskorakakis2021]
   ebRef: 'EB §Defaults › Volume (frequency, strength 2–3 sessions per lift per week)'
-  verified: false
+  verified: true
   userOverridable: true
+  note: >-
+    T-01 (2026-11-25): frequency has an independent strength effect with diminishing returns
+    (Pelland 2026: 1 → 2 sessions +4.07%, 2 → 3 +2.02%, nothing detectable beyond 3); ACSM 2026
+    "≥ 2 sessions/wk"; powerlifters spread their sets across 1–3 sessions a week.
 
 - id: volume.hypertrophy.perSessionSoftCap
   value: { fractionalSets: 11, directSets: 8, nudge: { min: 10, max: 12 } }
@@ -120,27 +149,41 @@
   ebRef: 'EB §Defaults › Volume (per-session cap, hypertrophy); §Volume › Per-session returns'
   verified: false
   userOverridable: true
-  note: 'Above the cap the planner suggests another session; never present "junk volume" as fact.'
+  note: >-
+    Above the cap the planner suggests another session; never present "junk volume" as fact. T-01
+    (2026-11-25): no peer-reviewed Remmert paper exists yet (only the preprint and two conference
+    abstracts, MSSE 58(10S), 2026), and few data lie above the cap. A design value until the
+    peer-reviewed paper appears (E-2).
 
 - id: volume.strength.perSessionHeavySets
   value: { min: 2, max: 3 }
   unit: sets
-  evidence: [PREPRINT]
-  sources: [src.remmert2025]
+  evidence: [POS, DELPHI/SURVEY]
+  sources: [src.acsm2026, src.androulakiskorakakis2021]
   ebRef: 'EB §Defaults › Volume (per-session cap, strength ~2–3 direct heavy sets per lift)'
-  verified: false
+  verified: true
   userOverridable: true
+  note: >-
+    T-01 (2026-11-25): ACSM 2026 Table 6 "Volume: 2–3 sets/session" for strength ("at least two
+    sets per exercise … these benefits diminish with each subsequent set"); 2–3 back-off sets after
+    a top single (Androulakis-Korakakis 2021). ACSM's figure is per exercise in general strength
+    training, not specifically heavy sets of a competition lift.
 
 - id: volume.strength.weeklyHeavySetsPerLift
   value: { min: 4, max: 10 }
   unit: sets
-  guard: { minimumDose: { min: 3, max: 6 }, plateauAbove: 5 }
+  guard: { minimumDose: { min: 3, max: 6 }, plateauAbove: 3 }
   evidence: [MA, DELPHI/SURVEY]
-  sources: [src.androulakiskorakakis2021, src.pelland2024]
+  sources: [src.androulakiskorakakis2021, src.pelland2026]
   ebRef: 'EB §Defaults › Volume (strength sets per competition lift per week)'
   verified: false
   userOverridable: true
-  note: 'The plateau above about 5 sets comes from the Pelland preprint.'
+  note: >-
+    Rules 1.8.0 (T-01 V-3, 2026-11-25): no detectable superiority above about 3 fractional sets a
+    week (Pelland 2026 data); gains continue below the detection threshold. The former 5 came from
+    the preprint's tier label. The minimum dose 3–6 is Androulakis-Korakakis 2021; the band 4–10
+    stays a design value (Pelland counts fractional sets of the tested lift, POWR direct sets at
+    ≥ 80% 1RM; surveyed powerlifters use about 4–8).
 
 - id: volume.startingVolume.maxFactor
   value: 1.2
@@ -174,8 +217,8 @@
     session time budget cannot fit every weekly target (PLN-14; planning.timeBudget.fallback).
     Sets at 6–15RM, the hypertrophy rep range; the EB "minimum" mode [INF] is 4–6 sets at 0–2
     RIR. A row of its own rather than the floor of volume.hypertrophy.weeklyBands: the same number,
-    but the floor is the Pelland detectability boundary (preprint, verified false) the validator
-    flags against, while this is the published narrative-review dose the generator plans to.
+    but the floor is the Pelland detectability boundary the validator flags against, while this is
+    the published narrative-review dose the generator plans to.
 
 - id: volume.repRange.hypertrophy
   value:
@@ -235,12 +278,15 @@
 - id: volume.effort.hypertrophySlopePerRir
   value: -0.48
   unit: pct
-  evidence: [MA, PREPRINT]
+  evidence: [MA]
   sources: [src.robinson2024]
   ebRef: 'EB §Volume › Proximity to failure (−0.48% muscle size per extra RIR)'
-  verified: false
+  verified: true
   userOverridable: false
-  note: 'Preprint numbers (SportRxiv 295); verify against the final paper. For education texts only.'
+  note: >-
+    For education texts only. Checked against the peer-reviewed accepted manuscript (T-01,
+    2026-11-25): −0.48% per RIR [95% CI −0.78, −0.179], 140 effects from 26 studies; no effect
+    on strength.
 
 - id: volume.strength.minimumDosePerLift
   value: { min: 3, max: 6 }

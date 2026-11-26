@@ -158,7 +158,7 @@ Product-owner decision 2026-11-25 (L-2): the server-side components are document
 
 - Running these programs unmodified on one's own server is not distribution, so their GPL and LGPL parts carry no duty towards the users of the app. No program is under a network-use licence (AGPL) or a source-available one (SSPL, BUSL).
 - **The image must stay private on GHCR** (runbook §2). Publishing it would distribute these programs, with the source-offer duties of the GPL and LGPL packages.
-- The image tag `nginx:1.30-alpine` is not pinned to the digest, so the package list can change with a rebuild. CI saves the list of every image it builds (`image-packages.txt` in the `reports` artifact); refresh `deploy/server-inventory.yaml` from it when the base image changes (runbook §6).
+- Since M6d `deploy/Dockerfile` pins `nginx:1.30-alpine` to the digest above (the tag's multi-arch index), so a rebuild uses exactly the packages listed here, and `pnpm licence` fails when the Dockerfile's digest and `deploy/server-inventory.yaml`'s differ. A new digest (Dependabot's PR, or by hand for a security fix) comes with a regenerated inventory in the same PR (runbook §6.1); CI still saves the list of every image it builds (`image-packages.txt` in the `reports` artifact) to regenerate it from. The GHCR package stays private (runbook §2): publishing the image would distribute these GPL and LGPL packages.
 - Not inventoried package by package: the VPS's operating system (Ubuntu 24.04 LTS) and the Docker engine that Coolify installs. They are the hosting platform, maintained by the publisher like any server (technical concept §7.6).
 - The technical concept's Appendix B says this since v0.11.
 

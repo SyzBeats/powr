@@ -2,7 +2,9 @@
  * `@powr/domain/bodyweight`: the bodyweight trend and weekly rate (BOD-02; EB §Nutrition › Trend
  * smoothing). A daily EMA (α 0.1) with gaps handled by α_eff = 1 − (1 − α)^Δdays, started from
  * the mean of the first 3–7 weigh-ins and fed readings winsorised to ±2.5% of the trend; the rate
- * is the least-squares slope over the last 14–28 days. Several readings on one day are averaged.
+ * is the least-squares slope of the readings of the last 28 days, shown once they span at least
+ * 21 days (`bodyweight.rate.windowDays`; rules 1.8.0, T-01: over 14 days the slope's standard
+ * error is about the width of the ±0.25% maintain band). Several readings on one day are averaged.
  */
 import { explained, quantity, type Explained } from '../explain';
 import type { LocalDate } from '../ids';
@@ -89,7 +91,8 @@ export interface BodyweightRate {
 
 /**
  * Weekly rate: the regression slope of the (winsorised) readings within the window ending at the
- * latest reading; null until they span at least the window's minimum.
+ * latest reading; null ("not enough data yet") until they span at least the window's minimum
+ * (21 days since rules 1.8.0). The explanation names that minimum (`minDays`).
  */
 export function bodyweightRate(
   points: readonly BodyweightPoint[],
@@ -104,7 +107,7 @@ export function bodyweightRate(
   const spanDays = first && last ? daysBetween(first.localDate, last.localDate) : 0;
   if (!first || !last || recent.length < 2 || spanDays < window.value.min) {
     return explained(null, 'bodyweight.rate.insufficientData', {
-      args: { spanDays, readings: recent.length },
+      args: { spanDays, readings: recent.length, minDays: window.value.min },
       params: [window],
     });
   }
@@ -166,7 +169,10 @@ export function firstReadingPerDay<
 }
 
 export type RateRules = RuleSlice<
-  'bodyweight.rate.bulk' | 'bodyweight.rate.cut' | 'bodyweight.rate.maintain'
+  | 'bodyweight.rate.bulk'
+  | 'bodyweight.rate.cut'
+  | 'bodyweight.rate.maintain'
+  | 'bodyweight.rate.windowDays'
 >;
 
 export type RatePhase = 'bulk' | 'cut' | 'maintain' | 'notTracking';
@@ -189,7 +195,8 @@ export interface RateBand {
  * BOD-02: the weekly rate against the phase's band (EB §Nutrition › Bulking, › Cutting): bulk by
  * level (novice and intermediate 0.25–0.5 %, advanced 0.1–0.25 % per week), cut 0.5–0.7 % loss
  * per week, maintenance within ±0.25 % ([INF]). `history` holds the weekly rates, newest first
- * (the rate now, a week earlier, …), for the sustained-rate warnings.
+ * (the rate now, a week earlier, …), for the sustained-rate warnings. Without a rate now the
+ * status is `insufficientData`, and the explanation names the days of weigh-ins a rate needs.
  */
 export function rateBand(
   history: readonly (number | null)[],
@@ -242,6 +249,7 @@ export function rateBand(
       min: band?.min ?? null,
       max: band?.max ?? null,
       warning,
+      minDays: rules['bodyweight.rate.windowDays'].value.min,
     },
     params,
   });

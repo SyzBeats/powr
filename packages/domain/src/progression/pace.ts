@@ -17,6 +17,11 @@ import type { BodyRegion } from './types';
  * increase is above the slope's one-sided 95% upper bound AND the gap, accumulated over the
  * window, exceeds one typical error of the level (the "likely real" threshold of PRG-02, EB
  * §Load › Real change). Both conditions keep noise from switching the model.
+ *
+ * Rules 1.8.0 (T-01, product-owner decision of 2026-11-25): the upper bound uses the Student t
+ * quantile for the fit's n − 2 degrees of freedom, not the normal 1.645, and the window needs at
+ * least 6 exposures. With the normal quantile and 4 exposures (2 degrees of freedom, where t is
+ * 2.92) a lifter who keeps up fell below the bound in about 12% of windows instead of 5%.
  */
 
 export type PaceRules = RuleSlice<
@@ -59,9 +64,6 @@ export interface PaceCheck {
 function toPctPerWeek(perDay: number): number {
   return (Math.exp(perDay * 7) - 1) * 100;
 }
-
-/** One-sided 95% normal quantile. */
-const Z_ONE_SIDED_95 = 1.6448536269514722;
 
 export function progressionPace(input: PaceInput, rules: PaceRules): Explained<PaceCheck> {
   const window = rules['progression.pace.window'];
@@ -106,7 +108,9 @@ export function progressionPace(input: PaceInput, rules: PaceRules): Explained<P
     })),
   );
   const observed = toPctPerWeek(fit.slope);
-  const upper = toPctPerWeek(fit.slope + Z_ONE_SIDED_95 * fit.se);
+  // Without residual degrees of freedom the slope's uncertainty is unknown: never switch.
+  const margin = fit.dof >= 1 ? studentTQuantile(0.95, fit.dof) * fit.se : Number.POSITIVE_INFINITY;
+  const upper = toPctPerWeek(fit.slope + margin);
   const typicalErrorPct = te.value[input.level] * 100;
   const outrun = planned > upper && (planned - observed) * weeks > typicalErrorPct;
   const value: PaceCheck = {
@@ -151,11 +155,12 @@ function plannedPctPerWeek(
 
 /**
  * Weighted least squares of y on x (weights normalised to mean 1): the slope and its standard
- * error from the weighted residual variance (n − 2 degrees of freedom; 0 with two points).
+ * error from the weighted residual variance, with its n − 2 degrees of freedom.
  */
 function weightedSlope(points: readonly { x: number; y: number; w: number }[]): {
   slope: number;
   se: number;
+  dof: number;
 } {
   const meanWeight = points.reduce((sum, point) => sum + point.w, 0) / points.length;
   const weighted = points.map((point) => ({ ...point, w: point.w / meanWeight }));
@@ -168,14 +173,64 @@ function weightedSlope(points: readonly { x: number; y: number; w: number }[]): 
     sxx += point.w * (point.x - mx) ** 2;
     sxy += point.w * (point.x - mx) * (point.y - my);
   }
-  if (sxx === 0) return { slope: 0, se: Number.POSITIVE_INFINITY };
+  const dof = weighted.length - 2;
+  if (sxx === 0) return { slope: 0, se: Number.POSITIVE_INFINITY, dof };
   const slope = sxy / sxx;
   const intercept = my - slope * mx;
   const residual = weighted.reduce(
     (sum, point) => sum + point.w * (point.y - (intercept + slope * point.x)) ** 2,
     0,
   );
-  const dof = weighted.length - 2;
   const se = dof > 0 ? Math.sqrt(residual / dof / sxx) : 0;
-  return { slope, se };
+  return { slope, se, dof };
+}
+
+/**
+ * The `p` quantile (0.5 < p < 1) of Student's t distribution with `dof` degrees of freedom (a
+ * positive integer), by bisection on the exact distribution function: one-sided 95% gives 6.314
+ * (1), 2.920 (2), 2.132 (4), 1.812 (10), 1.697 (30), and tends to the normal 1.645.
+ */
+export function studentTQuantile(p: number, dof: number): number {
+  if (!(p > 0.5 && p < 1) || !Number.isInteger(dof) || dof < 1) {
+    throw new RangeError(`Need 0.5 < p < 1 and a positive integer dof, got ${p} and ${dof}`);
+  }
+  let low = 0;
+  let high = 1;
+  while (studentTCdf(high, dof) < p) high *= 2;
+  for (let step = 0; step < 200 && high - low > 1e-12 * high; step++) {
+    const mid = (low + high) / 2;
+    if (studentTCdf(mid, dof) < p) low = mid;
+    else high = mid;
+  }
+  return (low + high) / 2;
+}
+
+/**
+ * P(T ≤ t) for t ≥ 0 and an integer `dof`: (1 + A) / 2, with A = P(|T| < t) in closed form
+ * (Abramowitz & Stegun 26.7.3–26.7.4), θ = atan(t / √dof).
+ */
+function studentTCdf(t: number, dof: number): number {
+  const theta = Math.atan(t / Math.sqrt(dof));
+  const cos2 = Math.cos(theta) ** 2;
+  let a: number;
+  if (dof % 2 === 1) {
+    // Odd: (2/π)·(θ + sin θ·(cos θ + (2/3)·cos³θ + … + (2·4…(dof−3))/(1·3…(dof−2))·cos^(dof−2)θ)).
+    let term = Math.cos(theta);
+    let sum = dof > 1 ? term : 0;
+    for (let k = 3; k <= dof - 2; k += 2) {
+      term *= ((k - 1) / k) * cos2;
+      sum += term;
+    }
+    a = (2 / Math.PI) * (theta + Math.sin(theta) * sum);
+  } else {
+    // Even: sin θ·(1 + (1/2)·cos²θ + … + (1·3…(dof−3))/(2·4…(dof−2))·cos^(dof−2)θ).
+    let term = 1;
+    let sum = 1;
+    for (let k = 2; k <= dof - 2; k += 2) {
+      term *= ((k - 1) / k) * cos2;
+      sum += term;
+    }
+    a = Math.sin(theta) * sum;
+  }
+  return (1 + a) / 2;
 }

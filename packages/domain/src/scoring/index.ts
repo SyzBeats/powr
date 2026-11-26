@@ -4,7 +4,8 @@
  * Wilks2020, plus the allometric index kg / BW^0.67. Coefficients and the bodyweight clamps are
  * registry data (the clamps are an app implementation choice, recorded there); no OpenPowerlifting
  * code is used, its unit-test values serve as reference vectors only. Inputs are kg; results are
- * unrounded (display rounds to 2 decimals). IPF and GL are floored at 0.
+ * unrounded (display rounds to 2 decimals), except IPF GL, which follows the IPF's 6-decimal
+ * rounding of its coefficient and points (rules 1.8.0, T-01). IPF and GL are floored at 0.
  */
 import { explained, type Explained } from '../explain';
 import type { Param, Polynomial, Range, RuleSlice, ScoreFormula, SexReference } from '../rules';
@@ -105,6 +106,13 @@ function ipfPoints(input: ScoreInput, rules: ScoringRules): Explained<number | n
   return explained(value, 'scoring.ipfPoints', { args: { value }, params });
 }
 
+/**
+ * IPF GL (IPF 2020, "The IPF GL Coefficients for Relative Scoring"): coefficient = 100 / (A −
+ * B·e^(−C·BW)), applied for BW ≥ 40 kg (men) and ≥ 35 kg (women), the registry's by-sex minimum.
+ * The document rounds the coefficient to 6 decimals, multiplies it by the result and rounds the
+ * points to 6 decimals; POWR follows it, so its example 92.04 kg / 1035 kg (men, equipped) gives
+ * 0.109039 × 1035 = 112.855365 (112.86 at 2 decimals, where the unrounded coefficient gives 112.85).
+ */
 function ipfGl(input: ScoreInput, rules: ScoringRules): Explained<number | null> {
   const coefficients = rules['scoring.ipfGl.coefficients'];
   const minBodyweight = rules['scoring.ipfGl.minBodyweightKg'];
@@ -114,8 +122,14 @@ function ipfGl(input: ScoreInput, rules: ScoringRules): Explained<number | null>
   }
   const { a, b, c } = coefficients.value[input.sex][input.division][input.lift];
   let value = 0;
-  if (input.bodyweightKg >= minBodyweight.value) {
-    value = input.liftedKg * Math.max(0, 100 / (a - b * Math.exp(-c * input.bodyweightKg)));
+  if (input.bodyweightKg >= minBodyweight.value[input.sex]) {
+    const coefficient = roundTo6(Math.max(0, 100 / (a - b * Math.exp(-c * input.bodyweightKg))));
+    value = roundTo6(coefficient * input.liftedKg);
   }
   return explained(value, 'scoring.ipfGl', { args: { value }, params });
+}
+
+/** Rounds half up to 6 decimals, as the IPF GL procedure does (non-negative inputs). */
+function roundTo6(value: number): number {
+  return Math.round(value * 1e6) / 1e6;
 }

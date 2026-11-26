@@ -6,13 +6,18 @@
 
 - id: src.mayhew2008
   citation: >-
-    Mayhew et al. 2008. [Accuracy of 14 rep-max prediction equations: 103 college women, bench
-    press, reps to fatigue at 60–90% 1RM, before and after 12 weeks of training.]
+    Mayhew JL, Johnson BD, Lamonte MJ, Lauber D & Kemmler W 2008. Accuracy of prediction
+    equations for determining one repetition maximum bench press in women before and after
+    resistance training. J Strength Cond Res 22(5):1570–1577. DOI 10.1519/JSC.0b013e31817b02ad.
   url: https://pubmed.ncbi.nlm.nih.gov/18714230/
   seeAlso:
     - https://www.unm.edu/~rrobergs/478PredictionAccuracy.pdf
   tag: OBS
   status: active
+  note: >-
+    Accuracy of 14 rep-max prediction equations: 103 college women, bench press, reps to fatigue
+    at 60–90% 1RM, before and after 12 weeks of training. Title completed by the T-01 evidence
+    verification (2026-11-25).
 
 - id: src.reynolds2006
   citation: >-
@@ -61,14 +66,16 @@
 
 - id: src.fitnessvolt-rts-chart
   citation: >-
-    [The Tuchscherer/RTS RPE chart, %1RM by reps and RPE, with the author's caveats; secondary
-    source.] FitnessVolt, "Tuchscherer chart explained".
+    [The decimal RPE chart as commonly circulated as the RTS (Tuchscherer) chart: %1RM by reps and
+    RPE, with the chart's caveats; secondary source.] FitnessVolt, "Tuchscherer chart explained".
   url: https://fitnessvolt.com/rpe-training/guides/tuchscherer-chart-explained
   tag: PRACT
   status: active
   note: >-
-    Secondary transcription of the chart; verify against an RTS original before the RTS table is
-    marked verified.
+    The decimal chart as commonly circulated; Tuchscherer 2014 prints a different, lower chart
+    (Beginning RTS: 5–8 points lower at 5–11 effective reps). No primary RTS publication of these
+    decimal values was found, so POWR calls it the "RPE chart (common RTS version)", not
+    Tuchscherer's original (T-01 evidence verification, 2026-11-25).
 
 - id: src.marzagao2026
   citation: >-
@@ -100,11 +107,15 @@
 
 - id: src.braith1993
   citation: >-
-    Braith et al. 1993. [Knee-extension 7–10RM as a predictor of 1RM before and after 18 weeks of
-    training; 58 young adults.]
+    Braith RW, Graves JE, Leggett SH & Pollock ML 1993. Effect of training on the relationship
+    between maximal and submaximal strength. Med Sci Sports Exerc 25(1):132–138.
+    DOI 10.1249/00005768-199301000-00018.
   url: https://pubmed.ncbi.nlm.nih.gov/8423746/
   tag: OBS
   status: active
+  note: >-
+    Knee-extension 7–10RM as a predictor of 1RM before and after 18 weeks of training; 58 young
+    adults. Title completed by the T-01 evidence verification (2026-11-25).
 
 - id: src.powr-eb-load
   citation: >-
@@ -217,3 +228,71 @@
   note: >-
     In 16-week simulations of intermediate and advanced lifters, a measurement CV above about 4%
     made the model's predictions unsatisfactory, worse with less frequent testing.
+
+# Rules 1.8.0 (T-01 evidence verification, 2026-11-25; docs/release/evidence-verification.md):
+# the RIR-bias sources (EB §Gaps #26), the noise sources of load.trend.noiseTypicalSd and the
+# peer-reviewed comparison chart of load.curve.rts. Citations and DOIs as the report gives them.
+
+- id: src.russo2025
+  citation: >-
+    Russo F, Marconcin P, Gomes D, Peralta M, Flôres F & Casanova N 2025. Factors influencing the
+    accuracy of the repetition in reserve scale in resistance training: a systematic review.
+    Physical Therapy Reviews 31(1):46–63. DOI 10.1080/10833196.2025.2564026.
+  url: https://doi.org/10.1080/10833196.2025.2564026
+  seeAlso: [http://hdl.handle.net/10174/39438]
+  tag: SR
+  status: active
+  note: >-
+    26 studies; qualitative synthesis: accuracy better near failure (especially upper-limb
+    exercises), worse with more reps and lighter loads. No pooled error size. Closes EB §Gaps #26
+    for the direction of the RIR bias; abstract and first page read (T-01, 2026-11-25).
+
+- id: src.casanova2025
+  citation: >-
+    Casanova N, Gomes D, Russo F, Mateus J, Vieira A, Malcata G, Tenfen P, Soares D & Flôres F
+    2025. Accuracy in predicting repetitions in reserve during resistance training: differences
+    across load intensities, distance from muscular failure, sexes, and exercises. J Phys Educ
+    Sport 25(11):2373–2381. DOI 10.7752/jpes.2025.11262.
+  url: https://doi.org/10.7752/jpes.2025.11262
+  tag: OBS
+  status: active
+  note: >-
+    At loads of about 80% 1RM, true minus reported RIR was about +1.2 reps at a called RIR 3 and
+    +0.1 to +0.65 at RIR 1; errors of 2–5 reps at 50% 1RM.
+
+- id: src.martikainen2025
+  citation: >-
+    Martikainen O, Niiranen H, Rytkönen T, Schoenfeld BJ, Ahtiainen JP & Hulmi JJ 2025. Influence
+    of varying proximity-to-failure on muscular adaptations and repetitions-in-reserve estimation
+    accuracy in resistance-trained individuals. J Sci Sport Exerc (online ahead of print).
+    DOI 10.1007/s42978-025-00338-8.
+  url: https://doi.org/10.1007/s42978-025-00338-8
+  tag: RCT-T
+  status: active
+  note: 'Baseline RIR error at a called RIR 3: squat +1.5 ± 1.7, bench +1.1 ± 1.8 reps.'
+
+- id: src.lovegrove2022
+  citation: >-
+    Lovegrove S, Hughes LJ, Mansfield SK, Read PJ, Price P & Patterson SD 2022. Repetitions in
+    reserve is a reliable tool for prescribing resistance training load. J Strength Cond Res
+    36(10):2696–2700. DOI 10.1519/JSC.0000000000003952.
+  url: https://pubmed.ncbi.nlm.nih.gov/36135029/
+  tag: OBS
+  status: active
+  note: >-
+    Novices; loads chosen for 1 RIR at 3, 5 and 8 reps: bench 93.0 / 87.3 / 79.6% and deadlift
+    88.2 / 84.3 / 79.2% 1RM; between-session CV of the chosen load 2.7–6.2%.
+
+- id: src.helms2016
+  citation: >-
+    Helms ER, Cronin J, Storey A & Zourdos MC 2016. Application of the repetitions in
+    reserve-based rating of perceived exertion scale for resistance training. Strength Cond J
+    38(4):42–49. DOI 10.1519/SSC.0000000000000218.
+  url: https://doi.org/10.1519/SSC.0000000000000218
+  seeAlso: [https://openrepository.aut.ac.nz/items/92cefeac-7c32-44f1-bfbc-f48f4a5dd8cf]
+  tag: NARR
+  status: active
+  note: >-
+    Table 2 is a %1RM-by-reps-and-RPE chart built from Zourdos 2016 squat data (three measured
+    cells, the rest estimated); it is not the RTS chart. Cited as the peer-reviewed comparison for
+    load.curve.rts (within −2.2 to +0.4 points).

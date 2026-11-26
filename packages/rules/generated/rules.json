@@ -1,7 +1,7 @@
 {
   "format": 1,
-  "version": "1.7.0",
-  "hash": "127ea5b9a286e0d68c34e284f37a6b92f75100602ce258423ba6a166880325a9",
+  "version": "1.8.0",
+  "hash": "97874580e2f6b7f5c38fdb2444d17a2df2e70f240a637da56caa08b184a73ca8",
   "params": [
     {
       "id": "bodyweight.rate.bulk",
@@ -78,18 +78,19 @@
         "INF"
       ],
       "sources": [
+        "src.powr-prd",
         "src.powr-eb-nutrition"
       ],
-      "ebRef": "EB §Nutrition › Trend smoothing (no maintenance band in the EB); a POWR design value",
-      "verified": false,
+      "ebRef": "PRD BOD-02 v0.7 (\"When maintaining, the rate band shown is ±0.25 %BW/week\"); EB §Nutrition › Trend smoothing (no maintenance band in the EB)",
+      "verified": true,
       "userOverridable": true,
       "since": "mvp",
-      "note": "A POWR design value: a trend within ±0.25 % of bodyweight per week reads as maintaining (below the slowest bulk band and half the slowest cut band)."
+      "note": "The PRD's number (BOD-02 v0.7, approved 2026-11-25): a trend within ±0.25 % of bodyweight per week reads as maintaining; verified as the PRD's own number (T-01, 2026-11-25), its evidence label stays \"App estimate\". It is half the slowest cut target (0.5 %/week); the advanced bulk band (0.1–0.25 %/week) lies inside it, which does not matter because a band applies only to the selected phase. No study defines a short-term maintaining rate (long-term maintenance is < 3 % of bodyweight, Stevens 2006)."
     },
     {
       "id": "bodyweight.rate.windowDays",
       "value": {
-        "min": 14,
+        "min": 21,
         "max": 28
       },
       "unit": "days",
@@ -103,7 +104,7 @@
       "verified": true,
       "userOverridable": false,
       "since": "mvp",
-      "note": "The slope uses the readings of the last 28 days and needs them to span at least 14 days."
+      "note": "The slope uses the readings of the last 28 days and needs them to span at least 21 days; until then the app says \"not enough data yet\". Rules 1.8.0 (T-01, product-owner decision 2026-11-25; was 14): with a day-to-day SD of about 0.5% around the trend, the slope's standard error is about 0.23%/week over 14 days, about the half-width of the ±0.25% maintain band, but about 0.13%/week over 21 days and 0.08%/week over 28 [INF]. 21 is the start of the 21–28 days the evidence verification recommended and stays inside the EB's 14–28-day window."
     },
     {
       "id": "bodyweight.trend.alphaPerDay",
@@ -761,13 +762,14 @@
       ],
       "sources": [
         "src.fitnessvolt-rts-chart",
-        "src.zourdos2016"
+        "src.zourdos2016",
+        "src.helms2016"
       ],
-      "ebRef": "EB §Load › RTS chart (one-dimensional lookup)",
+      "ebRef": "EB §Load › RTS chart (one-dimensional lookup; the commonly circulated decimal version)",
       "verified": false,
       "userOverridable": false,
       "since": "mvp",
-      "note": "Transcribed from a secondary source. Beyond 13.5 effective reps the engine follows Wathan, scaled to meet the chart there. The chart's source warns it is a guide, assumes a fresh set and is less reliable above 10 reps and on isolation lifts."
+      "note": "The RPE chart (common RTS version): the decimal chart as commonly circulated, transcribed from a secondary source (all 26 values match two independent transcriptions). It is not Tuchscherer's own chart: his 2014 Beginning RTS chart is 5–8 points lower at 5–11 effective reps, and no primary publication of these decimal values was found. It agrees with Wathan within about 0.6 points and with the research-based chart of Helms 2016 (Table 2) within −2.2 to +0.4 points; no study validates it against tested 1RMs. A design value (T-01, 2026-11-25), settled only by such a validation or an RTS-published source for the decimal values. Beyond 13.5 effective reps the engine follows Wathan, scaled to meet the chart there. The chart's source warns it is a guide, assumes a fresh set and is less reliable above 10 reps and on isolation lifts."
     },
     {
       "id": "load.e1rm.equation",
@@ -790,7 +792,7 @@
       "verified": true,
       "userOverridable": true,
       "since": "mvp",
-      "note": "Applies to exercises of curve class equation (load.curve.classMap; TD-30). \"rts\" selects the exact RTS lookup, which the EB shows tracks Wathan within about 0.6 points for 2–10 effective reps."
+      "note": "Applies to exercises of curve class equation (load.curve.classMap; TD-30). \"rts\" selects the RPE chart (common RTS version, load.curve.rts), which the EB shows tracks Wathan within about 0.6 points for 2–10 effective reps."
     },
     {
       "id": "load.e1rm.setOrderDecay",
@@ -807,7 +809,7 @@
       "verified": false,
       "userOverridable": false,
       "since": "mvp",
-      "note": "The EB gives the direction only; 0.85 per later working set is a POWR design value."
+      "note": "The EB gives the direction only; 0.85 per later working set is a POWR design value. T-01 (2026-11-25): reps at a fixed load fall from set 2 or 3 even with 3–5 minutes of rest, so a later set's e1RM is biased low rather than noisier (RIR calls are slightly better in later sets); no study gives a per-set weight. A bias correction would fit the evidence better (a model change for later); settled by within-session e1RMs against a measured 1RM, or POWR's own logs."
     },
     {
       "id": "load.e1rm.weightByReff",
@@ -894,7 +896,7 @@
       "verified": false,
       "userOverridable": false,
       "since": "mvp",
-      "note": "A POWR design value: the set's base weight (RPE and effective-rep tiers, before the set-order decay) must reach the 0.5 tier (RPE ≥ 7 and ≤ 12 effective reps). Sets without entered effort never qualify (load.unknownEffort.eligibleForE1rmPr, E-1)."
+      "note": "A POWR design value: the set's base weight (RPE and effective-rep tiers, before the set-order decay) must reach the 0.5 tier (RPE ≥ 7 and ≤ 12 effective reps). Sets without entered effort never qualify (load.unknownEffort.eligibleForE1rmPr, E-1). T-01 (2026-11-25): RIR errors grow sharply above 12 reps (Halperin 2022) and far from failure (RPE < 7), which supports the cut; where exactly to cut is a product trade-off."
     },
     {
       "id": "load.reanchor.trigger",
@@ -938,17 +940,22 @@
       },
       "evidence": [
         "MA",
-        "RCT"
+        "SR",
+        "OBS",
+        "RCT-T"
       ],
       "sources": [
         "src.halperin2022",
-        "src.refalo2024a"
+        "src.refalo2024a",
+        "src.russo2025",
+        "src.casanova2025",
+        "src.martikainen2025"
       ],
       "ebRef": "EB §Defaults › Load (RIR bias correction); §Load › RIR accuracy; §Gaps #26",
-      "verified": false,
+      "verified": true,
       "userOverridable": false,
       "since": "mvp",
-      "note": "Lifters under-call RIR by about one rep, more so far from failure. Preliminary until the verification pass of EB §Gaps #26 (Russo 2025); learned per user from v1.3 (PRG-15)."
+      "note": "Lifters under-call RIR by about one rep, more so far from failure; learned per user from v1.3 (PRG-15). EB §Gaps #26 checked (T-01, 2026-11-25): Russo 2025 is qualitative and confirms the direction; study means +0.2 to +1.6 reps at a called RIR 3, so +0.5 is the conservative half of the evidence range (about +0.5 to +1). The product owner confirmed the conservative +0.5 on 2026-11-25 (not the central +1.0)."
     },
     {
       "id": "load.trend.changeThresholds",
@@ -981,7 +988,7 @@
       "verified": false,
       "userOverridable": false,
       "since": "mvp",
-      "note": "Any claim needs the smoothed change beyond likelyTe typical errors (EB) and, rules 1.6.0, beyond likelyZ standard deviations of its own uncertainty (the filter's variances of both points, which ignore their positive covariance and so overstate it). The TE rule alone assumes the smoothed values are much more precise than one TE; with session e1RMs as noisy as the filter assumes (9% for typical sets), it claimed a change in over 80% of flat 12-week series. likelyZ 1.5 is the product owner's choice of 2026-11-25 (strict, honesty first): under that realistic noise, likelyZ 1 still claimed a change in about 30–33% of flat 12-week series of typical sets, 1.5 in about 6–9%, at the cost of slower recognition of real gains (median weeks to a claim on typical sets: intermediate +1% a week 11.6 → 15, novice +2% a week 10 → 12.6). likelyZ and sustainSessions 3 (the EB's upper end) are POWR design values from the seeded simulation (packages/domain/test/reference/trend-calibration.test.ts)."
+      "note": "Any claim needs the smoothed change beyond likelyTe typical errors (EB) and, rules 1.6.0, beyond likelyZ standard deviations of its own uncertainty (the filter's variances of both points, which ignore their positive covariance and so overstate it). The TE rule alone assumes the smoothed values are much more precise than one TE; with session e1RMs as noisy as the filter assumes (9% for typical sets), it claimed a change in over 80% of flat 12-week series. likelyZ 1.5 is the product owner's choice of 2026-11-25 (strict, honesty first): under that realistic noise, likelyZ 1 still claimed a change in about 30–33% of flat 12-week series of typical sets, 1.5 in about 6–9%, at the cost of slower recognition of real gains (median weeks to a claim on typical sets: intermediate +1% a week 11.6 → 15, novice +2% a week 10 → 12.6). likelyZ and sustainSessions 3 (the EB's upper end) are POWR design values from the seeded simulation (packages/domain/test/reference/trend-calibration.test.ts). T-01 (2026-11-25): likelyTe and veryLikelyTe (1.96 × √2 × TE ≈ 2.77) follow the EB and Hopkins 2000; no study validates labelling rules for smoothed e1RM series, so the row stays a design value."
     },
     {
       "id": "load.trend.heavySet",
@@ -1030,16 +1037,21 @@
         "max": 0.1
       },
       "evidence": [
-        "PREPRINT"
+        "PREPRINT",
+        "INF"
       ],
       "sources": [
-        "src.marzagao2026"
+        "src.marzagao2026",
+        "src.grgic2020",
+        "src.refalo2024a",
+        "src.casanova2025",
+        "src.lovegrove2022"
       ],
       "ebRef": "EB §Defaults › Load (smoothing noise 8–10% for typical logged sets); §Load › e1RM algorithm",
       "verified": false,
       "userOverridable": false,
       "since": "mvp",
-      "note": "The 8.5–10% within-person spread comes from preprint app data (verify before hard-coding)."
+      "note": "The 8.5–10% within-person spread comes from preprint app data, still the only direct measurement (E-2). T-01 (2026-11-25): the peer-reviewed error budget (RIR error about 2–5.5% of e1RM, day-to-day 1RM CV 2–3.3%, novices' chosen loads CV 2.7–6.2%) combines to about 5–8% in the lab; real logging adds entry errors, uncontrolled rest and true change, so 9% is plausible. A design value until a peer-reviewed within-person spread from logged sets exists."
     },
     {
       "id": "load.trend.noviceWidening",
@@ -1052,13 +1064,14 @@
         "INF"
       ],
       "sources": [
-        "src.powr-eb-load"
+        "src.powr-eb-load",
+        "src.grgic2020"
       ],
       "ebRef": "EB §Load › e1RM drift (\"wider bands for beginners in their first 4–8 weeks\"); PRD PRG-02",
       "verified": false,
       "userOverridable": false,
       "since": "mvp",
-      "note": "The EB gives the window; the factor 1.5 is a POWR design value."
+      "note": "The EB gives the window; the factor 1.5 is a POWR design value. T-01 (2026-11-25): the 1RM test–retest CV ratios untrained/trained (5.5 / 3.3 = 1.67) and without/with familiarisation (5.3 / 3.8 = 1.39) bracket 1.5 (Grgic 2020); no study measures how long a novice's extra noise lasts."
     },
     {
       "id": "load.trend.processSdPerWeek",
@@ -1089,7 +1102,7 @@
       "verified": false,
       "userOverridable": false,
       "since": "mvp",
-      "note": "Weekly random-walk SD of ln(e1RM), the prior for how fast a lifter's true e1RM moves: about the top of each level's weekly rate (novice 1–2%, up to 3–4% in the first weeks of a lift; trained 0.2–1% in 8–12-week trials; advanced 0.02–0.1% long-run, with real swings of a few percent around peaking, fatigue and breaks). Rules 1.6.0 re-checked the values against the literature and a seeded simulation (packages/domain/test/reference/trend-calibration.test.ts) and kept them: with the uncertainty gate of load.trend.changeThresholds, 1.5–2 times these values labelled real gains at most a week sooner but doubled the false claims on heavy sets; the slow labels came from the 4-week window (now load.trend.reference). The state-space literature fixes the observation noise from reliability data and estimates the process noise per person by maximum likelihood once enough data exist (proposed as a later step). A POWR design value."
+      "note": "Weekly random-walk SD of ln(e1RM), the prior for how fast a lifter's true e1RM moves: about the top of each level's weekly rate (novice 1–2%, up to 3–4% in the first weeks of a lift; trained 0.2–1% in 8–12-week trials; advanced 0.02–0.1% long-run, with real swings of a few percent around peaking, fatigue and breaks). Rules 1.6.0 re-checked the values against the literature and a seeded simulation (packages/domain/test/reference/trend-calibration.test.ts) and kept them: with the uncertainty gate of load.trend.changeThresholds, 1.5–2 times these values labelled real gains at most a week sooner but doubled the false claims on heavy sets; the slow labels came from the 4-week window (now load.trend.reference). The state-space literature fixes the observation noise from reliability data and estimates the process noise per person by maximum likelihood once enough data exist (proposed as a later step). A POWR design value; T-01 (2026-11-25) found no study of the week-to-week variance of a lifter's true strength and kept it."
     },
     {
       "id": "load.trend.reference",
@@ -1119,7 +1132,7 @@
       "verified": false,
       "userOverridable": false,
       "since": "mvp",
-      "note": "Rules 1.6.0: the window is by level. A label compares the change over the window with one TE, so a steady gain g a week can only show once g × weeks > TE: with 4 weeks for everyone, trained lifters needed more than 0.83% a week (3.3% / 4) and a realistic intermediate 0.5% a week was never labelled. 8 weeks lets 0.5% a week show (4% > 3.3%); novices keep 4 weeks (5.5% / 4 = 1.4% a week, below their usual 1–2%) so stalls and dips still show quickly. The EB classifies by the slope over 8–12 weeks. Rules 1.7.0 (TD-60): advanced lifters get the 12-week end (their good-block 0.25–0.5% a week needs the longer window to pass one TE: 3–6% over 12 weeks), now that the session engine keeps 60 trend points and exposures (12 weeks at up to 4 sessions a week); rules 1.6.0 had 8 because it kept 30. The series' first `sessions` points are never the reference (barely smoothed); while a series is shorter than the window its oldest point after them is. A POWR design value."
+      "note": "Rules 1.6.0: the window is by level. A label compares the change over the window with one TE, so a steady gain g a week can only show once g × weeks > TE: with 4 weeks for everyone, trained lifters needed more than 0.83% a week (3.3% / 4) and a realistic intermediate 0.5% a week was never labelled. 8 weeks lets 0.5% a week show (4% > 3.3%); novices keep 4 weeks (5.5% / 4 = 1.4% a week, below their usual 1–2%) so stalls and dips still show quickly. The EB classifies by the slope over 8–12 weeks. Rules 1.7.0 (TD-60): advanced lifters get the 12-week end (their good-block 0.25–0.5% a week needs the longer window to pass one TE: 3–6% over 12 weeks), now that the session engine keeps 60 trend points and exposures (12 weeks at up to 4 sessions a week); rules 1.6.0 had 8 because it kept 30. The series' first `sessions` points are never the reference (barely smoothed); while a series is shorter than the window its oldest point after them is. A POWR design value: the windows are derived from the verified typical errors and realistic rates, not measured (T-01, 2026-11-25)."
     },
     {
       "id": "load.trend.repRangeShift",
@@ -1136,13 +1149,14 @@
       "sources": [
         "src.braith1993",
         "src.mayhew2008",
+        "src.nuzzo2024",
         "src.powr-eb-load"
       ],
       "ebRef": "EB §Load › e1RM drift (flag e1RM jumps that coincide with a change in typical rep range); PRD PRG-02",
       "verified": false,
       "userOverridable": false,
       "since": "mvp",
-      "note": "A POWR design value: a \"likely real\" change is flagged as possibly a rep-range effect when the median reps of the latest sessions differ from those around the reference by at least this many reps."
+      "note": "A POWR design value: a \"likely real\" change is flagged as possibly a rep-range effect when the median reps of the latest sessions differ from those around the reference by at least this many reps. T-01 (2026-11-25): with the between-person spread of reps to failure (Nuzzo 2024: SD 2.51 reps at 80% 1RM), a 3-rep shift can move the e1RM by about half to one trained typical error; no study gives the number."
     },
     {
       "id": "load.trend.strengthMaxReff",
@@ -1329,6 +1343,7 @@
         "max": 16
       },
       "evidence": [
+        "MA",
         "INF"
       ],
       "sources": [
@@ -1336,10 +1351,10 @@
         "src.powr-eb-monitoring"
       ],
       "ebRef": "EB §Monitoring › Sleep & stress (sleep loss impairs PM tasks; AM tasks largely unaffected); PRD RDY-03",
-      "verified": false,
+      "verified": true,
       "userOverridable": true,
       "since": "mvp",
-      "note": "A POWR design value: sessions starting at or after noon count as \"PM sessions\"."
+      "note": "Sessions starting at or after noon count as \"PM sessions\". Craven 2022 splits tasks into ante and post meridiem, which is before vs after noon; the mechanism is time awake (about 0.4% per hour after deprivation or late restriction). Verified against the full text (T-01, 2026-11-25)."
     },
     {
       "id": "monitoring.readiness.sleep",
@@ -1434,11 +1449,11 @@
       "sources": [
         "src.powr-prd"
       ],
-      "ebRef": "PRD MOT-03 (in freestyle mode the user sets a weekly session target); the value before one is set is a POWR design value",
-      "verified": false,
+      "ebRef": "PRD MOT-03 v0.7 (\"Without a plan or a weekly target, one session keeps the week\")",
+      "verified": true,
       "userOverridable": true,
       "since": "mvp",
-      "note": "A POWR design value: weeks without plan sessions and without a user target ask for one session."
+      "note": "Weeks without plan sessions and without a user target ask for one session (PRD MOT-03 v0.7); verified as the PRD's own number (T-01, 2026-11-25), its evidence label stays \"App estimate\". A streak rewards consistency, not dose: WHO 2020 recommends muscle strengthening on 2 or more days a week, while one session a week maintains strength and size in younger adults (Spiering 2021). The product owner confirmed the default of 1 on 2026-11-25."
     },
     {
       "id": "motivation.streak.graceSessions",
@@ -1524,7 +1539,7 @@
       "verified": false,
       "userOverridable": true,
       "since": "mvp",
-      "note": "POWR reading of \"key work\": the primary slots; the per-session caps still apply."
+      "note": "POWR reading of \"key work\": the primary slots; the per-session caps still apply. T-01 (2026-11-25): no study addresses which work to move after a missed session; the strength effect of a lift's frequency (Pelland 2026) supports keeping the main lifts."
     },
     {
       "id": "planning.novice.maxWorkingExercises",
@@ -1586,17 +1601,20 @@
       },
       "unit": "sets",
       "evidence": [
+        "POS",
         "INF"
       ],
       "sources": [
         "src.powr-prd",
-        "src.powr-eb-volume"
+        "src.powr-eb-volume",
+        "src.acsm2026",
+        "src.acsm2009"
       ],
       "ebRef": "PRD PLN-07 examples (3 × 10, 5 × 3, 4 × 5, 3 × 8–12); EB §Defaults › Volume (weekly and per-session volume)",
-      "verified": false,
+      "verified": true,
       "userOverridable": true,
       "since": "mvp",
-      "note": "POWR design value: the working sets one exercise slot gets per session. The EB sets weekly and per-session volume per muscle, not sets per exercise; more volume comes from more slots."
+      "note": "The working sets one exercise slot gets per session. The EB sets weekly and per-session volume per muscle, not sets per exercise; more volume comes from more slots. T-01 (2026-11-25): the minimum of 2 is ACSM 2026's \"at least two sets per exercise\"; the maximum of 5 lies inside ACSM 2009's 3–6 sets per exercise for advanced hypertrophy training."
     },
     {
       "id": "planning.strength.accessorySets",
@@ -1614,7 +1632,7 @@
       "verified": false,
       "userOverridable": true,
       "since": "mvp",
-      "note": "POWR design value: working sets of a powerlifting accessory slot (no muscle bands apply to them, PLN-03)."
+      "note": "POWR design value: working sets of a powerlifting accessory slot (no muscle bands apply to them, PLN-03). T-01 (2026-11-25): the EB's \"accessories 1–3 per lift\" counts accessory exercises, not sets (Androulakis-Korakakis 2021); surveyed powerlifters did about 2–3 sets per accessory exercise a week, and ACSM 2026 advises at least two sets per exercise. 3 sets match when a slot comes once a week; no study sets the number."
     },
     {
       "id": "planning.timeBudget.fallback",
@@ -1629,17 +1647,21 @@
       },
       "unit": "none",
       "evidence": [
-        "INF"
+        "INF",
+        "RCT",
+        "NARR"
       ],
       "sources": [
         "src.powr-prd",
-        "src.iversen2021"
+        "src.iversen2021",
+        "src.bickel2011",
+        "src.spiering2021"
       ],
       "ebRef": "PRD PLN-03 (priority muscles in the upper part of the band, de-prioritized muscles at the floor or maintenance level) and PLN-14 (time budget); EB §Volume › Minimum and maintenance doses; §Session › Session duration and time-cap mode",
-      "verified": false,
+      "verified": true,
       "userOverridable": false,
       "since": "mvp",
-      "note": "POWR design value (product-owner decision, M2b): when the session time budget cannot fit every weekly target, the first non-empty group in keepFull keeps its full target: the user's priority muscles, else the template's emphasis (the display groups its hypertrophy slots of a templateSlots priority target). Every other muscle falls back towards volume.hypertrophy.minimumDose; the plan says so and suggests more minutes per session or another training day."
+      "note": "PRD PLN-14: \"the user's priority muscles keep their full target … Without priorities, the muscles the template emphasises keep theirs\" (product-owner decision, M2b); verified as the PRD's own rule (T-01, 2026-11-25), its evidence label stays \"App estimate\". The fallback dose is supported: about 4 weekly sets (Iversen 2021); strength and size are kept for months with a third of the volume (Bickel 2011) or less if the load is kept (Spiering 2021). When the session time budget cannot fit every weekly target, the first non-empty group in keepFull keeps its full target: the user's priority muscles, else the template's emphasis (the display groups its hypertrophy slots of a templateSlots priority target). Every other muscle falls back towards volume.hypertrophy.minimumDose; the plan says so and suggests more minutes per session or another training day."
     },
     {
       "id": "planning.variety.pool",
@@ -1656,7 +1678,7 @@
       "verified": false,
       "userOverridable": true,
       "since": "mvp",
-      "note": "POWR design value: variety mode picks among the best N candidates of a slot with the plan seed."
+      "note": "POWR design value: variety mode picks among the best N candidates of a slot with the plan seed. T-01 (2026-11-25): some systematic variation helps and excessive random variation may not (Kassiano 2022); app-chosen random exercises gave equal gains (Baz-Valle 2019); no study gives a pool size."
     },
     {
       "id": "planning.volume.startPosition",
@@ -1678,7 +1700,7 @@
       "verified": false,
       "userOverridable": true,
       "since": "mvp",
-      "note": "Fractions of the way from the low to the high end of the default band (10–20 fractional sets per muscle, 4–10 heavy sets per lift): novice 12, intermediate and advanced 15, priority 18. The PRD names the parts of the band, not the numbers."
+      "note": "Fractions of the way from the low to the high end of the default band (10–20 fractional sets per muscle, 4–10 heavy sets per lift): novice 12, intermediate and advanced 15, priority 18. The PRD names the parts of the band, not the numbers. T-01 (2026-11-25): all three hypertrophy starting points lie inside the evidence bands (ACSM 2026, Baz-Valle 2022); when recent volume is known, the 1.2× rule (volume.startingVolume.maxFactor) overrides this row. No study sets the positions."
     },
     {
       "id": "progression.apre.sixRm",
@@ -1733,10 +1755,10 @@
           {
             "minReps": 13,
             "maxReps": null,
-            "adjustKg": 7.5,
+            "adjustKg": 6.25,
             "rangeKg": {
               "min": 5,
-              "max": 10
+              "max": 7.5
             }
           }
         ]
@@ -1744,18 +1766,22 @@
       "unit": "mixed",
       "evidence": [
         "RCT-T",
-        "MA"
+        "MA",
+        "OBS",
+        "PRACT"
       ],
       "sources": [
+        "src.mann2011",
+        "src.mann2017",
         "src.mann2010",
         "src.huang2023",
         "src.zhang2021"
       ],
       "ebRef": "EB §Progression › Progression rules (APRE-6 table); §Defaults › Progression (APRE preset)",
-      "verified": false,
+      "verified": true,
       "userOverridable": false,
       "since": "mvp",
-      "note": "The suggested change is the midpoint of each range, then rounded to the equipment. Secondary sources differ slightly and the original tables were not retrieved."
+      "note": "The suggested change is the midpoint of each range, then rounded to the equipment. The original table is in pounds (Mann 2011, Appendix A; Mann 2017): 0–2 reps −5 to 10 lb, 3–4 −0 to 5, 5–7 same, 8–12 +5 to 10, 13+ +10 to 15 (10–15 lb = 4.5–6.8 kg), rounded to plates here. Rules 1.8.0 (T-01 V-1, 2026-11-25): the 13+ row is +5 to 7.5 kg (midpoint 6.25); the former +5 to 10 kg came from Huang 2023's mis-conversion of 10–15 lb. Not reachable in the MVP (APRE slots run as RPE; no template uses APRE)."
     },
     {
       "id": "progression.calibration",
@@ -1774,14 +1800,15 @@
         "INF"
       ],
       "sources": [
+        "src.powr-prd",
         "src.powr-technical-concept",
         "src.halperin2022"
       ],
       "ebRef": "PRD PRG-08; technical concept §8.7.5 (calibration status); EB §Load › RIR accuracy (wide priors)",
-      "verified": false,
+      "verified": true,
       "userOverridable": false,
       "since": "mvp",
-      "note": "Data only in M1; a POWR design rule for new users and exercises."
+      "note": "PRD PRG-08 verbatim: \"the first 1–2 exposures prescribe a target RIR of 3–4\"; verified as the PRD's own numbers (T-01, 2026-11-25), its evidence label stays \"App estimate\". The margin fits the evidence: lifters under-predict reps to failure by about 1 rep with a between-person SD of 1.45 reps (Halperin 2022), so RIR 3–4 keeps a typical misjudgement short of failure."
     },
     {
       "id": "progression.calibration.reliableSetWeight",
@@ -1802,7 +1829,7 @@
       "verified": false,
       "userOverridable": false,
       "since": "mvp",
-      "note": "A POWR design value for the calibration state machine (TD-27): uncalibrated → calibrating → calibrated. One exposure with entered effort calibrates when one of its sets reaches this e1RM set weight (the 0.5 tier: RPE ≥ 7 and ≤ 12 effective reps); otherwise the second exposure does (progression.calibration exposures.max)."
+      "note": "A POWR design value for the calibration state machine (TD-27): uncalibrated → calibrating → calibrated. One exposure with entered effort calibrates when one of its sets reaches this e1RM set weight (the 0.5 tier: RPE ≥ 7 and ≤ 12 effective reps); otherwise the second exposure does (progression.calibration exposures.max). T-01 (2026-11-25): the tier follows the RIR-accuracy evidence (Halperin 2022); no study addresses when one calibration exposure suffices. A set at the calibration target RIR 4 (RPE 6) does not calibrate on its own."
     },
     {
       "id": "progression.classification.slopePctPerWeek",
@@ -1842,7 +1869,7 @@
       "verified": false,
       "userOverridable": false,
       "since": "mvp",
-      "note": "The EB lists four training-age bands but no mapping to three levels; mapping 2+ years to advanced is a POWR choice until the observed slope takes over (≥ 8 weeks of data)."
+      "note": "The EB lists four training-age bands but no mapping to three levels; mapping 2+ years to advanced is a POWR choice until the observed slope takes over (≥ 8 weeks of data). T-01 (2026-11-25): intermediateFrom 6 is ACSM 2009's \"approximately 6 months of consistent RT experience\"; advancedFrom 24 is a reading of \"years\" that agrees with the slope classifier for typical lifters with 2–5 years of training. Settled by a validated training-status classification with published cut-offs."
     },
     {
       "id": "progression.double.incrementGuardPct",
@@ -2010,7 +2037,7 @@
       "id": "progression.pace.window",
       "value": {
         "weeks": 4,
-        "minExposures": 4
+        "minExposures": 6
       },
       "unit": "mixed",
       "evidence": [
@@ -2026,7 +2053,7 @@
       "verified": false,
       "userOverridable": false,
       "since": "mvp",
-      "note": "A POWR design value: the planned weekly increase must exceed the one-sided 95% upper bound of the session-e1RM slope over the window, and the gap over the window must exceed one typical error."
+      "note": "A POWR design value: the planned weekly increase must exceed the one-sided 95% upper bound of the session-e1RM slope over the window, and the gap over the window must exceed one typical error. Rules 1.8.0 (T-01, product-owner decision 2026-11-25): the bound uses the Student t quantile for the fit's n − 2 degrees of freedom, and minExposures is 6 (was 4): with the normal quantile and 4 exposures the switch fired on noise in about 12% of windows instead of 5% (packages/domain/test/reference/pace.test.ts). No study defines when linear progression should give way to autoregulation."
     },
     {
       "id": "progression.stall.failedSessions",
@@ -2091,7 +2118,7 @@
       "verified": false,
       "userOverridable": false,
       "since": "mvp",
-      "note": "POWR design values (PRD §7.3: \"the weights are an app convention, labelled [INF]\")."
+      "note": "POWR design values (PRD §7.3: \"the weights are an app convention, labelled [INF]\"). T-01 (2026-11-25): each factor has an evidence basis, but no study weights such factors against each other; closest to settling it: a sensitivity run of the plan matrix (±0.05 per weight) with the content review's expert judgement."
     },
     {
       "id": "scoring.allometric.exponent",
@@ -2194,13 +2221,15 @@
         "OFFICIAL"
       ],
       "sources": [
+        "src.konertz2019",
+        "src.kopayev2020",
         "src.opl-dots"
       ],
       "ebRef": "EB §Scoring › DOTS (coef = 500 / (A·x⁴ + B·x³ + C·x² + D·x + E))",
-      "verified": false,
+      "verified": true,
       "userOverridable": false,
       "since": "mvp",
-      "note": "Stored in ascending powers (E, D, C, B, A). No official derivation of DOTS exists."
+      "note": "Stored in ascending powers (E, D, C, B, A). T-01 (2026-11-25): all 10 equal the author's own definition (Konertz 2019), which also states the 40–210 / 40–150 kg domain of scoring.dots.bodyweightClampKg; the author describes the derivation in words only."
     },
     {
       "id": "scoring.ipfGl.coefficients",
@@ -2263,30 +2292,36 @@
         "OFFICIAL"
       ],
       "sources": [
-        "src.opl-goodlift",
-        "src.vcalc-ipf-gl"
+        "src.ipf2020",
+        "src.kopayev2020",
+        "src.opl-goodlift"
       ],
       "ebRef": "EB §Scoring › IPF GL (GL = Total × 100 / (A − B·e^(−C·BW)))",
-      "verified": false,
+      "verified": true,
       "userOverridable": false,
       "since": "mvp",
-      "note": "The official GL model document could not be opened; only men's classic is independently confirmed."
+      "note": "T-01 (2026-11-25): all 24 numbers equal Table 1 of the IPF GL document (IPF 2020; 0.009210 = 0.00921), and its worked examples reproduce. The IPF rounds the coefficient to 6 decimals before multiplying and the points to 6 decimals; POWR follows it (rules 1.8.0). The document is titled \"actual from May 01, 2020 to Dec 31, 2023\"; no newer set was found."
     },
     {
       "id": "scoring.ipfGl.minBodyweightKg",
-      "value": 35,
+      "value": {
+        "male": 40,
+        "female": 35
+      },
       "unit": "kg",
       "evidence": [
-        "INF"
+        "OFFICIAL"
       ],
       "sources": [
+        "src.ipf2020",
         "src.opl-goodlift",
         "src.powr-eb-scoring"
       ],
-      "ebRef": "EB §Scoring › IPF GL (0 for BW < 35 kg; floored at 0)",
+      "ebRef": "IPF 2020 GL document (Bwt ≥ 40 kg for men, ≥ 35 kg for women); EB §Scoring › IPF GL (0 below the minimum; floored at 0)",
       "verified": true,
       "userOverridable": false,
-      "since": "mvp"
+      "since": "mvp",
+      "note": "Rules 1.8.0 (T-01 V-5, 2026-11-25): by sex, as the IPF GL document applies the formula, so men between 35 and 40 kg get no GL score, as at IPF meets. Rules up to 1.7.0 used 35 kg for both sexes, OpenPowerlifting's choice."
     },
     {
       "id": "scoring.ipfPoints.coefficients",
@@ -2432,13 +2467,15 @@
         "OFFICIAL"
       ],
       "sources": [
+        "src.kopayev2020",
+        "src.wilks2008",
         "src.opl-wilks"
       ],
       "ebRef": "EB §Scoring › Wilks (coef = 500 / (a + b·x + … + f·x⁵))",
-      "verified": false,
+      "verified": true,
       "userOverridable": false,
       "since": "mvp",
-      "note": "Ascending powers a…f; not yet checked against a primary Wilks publication."
+      "note": "Ascending powers a…f. T-01 (2026-11-25): all 12 equal the polynomial in the IPF-hosted Kopayev 2020 report; it reproduces 2,761 of 2,770 cells of Robert Wilks's own tables (9 differ by 1 in the 4th decimal at rounding half-points). No polynomial published by Wilks himself was found."
     },
     {
       "id": "scoring.wilks2020.bodyweightClampKg",
@@ -2490,13 +2527,15 @@
         "OFFICIAL"
       ],
       "sources": [
+        "src.pa2020",
+        "src.kopayev2020",
         "src.opl-wilks2020"
       ],
       "ebRef": "EB §Scoring › Wilks2020 (coef = 600 / polynomial)",
-      "verified": false,
+      "verified": true,
       "userOverridable": false,
       "since": "mvp",
-      "note": "The numerator is 600, not 500."
+      "note": "The numerator is 600, not 500. T-01 (2026-11-25): all 12 equal Powerlifting Australia's calculator equation, whose 0.05 kg tables (5,440 cells) reproduce exactly; Kopayev 2020 prints the same values."
     },
     {
       "id": "session.duration.repSeconds",
@@ -3172,14 +3211,13 @@
         "MA"
       ],
       "sources": [
-        "src.pelland2024",
         "src.pelland2026"
       ],
       "ebRef": "EB §Defaults › Volume (set counting: primary 1.0, synergist 0.5; show direct and fractional)",
-      "verified": false,
+      "verified": true,
       "userOverridable": true,
       "since": "mvp",
-      "note": "Both counts are always computed; this picks the default display. Whether the published Pelland version changed the fractional-counting conclusion is not verified (E-2)."
+      "note": "Both counts are always computed; this picks the default display. The published abstract keeps the conclusion: \"The relative evidence for the 'fractional' quantification method was strongest\"; the OSF sensitivity plots put the best synergist weight at about 0.38–0.40, and 0.5 fits within about 0.1% of it (T-01, 2026-11-25)."
     },
     {
       "id": "volume.effort.hypertrophyRir",
@@ -3210,17 +3248,16 @@
       "value": -0.48,
       "unit": "pct",
       "evidence": [
-        "MA",
-        "PREPRINT"
+        "MA"
       ],
       "sources": [
         "src.robinson2024"
       ],
       "ebRef": "EB §Volume › Proximity to failure (−0.48% muscle size per extra RIR)",
-      "verified": false,
+      "verified": true,
       "userOverridable": false,
       "since": "mvp",
-      "note": "Preprint numbers (SportRxiv 295); verify against the final paper. For education texts only."
+      "note": "For education texts only. Checked against the peer-reviewed accepted manuscript (T-01, 2026-11-25): −0.48% per RIR [95% CI −0.78, −0.179], 140 effects from 26 studies; no effect on strength."
     },
     {
       "id": "volume.effort.strengthAccessoryRpe",
@@ -3291,15 +3328,20 @@
       },
       "unit": "sessions",
       "evidence": [
-        "MA"
+        "MA",
+        "POS",
+        "DELPHI/SURVEY"
       ],
       "sources": [
-        "src.pelland2024"
+        "src.pelland2026",
+        "src.acsm2026",
+        "src.androulakiskorakakis2021"
       ],
       "ebRef": "EB §Defaults › Volume (frequency, strength 2–3 sessions per lift per week)",
-      "verified": false,
+      "verified": true,
       "userOverridable": true,
-      "since": "mvp"
+      "since": "mvp",
+      "note": "T-01 (2026-11-25): frequency has an independent strength effect with diminishing returns (Pelland 2026: 1 → 2 sessions +4.07%, 2 → 3 +2.02%, nothing detectable beyond 3); ACSM 2026 \"≥ 2 sessions/wk\"; powerlifters spread their sets across 1–3 sessions a week."
     },
     {
       "id": "volume.hardSet.highReps",
@@ -3370,7 +3412,7 @@
       "verified": true,
       "userOverridable": false,
       "since": "mvp",
-      "note": "Weekly fractional hard sets a muscle outside the keep-full group falls back to when the session time budget cannot fit every weekly target (PLN-14; planning.timeBudget.fallback). Sets at 6–15RM, the hypertrophy rep range; the EB \"minimum\" mode [INF] is 4–6 sets at 0–2 RIR. A row of its own rather than the floor of volume.hypertrophy.weeklyBands: the same number, but the floor is the Pelland detectability boundary (preprint, verified false) the validator flags against, while this is the published narrative-review dose the generator plans to."
+      "note": "Weekly fractional hard sets a muscle outside the keep-full group falls back to when the session time budget cannot fit every weekly target (PLN-14; planning.timeBudget.fallback). Sets at 6–15RM, the hypertrophy rep range; the EB \"minimum\" mode [INF] is 4–6 sets at 0–2 RIR. A row of its own rather than the floor of volume.hypertrophy.weeklyBands: the same number, but the floor is the Pelland detectability boundary the validator flags against, while this is the published narrative-review dose the generator plans to."
     },
     {
       "id": "volume.hypertrophy.perSessionSoftCap",
@@ -3393,7 +3435,7 @@
       "verified": false,
       "userOverridable": true,
       "since": "mvp",
-      "note": "Above the cap the planner suggests another session; never present \"junk volume\" as fact."
+      "note": "Above the cap the planner suggests another session; never present \"junk volume\" as fact. T-01 (2026-11-25): no peer-reviewed Remmert paper exists yet (only the preprint and two conference abstracts, MSSE 58(10S), 2026), and few data lie above the cap. A design value until the peer-reviewed paper appears (E-2)."
     },
     {
       "id": "volume.hypertrophy.tiers",
@@ -3437,15 +3479,18 @@
       ],
       "unit": "table",
       "evidence": [
+        "MA",
         "PREPRINT"
       ],
       "sources": [
+        "src.pelland2026",
         "src.pelland2024"
       ],
       "ebRef": "EB §Volume › About 4 sets per week is detectable (hypertrophy efficiency tiers; SDES 2.05%)",
       "verified": false,
       "userOverridable": false,
-      "since": "mvp"
+      "since": "mvp",
+      "note": "Reproduced from the published paper's supplementary data (OSF): MED 4 and SDES 2.05%; extra sets per detectable gain about 5.8 / 8.1 / 10.6 / 13.1, within the registry's precision. The tier table itself was read in the preprint; it stays verified false until the published Table 2A is read (product-owner decision, T-01, 2026-11-25)."
     },
     {
       "id": "volume.hypertrophy.weeklyBands",
@@ -3460,24 +3505,23 @@
       "guard": {
         "softWarningAbove": 30,
         "softText": "no detectable superiority",
-        "hardText": "no data"
+        "hardText": "almost no data"
       },
       "evidence": [
         "MA",
-        "PREPRINT"
+        "POS"
       ],
       "sources": [
         "src.pelland2026",
-        "src.pelland2024",
-        "src.bazvalle2022",
         "src.acsm2026",
+        "src.bazvalle2022",
         "src.powr-eb-volume"
       ],
       "ebRef": "EB §Defaults › Volume (hypertrophy weekly sets per muscle, fractional); §Volume › About 4 sets",
-      "verified": false,
+      "verified": true,
       "userOverridable": false,
       "since": "mvp",
-      "note": "Fractional sets per muscle per week: floor 4, default 10–20, high band 20–30 (an individual experiment), soft warning above 30, hard warning above 40."
+      "note": "Fractional sets per muscle per week: floor 4, default 10–20, high band 20–30 (an individual experiment), soft warning above 30, hard warning above 40. T-01 (2026-11-25): 4 vs 0 sets +2.21% (Pelland 2026 data); ACSM 2026 \"≥ 10 sets/wk\" and diminishing returns beyond about 18–20; Baz-Valle 2022 12–20; the PUOS is 31; only one study in Pelland's dataset tested more than 40 sets (45), hence \"almost no data\"."
     },
     {
       "id": "volume.load.hypertrophyMinPct1rm",
@@ -3524,9 +3568,11 @@
       },
       "unit": "mixed",
       "evidence": [
+        "MA",
         "PREPRINT"
       ],
       "sources": [
+        "src.pelland2026",
         "src.remmert2025",
         "src.pelland2024"
       ],
@@ -3534,7 +3580,7 @@
       "verified": false,
       "userOverridable": false,
       "since": "mvp",
-      "note": "The authors stress these are not upper limits; more sets still add gains, just not detectably."
+      "note": "The authors stress these are not upper limits; more sets still add gains, just not detectably. T-01 (2026-11-25): all three values reproduce from the published paper's data (30 → 45 sets 61.7%, 31 → 45 46.9%; 2 → 14 sets 52.3%, 3 → 32 3.6%; 2 → 5 sessions 61.85%, 3 → 6 0.0%); the hypertrophy 31 is partly set by the end of the comparison grid (45 sets), and the term comes from the Remmert preprint. Stays verified false until the published full text is read (product-owner decision)."
     },
     {
       "id": "volume.repRange.hypertrophy",
@@ -3662,15 +3708,18 @@
       },
       "unit": "sets",
       "evidence": [
-        "PREPRINT"
+        "POS",
+        "DELPHI/SURVEY"
       ],
       "sources": [
-        "src.remmert2025"
+        "src.acsm2026",
+        "src.androulakiskorakakis2021"
       ],
       "ebRef": "EB §Defaults › Volume (per-session cap, strength ~2–3 direct heavy sets per lift)",
-      "verified": false,
+      "verified": true,
       "userOverridable": true,
-      "since": "mvp"
+      "since": "mvp",
+      "note": "T-01 (2026-11-25): ACSM 2026 Table 6 \"Volume: 2–3 sets/session\" for strength (\"at least two sets per exercise … these benefits diminish with each subsequent set\"); 2–3 back-off sets after a top single (Androulakis-Korakakis 2021). ACSM's figure is per exercise in general strength training, not specifically heavy sets of a competition lift."
     },
     {
       "id": "volume.strength.tiers",
@@ -3684,17 +3733,11 @@
         {
           "minSets": 2,
           "maxSets": 2,
-          "tier": "higherEfficiency",
-          "extraSetsPerDetectableGain": 0.75
+          "tier": "lowerEfficiency",
+          "extraSetsPerDetectableGain": 12
         },
         {
           "minSets": 3,
-          "maxSets": 4,
-          "tier": "intermediateEfficiency",
-          "extraSetsPerDetectableGain": 2.25
-        },
-        {
-          "minSets": 5,
           "maxSets": null,
           "tier": "notDetectable",
           "extraSetsPerDetectableGain": null
@@ -3702,15 +3745,17 @@
       ],
       "unit": "table",
       "evidence": [
-        "PREPRINT"
+        "MA",
+        "INF"
       ],
       "sources": [
-        "src.pelland2024"
+        "src.pelland2026"
       ],
       "ebRef": "EB §Volume › About 4 sets per week is detectable (strength tiers; SDES 3.96%)",
       "verified": false,
       "userOverridable": false,
-      "since": "mvp"
+      "since": "mvp",
+      "note": "Rules 1.8.0 (T-01 V-2, 2026-11-25): recomputed from the published paper's supplementary data (OSF). From 1 set, 3 more give a detectable gain (P 83.6%); from 2 sets, 12 more (P 52.3%); from 3 sets, no higher volume up to 32 sets does (best P 3.6%), which agrees with the PUOS of 3. The preprint's 0.75 and 2.25 and its \"not detectable from 5\" could not be reproduced. Gains continue below the detection threshold (10 vs 3 sets: +2.63%). Stays verified false until the published Table 2B is read: the table is POWR's recomputation."
     },
     {
       "id": "volume.strength.weeklyHeavySetsPerLift",
@@ -3724,7 +3769,7 @@
           "min": 3,
           "max": 6
         },
-        "plateauAbove": 5
+        "plateauAbove": 3
       },
       "evidence": [
         "MA",
@@ -3732,13 +3777,13 @@
       ],
       "sources": [
         "src.androulakiskorakakis2021",
-        "src.pelland2024"
+        "src.pelland2026"
       ],
       "ebRef": "EB §Defaults › Volume (strength sets per competition lift per week)",
       "verified": false,
       "userOverridable": true,
       "since": "mvp",
-      "note": "The plateau above about 5 sets comes from the Pelland preprint."
+      "note": "Rules 1.8.0 (T-01 V-3, 2026-11-25): no detectable superiority above about 3 fractional sets a week (Pelland 2026 data); gains continue below the detection threshold. The former 5 came from the preprint's tier label. The minimum dose 3–6 is Androulakis-Korakakis 2021; the band 4–10 stays a design value (Pelland counts fractional sets of the tested lift, POWR direct sets at ≥ 80% 1RM; surveyed powerlifters use about 4–8)."
     }
   ]
 }

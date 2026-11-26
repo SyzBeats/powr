@@ -6,10 +6,10 @@ import { describe, expect, it } from 'vitest';
  * data/*.yaml, or a registry change that moves an EB reference value, fails here.
  */
 import type { MuscleCredit, MuscleId, SourceId } from '@powr/domain';
-import { bodyweightTrend } from '@powr/domain/bodyweight';
+import { bodyweightRate, bodyweightTrend } from '@powr/domain/bodyweight';
 import { loadForTarget } from '@powr/domain/e1rm';
 import type { Implement } from '@powr/domain/loading';
-import { suggestDoubleProgression } from '@powr/domain/progression';
+import { suggestApre, suggestDoubleProgression } from '@powr/domain/progression';
 import { restSeconds } from '@powr/domain/rest';
 import { score, type ScoreInput } from '@powr/domain/scoring';
 import { muscleVolume, setCredit } from '@powr/domain/volume';
@@ -109,10 +109,16 @@ describe('golden: scoring (EB §Scoring)', () => {
     expect(at(score('wilks2020', lifter('female', 60, 1), RULES).value, 4)).toBe(1.319);
     expect(at(score('ipfPoints', lifter('male', 93, 777.5), RULES).value, 2)).toBe(741.32);
     expect(at(score('ipfPoints', lifter('female', 73, 337.5), RULES).value, 2)).toBe(546.67);
+    // The IPF GL document's examples with its 6-decimal rounding (rules 1.8.0, T-01): 112.855365
+    // (112.86; the unrounded coefficient gave the EB's 112.85) and 96.783453.
     const equipped = { ...lifter('male', 92.04, 1035), division: 'equipped' as const };
-    expect(at(score('ipfGl', equipped, RULES).value, 2)).toBe(112.85);
+    expect(score('ipfGl', equipped, RULES).value).toBe(112.855365);
+    expect(at(score('ipfGl', equipped, RULES).value, 2)).toBe(112.86);
     const bench = { ...lifter('female', 70.5, 122.5), lift: 'bench' as const };
-    expect(at(score('ipfGl', bench, RULES).value, 2)).toBe(96.78);
+    expect(score('ipfGl', bench, RULES).value).toBe(96.783453);
+    expect(RULES['scoring.ipfGl.minBodyweightKg'].value).toEqual({ male: 40, female: 35 });
+    expect(score('ipfGl', lifter('male', 38, 300), RULES).value).toBe(0);
+    expect(score('ipfGl', lifter('female', 38, 300), RULES).value).toBeGreaterThan(0);
     const m83 = lifter('male', 83, 700);
     expect(at(score('dots', m83, RULES).value, 2)).toBe(472.56);
     expect(at(score('ipfGl', m83, RULES).value, 2)).toBe(96.9);
@@ -192,11 +198,38 @@ describe('golden: progression and bodyweight', () => {
     expect(result.value).toMatchObject({ action: 'increase', load: kg(32.5), reps: 8 });
   });
 
+  it('APRE-6: 13+ reps on the AMRAP add +5 to 7.5 kg (Mann 2011/2017, +10 to 15 lb; T-01 V-1)', () => {
+    const steps = { implement: { kind: 'steps', unit: 'kg', start: 0, step: 2.5 } } as const;
+    expect(RULES['progression.apre.sixRm'].value.adjustments.at(-1)).toEqual({
+      minReps: 13,
+      maxReps: null,
+      adjustKg: 6.25,
+      rangeKg: { min: 5, max: 7.5 },
+    });
+    // 100 kg + 6.25 kg = 106.25 kg, on 2.5 kg steps with ties down: 105 kg (was 107.5 kg).
+    expect(suggestApre({ sixRm: kg(100), amrapReps: 14 }, steps, RULES).value.load).toEqual(
+      kg(105),
+    );
+  });
+
   it('bodyweight EMA: α 0.1 per day, α_eff over gaps', () => {
     const weighIns = [
       ...Array.from({ length: 7 }, (_, n) => ({ localDate: day(n), mass: kg(80) })),
       { localDate: day(9), mass: kg(81) },
     ];
     expect(bodyweightTrend(weighIns, RULES).value.at(-1)?.trendKg).toBeCloseTo(80.271, 12);
+  });
+
+  it('bodyweight rate: "not enough data yet" until the readings span 21 days (T-01)', () => {
+    const daily = (days: number) =>
+      bodyweightTrend(
+        Array.from({ length: days + 1 }, (_, n) => ({
+          localDate: day(n),
+          mass: kg(80 - 0.02 * n),
+        })),
+        RULES,
+      ).value;
+    expect(bodyweightRate(daily(20), RULES).value).toBeNull();
+    expect(bodyweightRate(daily(21), RULES).value?.spanDays).toBe(21);
   });
 });

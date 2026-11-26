@@ -1,9 +1,9 @@
 import { execFileSync } from 'node:child_process';
-import { writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { formatFailures, readBundledPackages, runGate } from './inventory.ts';
+import { checkImagePin, formatFailures, readBundledPackages, runGate } from './inventory.ts';
 import { loadPolicy } from './policy.ts';
 
 /**
@@ -42,6 +42,15 @@ console.log(
 );
 if (result.failures.length > 0) {
   console.error(`Licence gate FAILED (licence-policy.yaml):\n${formatFailures(result.failures)}`);
+  process.exit(1);
+}
+// The server-side list must describe the image the Dockerfile builds on (M6d, runbook §6.1).
+const pin = checkImagePin(
+  readFileSync(join(root, 'deploy/Dockerfile'), 'utf8'),
+  join(root, 'deploy/server-inventory.yaml'),
+);
+if (pin) {
+  console.error(`Licence gate FAILED: ${pin}`);
   process.exit(1);
 }
 console.log('Licence gate passed.');

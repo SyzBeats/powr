@@ -1,4 +1,4 @@
-import { mkdtempSync, rmSync } from 'node:fs';
+import { cpSync, mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
@@ -7,7 +7,11 @@ import { chromium, devices, type BrowserContext, type Page } from '@playwright/t
 import { expect, skipOnboarding, test } from './fixtures';
 import {
   chromiumTree,
+  copyStorage,
+  describeProfile,
   describeStorage,
+  locksReleased,
+  orphanedLogRecords,
   profileLeftovers,
   random,
   readStoredWorkout,
@@ -46,6 +50,9 @@ const SEED_ENV = process.env['POWR_KILL_SEED'];
 /** One line per kill with its point, mode and outcome (`POWR_KILL_VERBOSE=1`). */
 const VERBOSE = Boolean(process.env['POWR_KILL_VERBOSE']);
 const SQUAT = 'Barbell back squat';
+/** The recovery screen for data that is gone, and the first run it replaces (M6d). */
+const MISSING = 'Your data could not be read';
+const WELCOME = 'Welcome to POWR';
 const SQUAT_ID = 'ex.barbell-back-squat';
 
 const POINTS = {
@@ -72,6 +79,26 @@ const MODES = {
 } as const;
 type KillMode = keyof typeof MODES;
 
+/**
+ * Only some points or modes (`POWR_KILL_POINTS=atTap`, `POWR_KILL_MODES=browser`, comma-separated),
+ * to soak one case. The others get weight 0; the random sequence stays the same, so a seed still
+ * repeats its run.
+ */
+function only<T extends string>(weights: Readonly<Record<T, number>>, env: string | undefined) {
+  const chosen = (env ?? '')
+    .split(',')
+    .map((value) => value.trim())
+    .filter(Boolean);
+  if (chosen.length === 0) return weights;
+  const unknown = chosen.filter((value) => !(value in weights));
+  if (unknown.length > 0) throw new Error(`Unknown kill points or modes: ${unknown.join(', ')}`);
+  return Object.fromEntries(
+    Object.entries(weights).map(([key, weight]) => [key, chosen.includes(key) ? weight : 0]),
+  ) as Readonly<Record<T, number>>;
+}
+const POINT_WEIGHTS = only(POINTS, process.env['POWR_KILL_POINTS']);
+const MODE_WEIGHTS = only(MODES, process.env['POWR_KILL_MODES']);
+
 interface Stats {
   seed: number;
   kills: number;
@@ -87,7 +114,22 @@ interface Stats {
   edits: { acknowledged: number; inFlightNew: number; inFlightOld: number };
   /** Sets stored at the end; every check compares all of them. */
   finalSets: number;
+  /** Reopens that had to wait for a lock on the profile's stores to go (and the longest wait). */
+  lockWaits: { count: number; maxMs: number };
   ms: number;
+}
+
+/** One kill, kept for the failure report (the last few). */
+interface KillRecord {
+  readonly kill: number;
+  readonly point: KillPoint;
+  readonly mode: KillMode;
+  readonly at: string;
+  readonly processes: number;
+  readonly leftovers: number;
+  readonly lockWaitMs: number;
+  readonly locksHeld: readonly unknown[];
+  readonly reopenMs: number;
 }
 
 /** A line in the test output (the list reporter shows it). */
@@ -174,9 +216,13 @@ async function killRun(
     inFlight: { present: 0, absent: 0 },
     edits: { acknowledged: 0, inFlightNew: 0, inFlightOld: 0 },
     finalSets: 0,
+    lockWaits: { count: 0, maxMs: 0 },
     ms: 0,
   };
   const profile = mkdtempSync(join(tmpdir(), 'powr-e2e-kill-'));
+  /** The profile's storage folders as the last reopen found them (for the failure report). */
+  const beforeReopen = mkdtempSync(join(tmpdir(), 'powr-e2e-kill-storage-'));
+  const history: KillRecord[] = [];
   const problems: string[] = [];
   /**
    * Acknowledgements that reached the test: confirms (the `powr-set-commit` measure, taken right
@@ -274,9 +320,9 @@ async function killRun(
         stats.confirmed += 1;
       }
 
-      let point = rng.pick(POINTS);
+      let point = rng.pick(POINT_WEIGHTS);
       if (point === 'afterEdit' && model.size === 0) point = 'inCommit';
-      const mode = rng.pick(MODES);
+      const mode = rng.pick(MODE_WEIGHTS);
       stats.points[point] = (stats.points[point] ?? 0) + 1;
       stats.modes[mode] = (stats.modes[mode] ?? 0) + 1;
 
@@ -329,6 +375,7 @@ async function killRun(
 
       // The kill: no graceful step in between.
       const tree = chromiumTree(profile);
+      const killedAt = new Date().toISOString();
       if (mode === 'browser') {
         const closed = context.waitForEvent('close').catch(() => undefined);
         await sigkill(tree.all);
@@ -341,9 +388,31 @@ async function killRun(
           print(`seed ${seed}, kill ${kill + 1}: ${leftovers.length} leftover process(es) killed`);
           await sigkill(leftovers);
         }
+        // Nor a lock on its stores (a phone never reopens an app over its old process's files).
+        const locks = await locksReleased(profile);
+        if (locks.held.length > 0) {
+          stats.lockWaits.count += 1;
+          stats.lockWaits.maxMs = Math.max(stats.lockWaits.maxMs, locks.ms);
+          print(
+            `seed ${seed}, kill ${kill + 1}: waited ${locks.ms} ms for locks ${JSON.stringify(locks.held)}`,
+          );
+        }
+        copyStorage(profile, beforeReopen);
         acks.confirm = 0;
         acks.edit = 0;
+        const reopening = Date.now();
         ({ context, page } = await launch());
+        history.push({
+          kill: kill + 1,
+          point,
+          mode,
+          at: killedAt,
+          processes: tree.all.length,
+          leftovers: leftovers.length,
+          lockWaitMs: locks.ms,
+          locksHeld: locks.held,
+          reopenMs: Date.now() - reopening,
+        });
       } else {
         expect(tree.renderers.length, 'renderer processes').toBeGreaterThan(0);
         await sigkill(tree.renderers);
@@ -351,14 +420,35 @@ async function killRun(
         acks.confirm = 0;
         acks.edit = 0;
         page = await context.newPage();
+        history.push({
+          kill: kill + 1,
+          point,
+          mode,
+          at: killedAt,
+          processes: tree.renderers.length,
+          leftovers: 0,
+          lockWaitMs: 0,
+          locksHeld: [],
+          reopenMs: 0,
+        });
       }
+      if (history.length > 5) history.shift();
       stats.kills += 1;
 
-      // After the kill: the workout resumes…
+      // After the kill: the workout resumes… If the stored data is gone instead, POWR must say so
+      // ("Your data could not be read", M6d), never start over with the first run.
       await page.goto('/session');
-      await expect(page.getByRole('heading', { level: 1, name: 'Workout' })).toBeVisible({
+      const heading = page.getByRole('heading', { level: 1 });
+      await expect(heading).toHaveText(new RegExp(`^(Workout|${MISSING}|${WELCOME})$`), {
         timeout: 15_000,
       });
+      const shown = await heading.textContent();
+      if (shown === WELCOME) {
+        throw new Error(`kill ${kill + 1}: POWR started over with the first run (an app bug)`);
+      }
+      if (shown === MISSING) {
+        throw new Error(`kill ${kill + 1}: the stored data is gone; POWR showed "${MISSING}"`);
+      }
       await expect(page.getByText('Workout resumed')).toBeVisible();
       // …and the stored sets are exactly what was acknowledged, plus whole in-flight sets.
       const stored = await readStoredWorkout(page);
@@ -420,11 +510,31 @@ async function killRun(
       contentType: 'application/json',
     });
     print(`storage at the failure: ${JSON.stringify(storage)}`);
+    // The files on disk, the stores' locks and the last kills; and copies of the storage folders
+    // as the last reopen found them and as they are now, to open again by hand.
+    const disk = describeProfile(profile);
+    await test.info().attach('profile at the failure', {
+      body: JSON.stringify({ disk, lastKills: history }, null, 2),
+      contentType: 'application/json',
+    });
+    print(`profile at the failure: ${JSON.stringify({ ...disk, lastKills: history })}`);
+    const kept = test.info().outputPath('storage');
+    cpSync(beforeReopen, join(kept, 'before-reopen'), { recursive: true });
+    copyStorage(profile, join(kept, 'after-reopen'));
+    print(`storage folders kept in ${kept}`);
+    // The one known cause of a lost store (M6d): a log record orphaned by an earlier kill.
+    const orphans = orphanedLogRecords(beforeReopen);
+    print(
+      orphans.length > 0
+        ? `cause: Chromium dropped the IndexedDB store; its log held an orphaned record header (${orphans.join(', ')}) from an earlier kill (IMPLEMENTATION_NOTES.md, M6d)`
+        : 'cause: no orphaned log record before the reopen; not the known Chromium loss (M6d)',
+    );
     if (VERBOSE) print(snapshot);
     throw error;
   } finally {
     await context.close().catch(() => undefined);
     rmSync(profile, { recursive: true, force: true });
+    rmSync(beforeReopen, { recursive: true, force: true });
   }
   stats.ms = Date.now() - started;
   print(`KILL ${JSON.stringify(stats)}`);

@@ -175,7 +175,10 @@ describe('advanced training choices (SET-05)', () => {
         { paramId: 'deload.planned.everyWeeks', value: 6 },
       ]),
     );
-    expect(advanced.textContent).toContain('Your setting. Evidence default: Wathan.');
+    // The live settings query re-renders after the write; under load that can lag the store.
+    await waitFor(() =>
+      expect(advanced.textContent).toContain('Your setting. Evidence default: Wathan.'),
+    );
     expect(await seriousViolations()).toEqual([]);
     await user.click(
       within(advanced).getByRole('button', {

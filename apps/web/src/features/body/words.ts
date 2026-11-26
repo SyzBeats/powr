@@ -66,7 +66,7 @@ export function useBodyWords() {
       case 'untracked':
         return t`No phase set`;
       case 'insufficientData':
-        return t`A few more weigh-ins needed`;
+        return t`Not enough data yet`;
       default:
         return assertNever(value.status);
     }

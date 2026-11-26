@@ -190,7 +190,8 @@ export const EB_DEFAULTS: ParamValues = {
       { minReps: 3, maxReps: 4, adjustKg: -1.25, rangeKg: { min: -2.5, max: 0 } },
       { minReps: 5, maxReps: 7, adjustKg: 0, rangeKg: { min: 0, max: 0 } },
       { minReps: 8, maxReps: 12, adjustKg: 3.75, rangeKg: { min: 2.5, max: 5 } },
-      { minReps: 13, maxReps: null, adjustKg: 7.5, rangeKg: { min: 5, max: 10 } },
+      // Mann 2011 / 2017: 13+ reps → +10 to 15 lb (4.5–6.8 kg), +5 to 7.5 kg on plates (T-01, V-1).
+      { minReps: 13, maxReps: null, adjustKg: 6.25, rangeKg: { min: 5, max: 7.5 } },
     ],
   },
   'progression.calibration': { exposures: { min: 1, max: 2 }, targetRir: { min: 3, max: 4 } },
@@ -377,7 +378,8 @@ export const EB_DEFAULTS: ParamValues = {
       },
     },
   },
-  'scoring.ipfGl.minBodyweightKg': 35,
+  // IPF 2020 GL document: Bwt ≥ 40 kg for men, ≥ 35 kg for women (T-01, V-5).
+  'scoring.ipfGl.minBodyweightKg': { male: 40, female: 35 },
   'scoring.allometric.exponent': 0.67,
   'planning.mesocycle.accumulationWeeks': { min: 3, max: 8 },
   'planning.novice.maxWorkingExercises': 5,
@@ -399,7 +401,8 @@ export const EB_DEFAULTS: ParamValues = {
   'bodyweight.trend.alphaPerDay': 0.1,
   'bodyweight.trend.initialWeighIns': { min: 3, max: 7 },
   'bodyweight.trend.winsorizePct': 2.5,
-  'bodyweight.rate.windowDays': { min: 14, max: 28 },
+  // EB: the slope over the last 14–28 days; the rate shows once the readings span 21 (T-01).
+  'bodyweight.rate.windowDays': { min: 21, max: 28 },
   // M4a (EB §Nutrition › Bulking, › Cutting; PRD MOT-03/04, A-07, PLN-03; POWR design values).
   'bodyweight.rate.bulk': {
     target: {
@@ -420,7 +423,7 @@ export const EB_DEFAULTS: ParamValues = {
   'motivation.streak.graceSessions': 1,
   'motivation.streak.retroactiveBreakWeeks': 4,
   'motivation.streak.defaultWeeklyTarget': 1,
-  'progression.pace.window': { weeks: 4, minExposures: 4 },
+  'progression.pace.window': { weeks: 4, minExposures: 6 },
   'load.trend.repRangeShift': 3,
   'volume.strength.heavySet': { minPct1rm: 80, maxReps: 6 },
 };

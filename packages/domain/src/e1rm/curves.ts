@@ -28,8 +28,10 @@ export function equationPct(equation: Exclude<E1rmEquation, 'rts'>, reff: number
 }
 
 /**
- * The exact RTS lookup, interpolated between its half-rep rows. Beyond the last row it follows
- * Wathan, scaled to meet the chart there, so the curve stays continuous and decreasing.
+ * The RPE chart (common RTS version: the commonly circulated decimal chart, not Tuchscherer's
+ * own, which is 5–8 points lower at 5–11 effective reps; T-01), interpolated between its
+ * half-rep rows. Beyond the last row it follows Wathan, scaled to meet the chart there, so the
+ * curve stays continuous and decreasing.
  */
 export function rtsPct(rows: readonly PctAtReffRow[], reff: number): number | null {
   if (!(reff >= 1)) return null;

@@ -1,7 +1,9 @@
+import { sharedDataMarker } from '../db/data-guard';
+
 /**
  * "Delete all data" (DAT-13, §8.2.1): deletes the four databases (`powr`, `powr-safety`,
- * `powr-diag`, `powr-runtime`), clears `localStorage` and `sessionStorage` and closes the app's
- * notifications. The Cache Storage keeps the app files only (no user data), so POWR still opens
+ * `powr-diag`, `powr-runtime`), clears `localStorage` and `sessionStorage`, removes the data
+ * marker first (both copies, M6d) and closes the app's notifications. The Cache Storage keeps the app files only (no user data), so POWR still opens
  * offline afterwards. The Dexie-backed stores are deleted through their own instances, which
  * then stay closed (no auto-reopen that would create an empty database again).
  */
@@ -21,6 +23,8 @@ export interface WipeResult {
 const BLOCKED_TIMEOUT_MS = 10_000;
 
 export async function deleteAllData(targets: readonly Wipeable[]): Promise<WipeResult> {
+  // First, so a wipe cut short never leaves "data existed" behind with the data gone (M6d).
+  await sharedDataMarker().clear();
   await closeNotifications();
   await Promise.all([
     ...targets.map((target) => withTimeout(target.wipe())),

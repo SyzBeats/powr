@@ -34,6 +34,10 @@ function shipped(): CompiledRules {
   return compiled;
 }
 
+function verifiedOf(id: string): boolean | undefined {
+  return shipped().params.find((def) => def.id === id)?.verified;
+}
+
 describe('shipped rules registry (data/*.yaml)', () => {
   it('compiles: every row matches its schema, every MVP parameter is present', () => {
     expect(issues).toEqual([]);
@@ -69,14 +73,51 @@ describe('shipped rules registry (data/*.yaml)', () => {
       def.sources.some((id) => sources.get(id)?.tag === 'PREPRINT');
     const offenders = shipped().params.filter((def) => preprint(def) && def.verified);
     expect(offenders.map((def) => def.id)).toEqual([]);
+    // Rules 1.8.0 (T-01): weeklyBands and hypertrophySlopePerRir left this list, verified against
+    // the published Pelland 2026 data and the Robinson 2024 accepted manuscript.
     for (const id of [
-      'volume.hypertrophy.weeklyBands',
       'volume.hypertrophy.tiers',
       'volume.hypertrophy.perSessionSoftCap',
       'volume.puos',
-      'volume.effort.hypertrophySlopePerRir',
     ]) {
       expect(shipped().params.find((def) => def.id === id)).toMatchObject({ id, verified: false });
+      expect(preprint(shipped().params.find((def) => def.id === id)!)).toBe(true);
+    }
+  });
+
+  it('applies the T-01 evidence verification (rules 1.8.0, product owner 2026-11-25)', () => {
+    // The 14 research-backed and 4 PRD rows of the report, less the two Pelland tier rows kept
+    // until the full text is read, plus the corrected APRE table.
+    for (const id of [
+      'load.rirBias',
+      'volume.hypertrophy.weeklyBands',
+      'volume.counting.default',
+      'volume.frequency.strengthPerLift',
+      'volume.strength.perSessionHeavySets',
+      'volume.effort.hypertrophySlopePerRir',
+      'planning.slot.sets',
+      'scoring.wilks.coefficients',
+      'scoring.wilks2020.coefficients',
+      'scoring.dots.coefficients',
+      'scoring.ipfGl.coefficients',
+      'monitoring.readiness.pmFromHour',
+      'planning.timeBudget.fallback',
+      'progression.calibration',
+      'bodyweight.rate.maintain',
+      'motivation.streak.defaultWeeklyTarget',
+      'progression.apre.sixRm',
+    ]) {
+      expect({ id, verified: verifiedOf(id) }).toEqual({ id, verified: true });
+    }
+    // Kept preliminary until the published Pelland 2026 Tables 2A/2B are read, and the corrected
+    // strength guard whose band stays a design value.
+    for (const id of [
+      'volume.hypertrophy.tiers',
+      'volume.strength.tiers',
+      'volume.puos',
+      'volume.strength.weeklyHeavySetsPerLift',
+    ]) {
+      expect({ id, verified: verifiedOf(id) }).toEqual({ id, verified: false });
     }
   });
 
@@ -109,7 +150,7 @@ describe('shipped rules registry (data/*.yaml)', () => {
     const report = unverifiedReport(shipped());
     const count = shipped().params.filter((def) => !def.verified).length;
     expect(report.split('\n')).toHaveLength(count + 1);
-    expect(report).toContain('- volume.puos [PREPRINT]');
+    expect(report).toContain('- volume.puos [MA, PREPRINT]');
   });
 });
 

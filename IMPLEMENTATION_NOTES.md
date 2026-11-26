@@ -4961,3 +4961,463 @@ Files shared by several rows go into the first commit that needs them (noted); o
    `.github/workflows/deploy.yml`, `deploy/runbook.md`.
 10. `docs: technical concept v0.11, release checklist 1.1, M6c notes` — `docs/technical-concept.md`,
     `docs/release/checklist.md`, `IMPLEMENTATION_NOTES.md`.
+
+## M6d kill anomaly and fixes
+
+Written 2026-11-25 by the M6d work: the investigation of the kill test's one unexplained failure
+(G-06, EC-01 blocker), the defensive check that came out of it, the pinned server image and the
+README inside each backup. Status: `pnpm verify` green (numbers under "Evidence"). Nothing
+committed or staged beyond the baseline; the product owner commits.
+
+### The kill anomaly: what it is
+
+**Conclusion (high confidence): a real data-loss path in Chromium's IndexedDB (LevelDB), not in
+POWR and not a test artefact.** POWR's part was that it then started fresh without a word. Fixed:
+POWR now shows "Your data could not be read" instead of the first run, and the kill test names the
+cause when it happens.
+
+The mechanism, step by step (each step observed, see "Evidence of the mechanism"):
+
+1. LevelDB appends a record to its write-ahead log (`000003.log`) as two writes: a 7-byte header
+   (checksum, length, type), then the data. Chromium's `ChromiumWritableFile::Append` writes
+   straight to the file, unbuffered (`third_party/leveldatabase/env_chromium.cc`). A SIGKILL
+   between the two leaves the header alone at the end of the log.
+2. The next start recovers: LevelDB treats a record cut off at the end of the log as the normal
+   trace of a crash, not as corruption. Nothing is lost so far.
+3. Chromium opens LevelDB with `reuse_logs` (`Options::Options()`: `reuse_logs =
+   !IsLowEndDeviceOrPartialLowEndModeEnabled()` on every platform except ChromeOS, so on a
+   high-end Android phone like the S22 too). The recovered log is reopened for appending at its
+   end, so the next session's records go right behind the orphaned header.
+4. At the start after that, LevelDB's recovery meets the orphaned header in the middle of the log:
+   a checksum mismatch, reported as corruption (paranoid checks). Chromium's IndexedDB records the
+   corruption, and the first IndexedDB call fails with `UnknownError: Internal error opening
+   backing store for indexedDB.open`. Chromium deletes the origin's whole IndexedDB store: `powr`,
+   `powr-safety` (the safety copies), `powr-diag` and `powr-runtime`. The next `open` meets no
+   database; its `upgradeneeded` carries the non-standard `dataLoss: "total"` and
+   `dataLossMessage: "IndexedDB (database was corrupt): …"`. Local Storage, the service worker
+   registration and Cache Storage are untouched.
+5. Before M6d: Dexie created an empty `powr`, the first-run guard found no legal
+   acknowledgement, and the app greeted the user with "Welcome to POWR". (POWR's boot calls
+   `indexedDB.databases()` first, in `pendingUpgrade`; that call is the one that fails, and it was
+   caught as "no pending upgrade", so the app's diagnostics log showed nothing unusual either.)
+
+So a loss needs a whole-browser kill landing between two `write()` calls of one log record (a
+window of microseconds), then one more session that writes, then one more start. In the kill test
+the loss surfaces at the reopen after a later kill: M6c's "kill 97 at the tap" was where it showed,
+not where it began. Renderer-only kills cannot cause it (the browser process does the writes).
+
+**On a phone.** The same Chromium code runs in Chrome on Android, `reuse_logs` included (it is off
+only on low-end devices and ChromeOS), and Android ends processes with SIGKILL. The trigger needs
+Chrome's browser process killed during a write to POWR's IndexedDB, which mostly happens while
+POWR is in front (a crash, a force stop, the system reclaiming memory mid-write); then any later
+write and start complete the loss. Rare, but not prevented by anything POWR can do; the damage is
+the whole local history and the safety copies. Backups (DAT-08) are the protection; POWR now at
+least says what happened. Not measured on the S22. A short search found no upstream report of
+this interaction (an open decision below).
+
+### Rounds and kills
+
+The kill test as extended by M6d (below), 8–10 parallel workers, load average 15–45 (other
+worktrees were busy), the profile on `/tmp` (a 16 GB tmpfs with 12.8–13 GB free throughout).
+
+| Run                                                                                                          | Build             | Kills                        | Losses | Notes                                                                                                                                                                                                                                                                                                                                                                 |
+| ------------------------------------------------------------------------------------------------------------ | ----------------- | ---------------------------- | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| M6c (for reference)                                                                                          | M6c               | 2,397 (1,766+ whole-browser) | 1      | "Welcome to POWR"; no storage recorded                                                                                                                                                                                                                                                                                                                                |
+| A0: M6c's failing test (base seed 1795637024, "kills 91–100") 20 times                                       | M6c app, M6d test | 197                          | **1**  | repeat 9, kill 7: reproduced                                                                                                                                                                                                                                                                                                                                          |
+| A1: the normal mix, 15 rounds of 200 (base seeds 1801000000 + 1000 × round)                                  | M6c app, M6d test | 2,998                        | **2**  | round 5 "kills 21–30" kill 9 (in the commit); round 11 "kills 191–200" kill 9 (in the commit)                                                                                                                                                                                                                                                                         |
+| A2: whole-browser kills at the tap only, 10 rounds of 200 (`POWR_KILL_POINTS=atTap POWR_KILL_MODES=browser`) | M6c app, M6d test | 2,000                        | 0      | at the tap the commit has mostly not reached the browser yet                                                                                                                                                                                                                                                                                                          |
+| B0: A0 again                                                                                                 | M6d app and test  | 200                          | 0      | 20 of 20 passed                                                                                                                                                                                                                                                                                                                                                       |
+| B1: the normal mix, 15 rounds of 200 (base seeds 1811000000 + 1000 × round)                                  | M6d app and test  | 3,000                        | 0      | 300 of 300 passed; B0 and B1: 2,503 whole-browser and 697 renderer kills, 4,446 acknowledged sets and 364 acknowledged edits kept, 483 in-flight confirms complete and 470 absent, 0 partial, 355 typed-only none stored, 314 in-flight edits (310 new, 4 old), 0 lock waits, 0 leftovers                                                                             |
+| `pnpm e2e:kill` × 3 in the worktree (base seeds 1795643163, 1795643235, 1795643312)                          | M6d app and test  | 600                          | **1**  | run 1 "kills 151–160", kill 10 (after the acknowledgement): POWR showed "Your data could not be read", diagnostics `db.missing` with `dataLoss: "total"`, the cause line named the orphaned record (byte 209,903); `localStorage` was empty after the kill, so the marker's file copy caught it. Runs 2 and 3 passed. 835 acknowledged sets kept in the passing tests |
+
+In the passing tests of phase A (517 tests, 5,170 kills: 4,513 whole-browser and 657 renderer;
+points: at the tap 2,476, in the commit 828, after an edit 647, after the acknowledgement 399,
+during the rest 408, before the tap 412): 6,450 acknowledged sets and 350 acknowledged edits all
+kept; 447 in-flight confirms stored complete and 2,494 absent, 0 partial; 412 typed-only sets,
+none stored; 297 in-flight edits (289 new value, 8 old), none partial; **0 lost, partial or
+duplicated records**. No reopen found a process left over or a lock still held (0 of 4,513).
+
+**Rate.** Before (M6c app): 4 losses in 7,592 kills; in the normal mix 4 in 5,592 (M6c's 2,397
+plus A0 and A1), about 1 in 1,400; whole-browser kills at the tap alone 0 in 2,000 (below 1 in 670
+with 95 % confidence). After (M6d app): 1 loss in 3,800 kills (B0, B1 and the three `pnpm
+e2e:kill` runs; at the before-rate about 2.7 were expected, so no difference can be read into it).
+Over the whole normal mix: 5 losses in about 9,390 kills, about 1 in 1,900 (about 1 in 1,500
+whole-browser kills). The rate is Chromium's and cannot change with POWR's fix; what changes is
+the outcome: **before, every loss showed "Welcome to POWR" (4 of 4: M6c's report and the page
+snapshots of A0 and A1); after, it shows "Your data could not be read" (1 of 1)**, and the kill
+test fails naming the cause. At this rate a 200-kill run fails about once in ten runs, the 10-kill
+run of `pnpm e2e` about once in 200.
+
+### Evidence of the mechanism
+
+- **Each failure, captured** (A0 repeat 9, A1 rounds 5 and 11): the reopened IndexedDB LevelDB's
+  `LOG` says "Creating DB … since it was missing"; all IndexedDB databases are new and empty
+  (`powr-diag` holds only the new session's three entries); Local Storage, the service worker
+  registration and Cache Storage are intact; no lock was held and no process left (`/proc/locks`,
+  `/proc`); 12.8–12.9 GB free (no quota eviction, which would have removed the other storage
+  too). The copy of the storage folders taken right before the failing reopen holds the full log
+  (204,646 bytes in A0), with a normal recovery in its own `LOG`.
+- **The copy, reopened in a fresh Chromium, four times** (a scratch test serving a blank page on
+  the same origin): every time `indexedDB.databases()` fails with `UnknownError: Internal error
+  opening backing store for indexedDB.open`, the next `databases()` lists nothing, and
+  `open('powr')` gets `oldVersion 0`, `dataLoss: "total"`, `dataLossMessage: "IndexedDB (database
+  was corrupt): Internal error opening backing store for indexedDB.open."`, LevelDB logging
+  "Creating DB … since it was missing". Deterministic: the on-disk state itself is what Chromium
+  rejects.
+- **The log itself** (a record-by-record parser with CRC-32C): A0's log has 282 good records, then
+  at byte 163,964 a 7-byte header announcing a 227-byte FULL record with no data; valid records
+  start at the very next byte. The last good batch before it has sequence 2362 (5 entries), so the
+  orphan was to be 2367; the first batch after it is 2367 again, written by the next session after
+  its recovery had stopped at the orphan. A1 round 5: the same at byte 208,282 (a 4,338-byte record;
+  the last batch 2850 + 6, the next 2856 again). A1 round 11: the same at byte 255,454.
+- **Made deterministic, without random kills** (scratch test, then `e2e/data-loss.spec.ts`): kill a
+  profile with data, append the 7 bytes `fd 7c f2 bb e3 00 01` to its log, start (recovers, "Reusing
+  old log"), log one set, kill, start: the store is gone, `dataLoss: "total"`. Both builds lose the
+  data; the M6c build shows "Welcome to POWR", the M6d build "Your data could not be read".
+- **Chromium's source** (main, read 2026-11-25): `instance/bucket_context.cc` opens the backing
+  store with two tries; `instance/leveldb/backing_store.cc` records corruption on a corrupt open
+  and, on the next try, "IndexedDB recovering from a corrupted (and deleted) database", sets
+  `IDBDataLoss::Total` and calls `DestroyDatabase`; a lock or other I/O error is reported without
+  deleting anything.
+
+### The open path, audited
+
+| Suspect                                                                                          | Finding                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| ------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Dexie opening a fresh database because `indexedDB.databases()` or the stored-version check raced | `pendingUpgrade` only decides whether to take a safety copy; Dexie opens `powr` by name whatever it says. But Dexie does create the database when none exists, at boot **and when it reopens a connection the browser closed** (Dexie 4.4: `onclose` and `versionchange` close with `disableAutoOpen: false`, the next query reopens). That was the silent fresh start. **Fixed** (the guard below)                                                                                                                     |
+| The upgrade guard treating "can't read" as "no data"                                             | No: `readRawDatabase` returns null only when no database exists (it aborts the creation); a failed read rejects and shows the recovery screen. `pendingUpgrade` does swallow a failing `databases()` as "nothing pending", which is right for its purpose; since M6d that failure is no longer the only trace (the guard and `db.created` with `dataLoss`)                                                                                                                                                              |
+| Opening before the profile lock is released                                                      | Ruled out. In Chrome 159 the browser process itself holds every LevelDB lock (IndexedDB, Local Storage, Session Storage, the service worker database); the test reopens only after it is reaped, and since M6d also waits until `/proc/locks` lists no lock on the profile: 0 of 4,513 reopens found one. And a held lock does not empty the data: experiment H1 (a lock held by another process) gives `UnknownError` and POWR's "POWR could not open its data", the data intact                                       |
+| First-run detection reading before the database is ready                                         | No: the router renders only after `db.open()` and the container; `firstRunState` throws on a failed read (the route's error screen), it never returns "legal" for an unreadable database. Now documented in `app/first-run.ts`                                                                                                                                                                                                                                                                                          |
+| Storage non-persistent, with eviction                                                            | `persisted: false` in the test profile, but eviction needs low disk (Chromium evicts best-effort origins when free space drops below its threshold) and removes the service worker and Cache Storage too; 12.8 GB were free and those survived. Ruled out                                                                                                                                                                                                                                                               |
+| A `versionchange` or `blocked` path                                                              | Only "Delete all data" deletes `powr` (through its own instance, after clearing the marker). A deletion by anything else (another tab, developer tools) closed the connection and Dexie's next query recreated an empty database: the same silent fresh start, now refused                                                                                                                                                                                                                                              |
+| The safety-copy or raw-read code deleting or recreating anything                                 | No: `readRawDatabase` aborts the creation it would cause (IndexedDB then removes the new database); `powr-safety` never touches `powr`. Chromium's deletion takes `powr-safety` with it, though: the safety copies do not survive this loss                                                                                                                                                                                                                                                                             |
+| The browser opening a different profile                                                          | No: the same `--user-data-dir`, the same origin (the test's server port is fixed per test), the IndexedDB folder name unchanged; the other stores in the profile were the old ones                                                                                                                                                                                                                                                                                                                                      |
+| Other leftovers                                                                                  | `/tmp` held five `powr-e2e-kill-*` folders from M6c's runs whose files were written after the tests had deleted them (a profile deleted while its browser still ran: a test that failed or was stopped before closing it); unrelated to the losses above, which all show the orphaned-record signature. The new persistent-profile cases in `e2e/data-loss.spec.ts` close their browser before deleting the profile, also when a check fails (a first version left four folders behind when it failed on the M6c build) |
+
+### The fix: never a first run over lost data
+
+- **Marker** (`apps/web/src/infrastructure/db/data-guard.ts`): once `powr` holds the user's data
+  (the legal acknowledgement, a profile or a workout), POWR records it in two copies outside
+  IndexedDB: the `localStorage` key `powr.data` (`{"since": …}`) and an empty file
+  `powr-data-marker` in the origin private file system. Either counts. Two copies because
+  Chromium writes `localStorage` to disk only some seconds later: in the deterministic test a
+  browser killed right after onboarding lost the key, and with it the protection; the file is
+  created on disk at once and survives Chromium dropping IndexedDB. Set at boot when the data is
+  there (`storedDataPresent`, one read of `meta`, `profile` and `sessions` counts) and by the
+  first-run guard once the legal acknowledgement exists (once per page load). Removed first by
+  "Delete all data" (before any database), and by "Start again without data". Clearing the site's
+  data or eviction removes it with everything else: that still looks like a new install (§6.8).
+- **Guard** (`guardFreshStart`): Dexie's `populate` runs inside the upgrade transaction of a
+  database created from scratch; while the marker (read at boot, alongside `pendingUpgrade`, with
+  a one-second limit) says data existed, or this page has seen data, it throws, the creation is
+  aborted (IndexedDB removes the half-made database) and Dexie's open, or its automatic reopen,
+  fails. At boot that shows the recovery screen; while the app runs, the recovery screen replaces
+  the app. An existing but empty `powr` with the marker set gets the same screen; a database
+  whose presence read fails gets "POWR could not open its data" (never "no data").
+- **Recovery screen, kind `missing`** (`features/shell/RecoveryScreen.tsx`): "Your data could not
+  be read"; "POWR has kept training data on this phone, but this time the browser opened its
+  storage empty. POWR has not deleted or changed anything, and it does not start over by itself.";
+  "Try again" first (a passing problem clears), "Export diagnostics", then "Start again without
+  data…" with a confirmation ("POWR then starts like a new install on this phone. Your training
+  data comes back only from a backup file."), which forgets the marker and reloads into the first
+  run; the text points to restoring a backup in Settings, under Data and backups. No "Save a copy"
+  (there is nothing to read).
+- **Diagnostics**: `db.created` (`dataLoss` none/total/unknown, Chromium's flag read through a
+  thin `IDBFactory` wrapper, `observedIndexedDB`), `db.missing` (`phase` boot/running, `existing`,
+  `dataLoss`), `db.startAgain`. A device's diagnostics export now shows a browser-side loss.
+
+### The kill test (extended, not loosened)
+
+Everything it checked before it still checks. Added: before each reopen it waits until no process
+holds a lock on the profile's stores (`locksReleased`, `/proc/locks`; it never had to wait) and
+copies the storage folders; after a reopen it names what POWR showed (the workout, "Your data
+could not be read", or the first run, which is an app bug); a failure attaches and prints the
+origin's databases with their versions and record counts, the `meta` keys, the last 40
+diagnostics entries, the `localStorage` keys, the service workers and caches, persistence, every
+storage file with size and time, the IndexedDB LevelDB `LOG` and `LOG.old`, the locks, leftover
+processes, the free disk space and the last five kills; keeps the storage folders as the last
+reopen found them and as they are now; and prints a `cause:` line: the known Chromium loss when
+the copy's log holds an orphaned record (`orphanedLogRecords`, a CRC-32C log scan), or "not the
+known Chromium loss". `POWR_KILL_POINTS` and `POWR_KILL_MODES` restrict the points and modes for
+a soak (the random sequence stays the same, so a seed still repeats its run).
+
+### Server image and backup README
+
+- **Pinned image.** `deploy/Dockerfile`: `FROM
+  nginx:1.30-alpine@sha256:8eb04fe3b385090e9aa02961f77398ad09b6bf33ab07f6669a5bb7acce22c0d3`, the
+  digest M6c recorded, confirmed with `docker image inspect` as the tag's multi-arch OCI index
+  (`application/vnd.oci.image.index.v1+json`), so it resolves on amd64 and arm64. The build
+  resolved it locally (nothing pulled); the image's `apk list --installed` equals the inventory's
+  71 packages exactly; `deploy/smoke.ts` passed (182 checks). `pnpm licence` now also fails when
+  the Dockerfile has no digest or another one than `deploy/server-inventory.yaml`'s `image.digest`
+  (`checkImagePin`, 3 tests). Runbook §6.1 (new): how to update the digest on purpose and that the
+  inventory is regenerated in the same PR; §2: the GHCR package stays private (publishing it would
+  distribute its GPL packages), while the app is public.
+- **README.txt in every backup** (`packages/formats/src/backup/readme.ts`): what the file is and
+  what it holds; how to restore it now (Settings, then Data and backups, then Restore from a
+  backup; on a new phone also from Home; choose the file; type REPLACE and tap "Replace all data";
+  a safety copy of the replaced data is kept); that edited, damaged or newer files are refused;
+  that the format is described in POWR's documentation, `docs/formats/backup-format.md`, with the
+  schemas in `docs/formats/schemas/` (a path, no invented web address); and that the backup is not
+  encrypted. ASCII, at most 88 characters a line. The import still ignores the entry (only its
+  name is allowed): a backup with the old text, or none, imports the same (test); the kept v1/v2
+  fixtures keep their old text and import as before. The 17 kept hostile files were written again
+  by `scripts/hostile-fixtures.ts` (15 changed: they embed the README; deterministic, a second run
+  changes nothing).
+
+### Decisions and deviations
+
+| Brief says                                                    | What I did                                                                                                                                                                                                                                                          |
+| ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "A marker in `localStorage` or the runtime DB"                | Both `localStorage` and a file in the origin private file system. The runtime DB lives in the same IndexedDB store Chromium deletes, so it is lost together with the data; `localStorage` alone was lost by a kill within seconds of its write (deterministic test) |
+| "If a populated database existed at the last clean shutdown"  | The marker is written as soon as the data is seen (boot, the first-run guard), not at shutdown: a phone rarely shuts an app down cleanly                                                                                                                            |
+| "Harden the test so the artefact can't cause a false failure" | Not an artefact: a true data loss, so the test still fails on it, now with the outcome and the cause named. The lock wait is a guard only (it never waited)                                                                                                         |
+| "Show the recovery screen instead"                            | A new kind of the existing screen, `missing`, with "Start again without data…" (confirmed) instead of "Save a copy", which has nothing to read here                                                                                                                 |
+| —                                                             | "Delete all data" also removes the marker file, and its E2E test checks the private file system is empty                                                                                                                                                            |
+
+### Evidence
+
+`pnpm verify` on the final state, 2026-11-25: **exit 0**. Lint (0 errors, **0 warnings**), format,
+token gate, knip, catalog check, typecheck, **1,129 unit tests in 96 files** (1,113 before: + 11 in
+`src/infrastructure/db/data-guard.test.ts`, + 3 pin tests in `tools/licence/test/server.test.ts`,
+
+- 2 README tests in `packages/formats/test/backup.test.ts`), **139 component tests in 26 files**
+  (137 before: `test/m6d.test.tsx`), build, licence gate (37 distributed, 841 build-only, 73
+  server-side; the pin check passed), size (**entry JS 179.38 kB** gzip of 186, was 178.39: the
+  guard and the marker; 1 first-wave script, 0 with Zod; CSS 7.35 kB; service worker 9.67 kB;
+  precache 220 entries) and **103 E2E tests** (98 passed, 5 opt-in skipped; before 93 + 5: the 5 new
+  `e2e/data-loss.spec.ts` cases, each of which fails on the M6c build with "Welcome to POWR"; the
+  "Delete all data" case of `e2e/m5d.spec.ts` now also checks that the private file system is
+  empty); the 10-kill run passed (seed 20261125). The baseline `pnpm verify` before any change:
+  green (1,113 unit, 137 component, 93 passed and 5 skipped E2E, entry 178.39 kB, 0 lint warnings).
+  The image from the pinned digest built without a pull; `deploy/smoke.ts` passed 182 checks against
+  it; its 71 packages equal the inventory. The kill-test totals are in "Rounds and kills"; acknowledged
+  sets kept in passing tests over all M6d runs: 11,731, none lost by POWR.
+
+### Open items and decisions for the product owner
+
+- **The Chromium loss path.** It cannot be prevented from the web app. Options: (a) accept it,
+  with the new recovery screen and the backup reminder as the protection (no work); (b) report it
+  to Chromium (the deterministic reproduction above is report-ready; the product owner files it,
+  nothing was sent); (c) a recovery copy outside IndexedDB (for example a rolling backup file in the
+  origin private file system after each workout, which survives this loss but not "clear site
+  data"), restorable from "Your data could not be read": a feature with storage, privacy-notice
+  and performance questions (TD-77). Recommendation: (a) and (b) now, (c) decided after the S22
+  device tests.
+- **The kill test keeps failing now and then** (a 200-kill run about once in ten; `pnpm e2e`'s 10
+  kills about once in 200, so a rare red `pnpm verify`), because the loss is real. Keep it strict (recommended: a red
+  nightly with "cause: Chromium dropped the IndexedDB store" is triaged in a minute), or let the
+  test accept exactly this signature when POWR shows "Your data could not be read" and fail only
+  on anything else (then the nightly job stops reporting Chromium's losses).
+- **EC-01 / G-06 sign-off** now includes this known platform loss (checklist T-13).
+- **The marker file** is an empty file in the origin private file system: no personal data, but the
+  privacy notice's list of what POWR keeps on the phone could mention it (legal review).
+- **GHCR visibility** after the first push (checklist D-13, runbook §2).
+- **The stray `/tmp/powr-e2e-kill-*` folders** from M6c (five, about 27 MB) can be deleted.
+
+### Doc changes
+
+`docs/technical-concept.md` v0.11 (change-log addendum; §6.8; §7.1, §7.6 and §8.21 for the pinned
+image; §8.2.1 and §8.20 for the anomaly; §11.1 T-18; §11.2 TD-77; Appendix B);
+`docs/release/checklist.md` 1.2 (G-06, EC-01, EC-16, new D-13 and T-13, counts);
+`docs/release/licence-review.md` (the pinned image); `docs/formats/backup-format.md` (the README
+row); `deploy/runbook.md` (§1, §2, §6, new §6.1); `deploy/server-inventory.yaml` (comment).
+
+### Suggested commits (no attribution)
+
+The M6d changes are the unstaged and untracked files on top of the staged baseline.
+
+1. `fix(data): never a first run over lost data` — `apps/web/src/infrastructure/db/data-guard.ts`
+   and `data-guard.test.ts` (new), `apps/web/src/app/{boot.tsx,first-run.ts,upgrade.tsx}`,
+   `apps/web/src/features/shell/RecoveryScreen.tsx`, `apps/web/src/infrastructure/diagnostics/log.ts`,
+   `apps/web/src/infrastructure/platform/wipe.ts`, `apps/web/src/i18n/locales/{en,pseudo}/messages.po`,
+   `apps/web/test/m6d.test.tsx` (new), `apps/web/e2e/data-loss.spec.ts` (new), `apps/web/e2e/m5d.spec.ts`.
+2. `test(e2e): kill test waits for released locks and names the cause of a lost store` —
+   `apps/web/e2e/kill.ts`, `apps/web/e2e/kill.spec.ts`.
+3. `build(deploy): pin nginx:1.30-alpine to its digest and check it against the server inventory` —
+   `deploy/Dockerfile`, `deploy/server-inventory.yaml`, `deploy/runbook.md`,
+   `tools/licence/src/{cli.ts,inventory.ts}`, `tools/licence/test/server.test.ts`,
+   `docs/release/licence-review.md`.
+4. `fix(formats): the README inside each backup: restore path, format document, not encrypted` —
+   `packages/formats/src/backup/readme.ts`, `packages/formats/test/backup.test.ts`,
+   `packages/formats/fixtures/backups/hostile/*.zip` (15 rewritten), `docs/formats/backup-format.md`.
+5. `docs: M6d notes, technical concept v0.11 addendum, release checklist 1.2` —
+   `docs/technical-concept.md`, `docs/release/checklist.md`, `IMPLEMENTATION_NOTES.md`.
+
+## T-01 evidence verification applied
+
+Written 2026-11-25 by the T-01 work: the product owner's decisions of 2026-11-25 on
+`docs/release/evidence-verification.md` (release checklist T-01, TD-25) applied to the registry,
+the engine and the UI. Rules 1.7.0 → **1.8.0** (`1.8.0+97874580e2f6`), `ENGINE_VERSION` 0.2.0 →
+**0.3.0**. Status: `pnpm verify` green (numbers under "Evidence"). Nothing committed or staged
+beyond the baseline; the product owner commits.
+
+### What landed
+
+| Area            | Where                                                                                                                                                                                                                                        |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Registry values | `packages/rules/data/{load,volume,planning,progression,scoring,bodyweight,monitoring,motivation,ranking}.yaml`; `src/version.ts` (1.8.0); `src/params.ts` (`scoring.ipfGl.minBodyweightKg: bySex(positive)`); `generated/rules.json` rebuilt |
+| Source registry | 12 new entries in `data/sources/{load,progression,scoring}.yaml`; completed citations and notes in `load`, `volume`, `progression`, `scoring`, `monitoring` and `exercise-mapping.yaml` (`src.pelland2026`)                                  |
+| Engine          | `@powr/domain/scoring` (GL minimum by sex, 6-decimal rounding); `progression/pace.ts` (Student t quantile, `studentTQuantile`); `bodyweight` (`minDays` in both explanations); `rules/params.ts` (`BySex<number>`); `version.ts` (0.3.0)     |
+| Application     | `@powr/application/insights` `BodyweightView.rateMinDays`                                                                                                                                                                                    |
+| UI and copy     | Body screen and its words ("Not enough data yet"); the two bodyweight "Why?" texts; the parameter label of `load.curve.rts` and Settings' formula name ("RPE chart (common RTS version)"); catalogs re-extracted                             |
+| Tests           | New `packages/domain/test/reference/pace.test.ts`; `scoring`, `bodyweight`, `progression` reference tests; `analytics/insights.test.ts`; `fixtures/rules.ts`; rules `build.test.ts` and `golden.test.ts`; application `m4a` and `planning`   |
+| Component tests | `apps/web/test/body.test.tsx` (one new test); `settings-m5.test.tsx` waits for the re-render (it failed once under heavy machine load; unrelated to T-01)                                                                                    |
+| Docs            | `docs/release/evidence-verification.md` (version 1.1, "Applied (2026-11-25)"), `docs/release/checklist.md` (T-01 done), `docs/technical-concept.md` (v0.11 addendum, TD-25 closed)                                                           |
+
+### Product-owner decisions (2026-11-25) and what they became
+
+**1. The five corrections.**
+
+- **V-1** `progression.apre.sixRm`: the 13+ row is `{ adjustKg: 6.25, rangeKg: { min: 5, max: 7.5 } }`
+  (Mann 2011, Appendix A, and Mann 2017: +10 to 15 lb = 4.5–6.8 kg, on plates +5 to 7.5 kg).
+  Sources `src.mann2011`, `src.mann2017`, `src.mann2010`, `src.huang2023` (a reproduction; its note
+  names the mis-conversion), `src.zhang2021`; tags RCT-T, MA, OBS, PRACT; `verified: true`. Reference
+  test: 100 kg × 14 reps → **105 kg** (was 107.5 kg; 106.25 kg on 2.5 kg steps, ties down). A golden
+  test checks the compiled row and the same load. Not reachable in the MVP (APRE slots run as RPE).
+- **V-2** `volume.strength.tiers`: `[{1,1,minimumEffectiveDose,null}, {2,2,lowerEfficiency,12},
+  {3,null,notDetectable,null}]`, sourced to `src.pelland2026` (tags MA, INF: POWR's recomputation of
+  the OSF data); stays `verified: false` until the published Table 2B is read. No engine reads it.
+- **V-3** `volume.strength.weeklyHeavySetsPerLift`: `guard.plateauAbove` 5 → **3**, `src.pelland2024`
+  → `src.pelland2026`, the note says why; the band 4–10 stays a design value (`verified: false`).
+  No code reads `plateauAbove`.
+- **V-4** `volume.hypertrophy.weeklyBands`: `guard.hardText` "almost no data" (display only; the
+  validator's own copy is unchanged).
+- **V-5** `scoring.ipfGl.minBodyweightKg`: `{ male: 40, female: 35 }`, a schema change
+  (`bySex(positive)` in `@powr/rules`, `BySex<number>` in `@powr/domain/rules`); `ipfGl` reads the
+  lifter's sex. Tags OFFICIAL, sources `src.ipf2020`, `src.opl-goodlift`, `src.powr-eb-scoring`; the
+  row stays verified. Tests: men at 37 and 39.9 kg score 0, men at 40 kg and women at 35 kg score
+  (domain reference and golden tests).
+
+**2. The verification policy.** 17 rows flip to `verified: true`: the 12 research-backed rows the
+product owner released (`load.rirBias`, `volume.hypertrophy.weeklyBands`, `volume.counting.default`,
+`volume.frequency.strengthPerLift`, `volume.strength.perSessionHeavySets`,
+`volume.effort.hypertrophySlopePerRir`, `planning.slot.sets`, the four scoring coefficient sets,
+`monitoring.readiness.pmFromHour`), the 4 PRD rows (`planning.timeBudget.fallback`,
+`progression.calibration`, `bodyweight.rate.maintain`, `motivation.streak.defaultWeeklyTarget`; tag
+`INF` kept, so "App estimate") and the corrected APRE row. Sources and tags exactly as the report's
+flip table; every row that cited a preprint dropped it (E-2). Held back by the product owner:
+`volume.hypertrophy.tiers` and `volume.puos` (now citing `src.pelland2026` next to the preprints,
+tags MA, PREPRINT, with a note), until the published Pelland 2026 full text is read. The 12 new
+source entries are the report's YAML verbatim; the corrections to existing entries are the report's
+"Other source-registry corrections", with the old bracketed descriptions moved into the notes.
+`build.test.ts`: the E-2 must-stay-unverified list lost `weeklyBands` and `hypertrophySlopePerRir`
+(`hypertrophy.tiers`, `puos` and `perSessionSoftCap` stay and must still cite a preprint); a new test
+pins the 17 verified and the four Pelland-dependent preliminary rows. The 22 rows that stay
+preliminary each carry the report's rationale in their note, and the report's proposed supporting
+sources were added: `src.helms2016` (`load.curve.rts`), `src.grgic2020`, `src.refalo2024a`,
+`src.casanova2025`, `src.lovegrove2022` with tags PREPRINT, INF (`load.trend.noiseTypicalSd`),
+`src.grgic2020` (`load.trend.noviceWidening`), `src.nuzzo2024` (`load.trend.repRangeShift`).
+
+**3. Engine and display.**
+
+1. **RTS chart.** Values unchanged. "RPE chart (common RTS version)" is the parameter label
+   (`params.load.curve.rts`, shown in "Why?" and "How POWR decides") and the formula's name in
+   Settings' advanced choices (which offer no RTS option, as decided in M5; the name would show only
+   as the evidence default). The `src.fitnessvolt-rts-chart` citation and note (shown with the
+   sources) say it is the commonly circulated decimal chart and that Tuchscherer's 2014 chart is 5–8
+   points lower at 5–11 effective reps; the row cites `src.helms2016` as the peer-reviewed comparison
+   and stays a design value.
+2. **PRG-07 switch.** `progressionPace` takes the one-sided 95% Student t quantile for the fit's
+   n − 2 degrees of freedom (`studentTQuantile`: bisection on the exact distribution function for
+   integer degrees of freedom, Abramowitz & Stegun 26.7.3–4; without residual degrees of freedom it
+   never switches), and `progression.pace.window.minExposures` is 6. `pace.test.ts` checks the
+   quantile against published values and measures the false-switch rate on 2,000 seeded windows of
+   a lifter who keeps up exactly (1 % a week, log-normal noise of 3.3 % and 9 %): bound missed in
+   **5.95 %** of windows with 6 exposures and **4.95 %** with 8 (normal quantile 9.2 % and 7.75 %); the
+   former 4-exposure check with the normal quantile missed **12.45 %** (t: 5.35 %). With this noise the
+   typical-error gap almost never stops a switch the bound allows (1 window in 2,000). Outputs change, so `ENGINE_VERSION` is
+   0.3.0. The PRG-07 "Why?" texts are unchanged.
+3. **Bodyweight rate.** The report recommends 21–28 days; POWR takes **21** (the earliest span at which
+   the ±0.25 % maintain band is about ±2 standard errors of the slope; 28 cannot be reached by a
+   window of the last 28 days, whose span is at most 27). It is the existing registry parameter
+   `bodyweight.rate.windowDays` (min 14 → 21, max 28; still inside the EB's 14–28 days, so the row
+   stays verified), not a new one. Domain: no rate until the readings span 21 days, and both
+   explanations (`bodyweight.rate.insufficientData`, `bodyweight.rate.band`) carry `minDays`.
+   Application: `BodyweightView.rateMinDays`. UI: "Not enough data yet" for the weekly rate and the
+   band, the chart summary says the rate shows once the weigh-ins span 21 days, and both "Why?" texts
+   say so. Tests: domain (10, 14 and 20 days: no rate; 21 days: −0.14 kg a week), golden, application
+   (20 days none, 21 days a rate) and a component test (15 weigh-ins: "Not enough data yet").
+4. **IPF GL rounding.** The coefficient is rounded to 6 decimals, multiplied by the result, and the
+   points are rounded to 6 decimals, as the IPF document does: its examples give exactly 112.855365
+   and 96.783453, now tested to all 6 decimals, plus the coefficients 0.109039 and 0.790069. **Changed
+   vector:** men equipped 92.04 kg / 1035 kg is 112.86 at 2 decimals, not the EB/OpenPowerlifting
+   112.85, because OPL multiplies with the unrounded coefficient (112.854854); PRD ANL-07's ± 0.01
+   tolerance still holds. Every other EB cross-check vector (96.9, 101.06, 87.51, 88.72; women's
+   bench 96.78) is unchanged.
+
+**4. Kept.** `load.rirBias` +0.5 for RIR ≥ 3 and `motivation.streak.defaultWeeklyTarget` 1; both row
+notes record that the product owner confirmed them on 2026-11-25.
+
+### Counts and snapshots
+
+- **121 of 143** parameters verified, **22** preliminary (was 104 / 39 in rules 1.7.0; the "How POWR
+  decides" count follows the registry). The 22: `load.curve.rts`, `load.e1rm.setOrderDecay`,
+  `load.pr.minSetWeight`, `load.trend.changeThresholds`, `.noiseTypicalSd`, `.noviceWidening`,
+  `.processSdPerWeek`, `.reference`, `.repRangeShift`; `planning.missed.mergePriorities`,
+  `planning.strength.accessorySets`, `planning.variety.pool`, `planning.volume.startPosition`;
+  `progression.calibration.reliableSetWeight`, `.classification.trainingAgeMonths`,
+  `progression.pace.window`; `ranking.effectiveness`; `volume.hypertrophy.perSessionSoftCap`,
+  `volume.hypertrophy.tiers`, `volume.puos`, `volume.strength.tiers`,
+  `volume.strength.weeklyHeavySetsPerLift`. No parameter ID was added or removed (`ids.lock.json`
+  unchanged, no new label).
+- **Snapshots:** the plan-matrix and the trend-calibration snapshots are unchanged, as the report
+  expected: no changed value is read by the plan generator or the trend model.
+
+### Evidence
+
+- `pnpm verify` exit 0 (2026-11-25, on a heavily loaded machine): `oxlint --deny-warnings` with no
+  warning, format, tokens, knip, i18n catalogs, `tsc -b`; **1,135** unit tests (baseline 1,113: +22)
+  and **138** component tests (baseline 137: +1); build; licence gate; size (entry JS 178.39 KB of
+  186); **93** E2E tests passed, **5** opt-in skipped.
+- The baseline run before the changes was green except two load-dependent timeouts that passed when
+  re-run alone (`tools/arch-test` boundary probe, `timer-extras` pseudo-locale lead-in); the
+  `settings-m5` race seen once during this work is hardened (see "What landed").
+- Registry diff `1.7.0+127ea5b9a286 → 1.8.0+97874580e2f6`: 17 rows `verified false → true`, the value
+  changes V-1 (APRE 13+), V-2 (strength tiers), V-3 (`plateauAbove`), V-4 (`hardText`), V-5 (GL
+  minimum by sex), `bodyweight.rate.windowDays` (min 21), `progression.pace.window` (minExposures
+  6); the other changed rows differ in sources, tags or notes only.
+
+### Open items for the product owner
+
+- The published Pelland 2026 full text (Tables 2A/2B) for `volume.hypertrophy.tiers`,
+  `volume.strength.tiers` and `volume.puos`; the peer-reviewed Remmert paper (or the full MSSE 2026
+  conference abstracts) for `volume.hypertrophy.perSessionSoftCap`.
+- PRG-07 now needs 6 exposures of a lift in 4 weeks (1.5 a week): a lift trained once a week never
+  gets the pace check, which keeps it on its linear steps until the stall rule. That is the decided
+  trade-off; say if a longer window should cover once-a-week lifts.
+- Optional, from the report: store the APRE table in pounds and convert for kg users; `load.rirBias`
+  +1.0 and `load.trend.noiseTypicalSd` 0.08 stay unproposed options.
+- The EB wording "accessories 1–3 per lift" means 1–3 accessory exercises (for the next EB revision).
+
+### Proposed PRD wording (`docs/PRD.md` not edited)
+
+- **BOD-02:** "The weekly rate (kg/week and %BW/week) comes from a regression over the weigh-ins of
+  the last 28 days, shown once they span at least 21 days; before that the app says that there is not
+  enough data yet."
+- **ANL-07:** "IPF GL Points as the IPF computes them: the coefficient rounded to 6 decimals, from
+  40 kg bodyweight for men and 35 kg for women" and the vector "GL M equipped 92.04 kg / 1035 kg →
+  112.855365 (112.86; the OpenPowerlifting value 112.85 uses the unrounded coefficient)".
+- **EXL-04 and §7 (load-curve class):** "equation (Wathan or the RPE chart, common RTS version)"
+  instead of "equation (Wathan/RTS)".
+- **PRG-07 (TD-44 rule, if the PRD should name it):** "switch when the planned weekly increase lies
+  above the one-sided 95 % upper bound (Student t) of the e1RM slope over 4 weeks with at least
+  6 exposures, and the gap exceeds one typical error".
+
+### Suggested commits (no attribution)
+
+1. `feat(rules): T-01 source entries and citation fixes` — `packages/rules/data/sources/{load,progression,scoring,volume,monitoring,exercise-mapping}.yaml`.
+2. `feat: apply the T-01 evidence verification (rules 1.8.0, engine 0.3.0)` —
+   `packages/rules/data/{load,volume,planning,progression,scoring,bodyweight,monitoring,motivation,ranking}.yaml`,
+   `packages/rules/src/{version.ts,params.ts}`, `packages/rules/generated/rules.json`,
+   `packages/rules/scripts/{build.test.ts,golden.test.ts}`,
+   `packages/domain/src/{version.ts,rules/params.ts,scoring/index.ts,progression/pace.ts,bodyweight/index.ts,e1rm/curves.ts}`,
+   `packages/domain/test/{fixtures/rules.ts,fixtures/trend-sim.ts,analytics/insights.test.ts}`,
+   `packages/domain/test/reference/{pace.test.ts,scoring.test.ts,bodyweight.test.ts,progression.test.ts}`,
+   `packages/application/src/insights/body.ts`, `packages/application/test/{m4a.test.ts,planning.test.ts}`,
+   `apps/web/src/features/{body/BodyScreen.tsx,body/words.ts,why/args.ts,why/messages.ts,why/params/labels.ts,settings/TrainingAdvanced.tsx}`,
+   `apps/web/src/i18n/locales/{en,pseudo}/{messages,params}.po`, `apps/web/test/body.test.tsx`.
+3. `test(web): wait for the settings re-render` — `apps/web/test/settings-m5.test.tsx`.
+4. `docs: T-01 applied (evidence report 1.1, checklist, technical concept v0.11 addendum, notes)` —
+   `docs/release/evidence-verification.md`, `docs/release/checklist.md`, `docs/technical-concept.md`,
+   `IMPLEMENTATION_NOTES.md`.

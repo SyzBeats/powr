@@ -5,20 +5,33 @@
 
 - id: src.bazvalle2022
   citation: >-
-    Baz-Valle et al. 2022. [Weekly sets per muscle group in trained lifters: meta-analysis; "12–20
-    weekly sets per muscle group … an optimum standard recommendation".]
+    Baz-Valle E, Balsalobre-Fernández C, Alix-Fages C & Santos-Concejero J 2022. A systematic
+    review of the effects of different resistance training volumes on muscle hypertrophy. J Hum
+    Kinet 81:199–210. DOI 10.2478/hukin-2022-0017.
   url: https://pubmed.ncbi.nlm.nih.gov/35291645/
   tag: MA
   status: active
+  note: >-
+    Weekly sets per muscle group in trained lifters: "12–20 weekly sets per muscle group … an
+    optimum standard recommendation"; more than 20 vs 12–20 sets made no difference for the
+    quadriceps (p = 0.19) or biceps (p = 0.59). Citation completed by the T-01 evidence
+    verification (2026-11-25).
 
 - id: src.acsm2026
   citation: >-
-    American College of Sports Medicine 2026. [Position stand on resistance training, an umbrella
-    review of 137 systematic reviews: ≥ 10 sets/week for hypertrophy; ≥ 80% 1RM, 2–3 sets and ≥ 2
-    sessions/week for strength.]
+    Currier BS, D'Souza AC, Singh MAF, Lowisz CV, Rawson ES, Schoenfeld BJ, Smith-Ryan AE, Steen
+    JP, Thomas GA, Triplett NT, Washington TA, Werner TJ & Phillips SM 2026. American College of
+    Sports Medicine position stand. Resistance training prescription for muscle function,
+    hypertrophy, and physical performance in healthy adults: an overview of reviews. Med Sci
+    Sports Exerc 58(4):851–872. DOI 10.1249/MSS.0000000000003897.
   url: https://pubmed.ncbi.nlm.nih.gov/41843416/
   tag: POS
   status: active
+  note: >-
+    The American College of Sports Medicine position stand of 2026, an umbrella review of 137
+    systematic reviews: ≥ 10 sets/week for hypertrophy; ≥ 80% 1RM, 2–3 sets per session and ≥ 2
+    sessions/week for strength; "at least two sets per exercise". Citation completed by the T-01
+    evidence verification (2026-11-25).
 
 - id: src.schoenfeld2019b
   citation: >-
@@ -31,12 +44,17 @@
 
 - id: src.androulakiskorakakis2021
   citation: >-
-    Androulakis-Korakakis et al. 2021. [Minimum effective training dose for powerlifters: mixed
-    methods (interviews, two interventions, survey); ~3–6 working sets of 1–5 reps per lift per
-    week at > 80% 1RM and RPE 7.5–9.5.]
+    Androulakis-Korakakis P, Michalopoulos N, Fisher J, Keogh J, Loenneke J, Helms E, Wolf M,
+    et al. 2021. The minimum effective training dose required for 1RM strength in powerlifters.
+    Front Sports Act Living 3:713655. DOI 10.3389/fspor.2021.713655.
   url: https://pubmed.ncbi.nlm.nih.gov/34527944/
   tag: DELPHI/SURVEY
   status: active
+  note: >-
+    Mixed methods (interviews, two interventions, survey): ~3–6 working sets of 1–5 reps per lift
+    per week at > 80% 1RM and RPE 7.5–9.5, spread across 1–3 sessions per week per powerlift.
+    Accessories: 1–3 accessory exercises per powerlift (not sets). Citation completed by the T-01
+    evidence verification (2026-11-25).
 
 - id: src.scarpelli2022
   citation: >-
@@ -98,8 +116,9 @@
   tag: MA
   status: active
   note: >-
-    The slopes the EB quotes (−0.48% muscle size per RIR) come from the preprint version; verify
-    against the final paper before hard-coding.
+    The EB's slope of −0.48% muscle size per RIR was first read in the preprint; checked against
+    the accepted manuscript: −0.48% per RIR [−0.78, −0.179] (T-01 evidence verification,
+    2026-11-25).
 
 - id: src.refalo2024b
   citation: >-

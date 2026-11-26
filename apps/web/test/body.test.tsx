@@ -58,14 +58,31 @@ describe('bodyweight (BOD-01, BOD-02)', () => {
     ).toBeTruthy();
     const list = await screen.findByTestId('weigh-ins');
     expect(list.textContent).toContain('82.5 kg');
-    expect(screen.getByTestId('body-rate').textContent).toBe('Needs about two weeks');
+    expect(screen.getByTestId('body-rate').textContent).toBe('Not enough data yet');
     expect(await seriousViolations()).toEqual([]);
+  });
+
+  it('says "not enough data yet" until the weigh-ins span 21 days (T-01)', async () => {
+    const container = await createTestContainer();
+    await onboarded(container);
+    // 15 daily weigh-ins span 14 days: enough for a rate before rules 1.8.0, not any more.
+    await weighIns(container, 15);
+    renderRoute(container, '/body');
+    await waitFor(() => expect(screen.getByTestId('body-trend').textContent).toMatch(/kg$/), {
+      timeout: 5000,
+    });
+    expect(screen.getByTestId('body-rate').textContent).toBe('Not enough data yet');
+    expect(
+      screen.getAllByText(
+        /Not enough data yet for a weekly rate: it shows once your weigh-ins span 21 days/,
+      ).length,
+    ).toBeGreaterThan(0);
   });
 
   it('shows the trend, the weekly rate and the chart table, and edits and deletes a weigh-in', async () => {
     const container = await createTestContainer();
     await onboarded(container);
-    await weighIns(container, 21);
+    await weighIns(container, 28);
     const user = userEvent.setup();
     renderRoute(container, '/body');
 

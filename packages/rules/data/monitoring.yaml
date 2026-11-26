@@ -45,12 +45,16 @@
   value: 12
   unit: none
   range: { min: 10, max: 16 }
-  evidence: [INF]
+  evidence: [MA, INF]
   sources: [src.craven2022, src.powr-eb-monitoring]
   ebRef: 'EB §Monitoring › Sleep & stress (sleep loss impairs PM tasks; AM tasks largely unaffected); PRD RDY-03'
-  verified: false
+  verified: true
   userOverridable: true
-  note: 'A POWR design value: sessions starting at or after noon count as "PM sessions".'
+  note: >-
+    Sessions starting at or after noon count as "PM sessions". Craven 2022 splits tasks into ante
+    and post meridiem, which is before vs after noon; the mechanism is time awake (about 0.4% per
+    hour after deprivation or late restriction). Verified against the full text (T-01,
+    2026-11-25).
 
 - id: monitoring.spacing
   value:

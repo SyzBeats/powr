@@ -1,10 +1,12 @@
 # Powerlifting scores (EB §Scoring; §Defaults › Monitoring › Scoring display; PRD ANL-07). The
 # formulas are implemented from the published definitions in @powr/domain/scoring; OPL source code
 # is cited for values and test vectors only (LEG-08). IPF Points coefficients were cross-checked
-# against the IPF formula document; Wilks, Wilks2020, DOTS and GL stay verified false until checked
-# against a primary document (technical concept §8.7.7). The bodyweight clamps are an app
-# implementation choice that follows OPL. Not shipped: OPL's single-lift IPF squat and deadlift
-# constants (unknown origin, EB §Gaps #17).
+# against the IPF formula document; since rules 1.8.0 (T-01 evidence verification, 2026-11-25)
+# the Wilks, Wilks2020, DOTS and GL coefficients are checked against their primary or federation
+# documents too (research_notes/Parameter verification/scoring.md), and GL follows the IPF
+# document's bodyweight minimum by sex and its 6-decimal rounding. The other bodyweight clamps are
+# an app implementation choice that follows OPL. Not shipped: OPL's single-lift IPF squat and
+# deadlift constants (unknown origin, EB §Gaps #17).
 
 - id: scoring.display
   value: { primary: [ipfGl, dots], legacy: [wilks, wilks2020], decimals: 2 }
@@ -30,11 +32,14 @@
       ]
   unit: coefficients
   evidence: [OFFICIAL]
-  sources: [src.opl-wilks]
+  sources: [src.kopayev2020, src.wilks2008, src.opl-wilks]
   ebRef: 'EB §Scoring › Wilks (coef = 500 / (a + b·x + … + f·x⁵))'
-  verified: false
+  verified: true
   userOverridable: false
-  note: 'Ascending powers a…f; not yet checked against a primary Wilks publication.'
+  note: >-
+    Ascending powers a…f. T-01 (2026-11-25): all 12 equal the polynomial in the IPF-hosted Kopayev
+    2020 report; it reproduces 2,761 of 2,770 cells of Robert Wilks's own tables (9 differ by 1 in
+    the 4th decimal at rounding half-points). No polynomial published by Wilks himself was found.
 
 - id: scoring.wilks.bodyweightClampKg
   value: { male: { min: 40, max: 201.9 }, female: { min: 26.51, max: 154.53 } }
@@ -67,11 +72,14 @@
       ]
   unit: coefficients
   evidence: [OFFICIAL]
-  sources: [src.opl-wilks2020]
+  sources: [src.pa2020, src.kopayev2020, src.opl-wilks2020]
   ebRef: 'EB §Scoring › Wilks2020 (coef = 600 / polynomial)'
-  verified: false
+  verified: true
   userOverridable: false
-  note: 'The numerator is 600, not 500.'
+  note: >-
+    The numerator is 600, not 500. T-01 (2026-11-25): all 12 equal Powerlifting Australia's
+    calculator equation, whose 0.05 kg tables (5,440 cells) reproduce exactly; Kopayev 2020
+    prints the same values.
 
 - id: scoring.wilks2020.bodyweightClampKg
   value: { male: { min: 40, max: 200.95 }, female: { min: 40, max: 150.95 } }
@@ -88,11 +96,14 @@
     female: [-57.96288, 13.6175032, -0.1126655495, 0.0005158568, -0.0000010706]
   unit: coefficients
   evidence: [OFFICIAL]
-  sources: [src.opl-dots]
+  sources: [src.konertz2019, src.kopayev2020, src.opl-dots]
   ebRef: 'EB §Scoring › DOTS (coef = 500 / (A·x⁴ + B·x³ + C·x² + D·x + E))'
-  verified: false
+  verified: true
   userOverridable: false
-  note: 'Stored in ascending powers (E, D, C, B, A). No official derivation of DOTS exists.'
+  note: >-
+    Stored in ascending powers (E, D, C, B, A). T-01 (2026-11-25): all 10 equal the author's own
+    definition (Konertz 2019), which also states the 40–210 / 40–150 kg domain of
+    scoring.dots.bodyweightClampKg; the author describes the derivation in words only.
 
 - id: scoring.dots.bodyweightClampKg
   value: { male: { min: 40, max: 210 }, female: { min: 40, max: 150 } }
@@ -154,20 +165,28 @@
         bench: { a: 221.82209, b: 357.00377, c: 0.02937 }
   unit: coefficients
   evidence: [OFFICIAL]
-  sources: [src.opl-goodlift, src.vcalc-ipf-gl]
+  sources: [src.ipf2020, src.kopayev2020, src.opl-goodlift]
   ebRef: 'EB §Scoring › IPF GL (GL = Total × 100 / (A − B·e^(−C·BW)))'
-  verified: false
-  userOverridable: false
-  note: "The official GL model document could not be opened; only men's classic is independently confirmed."
-
-- id: scoring.ipfGl.minBodyweightKg
-  value: 35
-  unit: kg
-  evidence: [INF]
-  sources: [src.opl-goodlift, src.powr-eb-scoring]
-  ebRef: 'EB §Scoring › IPF GL (0 for BW < 35 kg; floored at 0)'
   verified: true
   userOverridable: false
+  note: >-
+    T-01 (2026-11-25): all 24 numbers equal Table 1 of the IPF GL document (IPF 2020; 0.009210 =
+    0.00921), and its worked examples reproduce. The IPF rounds the coefficient to 6 decimals
+    before multiplying and the points to 6 decimals; POWR follows it (rules 1.8.0). The document
+    is titled "actual from May 01, 2020 to Dec 31, 2023"; no newer set was found.
+
+- id: scoring.ipfGl.minBodyweightKg
+  value: { male: 40, female: 35 }
+  unit: kg
+  evidence: [OFFICIAL]
+  sources: [src.ipf2020, src.opl-goodlift, src.powr-eb-scoring]
+  ebRef: 'IPF 2020 GL document (Bwt ≥ 40 kg for men, ≥ 35 kg for women); EB §Scoring › IPF GL (0 below the minimum; floored at 0)'
+  verified: true
+  userOverridable: false
+  note: >-
+    Rules 1.8.0 (T-01 V-5, 2026-11-25): by sex, as the IPF GL document applies the formula, so men
+    between 35 and 40 kg get no GL score, as at IPF meets. Rules up to 1.7.0 used 35 kg for both
+    sexes, OpenPowerlifting's choice.
 
 - id: scoring.allometric.exponent
   value: 0.67

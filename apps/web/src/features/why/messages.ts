@@ -513,7 +513,7 @@ export const WHY_MESSAGES: { readonly [K in RuleId]: WhyMessage } = {
     full: msg({
       id: 'why.bodyweight.rate.insufficientData',
       message:
-        'Not enough weigh-ins yet for a weekly rate: {readings, plural, one {# reading} other {# readings}} over {spanDays, plural, one {# day} other {# days}}. A few more over the coming days will show it.',
+        'Not enough data yet for a weekly rate: {readings, plural, one {# reading} other {# readings}} over {spanDays, plural, one {# day} other {# days}}. The rate shows once your weigh-ins span {minDays, plural, one {# day} other {# days}}; over a shorter time the day-to-day ups and downs from water and food can look like a trend.',
     }),
   },
 
@@ -1457,7 +1457,7 @@ export const WHY_MESSAGES: { readonly [K in RuleId]: WhyMessage } = {
     full: msg({
       id: 'why.bodyweight.rate.band',
       message:
-        '{status, select, untracked {Set a phase (bulk, cut or maintain) to compare your weekly rate with a target range.} insufficientData {A few more weigh-ins will show how your trend compares with your {phase, select, bulk {bulking} cut {cutting} other {maintenance}} range.} below {Your trend is changing by {pctPerWeek, number}% a week, below your {phase, select, bulk {bulking} cut {cutting} other {maintenance}} range of {min, number}% to {max, number}%.} above {Your trend is changing by {pctPerWeek, number}% a week, above your {phase, select, bulk {bulking} cut {cutting} other {maintenance}} range of {min, number}% to {max, number}%.} other {Your trend is changing by {pctPerWeek, number}% a week, within your {phase, select, bulk {bulking} cut {cutting} other {maintenance}} range of {min, number}% to {max, number}%.}}{warning, select, fastLoss { You have been losing faster than 1% a week for a while; a slower pace helps keep muscle and strength.} fastGain { You have been gaining faster than your range for a few weeks; a smaller surplus usually adds less fat.} other {}}',
+        '{status, select, untracked {Set a phase (bulk, cut or maintain) to compare your weekly rate with a target range.} insufficientData {Not enough data yet: once your weigh-ins span {minDays, plural, one {# day} other {# days}}, POWR compares your weekly rate with your {phase, select, bulk {bulking} cut {cutting} other {maintenance}} range.} below {Your trend is changing by {pctPerWeek, number}% a week, below your {phase, select, bulk {bulking} cut {cutting} other {maintenance}} range of {min, number}% to {max, number}%.} above {Your trend is changing by {pctPerWeek, number}% a week, above your {phase, select, bulk {bulking} cut {cutting} other {maintenance}} range of {min, number}% to {max, number}%.} other {Your trend is changing by {pctPerWeek, number}% a week, within your {phase, select, bulk {bulking} cut {cutting} other {maintenance}} range of {min, number}% to {max, number}%.}}{warning, select, fastLoss { You have been losing faster than 1% a week for a while; a slower pace helps keep muscle and strength.} fastGain { You have been gaining faster than your range for a few weeks; a smaller surplus usually adds less fat.} other {}}',
     }),
   },
   'ranking.focus': {

@@ -183,7 +183,8 @@ function useEquationName() {
       case 'brzycki':
         return t`Brzycki`;
       default:
-        return t`RTS chart`;
+        // The commonly circulated decimal chart, not Tuchscherer's own (T-01, load.curve.rts).
+        return t`RPE chart (common RTS version)`;
     }
   };
 }

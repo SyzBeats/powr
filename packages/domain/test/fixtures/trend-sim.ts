@@ -48,7 +48,7 @@ export interface SessionLabel {
 const START = '2026-01-05' as LocalDate;
 
 /** Mulberry32: a small, fast, seeded 32-bit generator (deterministic across runs). */
-function mulberry32(seed: number): () => number {
+export function mulberry32(seed: number): () => number {
   let state = seed >>> 0;
   return () => {
     state = (state + 0x6d2b79f5) >>> 0;
@@ -60,7 +60,7 @@ function mulberry32(seed: number): () => number {
 }
 
 /** A standard normal draw (Box–Muller). */
-function normal(random: () => number): number {
+export function normal(random: () => number): number {
   const u = 1 - random();
   const v = random();
   return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);

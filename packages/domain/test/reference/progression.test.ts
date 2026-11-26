@@ -201,7 +201,9 @@ describe('APRE-6 preset', () => {
     [3, 97.5],
     [6, 100],
     [10, 102.5],
-    [14, 107.5],
+    // 13+ reps: +5 to 7.5 kg, midpoint 6.25 (Mann 2011/2017: +10 to 15 lb; rules 1.8.0, T-01
+    // V-1), so 106.25 kg on 2.5 kg steps with ties down: 105 kg (was 107.5 kg from +7.5 kg).
+    [14, 105],
   ])('set-3 AMRAP of %i reps → next 6RM %f kg', (amrapReps, next) => {
     expect(
       suggestApre({ sixRm: kg(100), amrapReps }, { implement: steps25 }, RULES).value.load,

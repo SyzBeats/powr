@@ -12,6 +12,13 @@ import { rulesStamp } from '@powr/rules';
 
 import { activateLocale } from '../i18n';
 import { PowrDb } from '../infrastructure/db';
+import {
+  guardFreshStart,
+  observedIndexedDB,
+  sharedDataMarker,
+  storedDataPresent,
+  type DataLoss,
+} from '../infrastructure/db/data-guard';
 import { pendingUpgrade } from '../infrastructure/db/stored-version';
 import { applyTheme, storedTheme } from '../infrastructure/platform/theme';
 import { captureInstallPrompt } from '../infrastructure/pwa/install';
@@ -57,15 +64,46 @@ export async function boot(rootElement: HTMLElement): Promise<void> {
 
   // DAT-14 (§6.7 step 3): a data update runs only after a safety copy of the stored data. The
   // guard is a lazy chunk, loaded only when the stored database is older than the code.
-  const pending = await pendingUpgrade();
+  // M6d: the data marker is read alongside (a file read; `data-guard.ts`).
+  const marker = sharedDataMarker();
+  const [pending, marked] = await Promise.all([
+    pendingUpgrade(),
+    withTimeout(marker.load(), () => marker.present()),
+  ]);
   if (pending) {
     await locale.catch(() => undefined);
     const { prepareUpgrade } = await import('./upgrade');
     if (!(await prepareUpgrade(guard, pending))) return;
   }
 
-  // DB gate: open (and upgrade, §8.2.3) before anything reads data.
-  const db = new PowrDb();
+  // DB gate: open (and upgrade, §8.2.3) before anything reads data. M6d: never start fresh over
+  // lost data (`data-guard.ts`): while the marker says the database held data, or this page has
+  // seen it, Dexie may not create it from scratch, at boot or when it reopens a connection the
+  // browser closed.
+  let dataExisted = marked;
+  let created: DataLoss | null = null;
+  const db = new PowrDb({
+    indexedDB: observedIndexedDB(indexedDB, (dataLoss) => {
+      created = dataLoss;
+    }),
+  });
+  let started = false;
+  // The `localStorage` copy also covers data stored by this page's own first run (onboarding).
+  const freshStart = guardFreshStart(
+    db,
+    () => dataExisted || marker.present(),
+    () => {
+      diagnostics.log('error', 'db.missing', {
+        phase: started ? 'running' : 'boot',
+        existing: false,
+        dataLoss: created ?? 'unknown',
+      });
+      // While the app runs, the browser closed the connection and the data is gone: the recovery
+      // screen replaces the app (at boot, the failed open below shows it).
+      if (started)
+        void import('./upgrade').then(({ showRecovery }) => showRecovery(guard, 'missing'));
+    },
+  );
   const openedAt = performance.now();
   const [opened, content, rules, catalog] = await Promise.allSettled([
     db.open().then(() => Math.round(performance.now() - openedAt)),
@@ -79,12 +117,35 @@ export async function boot(rootElement: HTMLElement): Promise<void> {
     root.render(<StartupError />);
   };
   if (opened.status === 'rejected') {
+    const { showRecovery } = await import('./upgrade');
+    // M6d: the database held data and is gone; the guard refused to start fresh.
+    if (freshStart.refused()) return showRecovery(guard, 'missing');
     // §6.8: a failed upgrade is rolled back by IndexedDB; never delete, offer a copy instead.
     const error: unknown = opened.reason;
     diagnostics.log('error', 'db.error', { name: error instanceof Error ? error.name : 'unknown' });
-    const { showRecovery } = await import('./upgrade');
     showRecovery(guard, pending ? 'upgrade' : 'open');
     return;
+  }
+  if (created !== null) {
+    // A new database: a first run, or (with `dataLoss: total`) the browser dropped a damaged one.
+    diagnostics.log(created === 'total' ? 'error' : 'info', 'db.created', { dataLoss: created });
+  }
+  // M6d: an existing database without the data the marker remembers is not a first run either;
+  // one that cannot be read is an open failure (never "no data").
+  const present = await storedDataPresent(db).catch(() => null);
+  if (present !== true && (present === null || dataExisted)) {
+    db.close();
+    const { showRecovery } = await import('./upgrade');
+    if (present === null) {
+      diagnostics.log('error', 'db.error', { name: 'ReadError' });
+      return showRecovery(guard, 'open');
+    }
+    diagnostics.log('error', 'db.missing', { phase: 'boot', existing: true, dataLoss: 'none' });
+    return showRecovery(guard, 'missing');
+  }
+  if (present) {
+    dataExisted = true;
+    void marker.set();
   }
   // §6.8: another window updated the database; this one lets go and asks for a reload.
   db.on('versionchange', () => {
@@ -108,6 +169,7 @@ export async function boot(rootElement: HTMLElement): Promise<void> {
       <App container={container} />
     </StrictMode>,
   );
+  started = true;
   diagnostics.log('info', 'app.start', {
     releaseTarget: __RELEASE_TARGET__,
     standalone: matchMedia('(display-mode: standalone)').matches,
@@ -119,6 +181,14 @@ export async function boot(rootElement: HTMLElement): Promise<void> {
   addEventListener('appinstalled', () => {
     void requestPersistentStorage(container.deps, 'appinstalled');
   });
+}
+
+/** The marker's file read may not hold up the start: after a second, `localStorage` decides. */
+function withTimeout(load: Promise<boolean>, fallback: () => boolean): Promise<boolean> {
+  return Promise.race([
+    load,
+    new Promise<boolean>((resolve) => setTimeout(() => resolve(fallback()), 1_000)),
+  ]);
 }
 
 /**

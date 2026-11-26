@@ -18,18 +18,20 @@
 
 - id: src.pelland2026
   citation: >-
-    Pelland, Remmert, Robinson, Hinson & Zourdos. Sports Med 2026;56(2):481–505. 67 studies,
-    2,058 participants; Bayesian multilevel meta-regressions adjusted for duration and training
-    status.
+    Pelland JC, Remmert JF, Robinson ZP, Hinson SR & Zourdos MC 2026. The resistance training dose
+    response: meta-regressions exploring the effects of weekly volume and frequency on muscle
+    hypertrophy and strength gains. Sports Med 56(2):481–505. DOI 10.1007/s40279-025-02344-w.
   url: https://pubmed.ncbi.nlm.nih.gov/41343037/
   seeAlso:
+    - https://osf.io/6z3xu
     - https://sponet.de/sponet/Record/4097139?lng=en
   tag: MA
   status: active
   note: >-
-    The mapping section cites the sponet catalogue record (seeAlso); the EB volume section gives
-    this PubMed record. Whether the published version changed the fractional-counting conclusion
-    is not verified (research note SE §5, E-2).
+    The published abstract keeps fractional counting as the best-supported method. The
+    supplementary data (OSF) reproduce the preprint's floor (4 sets), SDES (2.05% / 3.96%) and
+    PUOS (31 sets; 3 sets; 3 sessions); the strength tiers differ (no detectable superiority from
+    3 sets). Full text paywalled, not read (T-01, 2026-11-25).
 
 - id: src.remmert2025
   citation: >-

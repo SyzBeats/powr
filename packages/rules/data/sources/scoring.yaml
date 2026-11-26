@@ -39,7 +39,9 @@
   url: https://gitlab.com/openpowerlifting/opl-data/-/blob/main/crates/coefficients/src/dots.rs
   tag: OFFICIAL
   status: active
-  note: Reference source code; no official derivation of DOTS exists (EB §Scoring).
+  note: >-
+    Reference source code. DOTS is defined by its author (src.konertz2019); the derivation is
+    described only qualitatively, with no technical report (T-01, 2026-11-25).
 
 - id: src.opl-ipf
   citation: OpenPowerlifting opl-data, crates/coefficients/src/ipf.rs (IPF Points).
@@ -56,15 +58,19 @@
   tag: OFFICIAL
   status: active
   note: >-
-    Reference source code; the official IPF GL model document could not be opened, so the GL
-    coefficients are not yet checked against a federation document.
+    Reference source code. Its GL coefficients equal the IPF 2020 GL document (src.ipf2020,
+    checked in the T-01 evidence verification, 2026-11-25); OPL applies GL from 35 kg for both
+    sexes and does not round the coefficient, where the IPF document applies it from 40 kg (men)
+    and 35 kg (women) and rounds the coefficient to 6 decimals.
 
 - id: src.vcalc-ipf-gl
   citation: vCalc. IPF GL formula points calculator.
   url: https://www.vcalc.com/wiki/ipf-gl-formula-points-calculator
   tag: PRACT
   status: active
-  note: Independently confirms the men's classic GL coefficients (EB §Scoring).
+  note: >-
+    Independently confirms the men's classic GL coefficients (EB §Scoring). No longer cited by
+    scoring.ipfGl.coefficients since the IPF 2020 document itself was checked (T-01).
 
 - id: src.jaric2002
   citation: >-
@@ -93,3 +99,73 @@
   note: >-
     Display choices and the decision to apply OPL-style bodyweight clamps as an app implementation
     choice.
+
+# Rules 1.8.0 (T-01 evidence verification, 2026-11-25; research note
+# research_notes/Parameter verification/scoring.md): the primary or federation documents of the
+# Wilks, Wilks2020, DOTS and GL coefficients, each checked against the registry digit by digit.
+
+- id: src.ipf2020
+  citation: >-
+    International Powerlifting Federation 2020. The IPF GL Coefficients for Relative Scoring,
+    actual from May 01, 2020 to Dec 31, 2023 (May 2020). IPF formula documents.
+  url: https://www.powerlifting.sport/fileadmin/ipf/data/ipf-formula/IPF_GL_Coefficients-2020.pdf
+  seeAlso:
+    - https://www.powerlifting.sport/rules/codes/info/ipf-formula
+    - https://www.powerlifting.sport/fileadmin/ipf/data/ipf-formula/Announcement_IPF_GL_Formula_2020_1_.pdf
+  tag: OFFICIAL
+  status: active
+  note: >-
+    Table 1 prints all eight A/B/C sets (= registry). The formula applies for Bwt ≥ 40 kg (men)
+    and ≥ 35 kg (women); the coefficient is rounded to 6 decimals. Examples: 92.04 kg / 1035 kg →
+    112.855365; 70.50 kg / 122.5 kg → 96.783453.
+
+- id: src.kopayev2020
+  citation: >-
+    Kopayev O, Onyshchenko B & Stetsenko A 2020. Report: Evaluation of Wilks, Wilks-2, DOTS, IPF
+    and GoodLift formulas for calculating relative scores in IPF powerlifting competitions
+    (March 2020). International Powerlifting Federation.
+  url: https://www.powerlifting.sport/fileadmin/ipf/data/ipf-formula/Models_Evaluation-I-2020_01.pdf
+  tag: OFFICIAL
+  status: active
+  note: >-
+    Appendix 1 prints the Wilks (500), Wilks-2 (600), DOTS, IPF Points and GL coefficients; the
+    Wilks, Wilks2020, DOTS and GL values equal the registry. Secondary to the formula authors.
+
+- id: src.wilks2008
+  citation: >-
+    Wilks R [undated; PDF 2008]. Wilks Formula for Men and Women by Robert Wilks, Australia
+    (coefficient tables in 0.1 kg steps). European Powerlifting Federation.
+  url: https://www.europowerlifting.org/fileadmin/data/wilks_formula/Wilksformula_01.pdf
+  tag: OFFICIAL
+  status: active
+  note: >-
+    The original Wilks tables (men 40.0–205.9 kg, women 40.0–150.9 kg); the registry polynomial
+    reproduces 2,761 of 2,770 cells exactly (9 men's cells differ by 1 in the 4th decimal at
+    rounding half-points). Prints no polynomial.
+
+- id: src.pa2020
+  citation: >-
+    Powerlifting Australia 2020. Wilks Formula 2 Released (news, 28 February 2020) and the Wilks
+    Formula page (calculator and coefficient tables in 0.05 kg steps).
+  url: https://powerliftingaustralia.com/wilks-formula/
+  seeAlso:
+    - https://powerliftingaustralia.com/2020/02/28/wilks-formula-2-released/
+    - https://worldpowerlifting.com/technical/wilks-formula-calculator/
+  tag: OFFICIAL
+  status: active
+  note: >-
+    The calculator's equation 600 / (a + b·x + … + f·x⁵) carries all 12 coefficients (= registry);
+    tables for men 40–200.95 kg and women 40–150.95 kg reproduce exactly. The announcement names
+    no author.
+
+- id: src.konertz2019
+  citation: >-
+    Konertz T 2019. Die DOTS-Formeln – Die neuen Wilks. Kraftsport Colonia website.
+  url: https://kraftsport-colonia.de/dots
+  tag: OFFICIAL
+  status: active
+  note: >-
+    The author's definition of DOTS (Tim Konertz is named as the contact for the formula; page
+    metadata dated 15 October 2019); coefficients = registry. Domain men 40–210 kg, women
+    40–150 kg, with the boundary coefficient applied outside (= registry clamps). The BVDK
+    adoption notice could not be opened (HTTP 404).

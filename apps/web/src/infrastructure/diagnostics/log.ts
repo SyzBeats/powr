@@ -16,6 +16,11 @@ const DIAGNOSTIC_CODES = {
   'db.snapshotError': ['name'],
   'db.recovery': ['kind'],
   'db.versionchange': [],
+  // M6d: a database created from scratch (Chromium's `dataLoss` when it dropped a damaged store),
+  // data that is gone while the marker says it existed, and "Start again without data".
+  'db.created': ['dataLoss'],
+  'db.missing': ['phase', 'existing', 'dataLoss'],
+  'db.startAgain': [],
   // M5d: calendar export (CAL-01) and install promotion (PWA-02).
   'calendar.exported': ['events', 'cancelled', 'delivery'],
   'install.prompt': ['outcome'],

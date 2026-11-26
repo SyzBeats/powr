@@ -129,11 +129,6 @@ msgstr "Easing back in after a break"
 
 #. js-lingui-explicit-id
 #: src/features/why/params/labels.ts
-msgid "params.load.curve.rts"
-msgstr "Effort chart for weight, reps and RPE"
-
-#. js-lingui-explicit-id
-#: src/features/why/params/labels.ts
 msgid "params.volume.effort.strengthAccessoryRpe"
 msgstr "Effort for assistance work in strength training"
 
@@ -406,6 +401,11 @@ msgstr "Rest between strength sets"
 #: src/features/why/params/labels.ts
 msgid "params.session.rest.timeSaver"
 msgstr "Rest in time-saver mode"
+
+#. js-lingui-explicit-id
+#: src/features/why/params/labels.ts
+msgid "params.load.curve.rts"
+msgstr "RPE chart (common RTS version)"
 
 #. js-lingui-explicit-id
 #: src/features/why/params/labels.ts

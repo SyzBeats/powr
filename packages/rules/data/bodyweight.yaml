@@ -35,14 +35,20 @@
   userOverridable: false
 
 - id: bodyweight.rate.windowDays
-  value: { min: 14, max: 28 }
+  value: { min: 21, max: 28 }
   unit: days
   evidence: [INF]
   sources: [src.powr-eb-nutrition]
   ebRef: 'EB §Nutrition › Trend smoothing (rate = regression slope over the last 14–28 days); PRD BOD-02'
   verified: true
   userOverridable: false
-  note: 'The slope uses the readings of the last 28 days and needs them to span at least 14 days.'
+  note: >-
+    The slope uses the readings of the last 28 days and needs them to span at least 21 days;
+    until then the app says "not enough data yet". Rules 1.8.0 (T-01, product-owner decision
+    2026-11-25; was 14): with a day-to-day SD of about 0.5% around the trend, the slope's standard
+    error is about 0.23%/week over 14 days, about the half-width of the ±0.25% maintain band, but
+    about 0.13%/week over 21 days and 0.08%/week over 28 [INF]. 21 is the start of the 21–28 days
+    the evidence verification recommended and stays inside the EB's 14–28-day window.
 
 # M4a (rules 1.5.0): the weekly rate against the phase (BOD-02 "the weekly rate with its band").
 # Rates are % of bodyweight per week; the cut's are losses. Never derived from a single day.
@@ -79,8 +85,14 @@
   value: { min: -0.25, max: 0.25 }
   unit: pctPerWeek
   evidence: [INF]
-  sources: [src.powr-eb-nutrition]
-  ebRef: 'EB §Nutrition › Trend smoothing (no maintenance band in the EB); a POWR design value'
-  verified: false
+  sources: [src.powr-prd, src.powr-eb-nutrition]
+  ebRef: 'PRD BOD-02 v0.7 ("When maintaining, the rate band shown is ±0.25 %BW/week"); EB §Nutrition › Trend smoothing (no maintenance band in the EB)'
+  verified: true
   userOverridable: true
-  note: 'A POWR design value: a trend within ±0.25 % of bodyweight per week reads as maintaining (below the slowest bulk band and half the slowest cut band).'
+  note: >-
+    The PRD's number (BOD-02 v0.7, approved 2026-11-25): a trend within ±0.25 % of bodyweight per
+    week reads as maintaining; verified as the PRD's own number (T-01, 2026-11-25), its evidence
+    label stays "App estimate". It is half the slowest cut target (0.5 %/week); the advanced bulk
+    band (0.1–0.25 %/week) lies inside it, which does not matter because a band applies only to
+    the selected phase. No study defines a short-term maintaining rate (long-term maintenance is
+    < 3 % of bodyweight, Stevens 2006).

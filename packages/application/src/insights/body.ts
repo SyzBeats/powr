@@ -126,7 +126,10 @@ export interface BodyweightView {
   /** The trend over each day's first reading (BOD-02): raw, winsorised and smoothed values. */
   readonly points: readonly BodyweightPoint[];
   readonly latest: BodyweightPoint | null;
+  /** Null ("not enough data yet") until the readings span `rateMinDays`. */
   readonly rate: Explained<BodyweightRate | null>;
+  /** The span of weigh-ins a weekly rate needs (`bodyweight.rate.windowDays` min, 21 days). */
+  readonly rateMinDays: number;
   /** The rate against the phase's band (bulk, cut, maintain), with the sustained-rate guard. */
   readonly band: Explained<RateBand>;
 }
@@ -175,6 +178,7 @@ async function bodyweightFrom(
     points: from === null ? points : points.filter((point) => point.localDate >= from),
     latest,
     rate: bodyweightRate(points, rules),
+    rateMinDays: rules['bodyweight.rate.windowDays'].value.min,
     band: rateBand(
       [rateAt(0), rateAt(7), rateAt(14)],
       prepared.profile?.phase ?? 'notTracking',

@@ -362,7 +362,7 @@ describe('PRG-07: planned increases against the observed trend (TD-44)', () => {
     expect(pace.value.observedPctPerWeek).toBeCloseTo(5, 0);
   });
 
-  it('needs four exposures over half the window, and never switches advanced lifters (no increments)', () => {
+  it('needs six exposures over half the window, and never switches advanced lifters (no increments)', () => {
     const few = progressionPace(
       {
         samples: samples(0, 3),
@@ -375,6 +375,19 @@ describe('PRG-07: planned increases against the observed trend (TD-44)', () => {
     );
     expect(few.value.outrun).toBe(false);
     expect(few.why.args['insufficient']).toBe(true);
+    // Five flat exposures switched before rules 1.8.0 (minimum 4); six are needed now (T-01).
+    const five = progressionPace(
+      {
+        samples: samples(0, 5),
+        today: dayAfterStart(25),
+        level: 'novice',
+        region: 'upper',
+        loadKg: 100,
+      },
+      RULES,
+    );
+    expect(five.value).toMatchObject({ outrun: false, exposures: 5 });
+    expect(five.why.args['insufficient']).toBe(true);
     const advanced = progressionPace(
       {
         samples: samples(0),

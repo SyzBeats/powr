@@ -12,4 +12,8 @@
   ebRef: 'PRD MAP-03 (credit, evidence strength H > EMG > C, stretch emphasis, overload suitability, sub-region coverage; weights are configurable data); EB §Session › Exercise selection, › ROM, › Mapping'
   verified: false
   userOverridable: false
-  note: 'POWR design values (PRD §7.3: "the weights are an app convention, labelled [INF]").'
+  note: >-
+    POWR design values (PRD §7.3: "the weights are an app convention, labelled [INF]"). T-01
+    (2026-11-25): each factor has an evidence basis, but no study weights such factors against
+    each other; closest to settling it: a sensitivity run of the plan matrix (±0.05 per weight)
+    with the content review's expert judgement.

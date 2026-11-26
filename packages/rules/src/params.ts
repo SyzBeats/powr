@@ -341,7 +341,7 @@ export const PARAM_SCHEMAS = {
   'scoring.ipfPoints.coefficients': bySex(byDivisionEvent(ipfPoints)),
   'scoring.ipfPoints.minBodyweightKg': positive,
   'scoring.ipfGl.coefficients': bySex(byDivisionEvent(ipfGl)),
-  'scoring.ipfGl.minBodyweightKg': positive,
+  'scoring.ipfGl.minBodyweightKg': bySex(positive),
   'scoring.allometric.exponent': positive,
   // planning.yaml
   'planning.mesocycle.accumulationWeeks': range(z.number().int().min(1)),

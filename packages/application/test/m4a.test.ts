@@ -724,6 +724,16 @@ describe('streak, trends, history, scores and the body (MOT, ANL, BOD)', () => {
       test.advanceDays(1);
       await logBodyweight(test.deps, { mass: kg(80 - n * 0.08) });
     }
+    // 21 weigh-ins span 20 days: not enough data yet for a rate (rules 1.8.0, T-01: 21 days).
+    const early = await bodyweightOverview(test.deps);
+    expect(early.rateMinDays).toBe(21);
+    expect(early.rate.value).toBeNull();
+    expect(early.rate.why).toMatchObject({
+      rule: 'bodyweight.rate.insufficientData',
+      args: { spanDays: 20, minDays: 21 },
+    });
+    test.advanceDays(1);
+    await logBodyweight(test.deps, { mass: kg(78.4) });
     const edited = await editBodyweight(test.deps, {
       id: first.value.id,
       mass: kg(80.2),
@@ -731,7 +741,8 @@ describe('streak, trends, history, scores and the body (MOT, ANL, BOD)', () => {
     });
     expect(edited.ok && edited.value.note).toBe('Morning');
     const overview = await bodyweightOverview(test.deps);
-    expect(overview.entries).toHaveLength(21);
+    expect(overview.entries).toHaveLength(22);
+    expect(overview.rate.value?.spanDays).toBe(21);
     expect(overview.rate.value?.pctPerWeek).toBeLessThan(0);
     expect(overview.band.value.phase).toBe('notTracking');
     expect((await deleteBodyweight(test.deps, first.value.id)).ok).toBe(true);

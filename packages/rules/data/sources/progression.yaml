@@ -13,14 +13,19 @@
 
 - id: src.acsm2009
   citation: >-
-    American College of Sports Medicine 2009. [Position stand on progression models in resistance
-    training: increase load 2–10% when the current load is completed for 1–2 reps above target.]
+    American College of Sports Medicine (Ratamess NA, Alvar BA, Evetoch TK, Housh TJ, Kibler WB,
+    Kraemer WJ & Triplett NT) 2009. Progression models in resistance training for healthy adults.
+    Med Sci Sports Exerc 41(3):687–708. DOI 10.1249/MSS.0b013e3181915670.
   url: https://pubmed.ncbi.nlm.nih.gov/19204579/
   seeAlso:
     - https://pubmed.ncbi.nlm.nih.gov/11828249/
   tag: POS
   status: active
-  note: The seeAlso link is the 2002 stand with the same 2–10% rule.
+  note: >-
+    Position stand: increase load 2–10% when the current load is completed for 1–2 reps above
+    target; 1–3 sets per exercise for novices, 3–6 for advanced hypertrophy training; about 6
+    months of consistent training for "intermediate". The seeAlso link is the 2002 stand with the
+    same 2–10% rule. Title completed by the T-01 evidence verification (2026-11-25).
 
 - id: src.helms2018
   citation: >-
@@ -50,16 +55,17 @@
 
 - id: src.huang2023
   citation: >-
-    Huang et al. 2023. [Tabulates the APRE 6RM protocol: 10 × 50%, 6 × 75%, AMRAP at the 6RM and the
-    load adjustment by AMRAP reps.]
+    Huang Z, Ji H, Chen L, et al. 2023. Comparing autoregulatory progressive resistance exercise
+    and velocity-based resistance training on jump performance in college badminton athletes.
+    PeerJ 11:e15877. DOI 10.7717/peerj.15877. [Table 2 tabulates the APRE 6RM protocol: 10 × 50%,
+    6 × 75%, AMRAP at the 6RM and the load adjustment by AMRAP reps.]
   url: https://pmc.ncbi.nlm.nih.gov/articles/PMC10414022/table/table-2
-  seeAlso:
-    - https://training-conditioning.com/article/understanding-apre-part-1/
   tag: PRACT
   status: active
   note: >-
-    Cited for the protocol table only; secondary sources differ slightly and the original APRE
-    tables were not retrieved (EB §Progression › Progression rules).
+    A reproduction of the APRE protocol table (citing Mann 2011). Its 13+ row mis-converts the
+    original +10 to 15 lb to +5 to 10 kg (correct: 4.5–6.8 kg, +5 to 7.5 kg on plates); the other
+    rows convert correctly. The table source is src.mann2011 (T-01, 2026-11-25).
 
 - id: src.mcmaster2013
   citation: >-
@@ -78,3 +84,27 @@
   tag: INF
   status: active
   note: The EB's own inferred progression, deload and return-from-break rules ([INF]).
+
+# Rules 1.8.0 (T-01 evidence verification, 2026-11-25): the original APRE tables, in pounds.
+
+- id: src.mann2011
+  citation: >-
+    Mann JB 2011. A programming comparison: the APRE vs. linear periodization in short term
+    periods. PhD dissertation, University of Missouri-Columbia.
+  url: https://hdl.handle.net/10355/15836
+  tag: OBS
+  status: active
+  note: >-
+    Appendix A prints the APRE 3RM, 6RM and 10RM adjustment tables; the units are pounds (worked
+    examples in lb; Mann 2017). 6RM: 0–2 reps −5 to 10; 3–4 −0 to 5; 5–7 same; 8–12 +5 to 10;
+    13+ +10 to 15.
+
+- id: src.mann2017
+  citation: >-
+    Mann B 2017. Understanding APRE, part 1. Training & Conditioning, 3 November 2017.
+  url: https://training-conditioning.com/article/understanding-apre-part-1/
+  tag: PRACT
+  status: active
+  note: >-
+    By the APRE trial author. Prints the APRE-6 table with units: "+ 10 to 15 lbs" for 13+ reps;
+    "increase the starting load 10 to 15 pounds".
