@@ -5438,4 +5438,7 @@ recovery screen (M6d's data guard, never a first run over lost data) and the bac
 reminders (DAT-08). It is **not reported to Chromium**; a bug report and standalone reproduction
 were started and stopped at the product owner's request, so none exists. A recovery copy outside
 IndexedDB (TD-77, for example a rolling backup file in the origin private file system) is decided
-after the S22 device tests. Still open in T-13: whether the kill test stays strict.
+after the S22 device tests. **The kill test stays strict** (product owner, 2026-11-26): it fails
+whenever the store is lost, naming the Chromium cause, so `pnpm verify` can go red in about 1 of
+200 runs and the nightly 200-kill job about once in ten; such a run is triaged, never treated as a
+pass. T-13 is closed.

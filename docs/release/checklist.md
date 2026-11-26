@@ -106,7 +106,7 @@ Do them in this order. The runbook ([`deploy/runbook.md`](../../deploy/runbook.m
 | T-10 | Technical concept §8.18 promises two trust measures for a closed-source app (risk R-17): an in-app "Verify it yourself" help page and SHA-256 checksums of the deployed files in the release notes. Neither is built. Not a PRD exit criterion | Built, or deferred by the product owner with a note | PO decides; Agent builds | Pending product owner |
 | T-11 | Usability metrics M2 (≤ 3 s from the end of a set to a confirmed log) and M13 (SUS ≥ 75; ≥ 70 % "motivating") from the M6 roadmap row; not PRD exit criteria | [Usability test plan](usability-test-plan.md) | PO | Pending product owner |
 | T-12 | TD-73…TD-76: four performance levers M6a measured on the desktop at 4× CPU and left as they are (note: the Progress hub's data at 619 ms, the exercise chart at 711 ms and library search at 125 ms are above their §8.19 targets of 300, 500 and 100 ms, although each screen appears at once): each set confirm reads all weigh-ins twice; the Progress hub reads every e1RM point; the idle warm-up checks every week at each start; "Verify data" makes one request per session | The S22 numbers of the [performance protocol](../device-tests/S22-performance-protocol.md) (row EC-07), then the product owner keeps each or has an agent act on its lever (technical concept §11.2) | PO, then Agent | Pending device test |
-| T-13 | **Chromium's IndexedDB loss path** (M6d, technical concept T-18, TD-77): a whole-browser process kill between LevelDB's two writes of one log record, then one more session and one more start, and Chromium deletes the origin's whole IndexedDB store, safety copies included; measured about 1 loss in 1,900 kills of the kill test's mix (5 in about 9,390 over M6c and M6d). POWR now shows "Your data could not be read" instead of the first run, and the kill test names the cause. Not preventable by the app | **Decided 2026-11-26 (product owner): accept it for the MVP.** The protection is the recovery screen "Your data could not be read" and the backups (DAT-08); no report to Chromium; a recovery copy outside IndexedDB (TD-77) is decided after the S22 device tests. Still open: whether the kill test stays strict (a red nightly now and then) | PO decides; Agent builds | Pending product owner |
+| T-13 | **Chromium's IndexedDB loss path** (M6d, technical concept T-18, TD-77): a whole-browser process kill between LevelDB's two writes of one log record, then one more session and one more start, and Chromium deletes the origin's whole IndexedDB store, safety copies included; measured about 1 loss in 1,900 kills of the kill test's mix (5 in about 9,390 over M6c and M6d). POWR now shows "Your data could not be read" instead of the first run, and the kill test names the cause. Not preventable by the app | **Decided 2026-11-26 (product owner): accept it for the MVP.** The protection is the recovery screen "Your data could not be read" and the backups (DAT-08); no report to Chromium; a recovery copy outside IndexedDB (TD-77) is decided after the S22 device tests. **Kill test: stays strict** (product owner, 2026-11-26): a red run that names the Chromium cause is triaged, never accepted as a pass. | PO decides; Agent builds | Done |
 
 ## 6. Status counts
 
@@ -114,12 +114,12 @@ Counted over the 55 rows of sections 2–5 on 2026-11-25, after M6d's results we
 
 | Status | Count | Rows |
 |---|---|---|
-| Done | 15 | EC-08, EC-17, EC-18, G-01, G-02, G-03, G-04, G-05, G-06, G-07, S-04, T-01, T-04, T-05, T-09 |
+| Done | 16 | EC-08, EC-17, EC-18, G-01, G-02, G-03, G-04, G-05, G-06, G-07, S-04, T-01, T-04, T-05, T-09, T-13 |
 | Pending device test | 15 | EC-06, EC-07, EC-09, EC-10, EC-11, EC-12, EC-13, S-03, D-06, T-02, T-03, T-06, T-07, T-08, T-12 |
-| Pending product owner | 25 | EC-01, EC-02, EC-03, EC-04, EC-05, EC-14, EC-15, EC-16, S-01, S-02, D-01, D-02, D-03, D-04, D-05, D-07, D-08, D-09, D-10, D-11, D-12, D-13, T-10, T-11, T-13 |
+| Pending product owner | 24 | EC-01, EC-02, EC-03, EC-04, EC-05, EC-14, EC-15, EC-16, S-01, S-02, D-01, D-02, D-03, D-04, D-05, D-07, D-08, D-09, D-10, D-11, D-12, D-13, T-10, T-11 |
 | Pending agent | 0 | — |
 
-Of the 18 exit-criterion rows (section 2): 3 done, 7 pending a device test, 8 pending the product owner, none pending an agent. T-01 (TD-25, the evidence verification) is done: rules 1.8.0 leaves 22 of 143 parameters preliminary; T-09 is done (2026-11-26, `minimumReleaseAge` 2 days); T-10 and T-13 wait for the product owner's decision.
+Of the 18 exit-criterion rows (section 2): 3 done, 7 pending a device test, 8 pending the product owner, none pending an agent. T-01 (TD-25, the evidence verification) is done: rules 1.8.0 leaves 22 of 143 parameters preliminary; T-09 is done (2026-11-26, `minimumReleaseAge` 2 days); T-10 waits for the product owner's decision; T-13 is decided (accepted, kill test strict).
 
 ## 7. Sign-off
 
