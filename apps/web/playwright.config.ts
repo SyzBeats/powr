@@ -16,6 +16,10 @@ export default defineConfig({
     deviceScaleFactor: 3,
     trace: 'retain-on-failure',
     serviceWorkers: 'allow',
+    // One time zone everywhere: without it the browser takes the host's (Europe/Zurich on the
+    // development machines, UTC on GitHub's runners), and tests that turn local times into UTC
+    // (the calendar export's DTSTART) pass on one and fail on the other.
+    timezoneId: 'Europe/Zurich',
   },
   projects: [{ name: 'chromium-android', use: { browserName: 'chromium' } }],
 });

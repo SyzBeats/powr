@@ -27,11 +27,21 @@ function probe(relativePath: string, source: string): string {
   return relativePath;
 }
 
+/**
+ * Runs oxlint on one probe file. The output format is pinned: oxlint otherwise picks it from the
+ * environment (`github` under GitHub Actions, which drops the rules' help texts; the decorated
+ * `default` in a terminal; `agent` when an AI agent runs it), and these assertions read the
+ * `agent` lines ("error eslint(rule): message help: …").
+ */
 function lint(file: string, flags: readonly string[] = []) {
-  const result = spawnSync(join(root, 'node_modules/.bin/oxlint'), [...flags, file], {
-    cwd: root,
-    encoding: 'utf8',
-  });
+  const result = spawnSync(
+    join(root, 'node_modules/.bin/oxlint'),
+    ['--format=agent', ...flags, file],
+    {
+      cwd: root,
+      encoding: 'utf8',
+    },
+  );
   return { status: result.status, output: result.stdout + result.stderr };
 }
 
