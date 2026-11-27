@@ -10,6 +10,7 @@ import { checkReflow, checkScreen } from './planning';
 test.describe('charts (S-4)', () => {
   test('render lazily under Trusted Types; tap, keys, ranges and the table work; axe passes', async ({
     page,
+    server,
   }) => {
     await skipOnboarding(page);
     const loaded = () =>
@@ -22,9 +23,13 @@ test.describe('charts (S-4)', () => {
     expect(await loaded()).toBe(false);
 
     const response = await page.goto('/debug/charts');
-    expect(response?.headers()['content-security-policy']).toContain(
-      "require-trusted-types-for 'script'",
-    );
+    // The test server adds Trusted Types to the production CSP; the nginx image (CI's second E2E
+    // pass, E2E_BASE_URL) sends the production headers, which do not enforce it yet (TD-03).
+    if (server) {
+      expect(response?.headers()['content-security-policy']).toContain(
+        "require-trusted-types-for 'script'",
+      );
+    }
     await expect(page.getByRole('heading', { level: 1, name: 'Charts (S-4)' })).toBeVisible();
     await expect(page.locator('[data-chart-ready]')).toHaveCount(4);
     await expect(page.locator('[data-chart-ready] canvas').first()).toBeVisible();
